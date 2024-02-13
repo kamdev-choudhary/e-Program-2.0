@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 const API_URL = "http://127.0.0.1:5000/api";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../store/auth";
+import { useAuth } from "../../store/auth";
 
 const LoginPage = () => {
   const [user, setUser] = useState({

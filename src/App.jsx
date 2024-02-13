@@ -1,15 +1,17 @@
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import Lectures from "./views/lectures/Lectures";
-import HomePage from "./views/home/index";
+
 import { Navbar } from "./components/Navbar";
 import Footer from "./components/Footer";
-import Exams from "./views/exams/Exams";
-import Syllabus from "./views/syllabus/Syllabus";
-import Library from "./views/library/library";
-import ErrorPage from "./views/ErrorPage";
-import LoginPage from "./views/LoginPage";
-import RegisterPage from "./views/RegisterPage";
-import LogoutUser from "./views/LogoutUser";
+
+import Lectures from "./pages/lectures/Lectures";
+import HomePage from "./pages/home/index";
+import Exams from "./pages/exams/Exams";
+import Syllabus from "./pages/syllabus/Syllabus";
+import Library from "./pages/library/library";
+import ErrorPage from "./pages/ErrorPage/ErrorPage";
+import LoginPage from "./pages/LoginPage/LoginPage";
+import RegisterPage from "./pages/RegisterPage/RegisterPage";
+import LogoutUser from "./pages/LogoutUser/LogoutUser";
 
 function App() {
   return (

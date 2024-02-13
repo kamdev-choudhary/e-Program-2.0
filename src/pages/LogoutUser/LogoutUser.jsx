@@ -1,6 +1,6 @@
 import { Navigate } from "react-router-dom";
 import { useEffect } from "react";
-import { useAuth } from "../store/auth";
+import { useAuth } from "../../store/auth";
 
 const LogoutUser = () => {
   const { logoutUser } = useAuth();

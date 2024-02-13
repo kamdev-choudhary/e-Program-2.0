@@ -7,7 +7,7 @@ const Lectures = () => {
   const [lectures, setLectures] = useState([]);
 
   useEffect(() => {
-    fetch(`${API_URL}/viewlectures`)
+    fetch(`${API_URL}/lectures`)
       .then((response) => response.json())
       .then((data) => setLectures(data.lectures))
       .catch((error) => console.error("Error fetching lectures:", error));
