@@ -8,6 +8,8 @@ const PORT = 5000;
 
 const authRouter = require("./routers/auth-router");
 const lectureRouter = require("./routers/lectureRouter");
+const questionRouter = require("./routers/questionRoute");
+const materialRouter = require("./routers/materialRoute");
 
 app.use(cors());
 app.use(express.json());
@@ -18,11 +20,13 @@ app.get("/", (req, res) => {
 
 app.use("/api/auth", authRouter);
 app.use("/api/lectures", lectureRouter);
+app.use("/api/questionbank", questionRouter);
+app.use("/api/materials", materialRouter);
 
 app.use(errorMiddleware);
 
 connectDB().then(() => {
   app.listen(PORT, () => {
-    console.log(`Server is liesning at Port : ${PORT}`);
+    console.log(`Server is listening to Port : ${PORT}`);
   });
 });

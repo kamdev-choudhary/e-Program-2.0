@@ -4,9 +4,9 @@ const Schema = mongoose.Schema;
 const lectureSchema = new Schema({
   class: String,
   subject: String,
-  chapter_name: String,
-  lecture_number: Number,
-  video_link: String,
+  chapterName: String,
+  lectureNumber: Number,
+  videoId: String,
 });
 
 const Lecture = mongoose.model("Lectures", lectureSchema);

@@ -1,9 +1,11 @@
 const mongoose = require("mongoose");
 const initdata = require("./lectureData.js");
+const academicData = require("./academicData.js");
 const Lecture = require("../models/lectures.js");
+const Academic = require("../models/academic.js");
+require("dotenv").config();
 
-// dbUrl = process.env.ATLASDB_URL;
-const dbUrl = "mongodb://127.0.0.1:27017/dakshana";
+dbUrl = process.env.DB_URL;
 
 main()
   .then(() => {
@@ -18,8 +20,10 @@ async function main() {
 }
 
 const initDB = async () => {
-  // await Lecture.deleteMany({});
+  await Lecture.deleteMany({});
   await Lecture.insertMany(initdata.data);
+  await Academic.deleteMany({});
+  await Academic.insertMany(academicData.data);
   console.log(`data was initialised`);
 };
 

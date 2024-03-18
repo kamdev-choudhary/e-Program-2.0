@@ -1,0 +1,43 @@
+@media only screen and (max-width: 768px) {
+  .lecture-container {
+    flex-direction: column-reverse; /* Reverse the direction of flexbox for mobile */
+  }
+
+  .col-md-6 {
+    width: 100%; /* Make both columns take full width on mobile */
+    max-width: 100%; /* Ensure both columns take full width */
+    overflow: hidden; /* Hide overflow to prevent horizontal scrolling */
+  }
+
+  .col-md-6:last-child {
+    margin-top: 20px; /* Add margin between the two columns on mobile */
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    width: 100%;
+    margin-top: 20px; /* Add margin between the table and the YouTube video on mobile */
+  }
+}
+.table {
+  border-collapse: collapse;
+  border: 1px solid #ddd;
+  font-size: 18px;
+  cursor: pointer;
+}
+.myTable th,
+.myTable td {
+  text-align: center;
+  padding: 12px;
+}
+.myTable th {
+  position: sticky;
+  top: 0;
+  background-color: white;
+  z-index: 2;
+}
+
+.myTable tr {
+  border-bottom: 1px solid #ddd;
+}

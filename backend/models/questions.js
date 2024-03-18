@@ -1,25 +1,27 @@
 const mongoose = require("mongoose");
+const { string } = require("zod");
 const Schema = mongoose.Schema;
 
 const questionSchema = new Schema({
-  question_id: String,
+  classes: Number,
+  questionId: String,
   subject: String,
   topic: String,
-  Subtopic: String,
-  Difficulty_level: String,
-  questionType: Number,
+  subtopic: String,
+  difficultyLevel: String,
+  questionType: String,
+  timeRequired: Number,
   isApproved: {
     type: String,
     default: "no",
   },
   questionText: String,
-  options: {
-    option1: String,
-    option2: String,
-    option3: String,
-    option4: String,
-  },
-  correctAnswer: Number,
+  option1: String,
+  option2: String,
+  option3: String,
+  option4: String,
+  correctAnswer: String,
+  solution: String,
 });
 
 const Question = mongoose.model("Question", questionSchema);
