@@ -24,7 +24,6 @@ function App() {
           <Route path="/lectures" Component={LecturePage} />
           <Route path="/materials" Component={MaterialPage} />
           <Route path="/question bank" Component={QuestionBankPage} />
-          <Route path="/login" Component={UserPage} />
           <Route path="*" Component={ErrorPage} />
         </Routes>
       </div>

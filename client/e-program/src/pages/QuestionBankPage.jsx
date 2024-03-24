@@ -18,6 +18,7 @@ export default function QuestionBankPage() {
   const [timeRequired, setTimeRequired] = useState("");
   const [searchQuestion, setSearchQuestion] = useState("");
 
+  const [editMode, setEditMode] = useState(false);
   const [showQuestionTypeModal, setShowQuestionTypeModal] = useState(false);
   const [showQuestionModal, setShowQuestionModal] = useState({
     SingleCorrect: false,
@@ -35,7 +36,7 @@ export default function QuestionBankPage() {
       })
       .then((data) => setQuestions(data.questions))
       .catch((error) => setError(error.message));
-  }, []);
+  }, [showQuestionModal, showQuestionTypeModal]);
 
   const handleShowQuestionTypeModal = () => {
     setShowQuestionTypeModal(true);
@@ -43,6 +44,10 @@ export default function QuestionBankPage() {
 
   const handleCloseQuestionTypeModal = () => {
     setShowQuestionTypeModal(false);
+  };
+
+  const handleChangeEditMode = () => {
+    setEditMode(!editMode);
   };
 
   const handleAddQuestion = (e) => {
@@ -53,13 +58,13 @@ export default function QuestionBankPage() {
     });
   };
 
-  const handleCloseAddQuestion = (e) => {
-    const { name } = e.target;
+  const handleCloseAddQuestion = (modalName) => {
     setShowQuestionModal({
       ...showQuestionModal,
-      [name]: false,
+      [modalName]: false,
     });
   };
+
   function handleSearch(e) {
     setSearchQuestion(e.target.value);
     const filteredQuestions = questions.filter((question) => {
@@ -227,7 +232,7 @@ export default function QuestionBankPage() {
               />
             </div>
           </div>
-          <div className="col-md-4 text-center">
+          <div className="col-md-3">
             <button
               type="button"
               className="btn btn-outline-success"
@@ -235,6 +240,20 @@ export default function QuestionBankPage() {
             >
               Add Question
             </button>
+          </div>
+          <div className="col-md-3">
+            <div className="form-check form-switch">
+              <input
+                className="form-check-input"
+                type="checkbox"
+                checked={editMode}
+                onChange={handleChangeEditMode}
+                id="flexSwitchCheckDefault"
+              />
+              <label className="form-check-label" for="flexSwitchCheckDefault">
+                Edit or Delete
+              </label>
+            </div>
           </div>
         </div>
 
@@ -290,20 +309,22 @@ export default function QuestionBankPage() {
 
         <Modal
           show={showQuestionModal.SingleCorrect}
-          onHide={handleCloseAddQuestion}
+          onHide={() => handleCloseAddQuestion("SingleCorrect")}
           dialogClassName="modal-xl"
         >
           <Modal.Header>
             <Modal.Title>Single Correct Question</Modal.Title>
           </Modal.Header>
           <Modal.Body>
-            <SingleCorrectQuestion />
+            <SingleCorrectQuestion
+              handleCloseAddQuestion={handleCloseAddQuestion}
+            />
           </Modal.Body>
           <Modal.Footer>
             <Button
               variant="danger"
               name="SingleCorrect"
-              onClick={handleCloseAddQuestion}
+              onClick={() => handleCloseAddQuestion("SingleCorrect")}
             >
               Close
             </Button>
@@ -311,7 +332,7 @@ export default function QuestionBankPage() {
         </Modal>
         <Modal
           show={showQuestionModal.MultiCorrect}
-          onHide={handleCloseAddQuestion}
+          onHide={() => handleCloseAddQuestion("MultiCorrect")}
           dialogClassName="modal-xl"
         >
           <Modal.Header>
@@ -324,7 +345,7 @@ export default function QuestionBankPage() {
             <Button
               variant="danger"
               name="MultiCorrect"
-              onClick={handleCloseAddQuestion}
+              onClick={() => handleCloseAddQuestion("MultiCorrect")}
             >
               Close
             </Button>
@@ -332,7 +353,7 @@ export default function QuestionBankPage() {
         </Modal>
         <Modal
           show={showQuestionModal.Integer}
-          onHide={handleCloseAddQuestion}
+          onHide={() => handleCloseAddQuestion("Integer")}
           dialogClassName="modal-xl"
         >
           <Modal.Header>
@@ -345,7 +366,7 @@ export default function QuestionBankPage() {
             <Button
               variant="danger"
               name="Integer"
-              onClick={handleCloseAddQuestion}
+              onClick={() => handleCloseAddQuestion("Integer")}
             >
               Close
             </Button>
@@ -378,11 +399,16 @@ export default function QuestionBankPage() {
                 Topic
               </th>
               <th scope="col" className="text-center">
-                Class
+                SubTopic
               </th>
               <th scope="col" className="text-center">
                 Difficulty Level
               </th>
+              {editMode && (
+                <th scope="col" className="text-center">
+                  Edit or Delete
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -392,7 +418,7 @@ export default function QuestionBankPage() {
                   <td>
                     <input type="Checkbox" />
                   </td>
-                  <td className="text-center">{question.question_id}</td>
+                  <td className="text-center">{question.questionId}</td>
                   <td>{question.questionText}</td>
                   <td className="text-center">
                     <button className="btn btn-sm btn-outline-success">
@@ -404,6 +430,19 @@ export default function QuestionBankPage() {
                   <td className="text-center">{question.topic}</td>
                   <td className="text-center">{question.subtopic}</td>
                   <td className="text-center">{question.difficulty_level}</td>
+                  {editMode && (
+                    <td scope="col" className="text-center">
+                      <i
+                        className="fa-solid fa-trash"
+                        style={{ color: "brown" }}
+                      ></i>{" "}
+                      &nbsp;|| &nbsp;
+                      <i
+                        className="fa-solid fa-edit"
+                        style={{ color: "blue" }}
+                      ></i>
+                    </td>
+                  )}
                 </tr>
               </React.Fragment>
             ))}

@@ -32,20 +32,22 @@ export default function UserPage() {
     }
   };
   return (
-    <div className="row">
-      <div className="col-6 align-center">
+    <div className="login">
+      <div className="row border p-3 text-center">
+      <div className="col-12 align-center">
         <img
           className=""
           src="https://www.dakshana.org/wp-content/uploads/2017/10/new-logo.png"
           alt=""
-          height="300px"
+          height="100px"
         />
       </div>
-      <div className="col-6 ">
-        <h3>Login to Dakshana E-program</h3>
+      <hr className="mt-2"/>
+      <div className="col-12 ">
+
         <form onSubmit={handleOnSubmit}>
           <div className="form-row">
-            <div className="form-group mt-3">
+            <div className="form-group mt-1">
               <label htmlFor="identifier">Email</label>
               <input
                 onChange={handleInput}
@@ -58,7 +60,7 @@ export default function UserPage() {
                 required
               />
             </div>
-            <div className="form-group mt-3">
+            <div className="form-group mt-1">
               <label htmlFor="inputPassword">Password</label>
               <input
                 onChange={handleInput}
@@ -73,11 +75,12 @@ export default function UserPage() {
             </div>
           </div>
           <div className="form-group mt-3 ms-auto"></div>
-          <button type="submit" className="btn btn-primary">
+          <button type="submit" className="btn btn-success">
             Login
           </button>
         </form>
       </div>
+    </div>
     </div>
   );
 }

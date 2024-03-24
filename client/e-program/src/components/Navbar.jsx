@@ -1,9 +1,16 @@
 import "./Navbar.css";
 import { NavLink } from "react-router-dom";
+import { Modal, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap";
+import UserPage from "../pages/UserPage";
+import { useState } from "react";
 
 function Navbar() {
+  const [showUserPage, setShowUserPage] = useState(false)
+  function handleshowUserPage () {
+    setShowUserPage(!showUserPage)
+  }
   return (
     <>
       <nav className="navbar navbar-expand-lg bg-body-tertiary">
@@ -77,7 +84,7 @@ function Navbar() {
                 </ul>
               </li>
               <li className="nav-item ">
-                <NavLink className="nav-link " to="/login">
+                <NavLink className="nav-link " onClick={handleshowUserPage}>
                   Login
                 </NavLink>
               </li>
@@ -85,6 +92,23 @@ function Navbar() {
           </div>
         </div>
       </nav>
+      <Modal
+      show={showUserPage} 
+      onHide={handleshowUserPage}
+      dialogClassName="modal-md"
+      >
+        <Modal.Header>
+          <Modal.Title>Login or Signup</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <UserPage/>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="danger" onClick={handleshowUserPage} >
+              Close
+            </Button>
+            </Modal.Footer>
+      </Modal>
     </>
   );
 }

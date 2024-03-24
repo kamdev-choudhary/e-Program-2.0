@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function SingleCorrectQuestion() {
+export default function SingleCorrectQuestion(props) {
   const [questionData, setQuestionData] = useState({
     classes: "",
 
@@ -29,6 +29,21 @@ export default function SingleCorrectQuestion() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("QUestion data:", questionData);
+    fetch("http://127.0.0.1:5000/api/questionbank", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(questionData),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Success:", data);
+        props.handleCloseAddQuestion("SingleCorrect");
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
   return (
