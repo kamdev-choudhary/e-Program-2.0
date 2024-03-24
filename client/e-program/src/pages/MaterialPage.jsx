@@ -1,11 +1,44 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
+import AddBooks from "../components/AddBooks";
+import { Modal, Button } from "react-bootstrap";
 
 const API_URL = "http://127.0.0.1:5000/api";
 
 export default function MaterialPage() {
   const [books, setBooks] = useState([]);
   const [error, setError] = useState(null);
+  const [newBook, setNewBook] = useState({
+    title: "",
+    bookID: "",
+    subject: "",
+    category: "",
+    author: "",
+    PublishingYear: "",
+  });
+  const [showAddBook, setShowAddBook] = useState(false);
+
+  const handleAddNewBook = () => {
+    setShowAddBook(!showAddBook);
+  };
+
+  const handleNewBookChange = (e) => {
+    const { name, value } = e.target;
+    setNewBook({ ...newBook, [name]: value });
+  };
+
+  const handleOnSubmit = (e) => {
+    e.preventDefault();
+    console.log(newBook);
+    setNewBook({
+      title: "",
+      bookID: "",
+      subject: "",
+      category: "",
+      author: "",
+      PublishingYear: "",
+    });
+  };
 
   useEffect(() => {
     fetch(`${API_URL}/materials`)
@@ -37,10 +70,125 @@ export default function MaterialPage() {
             </div>
           </div>
           <div className="col-md-6 text-center">
-            <button className="btn btn-success">Add New Books</button>
+            <button className="btn btn-success" onClick={handleAddNewBook}>
+              Add New Books
+            </button>
           </div>
         </div>
       </div>
+
+      <Modal
+        show={showAddBook}
+        onHide={handleAddNewBook}
+        dialogClassName="modal-xl"
+      >
+        <Modal.Header>
+          <Modal.Title>Add New Books</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <form onSubmit={handleOnSubmit}>
+            <div className="input-group mb-2">
+              <div className="input-group-prepend">
+                <div className="input-group-text ">Book ID</div>
+              </div>
+              <input
+                type="text"
+                name="bookID"
+                value={newBook.bookID}
+                onChange={handleNewBookChange}
+                className="form-control"
+                id="inlineFormInputGroup"
+                placeholder="Book ID"
+              />
+            </div>
+            <div className="input-group mb-2">
+              <div className="input-group-prepend">
+                <div className="input-group-text">Book Title</div>
+              </div>
+              <input
+                type="text"
+                className="form-control"
+                name="title"
+                value={newBook.title}
+                onChange={handleNewBookChange}
+                id="inlineFormInputGroup"
+                placeholder="Book TItle"
+              />
+            </div>
+            <div className="input-group mb-2">
+              <div className="input-group-prepend">
+                <div className="input-group-text">Author</div>
+              </div>
+              <input
+                name="author"
+                value={newBook.author}
+                onChange={handleNewBookChange}
+                type="text"
+                className="form-control"
+                id="inlineFormInputGroup"
+                placeholder="Author"
+              />
+            </div>
+            <div className="input-group mb-2">
+              <div className="input-group-prepend">
+                <div className="input-group-text">Subject</div>
+              </div>
+              <input
+                type="text"
+                className="form-control"
+                name="subject"
+                value={newBook.subject}
+                onChange={handleNewBookChange}
+                id="inlineFormInputGroup"
+                placeholder="Subject"
+              />
+            </div>
+            <div className="input-group mb-2">
+              <div className="input-group-prepend">
+                <div className="input-group-text">Category</div>
+              </div>
+              <input
+                type="text"
+                className="form-control"
+                name="category"
+                value={newBook.category}
+                onChange={handleNewBookChange}
+                id="inlineFormInputGroup"
+                placeholder="Category"
+              />
+            </div>
+            <div className="input-group mb-2">
+              <div className="input-group-prepend">
+                <div className="input-group-text">Publishing Year</div>
+              </div>
+              <input
+                type="text"
+                className="form-control"
+                name="PublishingYear"
+                value={newBook.PublishingYear}
+                onChange={handleNewBookChange}
+                id="inlineFormInputGroup"
+                placeholder="Publishinh Year"
+              />
+            </div>
+            <div className="input-group mb-2">
+              <input
+                type="file"
+                className="form-control"
+                id="inlineFormInputGroup"
+                placeholder="Publishinh Year"
+              />
+            </div>
+            <button className="form-control btn btn-success ">Submit</button>
+          </form>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="danger" onClick={handleAddNewBook}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
       <hr />
       <div className="row">
         <table className="table table-hover table-bordered border-secondary-emphasis rounded">

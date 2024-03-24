@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Button } from "react-bootstrap";
+import { Modal, Button, ModalBody } from "react-bootstrap";
 import "./QuestionBankPage.css";
 import SingleCorrectQuestion from "../components/SingleCorrectQuestion";
 import MultiCorrectQuestion from "../components/MultiCorrectQuestion";
 import IntegerType from "../components/IntegerType";
+import ViewQuestion from "../components/ViewQuestion";
 
 const API_URL = "http://127.0.0.1:5000/api";
 
@@ -17,9 +18,11 @@ export default function QuestionBankPage() {
   const [difficultyLevel, setDifficultyLevel] = useState("");
   const [timeRequired, setTimeRequired] = useState("");
   const [searchQuestion, setSearchQuestion] = useState("");
+  const [currQuestion, setCurrentQuestion] = useState([]);
 
   const [editMode, setEditMode] = useState(false);
   const [showQuestionTypeModal, setShowQuestionTypeModal] = useState(false);
+  const [showViewQuestion, setShowViewQuestion] = useState(false);
   const [showQuestionModal, setShowQuestionModal] = useState({
     SingleCorrect: false,
     MultiCorrect: false,
@@ -50,6 +53,12 @@ export default function QuestionBankPage() {
     setEditMode(!editMode);
   };
 
+  const handleShowViewQuestion = (question) => {
+    setShowViewQuestion(!showViewQuestion);
+    if (question) {
+      setCurrentQuestion(question);
+    }
+  };
   const handleAddQuestion = (e) => {
     const { name } = e.target;
     setShowQuestionModal({
@@ -63,6 +72,10 @@ export default function QuestionBankPage() {
       ...showQuestionModal,
       [modalName]: false,
     });
+  };
+
+  const handleViewQuestion = (question) => {
+    console.log(question.option1);
   };
 
   function handleSearch(e) {
@@ -250,7 +263,10 @@ export default function QuestionBankPage() {
                 onChange={handleChangeEditMode}
                 id="flexSwitchCheckDefault"
               />
-              <label className="form-check-label" for="flexSwitchCheckDefault">
+              <label
+                className="form-check-label"
+                htmlFor="flexSwitchCheckDefault"
+              >
                 Edit or Delete
               </label>
             </div>
@@ -421,7 +437,12 @@ export default function QuestionBankPage() {
                   <td className="text-center">{question.questionId}</td>
                   <td>{question.questionText}</td>
                   <td className="text-center">
-                    <button className="btn btn-sm btn-outline-success">
+                    <button
+                      className="btn btn-sm btn-outline-success"
+                      onClick={() => {
+                        handleShowViewQuestion(question);
+                      }}
+                    >
                       View
                     </button>
                   </td>
@@ -449,6 +470,17 @@ export default function QuestionBankPage() {
           </tbody>
         </table>
       </div>
+      <Modal show={showViewQuestion} onHide={handleShowViewQuestion}>
+        <Modal.Header> View Question</Modal.Header>
+        <Modal.Body>
+          <ViewQuestion currQuestion={currQuestion} />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="danger" onClick={handleShowViewQuestion}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }
