@@ -42,6 +42,11 @@ export default function LecturePage() {
   const [error, setError] = useState(null);
   const [collapsedChapter, setCollapsedChapter] = useState(null);
   const [currVID, setCurrVID] = useState(null);
+  const [filterText, setFilterText] = useState("");
+
+  const handleFilterTextChange = (e) => {
+    setFilterText(e.value);
+  };
 
   useEffect(() => {
     fetch(`${API_URL}/lectures`)
@@ -52,17 +57,13 @@ export default function LecturePage() {
         return response.json();
       })
       .then((data) => {
-        // Sort lectures by class, subject, and lecture number
         const sortedLectures = data.lectures.sort((a, b) => {
-          // Sort by class
           if (a.class !== b.class) {
             return a.class.localeCompare(b.class);
           }
-          // If classes are same, sort by subject
           if (a.subject !== b.subject) {
             return a.subject.localeCompare(b.subject);
           }
-          // If subjects are same, sort by lecture number
           return a.lectureNumber - b.lectureNumber;
         });
         setLectures(sortedLectures);
@@ -102,7 +103,13 @@ export default function LecturePage() {
               <b>Search</b> &nbsp; &nbsp;&nbsp;
               <i className="fa fa-search"></i>
             </span>
-            <input className="form-control" type="text" />
+            <input
+              className="form-control"
+              type="text"
+              onChange={handleFilterTextChange}
+              name="filterText"
+              value={filterText}
+            />
           </div>
         </div>
       </div>

@@ -88,9 +88,12 @@ export default function MaterialPage() {
         <Modal.Body>
           <form onSubmit={handleOnSubmit}>
             <div className="input-group mb-2">
-              <div className="input-group-prepend">
-                <div className="input-group-text ">Book ID</div>
-              </div>
+              <span
+                className="input-group-text bg-success text-light"
+                id="addon-wrapping"
+              >
+                Book ID
+              </span>
               <input
                 type="text"
                 name="bookID"
@@ -102,9 +105,12 @@ export default function MaterialPage() {
               />
             </div>
             <div className="input-group mb-2">
-              <div className="input-group-prepend">
-                <div className="input-group-text">Book Title</div>
-              </div>
+              <span
+                className="input-group-text bg-success text-light"
+                id="addon-wrapping"
+              >
+                Book Title
+              </span>
               <input
                 type="text"
                 className="form-control"
@@ -116,9 +122,12 @@ export default function MaterialPage() {
               />
             </div>
             <div className="input-group mb-2">
-              <div className="input-group-prepend">
-                <div className="input-group-text">Author</div>
-              </div>
+              <span
+                className="input-group-text bg-success text-light"
+                id="addon-wrapping"
+              >
+                Author
+              </span>
               <input
                 name="author"
                 value={newBook.author}
@@ -130,9 +139,12 @@ export default function MaterialPage() {
               />
             </div>
             <div className="input-group mb-2">
-              <div className="input-group-prepend">
-                <div className="input-group-text">Subject</div>
-              </div>
+              <span
+                className="input-group-text bg-success text-light"
+                id="addon-wrapping"
+              >
+                Subject
+              </span>
               <input
                 type="text"
                 className="form-control"
@@ -144,9 +156,12 @@ export default function MaterialPage() {
               />
             </div>
             <div className="input-group mb-2">
-              <div className="input-group-prepend">
-                <div className="input-group-text">Category</div>
-              </div>
+              <span
+                className="input-group-text bg-success text-light"
+                id="addon-wrapping"
+              >
+                Category
+              </span>
               <input
                 type="text"
                 className="form-control"
@@ -158,9 +173,12 @@ export default function MaterialPage() {
               />
             </div>
             <div className="input-group mb-2">
-              <div className="input-group-prepend">
-                <div className="input-group-text">Publishing Year</div>
-              </div>
+              <span
+                className="input-group-text bg-success text-light"
+                id="addon-wrapping"
+              >
+                Publishing Year
+              </span>
               <input
                 type="text"
                 className="form-control"
@@ -168,7 +186,7 @@ export default function MaterialPage() {
                 value={newBook.PublishingYear}
                 onChange={handleNewBookChange}
                 id="inlineFormInputGroup"
-                placeholder="Publishinh Year"
+                placeholder="Publishing Year"
               />
             </div>
             <div className="input-group mb-2">
@@ -176,10 +194,15 @@ export default function MaterialPage() {
                 type="file"
                 className="form-control"
                 id="inlineFormInputGroup"
-                placeholder="Publishinh Year"
               />
             </div>
-            <button className="form-control btn btn-success ">Submit</button>
+            <div className="row ms-auto">
+              <div className="div col-12 text-center">
+                <button className="form-control btn btn-success ">
+                  Submit
+                </button>
+              </div>
+            </div>
           </form>
         </Modal.Body>
         <Modal.Footer>

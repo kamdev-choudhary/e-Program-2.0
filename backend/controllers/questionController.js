@@ -51,3 +51,12 @@ module.exports.saveQuestion = async (req, res) => {
   await newQuestion.save();
   res.status(200).json("Data Saved Successfully");
 };
+
+// Delete Question
+
+module.exports.deleteQuestion = async (req, res) => {
+  let { questionId } = req.body.questionId;
+  const DeletedQuestion = await Question.findOneAndDelete(questionId);
+  console.log(DeletedQuestion);
+  res.status(200).json("Question Deleted Succesfully");
+};

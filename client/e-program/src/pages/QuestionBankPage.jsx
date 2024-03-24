@@ -22,6 +22,7 @@ export default function QuestionBankPage() {
 
   const [editMode, setEditMode] = useState(false);
   const [showQuestionTypeModal, setShowQuestionTypeModal] = useState(false);
+  const [refresh, setRefresh] = useState(false);
   const [showViewQuestion, setShowViewQuestion] = useState(false);
   const [showQuestionModal, setShowQuestionModal] = useState({
     SingleCorrect: false,
@@ -39,7 +40,7 @@ export default function QuestionBankPage() {
       })
       .then((data) => setQuestions(data.questions))
       .catch((error) => setError(error.message));
-  }, [showQuestionModal, showQuestionTypeModal]);
+  }, [showQuestionModal, showQuestionTypeModal, refresh]);
 
   const handleShowQuestionTypeModal = () => {
     setShowQuestionTypeModal(true);
@@ -74,8 +75,22 @@ export default function QuestionBankPage() {
     });
   };
 
-  const handleViewQuestion = (question) => {
-    console.log(question.option1);
+  const handleDeleteQuestion = (question) => {
+    fetch("http://127.0.0.1:5000/api/questionbank", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(question),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Success:", data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+    setRefresh(!refresh);
   };
 
   function handleSearch(e) {
@@ -203,9 +218,9 @@ export default function QuestionBankPage() {
               Question Target
             </span>
             <select className="form-control" name="question[className]">
-              <option value="">-- Select Subject --</option>
-              <option value="IX">className - 09</option>
-              <option value="X">className - 10</option>
+              <option value="">-- Select Target --</option>
+              <option value="IX">JEE</option>
+              <option value="X">NEET</option>
             </select>
           </div>
         </div>
@@ -215,12 +230,12 @@ export default function QuestionBankPage() {
               className="input-group-text bg-success text-light"
               id="addon-wrapping"
             >
-              Question Source
+              Question Group
             </span>
             <select className="form-control" name="question[className]">
-              <option value="">-- Select Subject --</option>
-              <option value="IX">className - 09</option>
-              <option value="X">className - 10</option>
+              <option value="">-- Select Group --</option>
+              <option value="IX">G1</option>
+              <option value="X">G2</option>
             </select>
           </div>
         </div>
@@ -257,17 +272,17 @@ export default function QuestionBankPage() {
           <div className="col-md-3">
             <div className="form-check form-switch">
               <input
-                className="form-check-input"
+                className="form-check-input border border-primary"
                 type="checkbox"
                 checked={editMode}
                 onChange={handleChangeEditMode}
                 id="flexSwitchCheckDefault"
               />
               <label
-                className="form-check-label"
+                className="form-check-label "
                 htmlFor="flexSwitchCheckDefault"
               >
-                Edit or Delete
+                Delete
               </label>
             </div>
           </div>
@@ -422,7 +437,7 @@ export default function QuestionBankPage() {
               </th>
               {editMode && (
                 <th scope="col" className="text-center">
-                  Edit or Delete
+                  Delete
                 </th>
               )}
             </tr>
@@ -455,12 +470,8 @@ export default function QuestionBankPage() {
                     <td scope="col" className="text-center">
                       <i
                         className="fa-solid fa-trash"
+                        onClick={() => handleDeleteQuestion(question)}
                         style={{ color: "brown" }}
-                      ></i>{" "}
-                      &nbsp;|| &nbsp;
-                      <i
-                        className="fa-solid fa-edit"
-                        style={{ color: "blue" }}
                       ></i>
                     </td>
                   )}
@@ -470,7 +481,11 @@ export default function QuestionBankPage() {
           </tbody>
         </table>
       </div>
-      <Modal show={showViewQuestion} onHide={handleShowViewQuestion}>
+      <Modal
+        show={showViewQuestion}
+        onHide={handleShowViewQuestion}
+        dialogClassName="modal-xl"
+      >
         <Modal.Header> View Question</Modal.Header>
         <Modal.Body>
           <ViewQuestion currQuestion={currQuestion} />
