@@ -10,8 +10,8 @@ function CollapsibleTable({ lectures, playLecture }) {
     <div>
       <table className="table border  border-secondary rounded">
         <thead>
-          <tr className="sticky-top">
-            <th scope="col ">Chapter Name</th>
+          <tr className="sticky-top ">
+            <th scope="col">Chapter Name</th>
             <th scope="col">Lecture Number</th>
             <th scope="col">Video</th>
           </tr>
@@ -122,17 +122,20 @@ export default function LecturePage() {
           <table className="table table-hover  table-responsive table-bordered border-secondary-emphasis">
             <thead>
               <tr className="sticky-top ">
-                <th scope="col" className="text-center">
+                <th
+                  scope="col"
+                  className="text-center bg-success text-white bg-success text-white"
+                >
                   Class
                 </th>
-                <th scope="col" className="text-center">
+                <th scope="col" className="text-center bg-success text-white">
                   Subject
                 </th>
-                <th scope="col" className="text-start">
+                <th scope="col" className=" text-center bg-success text-white">
                   Chapter
                 </th>
-                <th scope="col" className="text-center">
-                  # of Lecture
+                <th scope="col" className="text-center bg-success text-white">
+                  # of Lectures
                 </th>
               </tr>
             </thead>

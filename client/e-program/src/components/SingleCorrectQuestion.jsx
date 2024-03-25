@@ -65,7 +65,7 @@ export default function SingleCorrectQuestion(props) {
                   value={questionData.subject}
                   onChange={handleInputChange}
                 >
-                  <option value="">-- Select Class --</option>
+                  <option value="">-- Select Subject --</option>
                   <option value="physics">Physics</option>
                   <option value="chemistry">Chemistry</option>
                   <option value="mathematics">Mathematics</option>
@@ -110,7 +110,7 @@ export default function SingleCorrectQuestion(props) {
                   value={questionData.subtopic}
                   onChange={handleInputChange}
                 >
-                  <option value="">-- Select Topic --</option>
+                  <option value="">-- Select Sub Topic --</option>
                   <option value="subtopic 1">Subtopic 1</option>
                   <option value="subtopic 2">subtopic 2</option>
                 </select>

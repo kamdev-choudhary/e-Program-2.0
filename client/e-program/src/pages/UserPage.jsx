@@ -2,6 +2,7 @@ import { useState } from "react";
 const API_URL = "http://127.0.0.1:5000/api";
 
 export default function UserPage() {
+  const [isLoginPage, setIsLoginPage] = useState(true);
   const [user, setUser] = useState({
     email: "",
     password: "",
@@ -9,6 +10,10 @@ export default function UserPage() {
 
   const handleInput = (e) => {
     setUser({ ...user, [e.target.name]: e.target.value });
+  };
+
+  const handleLoginPage = () => {
+    setIsLoginPage(!isLoginPage);
   };
 
   const handleOnSubmit = async (e) => {
@@ -33,19 +38,80 @@ export default function UserPage() {
     }
   };
   return (
-    <div className="login">
-      <div className="row border p-2  rounded">
-        <div className="col-12 text-center">
-          <img
-            src="https://www.dakshana.org/wp-content/uploads/2017/10/new-logo.png"
-            alt=""
-            height="100px"
-          />
+    <>
+      {isLoginPage && (
+        <div className="login">
+          <div className="row border p-2  rounded">
+            <div className="col-12 text-center">
+              <img
+                src="https://www.dakshana.org/wp-content/uploads/2017/10/new-logo.png"
+                alt=""
+                height="100px"
+              />
+            </div>
+            <hr className="mt-2" />
+            <div className="col-12 ">
+              <form onSubmit={handleOnSubmit}>
+                <div className="form-row">
+                  <div className="form-group mt-1">
+                    <label htmlFor="identifier">Email</label>
+                    <input
+                      onChange={handleInput}
+                      type="email"
+                      className="form-control"
+                      id="email"
+                      name="email"
+                      value={user.email}
+                      placeholder="Email"
+                      required
+                    />
+                  </div>
+                  <div className="form-group mt-1">
+                    <label htmlFor="inputPassword">Password</label>
+                    <input
+                      onChange={handleInput}
+                      type="password"
+                      className="form-control"
+                      id="inputPassword"
+                      name="password"
+                      value={user.password}
+                      placeholder="Password"
+                      required
+                    />
+                  </div>
+                </div>
+                <div className="form-group mt-3 text-center">
+                  <button type="submit" className="btn btn-success">
+                    Login
+                  </button>
+                </div>
+              </form>
+            </div>
+            <hr className="mt-3" />
+            <p>
+              New to Dakshana.
+              <span
+                className="btn btn-sm btn-primary"
+                onClick={handleLoginPage}
+              >
+                Create Account
+              </span>
+            </p>
+          </div>
         </div>
-        <hr className="mt-2" />
-        <div className="col-12 ">
-          <form onSubmit={handleOnSubmit}>
-            <div className="form-row">
+      )}
+      {!isLoginPage && (
+        <div className="row border p-2  rounded">
+          <div className="col-12 text-center">
+            <img
+              src="https://www.dakshana.org/wp-content/uploads/2017/10/new-logo.png"
+              alt=""
+              height="100px"
+            />
+          </div>
+          <hr className="mt-2" />
+          <div className="col-12 ">
+            <form onSubmit={handleOnSubmit}>
               <div className="form-group mt-1">
                 <label htmlFor="identifier">Email</label>
                 <input
@@ -56,6 +122,19 @@ export default function UserPage() {
                   name="email"
                   value={user.email}
                   placeholder="Email"
+                  required
+                />
+              </div>
+              <div className="form-group mt-1">
+                <label htmlFor="identifier">Mobile Number</label>
+                <input
+                  onChange={handleInput}
+                  type="email"
+                  className="form-control"
+                  id="mobile"
+                  name="mobile"
+                  value={user.email}
+                  placeholder="Mobile Number"
                   required
                 />
               </div>
@@ -72,20 +151,23 @@ export default function UserPage() {
                   required
                 />
               </div>
-            </div>
-            <div className="form-group mt-3 text-center">
-              <button type="submit" className="btn btn-success">
-                Login
-              </button>
-            </div>
-          </form>
+
+              <div className="form-group mt-3 text-center">
+                <button type="submit" className="btn btn-success">
+                  Sign Up
+                </button>
+              </div>
+            </form>
+          </div>
+          <hr className="mt-3" />
+          <p>
+            Already Have account to Dakshana.
+            <span className="btn btn-sm btn-primary" onClick={handleLoginPage}>
+              Sign In
+            </span>
+          </p>
         </div>
-        <hr className="mt-3" />
-        <p>
-          New to Dakshana.{" "}
-          <span className="btn btn-sm btn-primary">Create Account</span>
-        </p>
-      </div>
-    </div>
+      )}
+    </>
   );
 }

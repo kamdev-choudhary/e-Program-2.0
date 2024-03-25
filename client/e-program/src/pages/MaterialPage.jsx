@@ -217,25 +217,25 @@ export default function MaterialPage() {
         <table className="table table-hover table-bordered border-secondary-emphasis rounded">
           <thead>
             <tr>
-              <th scope="col" className="text-center">
+              <th scope="col" className="text-center bg-success text-white">
                 Book ID
               </th>
-              <th scope="col" className="text-center">
+              <th scope="col" className="text-center bg-success text-white">
                 Title
               </th>
-              <th scope="col" className="text-center">
+              <th scope="col" className="text-center bg-success text-white">
                 Author
               </th>
-              <th scope="col" className="text-center">
+              <th scope="col" className="text-center bg-success text-white">
                 Subject
               </th>
-              <th scope="col" className="text-center">
+              <th scope="col" className="text-center bg-success text-white">
                 Category
               </th>
-              <th scope="col" className="text-center">
+              <th scope="col" className="text-center bg-success text-white">
                 Publishing Year
               </th>
-              <th scope="col" className="text-center">
+              <th scope="col" className="text-center bg-success text-white">
                 View
               </th>
             </tr>

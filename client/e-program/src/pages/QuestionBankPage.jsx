@@ -75,6 +75,7 @@ export default function QuestionBankPage() {
     });
   };
 
+  // Delete Question
   const handleDeleteQuestion = (question) => {
     fetch("http://127.0.0.1:5000/api/questionbank", {
       method: "DELETE",
@@ -98,8 +99,6 @@ export default function QuestionBankPage() {
     const filteredQuestions = questions.filter((question) => {
       return question.questionText === e.target.value;
     });
-    // Now you can do something with the filtered questions if needed
-    console.log("Filtered questions:", filteredQuestions);
   }
 
   const filteredQuestions = questions.filter((question) => {
@@ -188,7 +187,7 @@ export default function QuestionBankPage() {
               Difficulty Level
             </span>
             <select className="form-control" name="question[className]">
-              <option value="">-- Select Subject --</option>
+              <option value="">-- Select Class --</option>
               <option value="IX">className - 09</option>
               <option value="X">className - 10</option>
             </select>
@@ -408,35 +407,44 @@ export default function QuestionBankPage() {
         <table className="table mt-2 border">
           <thead className="bg-success">
             <tr>
-              <th scope="col" className="text-center">
+              <th
+                scope="col"
+                className="text-center text-center bg-success text-white "
+              >
                 Select
               </th>
-              <th scope="col" className="col-1 text-center">
+              <th
+                scope="col"
+                className="col-1 text-center bg-success text-white"
+              >
                 Q. id
               </th>
-              <th scope="col" className="col-4">
+              <th
+                scope="col"
+                className="col-4 text-center bg-success text-white"
+              >
                 Question
               </th>
-              <th scope="col" className="text-center">
+              <th scope="col" className="text-center bg-success text-white">
                 View
               </th>
-              <th scope="col" className="text-center">
+              <th scope="col" className="text-center bg-success text-white">
                 Is Approved
               </th>
-              <th scope="col" className="text-center">
+              <th scope="col" className="text-center bg-success text-white">
                 Subject
               </th>
-              <th scope="col" className="text-center">
+              <th scope="col" className="text-center bg-success text-white">
                 Topic
               </th>
-              <th scope="col" className="text-center">
+              <th scope="col" className="text-center bg-success text-white">
                 SubTopic
               </th>
-              <th scope="col" className="text-center">
+              <th scope="col" className="text-center bg-success text-white">
                 Difficulty Level
               </th>
               {editMode && (
-                <th scope="col" className="text-center">
+                <th scope="col" className="text-center bg-success text-white">
                   Delete
                 </th>
               )}
