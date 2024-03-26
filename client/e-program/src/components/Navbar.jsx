@@ -3,23 +3,20 @@ import { NavLink } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap";
-import UserPage from "../pages/UserPage";
+import UserPage from "./UserLogin";
 import { useState } from "react";
 
 function Navbar() {
-  const [showUserPage, setShowUserPage] = useState(false)
-  function handleshowUserPage () {
-    setShowUserPage(!showUserPage)
+  const [showUserPage, setShowUserPage] = useState(false);
+  function handleshowUserPage() {
+    setShowUserPage(!showUserPage);
   }
   return (
     <>
       <nav className="navbar navbar-expand-lg bg-body-tertiary">
         <div className="container-fluid">
           <NavLink className="navbar-brand" to="/">
-            <img
-              src="https://www.dakshana.org/wp-content/uploads/2017/10/new-logo.png"
-              alt=""
-            />
+            <img src="/brand-logo.jpg" alt="" />
           </NavLink>
           <button
             className="navbar-toggler"
@@ -93,21 +90,31 @@ function Navbar() {
         </div>
       </nav>
       <Modal
-      show={showUserPage} 
-      onHide={handleshowUserPage}
-      dialogClassName="modal-md"
+        show={showUserPage}
+        onHide={handleshowUserPage}
+        dialogClassName="modal-md"
       >
         <Modal.Header>
-          <Modal.Title>Login or Signup</Modal.Title>
+          <Modal.Title>Login to Website</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <UserPage/>
+          <UserPage />
+          <div className="m-1 mt-2 text-center">
+            New to Dakshana
+            <NavLink
+              to="/register"
+              className="text-decoration-none ms-2 p-1"
+              onClick={handleshowUserPage}
+            >
+              Register
+            </NavLink>
+          </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="danger" onClick={handleshowUserPage} >
-              Close
-            </Button>
-            </Modal.Footer>
+          <Button variant="danger" onClick={handleshowUserPage}>
+            Close
+          </Button>
+        </Modal.Footer>
       </Modal>
     </>
   );

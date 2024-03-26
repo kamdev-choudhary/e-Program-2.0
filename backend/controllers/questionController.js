@@ -28,7 +28,7 @@ module.exports.saveQuestion = async (req, res) => {
         qprefix = 4000000;
         break;
       default:
-        qprefix = 50000000;
+        qprefix = 500000;
         break;
     }
     return qprefix;
@@ -55,8 +55,8 @@ module.exports.saveQuestion = async (req, res) => {
 // Delete Question
 
 module.exports.deleteQuestion = async (req, res) => {
-  let { questionId } = req.body.questionId;
-  const DeletedQuestion = await Question.findOneAndDelete(questionId);
-  console.log(DeletedQuestion);
+  const DeletedQuestion = await Question.findOneAndDelete({
+    _id: req.body._id,
+  });
   res.status(200).json("Question Deleted Succesfully");
 };

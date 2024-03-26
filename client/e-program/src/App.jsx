@@ -9,13 +9,14 @@ import MaterialPage from "./pages/MaterialPage";
 import AdminPage from "./pages/AdminPage";
 import QuestionBankPage from "./pages/QuestionBankPage";
 import ErrorPage from "./components/ErrorPage";
-import UserPage from "./pages/UserPage";
+import Users from "./components/Users";
+import RegisterPage from "./pages/RegisterPage";
 
 function App() {
   return (
     <BrowserRouter>
       <Navbar />
-      <div className="container mt-3">
+      <div className="content">
         <Routes>
           <Route path="/" Component={HomePage} />
           <Route path="/admin" Component={AdminPage} />
@@ -24,6 +25,8 @@ function App() {
           <Route path="/lectures" Component={LecturePage} />
           <Route path="/materials" Component={MaterialPage} />
           <Route path="/question bank" Component={QuestionBankPage} />
+          <Route path="/admin/users" Component={Users} />
+          <Route path="/register" Component={RegisterPage} />
           <Route path="*" Component={ErrorPage} />
         </Routes>
       </div>

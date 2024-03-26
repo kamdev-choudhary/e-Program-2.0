@@ -404,7 +404,7 @@ export default function QuestionBankPage() {
         </Modal>
 
         <hr className="mt-2 mb-2" />
-        <table className="table mt-2 border">
+        <table className="table mt-2 border table-hover">
           <thead className="bg-success">
             <tr>
               <th

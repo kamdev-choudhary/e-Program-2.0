@@ -10,6 +10,7 @@ const authRouter = require("./routers/auth-router");
 const lectureRouter = require("./routers/lectureRouter");
 const questionRouter = require("./routers/questionRoute");
 const materialRouter = require("./routers/materialRoute");
+const adminRoute = require("./routers/adminRoute");
 
 app.use(cors());
 app.use(express.json());
@@ -19,9 +20,14 @@ app.get("/", (req, res) => {
 });
 
 app.use("/api/auth", authRouter);
+app.use("/api/admin", adminRoute);
 app.use("/api/lectures", lectureRouter);
 app.use("/api/questionbank", questionRouter);
 app.use("/api/materials", materialRouter);
+
+app.use("/*", (req, res) => {
+  res.send("Backend for DAKSHANA");
+});
 
 app.use(errorMiddleware);
 
