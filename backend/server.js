@@ -11,6 +11,7 @@ const lectureRouter = require("./routers/lectureRouter");
 const questionRouter = require("./routers/questionRoute");
 const materialRouter = require("./routers/materialRoute");
 const adminRoute = require("./routers/adminRoute");
+const examRouter = require("./routers/examRouter");
 
 app.use(cors());
 app.use(express.json());
@@ -24,6 +25,7 @@ app.use("/api/admin", adminRoute);
 app.use("/api/lectures", lectureRouter);
 app.use("/api/questionbank", questionRouter);
 app.use("/api/materials", materialRouter);
+app.use("/api/exams", examRouter);
 
 app.use("/*", (req, res) => {
   res.send("Backend for DAKSHANA");

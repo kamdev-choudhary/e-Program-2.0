@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
-import AddBooks from "../components/AddBooks";
 import { Modal, Button } from "react-bootstrap";
 
 const API_URL = "http://127.0.0.1:5000/api";

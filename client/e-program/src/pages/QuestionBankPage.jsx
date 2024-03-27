@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Modal, Button, ModalBody } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 import "./QuestionBankPage.css";
 import SingleCorrectQuestion from "../components/SingleCorrectQuestion";
 import MultiCorrectQuestion from "../components/MultiCorrectQuestion";
@@ -19,8 +19,16 @@ export default function QuestionBankPage() {
   const [timeRequired, setTimeRequired] = useState("");
   const [searchQuestion, setSearchQuestion] = useState("");
   const [currQuestion, setCurrentQuestion] = useState([]);
+  const [examTemplates, setExamTemplates] = useState([]);
+  const [questionInExamTemplate, SetQuestionInExamTemplate] = useState([]);
+  const [selectedTemplate, setSelectedTemplate] = useState("");
+  const [questionAddToTemplate, setQuestionAddToTemplate] = useState({
+    questionId: "",
+    examTemplateId: "",
+  });
 
   const [editMode, setEditMode] = useState(false);
+  const [addToTemplate, setAddToTemplate] = useState(false);
   const [showQuestionTypeModal, setShowQuestionTypeModal] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [showViewQuestion, setShowViewQuestion] = useState(false);
@@ -40,7 +48,60 @@ export default function QuestionBankPage() {
       })
       .then((data) => setQuestions(data.questions))
       .catch((error) => setError(error.message));
+
+    fetch(`${API_URL}/exams`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => setExamTemplates(data.examTemplates))
+      .catch((error) => setError(error.message));
   }, [showQuestionModal, showQuestionTypeModal, refresh]);
+
+  // Delete Question
+  const handleDeleteQuestion = (question) => {
+    fetch("http://127.0.0.1:5000/api/questionbank", {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(question),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Success:", data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+    setRefresh(!refresh);
+  };
+
+  //Add Question to Group
+  const handleQuestionToTemplate = (Id) => {
+    setQuestionAddToTemplate({
+      ...questionAddToTemplate,
+      questionId: Id,
+      examTemplateId: selectedTemplate,
+    });
+    fetch("http://127.0.0.1:5000/api/exams/addtotemplate", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(questionAddToTemplate),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Success:", data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+    setRefresh(!refresh);
+  };
 
   const handleShowQuestionTypeModal = () => {
     setShowQuestionTypeModal(true);
@@ -52,6 +113,10 @@ export default function QuestionBankPage() {
 
   const handleChangeEditMode = () => {
     setEditMode(!editMode);
+  };
+
+  const handleAddToTemplate = () => {
+    setAddToTemplate(!addToTemplate);
   };
 
   const handleShowViewQuestion = (question) => {
@@ -75,23 +140,11 @@ export default function QuestionBankPage() {
     });
   };
 
-  // Delete Question
-  const handleDeleteQuestion = (question) => {
-    fetch("http://127.0.0.1:5000/api/questionbank", {
-      method: "DELETE",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(question),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Success:", data);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-    setRefresh(!refresh);
+  const handleSelectedTemplate = (e) => {
+    if (e.target.value !== "") {
+      setSelectedTemplate(e.target.value);
+      SetQuestionInExamTemplate(examTemplates[0].questions);
+    }
   };
 
   function handleSearch(e) {
@@ -231,10 +284,17 @@ export default function QuestionBankPage() {
             >
               Question Group
             </span>
-            <select className="form-control" name="question[className]">
-              <option value="">-- Select Group --</option>
-              <option value="IX">G1</option>
-              <option value="X">G2</option>
+            <select
+              className="form-control"
+              name="question[className]"
+              onChange={(event) => handleSelectedTemplate(event)}
+            >
+              <option value=""> ---Select Group----</option>
+              {examTemplates.map((examTemplate, index) => (
+                <option key={index} value={examTemplate._id}>
+                  {examTemplate.examName}
+                </option>
+              ))}
             </select>
           </div>
         </div>
@@ -268,7 +328,7 @@ export default function QuestionBankPage() {
               Add Question
             </button>
           </div>
-          <div className="col-md-3">
+          <div className="col-md-1">
             <div className="form-check form-switch">
               <input
                 className="form-check-input border border-primary"
@@ -282,6 +342,23 @@ export default function QuestionBankPage() {
                 htmlFor="flexSwitchCheckDefault"
               >
                 Delete
+              </label>
+            </div>
+          </div>
+          <div className="col-md-2">
+            <div className="form-check form-switch">
+              <input
+                className="form-check-input border border-primary"
+                type="checkbox"
+                checked={addToTemplate}
+                onChange={handleAddToTemplate}
+                id="flexSwitchCheckDefault"
+              />
+              <label
+                className="form-check-label "
+                htmlFor="flexSwitchCheckDefault"
+              >
+                Add to Template
               </label>
             </div>
           </div>
@@ -448,6 +525,11 @@ export default function QuestionBankPage() {
                   Delete
                 </th>
               )}
+              {addToTemplate && (
+                <th scope="col" className="text-center bg-success text-white">
+                  Add
+                </th>
+              )}
             </tr>
           </thead>
           <tbody>
@@ -481,6 +563,22 @@ export default function QuestionBankPage() {
                         onClick={() => handleDeleteQuestion(question)}
                         style={{ color: "brown" }}
                       ></i>
+                    </td>
+                  )}
+                  {addToTemplate && (
+                    <td scope="col" className="text-center">
+                      {!questionInExamTemplate.includes(question._id) ? (
+                        <button
+                          className="btn btn-outline-success"
+                          onClick={() => handleQuestionToTemplate(question._id)}
+                        >
+                          Add
+                        </button>
+                      ) : (
+                        <button className="btn btn-success" disabled>
+                          Added
+                        </button>
+                      )}
                     </td>
                   )}
                 </tr>

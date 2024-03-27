@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-const { string } = require("zod");
 const Schema = mongoose.Schema;
 
 const questionSchema = new Schema({
