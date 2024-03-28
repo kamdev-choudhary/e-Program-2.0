@@ -4,4 +4,6 @@ const adminController = require("../controllers/adminController");
 
 router.route("/users").get(adminController.users);
 
+router.route("/academic").get(adminController.academicData);
+
 module.exports = router;

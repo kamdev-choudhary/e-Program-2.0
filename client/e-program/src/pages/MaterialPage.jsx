@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { NavLink } from "react-router-dom";
 import { Modal, Button } from "react-bootstrap";
+import Fab from "@mui/material/Fab";
+import AddIcon from "@mui/icons-material/Add";
+import { TextField } from "@mui/material";
 
 const API_URL = "http://127.0.0.1:5000/api";
 
@@ -55,23 +58,19 @@ export default function MaterialPage() {
     <>
       {error && <div>Error: {error}</div>}
       <div className="row">
-        <div className="row mb-2">
-          <div className="col-md-6 ">
-            <div className="input-group flex-nowrap rounded border border-secondary-emphasis">
-              <span
-                className="input-group-text bg-success text-light"
-                id="addon-wrapping"
-              >
-                <b>Search</b> &nbsp; &nbsp;&nbsp;
-                <i className="fa fa-search"></i>
-              </span>
-              <input className="form-control" type="text" />
-            </div>
+        <div className="row mb-2 mt-2">
+          <div className="col-md-8 ">
+            <TextField
+              label="Search"
+              id="name"
+              name="name"
+              style={{ marginBottom: "20px", width: "100%" }}
+            />
           </div>
-          <div className="col-md-6 text-center">
-            <button className="btn btn-success" onClick={handleAddNewBook}>
-              Add New Books
-            </button>
+          <div className="col-md-4 text-center">
+            <Fab color="primary" aria-label="add" onClick={handleAddNewBook}>
+              <AddIcon />
+            </Fab>
           </div>
         </div>
       </div>

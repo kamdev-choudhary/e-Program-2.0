@@ -16,7 +16,7 @@ function App() {
   return (
     <BrowserRouter>
       <Navbar />
-      <div className="content">
+      <div className="container">
         <Routes>
           <Route path="/" Component={HomePage} />
           <Route path="/admin" Component={AdminPage} />

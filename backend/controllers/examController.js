@@ -5,9 +5,7 @@ module.exports.addToTemplate = async (req, res, next) => {
   let { questionId, examTemplateId } = req.body;
   try {
     let currTemplate = await ExamTemplate.findById(examTemplateId);
-    console.log(currTemplate);
     let question = await Question.findById(questionId);
-
     currTemplate.questions.push(question);
     await currTemplate.save();
     res.status(200).json("Successfully Added to source");

@@ -6,26 +6,36 @@ import MultiCorrectQuestion from "../components/MultiCorrectQuestion";
 import IntegerType from "../components/IntegerType";
 import ViewQuestion from "../components/ViewQuestion";
 
+import Box from "@mui/material/Box";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import Table from "@mui/material/Table";
+import TableBody from "@mui/material/TableBody";
+import TableCell from "@mui/material/TableCell";
+import TableContainer from "@mui/material/TableContainer";
+import TableHead from "@mui/material/TableHead";
+import TableRow from "@mui/material/TableRow";
+import Paper from "@mui/material/Paper";
+
 const API_URL = "http://127.0.0.1:5000/api";
 
 export default function QuestionBankPage() {
-  const [questions, setQuestions] = useState([]);
   const [error, setError] = useState("");
-  const [currClass, setCurrClass] = useState("");
-  const [subject, setSubject] = useState("");
-  const [topic, setTopic] = useState("");
-  const [subtopic, setSubtopic] = useState("");
-  const [difficultyLevel, setDifficultyLevel] = useState("");
-  const [timeRequired, setTimeRequired] = useState("");
-  const [searchQuestion, setSearchQuestion] = useState("");
+
+  const [questions, setQuestions] = useState([]);
   const [currQuestion, setCurrentQuestion] = useState([]);
   const [examTemplates, setExamTemplates] = useState([]);
-  const [questionInExamTemplate, SetQuestionInExamTemplate] = useState([]);
+  const [questionInExamTemplate, setQuestionInExamTemplate] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState("");
+
   const [questionAddToTemplate, setQuestionAddToTemplate] = useState({
     questionId: "",
     examTemplateId: "",
   });
+
+  const [academic, setAcademic] = useState([]);
 
   const [editMode, setEditMode] = useState(false);
   const [addToTemplate, setAddToTemplate] = useState(false);
@@ -37,6 +47,25 @@ export default function QuestionBankPage() {
     MultiCorrect: false,
     Integer: false,
   });
+
+  const [filterData, setFilterData] = useState({
+    classes: "",
+    subject: "",
+    topic: "",
+    subtopic: "",
+    difficulty_level: "",
+    timeRequired: "",
+    target: "",
+    examTemplates: "",
+  });
+
+  const handleFilterDataChange = (e) => {
+    setFilterData({ ...filterData, [e.target.name]: e.target.value });
+  };
+
+  const uniqueClasses = [...new Set(academic.map((item) => item.class))];
+  const uniqueSubjects = [...new Set(academic.map((item) => item.subject))];
+  const uniqueTopic = [...new Set(academic.map((item) => item.topic))];
 
   useEffect(() => {
     fetch(`${API_URL}/questionbank`)
@@ -57,6 +86,16 @@ export default function QuestionBankPage() {
         return response.json();
       })
       .then((data) => setExamTemplates(data.examTemplates))
+      .catch((error) => setError(error.message));
+
+    fetch(`${API_URL}/admin/academic`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => setAcademic(data.academic))
       .catch((error) => setError(error.message));
   }, [showQuestionModal, showQuestionTypeModal, refresh]);
 
@@ -104,11 +143,7 @@ export default function QuestionBankPage() {
   };
 
   const handleShowQuestionTypeModal = () => {
-    setShowQuestionTypeModal(true);
-  };
-
-  const handleCloseQuestionTypeModal = () => {
-    setShowQuestionTypeModal(false);
+    setShowQuestionTypeModal(!showQuestionTypeModal);
   };
 
   const handleChangeEditMode = () => {
@@ -140,166 +175,193 @@ export default function QuestionBankPage() {
     });
   };
 
+  const addquestionInExamTemplate = (id) => {
+    const qInTemp = examTemplates.filter((template) => template._id === id);
+    setQuestionInExamTemplate(qInTemp[0].questions);
+    setRefresh(!refresh);
+  };
+
   const handleSelectedTemplate = (e) => {
     if (e.target.value !== "") {
       setSelectedTemplate(e.target.value);
-      SetQuestionInExamTemplate(examTemplates[0].questions);
+      addquestionInExamTemplate(e.target.value);
     }
   };
-
-  function handleSearch(e) {
-    setSearchQuestion(e.target.value);
-    const filteredQuestions = questions.filter((question) => {
-      return question.questionText === e.target.value;
-    });
-  }
-
-  const filteredQuestions = questions.filter((question) => {
-    return (
-      (currClass === "" || question.className === currClass) &&
-      (subject === "" || question.subject === subject) &&
-      (topic === "" || question.topic === topic) &&
-      (subtopic === "" || question.subtopic === subtopic) &&
-      (difficultyLevel === "" ||
-        question.difficulty_level === difficultyLevel) &&
-      (timeRequired === "" || question.time_required === timeRequired)
-    );
-  });
 
   return (
     <>
       <div className="row">
         <div className="col-md-4 mb-2">
-          <div className="input-group flex-nowrap rounded border border-success">
-            <span
-              className="input-group-text bg-success text-light"
-              id="addon-wrapping"
-            >
-              Class
-            </span>
-            <select className="form-control" name="question[className]">
-              <option value="">-- Select class --</option>
-              <option value="IX">className - 09</option>
-              <option value="X">className - 10</option>
-            </select>
-          </div>
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Class</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="classes"
+                label="Class"
+                value={filterData.classes}
+                onChange={handleFilterDataChange}
+              >
+                {uniqueClasses.map((classes, index) => (
+                  <MenuItem key={index} value={classes}>
+                    {classes}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
         </div>
         <div className="col-md-4 mb-2">
-          <div className="input-group flex-nowrap rounded border border-success">
-            <span
-              className="input-group-text bg-success text-light"
-              id="addon-wrapping"
-            >
-              Subject
-            </span>
-            <select className="form-control">
-              <option value="">-- Select Subject --</option>
-              <option value="physics">PHYSICS</option>
-              <option value="chemistry">CHEMISTRY</option>
-              <option value="mathematics">MATHEMATICS</option>
-              <option value="biology">BIOLOGY</option>
-            </select>
-          </div>
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Subject</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="subject"
+                label="Subject"
+                value={filterData.subject}
+                onChange={handleFilterDataChange}
+              >
+                {uniqueSubjects.map((subject, index) => (
+                  <MenuItem key={index} value={subject}>
+                    {subject}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
         </div>
         <div className="col-md-4 mb-2">
-          <div className="input-group flex-nowrap rounded border border-success">
-            <span
-              className="input-group-text bg-success text-light"
-              id="addon-wrapping"
-            >
-              Topic
-            </span>
-            <select className="form-control" name="question[className]">
-              <option value="">-- Select Topic --</option>
-              <option value="IX">Topic 1</option>
-              <option value="X">Topic 2</option>
-            </select>
-          </div>
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Topic</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="subject"
+                label="Subject"
+                value={filterData.subject}
+                onChange={handleFilterDataChange}
+              >
+                {uniqueSubjects.map((subject, index) => (
+                  <MenuItem key={index} value={subject}>
+                    {subject}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
         </div>
         <div className="col-md-4 mb-2">
-          <div className="input-group flex-nowrap rounded border border-success">
-            <span
-              className="input-group-text bg-success text-light"
-              id="addon-wrapping"
-            >
-              Sub Topic
-            </span>
-            <select className="form-control" name="question[className]">
-              <option value="">-- Select Subject --</option>
-              <option value="IX">className - 09</option>
-              <option value="X">className - 10</option>
-            </select>
-          </div>
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Sub Topic</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="subject"
+                label="Subject"
+                value={filterData.subject}
+                onChange={handleFilterDataChange}
+              >
+                {uniqueSubjects.map((subject, index) => (
+                  <MenuItem key={index} value={subject}>
+                    {subject}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
         </div>
         <div className="col-md-4 mb-2">
-          <div className="input-group flex-nowrap rounded border border-success">
-            <span
-              className="input-group-text bg-success text-light"
-              id="addon-wrapping"
-            >
-              Difficulty Level
-            </span>
-            <select className="form-control" name="question[className]">
-              <option value="">-- Select Class --</option>
-              <option value="IX">className - 09</option>
-              <option value="X">className - 10</option>
-            </select>
-          </div>
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">
+                DiffiCulty Level
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="subject"
+                label="Subject"
+                value={filterData.subject}
+                onChange={handleFilterDataChange}
+              >
+                {uniqueSubjects.map((subject, index) => (
+                  <MenuItem key={index} value={subject}>
+                    {subject}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
         </div>
         <div className="col-md-4 mb-2">
-          <div className="input-group flex-nowrap rounded border border-success">
-            <span
-              className="input-group-text bg-success text-light"
-              id="addon-wrapping"
-            >
-              Time Required
-            </span>
-            <select className="form-control" name="question[className]">
-              <option value="">-- Select Subject --</option>
-              <option value="IX">className - 09</option>
-              <option value="X">className - 10</option>
-            </select>
-          </div>
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">
+                Time Required
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="subject"
+                label="Subject"
+                value={filterData.subject}
+                onChange={handleFilterDataChange}
+              >
+                {uniqueSubjects.map((subject, index) => (
+                  <MenuItem key={index} value={subject}>
+                    {subject}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
         </div>
         <div className="col-md-4 mb-2">
-          <div className="input-group flex-nowrap rounded border border-success">
-            <span
-              className="input-group-text bg-success text-light"
-              id="addon-wrapping"
-            >
-              Question Target
-            </span>
-            <select className="form-control" name="question[className]">
-              <option value="">-- Select Target --</option>
-              <option value="IX">JEE</option>
-              <option value="X">NEET</option>
-            </select>
-          </div>
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Target</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="target"
+                label="target"
+                value={filterData.target}
+                onChange={handleFilterDataChange}
+              >
+                <MenuItem value="Both">Both</MenuItem>
+                <MenuItem value="JEE">JEE</MenuItem>
+                <MenuItem value="NEET">NEET</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
         </div>
         <div className="col-md-4 mb-2">
-          <div className="input-group flex-nowrap rounded border border-success">
-            <span
-              className="input-group-text bg-success text-light"
-              id="addon-wrapping"
-            >
-              Question Group
-            </span>
-            <select
-              className="form-control"
-              name="question[className]"
-              onChange={(event) => handleSelectedTemplate(event)}
-            >
-              <option value=""> ---Select Group----</option>
-              {examTemplates.map((examTemplate, index) => (
-                <option key={index} value={examTemplate._id}>
-                  {examTemplate.examName}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Exam Group</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="examTemplate"
+                label="Exam Group"
+                value={selectedTemplate}
+                onChange={handleSelectedTemplate}
+              >
+                {examTemplates.map((examTemplate, index) => (
+                  <MenuItem key={index} value={examTemplate._id}>
+                    {examTemplate.examName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
         </div>
-        <hr className="mt-2" />
-
+        <hr />
         <div className="row justify-content-end">
           <div className="col-md-6 text-center">
             <div className="input-group flex-nowrap rounded border border-success">
@@ -310,13 +372,7 @@ export default function QuestionBankPage() {
                 <b>Search</b> &nbsp; &nbsp;&nbsp;
                 <i className="fa fa-search"></i>
               </span>
-              <input
-                className="form-control"
-                type="text"
-                onChange={handleSearch}
-                name="search"
-                value={searchQuestion}
-              />
+              <input className="form-control" type="text" name="search" />
             </div>
           </div>
           <div className="col-md-3">
@@ -366,7 +422,7 @@ export default function QuestionBankPage() {
 
         <Modal
           show={showQuestionTypeModal}
-          onHide={handleCloseQuestionTypeModal}
+          onHide={handleShowQuestionTypeModal}
         >
           <Modal.Header>
             <Modal.Title>Add Question</Modal.Title>
@@ -408,7 +464,7 @@ export default function QuestionBankPage() {
             </div>
           </Modal.Body>
           <Modal.Footer>
-            <Button variant="danger" onClick={handleCloseQuestionTypeModal}>
+            <Button variant="danger" onClick={handleShowQuestionTypeModal}>
               Close
             </Button>
           </Modal.Footer>
@@ -481,112 +537,96 @@ export default function QuestionBankPage() {
         </Modal>
 
         <hr className="mt-2 mb-2" />
-        <table className="table mt-2 border table-hover">
-          <thead className="bg-success">
-            <tr>
-              <th
-                scope="col"
-                className="text-center text-center bg-success text-white "
-              >
-                Select
-              </th>
-              <th
-                scope="col"
-                className="col-1 text-center bg-success text-white"
-              >
-                Q. id
-              </th>
-              <th
-                scope="col"
-                className="col-4 text-center bg-success text-white"
-              >
-                Question
-              </th>
-              <th scope="col" className="text-center bg-success text-white">
-                View
-              </th>
-              <th scope="col" className="text-center bg-success text-white">
-                Is Approved
-              </th>
-              <th scope="col" className="text-center bg-success text-white">
-                Subject
-              </th>
-              <th scope="col" className="text-center bg-success text-white">
-                Topic
-              </th>
-              <th scope="col" className="text-center bg-success text-white">
-                SubTopic
-              </th>
-              <th scope="col" className="text-center bg-success text-white">
-                Difficulty Level
-              </th>
-              {editMode && (
-                <th scope="col" className="text-center bg-success text-white">
-                  Delete
-                </th>
-              )}
-              {addToTemplate && (
-                <th scope="col" className="text-center bg-success text-white">
-                  Add
-                </th>
-              )}
-            </tr>
-          </thead>
-          <tbody>
-            {filteredQuestions.map((question, index) => (
-              <React.Fragment key={index}>
-                <tr>
-                  <td>
-                    <input type="Checkbox" />
-                  </td>
-                  <td className="text-center">{question.questionId}</td>
-                  <td>{question.questionText}</td>
-                  <td className="text-center">
-                    <button
-                      className="btn btn-sm btn-outline-success"
-                      onClick={() => {
-                        handleShowViewQuestion(question);
-                      }}
-                    >
-                      View
-                    </button>
-                  </td>
-                  <td className="text-center">{question.isApproved}</td>
-                  <td className="text-center">{question.subject}</td>
-                  <td className="text-center">{question.topic}</td>
-                  <td className="text-center">{question.subtopic}</td>
-                  <td className="text-center">{question.difficulty_level}</td>
-                  {editMode && (
-                    <td scope="col" className="text-center">
-                      <i
-                        className="fa-solid fa-trash"
-                        onClick={() => handleDeleteQuestion(question)}
-                        style={{ color: "brown" }}
-                      ></i>
-                    </td>
-                  )}
-                  {addToTemplate && (
-                    <td scope="col" className="text-center">
-                      {!questionInExamTemplate.includes(question._id) ? (
-                        <button
-                          className="btn btn-outline-success"
-                          onClick={() => handleQuestionToTemplate(question._id)}
-                        >
-                          Add
-                        </button>
-                      ) : (
-                        <button className="btn btn-success" disabled>
-                          Added
-                        </button>
-                      )}
-                    </td>
-                  )}
-                </tr>
-              </React.Fragment>
-            ))}
-          </tbody>
-        </table>
       </div>
+
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead className="bg bg-success ">
+            <TableRow>
+              <TableCell align="center" className="text-white">
+                Question ID
+              </TableCell>
+              <TableCell align="center" className="text-white">
+                Queston
+              </TableCell>
+              <TableCell align="center" className="text-white">
+                View
+              </TableCell>
+              <TableCell align="center" className="text-white">
+                Approved
+              </TableCell>
+              <TableCell align="center" className="text-white">
+                Subject
+              </TableCell>
+              <TableCell align="center" className="text-white">
+                Topic
+              </TableCell>
+              <TableCell align="center" className="text-white">
+                SubTopic
+              </TableCell>
+              <TableCell align="center" className="text-white">
+                D Level
+              </TableCell>
+              {editMode && <TableCell>Delete</TableCell>}
+              {addToTemplate && <TableCell>Add</TableCell>}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {questions.map((question, index) => (
+              <TableRow
+                key={question._id}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell align="center">{question.questionId}</TableCell>
+                <TableCell>{question.questionText}</TableCell>
+                <TableCell align="center">
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      handleShowViewQuestion(question);
+                    }}
+                  >
+                    View
+                  </Button>
+                </TableCell>
+                <TableCell align="center">{question.isApproved}</TableCell>
+                <TableCell align="center">{question.subject}</TableCell>
+                <TableCell align="center">{question.topic}</TableCell>
+                <TableCell align="center">{question.subtopic}</TableCell>
+                <TableCell align="center">
+                  {question.difficulty_level}
+                </TableCell>
+                {editMode && (
+                  <TableCell scope="col" className="text-center">
+                    <i
+                      className="fa-solid fa-trash"
+                      onClick={() => handleDeleteQuestion(question)}
+                      style={{ color: "brown" }}
+                    ></i>
+                  </TableCell>
+                )}
+                {addToTemplate && (
+                  <TableCell scope="col" className="text-center">
+                    {!questionInExamTemplate.includes(question._id) ? (
+                      <button
+                        className="btn btn-outline-success"
+                        onClick={() => handleQuestionToTemplate(question._id)}
+                      >
+                        Add
+                      </button>
+                    ) : (
+                      <button className="btn btn-success" disabled>
+                        Added
+                      </button>
+                    )}
+                  </TableCell>
+                )}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+
       <Modal
         show={showViewQuestion}
         onHide={handleShowViewQuestion}

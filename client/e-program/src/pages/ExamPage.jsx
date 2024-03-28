@@ -1,7 +1,8 @@
+import { TextField } from "@mui/material";
 export default function ExamPage() {
   return (
     <>
-      <p>This is Exam Page</p>
+      <TextField label="Search" variant="outlined" />
     </>
   );
 }

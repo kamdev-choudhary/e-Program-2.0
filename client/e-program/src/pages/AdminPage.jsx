@@ -73,7 +73,7 @@ export default function AdminPage() {
         <div className="col-md-9 border rounded ">
           {ShowAdminContent === "dashboard" && (
             <div>
-              <p className="text-center mt-2 h4 border p-2 bg-secondary text-white">
+              <p className="text-center mt-2 h4 border p-2 bg-success text-white">
                 Dashboard
               </p>
               <hr />
@@ -81,7 +81,7 @@ export default function AdminPage() {
           )}
           {ShowAdminContent === "users" && (
             <div>
-              <p className="text-center mt-2 h4 border p-2 bg-secondary text-white">
+              <p className="text-center mt-2 h4 border p-2 bg-success text-white">
                 User Control
               </p>
               <hr />
@@ -93,13 +93,13 @@ export default function AdminPage() {
           {ShowAdminContent === "exam" && (
             <>
               <div>
-                <p className="text-center mt-2 h4 border p-2 bg-secondary text-white">
+                <p className="text-center mt-2 h4 border p-2 bg-success text-white">
                   Exam Master (Test Templates)
                 </p>
                 <hr />
                 <div className="row">
                   <div className="col-md-10">
-                    <div className="input-group flex-nowrap rounded border border-secondary-emphasis">
+                    <div className="input-group flex-nowrap rounded border border-success-emphasis">
                       <span
                         className="input-group-text bg-success text-light"
                         id="addon-wrapping"

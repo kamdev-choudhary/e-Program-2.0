@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { NavLink } from "react-router-dom";
+import TextField from "@mui/material/TextField";
+import Button from "@mui/material/Button";
 const API_URL = "http://127.0.0.1:5000/api";
 
 export default function UserPage() {
@@ -36,67 +37,32 @@ export default function UserPage() {
   };
   return (
     <>
-      <div className="login">
-        <div className="row border p-2  rounded">
-          <div className="col-12 text-center">
-            <img src="/brand-logo.jpg" alt="" height="100px" />
-          </div>
-          <hr className="mt-2" />
-
-          <div className="col-12 ">
-            <form onSubmit={handleOnSubmit}>
-              <div className="form-row">
-                <div class="form-group p-2">
-                  <div className="input-group flex-nowrap rounded border border-success">
-                    <span
-                      className="input-group-text bg-success text-light"
-                      id="addon-wrapping"
-                    >
-                      Email
-                    </span>
-                    <input
-                      onChange={handleInput}
-                      type="email"
-                      className="form-control"
-                      id="email"
-                      name="email"
-                      value={user.email}
-                      placeholder="Email"
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div class="form-group  p-2">
-                  <div className="input-group flex-nowrap rounded border border-success">
-                    <span
-                      className="input-group-text bg-success text-light"
-                      id="addon-wrapping"
-                    >
-                      Password
-                    </span>
-                    <input
-                      onChange={handleInput}
-                      type="password"
-                      className="form-control"
-                      id="inputPassword"
-                      name="password"
-                      value={user.password}
-                      placeholder="Password"
-                      required
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="form-group mt-3 text-center">
-                <button type="submit" className="btn btn-success">
-                  Login
-                </button>
-              </div>
-            </form>
-          </div>
-        </div>
+      <div className="mb-2">
+        <TextField
+          fullWidth
+          label="Email"
+          value={user.email}
+          onChange={handleInput}
+          id="email"
+          name="email"
+          style={{ marginBottom: "20px" }}
+        />
+        <TextField
+          fullWidth
+          label="Password"
+          type="password"
+          value={user.password}
+          onChange={handleInput}
+          id="password"
+          name="password"
+        />
       </div>
+      <div className="text-center">
+        <Button variant="contained" color="primary">
+          Login
+        </Button>
+      </div>
+      <hr />
     </>
   );
 }
