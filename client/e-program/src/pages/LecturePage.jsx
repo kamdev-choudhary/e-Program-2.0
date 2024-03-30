@@ -44,9 +44,9 @@ function CollapsibleTable({ lectures, playLecture }) {
                     "&:last-child td, &:last-child th": { border: 0 },
                   }}
                 >
-                  <TableCell>{lecture.chapterName}</TableCell>
-                  <TableCell>{lecture.lectureNumber}</TableCell>
-                  <TableCell>
+                  <TableCell align="center">{lecture.chapterName}</TableCell>
+                  <TableCell align="center">{lecture.lectureNumber}</TableCell>
+                  <TableCell align="center">
                     <span
                       className="btn btn-sm btn-outline-danger"
                       onClick={() => playLecture(lecture.videoId)}
@@ -176,7 +176,10 @@ export default function LecturePage() {
                         >
                           {lecturesByChapter[chapterName][0].class}
                         </TableCell>
-                        <TableCell onClick={() => toggleChapter(chapterName)}>
+                        <TableCell
+                          align="center"
+                          onClick={() => toggleChapter(chapterName)}
+                        >
                           {lecturesByChapter[chapterName][0].subject}
                         </TableCell>
                         <TableCell

@@ -46,7 +46,7 @@ export default function AdminPage() {
     setShowExamTemplateModal(!showExamTemplateModal);
   };
 
-  const handleViewExamTemplate = (examTemplate) => {
+  const handleShowExamTemplate = (examTemplate) => {
     handleShowExamTemplateModal();
     if (examTemplate) {
       setCurrTemplate(examTemplate);
@@ -108,8 +108,8 @@ export default function AdminPage() {
 
   return (
     <>
-      <div className="row ">
-        <div className="col-md-3 sidebar  list-group rounded">
+      <div className="row mt-2 container">
+        <div className="col-md-3 rounded ">
           <List sx={style}>
             <ListItem onClick={() => handleAdminContent("dashboard")}>
               <ListItemText primary="Dashboard" />
@@ -118,14 +118,14 @@ export default function AdminPage() {
             <ListItem onClick={() => handleAdminContent("users")}>
               <ListItemText primary="User Master" />
             </ListItem>
-            <Divider variant="inset" component="li" />
+            <Divider component="li" />
             <ListItem onClick={() => handleAdminContent("exam")}>
               <ListItemText primary="Exam Master" />
             </ListItem>
-            <Divider variant="middle" component="li" />
+            <Divider component="li" />
           </List>
         </div>
-        <div className="col-md-9 border rounded ">
+        <div className="col-md-9 border rounded p-2">
           {ShowAdminContent === "dashboard" && (
             <div>
               <p className="text-center mt-2 h4 border rounded p-2 bg-success text-white">
@@ -417,7 +417,7 @@ export default function AdminPage() {
                         <TableCell align="center">
                           <Button
                             size="sm"
-                            onClick={() => handleViewExamTemplate(examtemplate)}
+                            onClick={() => handleShowExamTemplate(examtemplate)}
                           >
                             View
                           </Button>
