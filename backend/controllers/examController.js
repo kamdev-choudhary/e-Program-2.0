@@ -23,9 +23,26 @@ module.exports.viewExams = async (req, res, next) => {
   }
 };
 
-module.exports.createTemplate = async (req, res, nexr) => {
+module.exports.viewExamTemplate = async (req, res, next) => {
+  let id = req.params.id;
+  try {
+    const examTemplate = await ExamTemplate.findById(id).populate({
+      path: "questions",
+    });
+    res.status(200).json({ examTemplate });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.createTemplate = async (req, res, next) => {
   try {
     const newTemplate = new ExamTemplate(req.body);
+    const exam = await ExamTemplate.findOne({}, { examId: 1 }).sort({
+      examId: -1,
+    });
+    const examId = exam ? exam.examId : null;
+    newTemplate.examId = +examId + 1;
     await newTemplate.save();
     res.status(200).json("Template Created Successfully");
   } catch (error) {

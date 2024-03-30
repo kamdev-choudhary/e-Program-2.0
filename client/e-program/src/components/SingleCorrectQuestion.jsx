@@ -3,7 +3,6 @@ import { useState } from "react";
 export default function SingleCorrectQuestion(props) {
   const [questionData, setQuestionData] = useState({
     classes: "",
-
     subject: "",
     topic: "",
     subtopic: "",

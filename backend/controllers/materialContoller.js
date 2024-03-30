@@ -8,3 +8,14 @@ module.exports.viewLibrary = async (req, res, next) => {
     next(error);
   }
 };
+
+module.exports.saveNewBook = async (req, res, next) => {
+  try {
+    const newBook = new Library(req.body);
+    newBook.file = req.body.file;
+    newBook.save();
+    res.status(200).json("Succesfully Saved");
+  } catch (error) {
+    next(error);
+  }
+};

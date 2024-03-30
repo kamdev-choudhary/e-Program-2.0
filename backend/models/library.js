@@ -7,18 +7,11 @@ const librarySchema = new Schema({
   author: String,
   subject: String,
   class: String,
-  catagory: String,
-  publishigYear: String,
-  addedAt: {
-    type: Date,
-    default: Date.now(),
-  },
-  pdf: {
-    url: String,
-    filename: String,
-  },
+  category: String,
+  publishingYear: String,
+  file: Buffer,
 });
 
-const Question = mongoose.model("Library", librarySchema);
+const Library = mongoose.model("Library", librarySchema);
 
-module.exports = Question;
+module.exports = Library;

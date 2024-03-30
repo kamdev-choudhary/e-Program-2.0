@@ -18,6 +18,13 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
+import Switch from "@mui/material/Switch";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import OutlinedInput from "@mui/material/OutlinedInput";
+import InputAdornment from "@mui/material/InputAdornment";
+import SearchIcon from "@mui/icons-material/Search";
+import Fab from "@mui/material/Fab";
+import AddIcon from "@mui/icons-material/Add";
 
 const API_URL = "http://127.0.0.1:5000/api";
 
@@ -191,7 +198,7 @@ export default function QuestionBankPage() {
   return (
     <>
       <div className="row">
-        <div className="col-md-4 mb-2">
+        <div className="col-md-3 mb-3">
           <Box sx={{ minWidth: 120 }}>
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">Class</InputLabel>
@@ -212,7 +219,7 @@ export default function QuestionBankPage() {
             </FormControl>
           </Box>
         </div>
-        <div className="col-md-4 mb-2">
+        <div className="col-md-3 mb-2">
           <Box sx={{ minWidth: 120 }}>
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">Subject</InputLabel>
@@ -233,37 +240,37 @@ export default function QuestionBankPage() {
             </FormControl>
           </Box>
         </div>
-        <div className="col-md-4 mb-2">
+        <div className="col-md-3 mb-2">
           <Box sx={{ minWidth: 120 }}>
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">Topic</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                name="subject"
-                label="Subject"
-                value={filterData.subject}
+                name="topic"
+                label="topic"
+                value={filterData.topic}
                 onChange={handleFilterDataChange}
               >
-                {uniqueSubjects.map((subject, index) => (
-                  <MenuItem key={index} value={subject}>
-                    {subject}
+                {uniqueTopic.map((topic, index) => (
+                  <MenuItem key={index} value={topic}>
+                    {topic}
                   </MenuItem>
                 ))}
               </Select>
             </FormControl>
           </Box>
         </div>
-        <div className="col-md-4 mb-2">
+        <div className="col-md-3 mb-2">
           <Box sx={{ minWidth: 120 }}>
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">Sub Topic</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                name="subject"
-                label="Subject"
-                value={filterData.subject}
+                name="subtopic"
+                label="subtopic"
+                value={filterData.subtopic}
                 onChange={handleFilterDataChange}
               >
                 {uniqueSubjects.map((subject, index) => (
@@ -275,7 +282,7 @@ export default function QuestionBankPage() {
             </FormControl>
           </Box>
         </div>
-        <div className="col-md-4 mb-2">
+        <div className="col-md-3 mb-2">
           <Box sx={{ minWidth: 120 }}>
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">
@@ -284,9 +291,9 @@ export default function QuestionBankPage() {
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                name="subject"
-                label="Subject"
-                value={filterData.subject}
+                name="difficulty_level"
+                label="difficulty_level"
+                value={filterData.difficulty_level}
                 onChange={handleFilterDataChange}
               >
                 {uniqueSubjects.map((subject, index) => (
@@ -298,7 +305,7 @@ export default function QuestionBankPage() {
             </FormControl>
           </Box>
         </div>
-        <div className="col-md-4 mb-2">
+        <div className="col-md-3 mb-2">
           <Box sx={{ minWidth: 120 }}>
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">
@@ -307,9 +314,9 @@ export default function QuestionBankPage() {
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                name="subject"
-                label="Subject"
-                value={filterData.subject}
+                name="timeRequired"
+                label="timeRequired"
+                value={filterData.timeRequired}
                 onChange={handleFilterDataChange}
               >
                 {uniqueSubjects.map((subject, index) => (
@@ -321,7 +328,7 @@ export default function QuestionBankPage() {
             </FormControl>
           </Box>
         </div>
-        <div className="col-md-4 mb-2">
+        <div className="col-md-3 mb-2">
           <Box sx={{ minWidth: 120 }}>
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">Target</InputLabel>
@@ -340,7 +347,7 @@ export default function QuestionBankPage() {
             </FormControl>
           </Box>
         </div>
-        <div className="col-md-4 mb-2">
+        <div className="col-md-3 mb-2">
           <Box sx={{ minWidth: 120 }}>
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">Exam Group</InputLabel>
@@ -361,271 +368,268 @@ export default function QuestionBankPage() {
             </FormControl>
           </Box>
         </div>
-        <hr />
-        <div className="row justify-content-end">
-          <div className="col-md-6 text-center">
-            <div className="input-group flex-nowrap rounded border border-success">
-              <span
-                className="input-group-text bg-success text-light"
-                id="addon-wrapping"
-              >
-                <b>Search</b> &nbsp; &nbsp;&nbsp;
-                <i className="fa fa-search"></i>
-              </span>
-              <input className="form-control" type="text" name="search" />
-            </div>
-          </div>
-          <div className="col-md-3">
-            <button
-              type="button"
-              className="btn btn-outline-success"
-              onClick={handleShowQuestionTypeModal}
-            >
-              Add Question
-            </button>
-          </div>
-          <div className="col-md-1">
-            <div className="form-check form-switch">
-              <input
-                className="form-check-input border border-primary"
-                type="checkbox"
+      </div>
+      <hr />
+      <div className="row ">
+        <div className="col-md-6 ">
+          <FormControl fullWidth>
+            <OutlinedInput
+              id="outlined-adornment-amount"
+              size="small"
+              startAdornment={
+                <InputAdornment position="start">
+                  Search <SearchIcon />
+                </InputAdornment>
+              }
+            />
+          </FormControl>
+        </div>
+        <div className="col-md-2 d-flex justify-content-center align-items-center">
+          <Fab
+            size="small"
+            color="primary"
+            aria-label="add"
+            onClick={handleShowQuestionTypeModal}
+          >
+            <AddIcon />
+          </Fab>
+        </div>
+        <div className="col-md-2 d-flex justify-content-center align-items-center">
+          <FormControlLabel
+            control={
+              <Switch
                 checked={editMode}
                 onChange={handleChangeEditMode}
-                id="flexSwitchCheckDefault"
+                inputProps={{ "aria-label": "controlled" }}
               />
-              <label
-                className="form-check-label "
-                htmlFor="flexSwitchCheckDefault"
-              >
-                Delete
-              </label>
-            </div>
-          </div>
-          <div className="col-md-2">
-            <div className="form-check form-switch">
-              <input
-                className="form-check-input border border-primary"
-                type="checkbox"
+            }
+            label="Delete"
+          />
+        </div>
+        <div className="col-md-2 d-flex justify-content-center align-items-center">
+          <FormControlLabel
+            control={
+              <Switch
                 checked={addToTemplate}
                 onChange={handleAddToTemplate}
-                id="flexSwitchCheckDefault"
+                inputProps={{ "aria-label": "controlled" }}
               />
-              <label
-                className="form-check-label "
-                htmlFor="flexSwitchCheckDefault"
-              >
-                Add to Template
-              </label>
-            </div>
-          </div>
+            }
+            label="Add to Source"
+          />
         </div>
-
-        <Modal
-          show={showQuestionTypeModal}
-          onHide={handleShowQuestionTypeModal}
-        >
-          <Modal.Header>
-            <Modal.Title>Add Question</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <div className="d-grid gap-2">
-              <button
-                className="btn btn-success"
-                type="button"
-                name="SingleCorrect"
-                onClick={handleAddQuestion}
-              >
-                Single Correct Question
-              </button>
-              <button
-                className="btn btn-success"
-                type="button"
-                name="MultiCorrect"
-                onClick={handleAddQuestion}
-              >
-                Multi Correct Question
-              </button>
-              <button
-                className="btn btn-success"
-                type="button"
-                name="Integer"
-                onClick={handleAddQuestion}
-              >
-                Integer Type Question
-              </button>
-              <button
-                className="btn btn-success"
-                type="button"
-                name="MultiCorrect"
-                onClick={handleAddQuestion}
-              >
-                Comprehensive Question
-              </button>
-            </div>
-          </Modal.Body>
-          <Modal.Footer>
-            <Button variant="danger" onClick={handleShowQuestionTypeModal}>
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
-
-        <Modal
-          show={showQuestionModal.SingleCorrect}
-          onHide={() => handleCloseAddQuestion("SingleCorrect")}
-          dialogClassName="modal-xl"
-        >
-          <Modal.Header>
-            <Modal.Title>Single Correct Question</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <SingleCorrectQuestion
-              handleCloseAddQuestion={handleCloseAddQuestion}
-            />
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              variant="danger"
-              name="SingleCorrect"
-              onClick={() => handleCloseAddQuestion("SingleCorrect")}
-            >
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <Modal
-          show={showQuestionModal.MultiCorrect}
-          onHide={() => handleCloseAddQuestion("MultiCorrect")}
-          dialogClassName="modal-xl"
-        >
-          <Modal.Header>
-            <Modal.Title>Multi Correct Question</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <MultiCorrectQuestion />
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              variant="danger"
-              name="MultiCorrect"
-              onClick={() => handleCloseAddQuestion("MultiCorrect")}
-            >
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
-        <Modal
-          show={showQuestionModal.Integer}
-          onHide={() => handleCloseAddQuestion("Integer")}
-          dialogClassName="modal-xl"
-        >
-          <Modal.Header>
-            <Modal.Title>Integer Type Question</Modal.Title>
-          </Modal.Header>
-          <Modal.Body>
-            <IntegerType />
-          </Modal.Body>
-          <Modal.Footer>
-            <Button
-              variant="danger"
-              name="Integer"
-              onClick={() => handleCloseAddQuestion("Integer")}
-            >
-              Close
-            </Button>
-          </Modal.Footer>
-        </Modal>
-
-        <hr className="mt-2 mb-2" />
       </div>
-
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead className="bg bg-success ">
-            <TableRow>
-              <TableCell align="center" className="text-white">
-                Question ID
-              </TableCell>
-              <TableCell align="center" className="text-white">
-                Queston
-              </TableCell>
-              <TableCell align="center" className="text-white">
-                View
-              </TableCell>
-              <TableCell align="center" className="text-white">
-                Approved
-              </TableCell>
-              <TableCell align="center" className="text-white">
-                Subject
-              </TableCell>
-              <TableCell align="center" className="text-white">
-                Topic
-              </TableCell>
-              <TableCell align="center" className="text-white">
-                SubTopic
-              </TableCell>
-              <TableCell align="center" className="text-white">
-                D Level
-              </TableCell>
-              {editMode && <TableCell>Delete</TableCell>}
-              {addToTemplate && <TableCell>Add</TableCell>}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {questions.map((question, index) => (
-              <TableRow
-                key={question._id}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-              >
-                <TableCell align="center">{question.questionId}</TableCell>
-                <TableCell>{question.questionText}</TableCell>
-                <TableCell align="center">
-                  <Button
-                    size="sm"
-                    onClick={() => {
-                      handleShowViewQuestion(question);
-                    }}
-                  >
-                    View
-                  </Button>
+      <hr />
+      <div className="mt-2">
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead className="bg bg-success ">
+              <TableRow>
+                <TableCell align="center" className="text-white">
+                  Question ID
                 </TableCell>
-                <TableCell align="center">{question.isApproved}</TableCell>
-                <TableCell align="center">{question.subject}</TableCell>
-                <TableCell align="center">{question.topic}</TableCell>
-                <TableCell align="center">{question.subtopic}</TableCell>
-                <TableCell align="center">
-                  {question.difficulty_level}
+                <TableCell align="center" className="text-white">
+                  Queston
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  View
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  Approved
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  Subject
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  Topic
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  SubTopic
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  D Level
                 </TableCell>
                 {editMode && (
-                  <TableCell scope="col" className="text-center">
-                    <i
-                      className="fa-solid fa-trash"
-                      onClick={() => handleDeleteQuestion(question)}
-                      style={{ color: "brown" }}
-                    ></i>
+                  <TableCell className="text-white" align="center">
+                    Delete
                   </TableCell>
                 )}
                 {addToTemplate && (
-                  <TableCell scope="col" className="text-center">
-                    {!questionInExamTemplate.includes(question._id) ? (
-                      <button
-                        className="btn btn-outline-success"
-                        onClick={() => handleQuestionToTemplate(question._id)}
-                      >
-                        Add
-                      </button>
-                    ) : (
-                      <button className="btn btn-success" disabled>
-                        Added
-                      </button>
-                    )}
+                  <TableCell className="text-white" align="center">
+                    Add
                   </TableCell>
                 )}
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {questions.map((question, index) => (
+                <TableRow
+                  key={question._id}
+                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                >
+                  <TableCell align="center">{question.questionId}</TableCell>
+                  <TableCell>{question.questionText}</TableCell>
+                  <TableCell align="center">
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        handleShowViewQuestion(question);
+                      }}
+                    >
+                      View
+                    </Button>
+                  </TableCell>
+                  <TableCell align="center">{question.isApproved}</TableCell>
+                  <TableCell align="center">{question.subject}</TableCell>
+                  <TableCell align="center">{question.topic}</TableCell>
+                  <TableCell align="center">{question.subtopic}</TableCell>
+                  <TableCell align="center">
+                    {question.difficulty_level}
+                  </TableCell>
+                  {editMode && (
+                    <TableCell scope="col" className="text-center">
+                      <i
+                        className="fa-solid fa-trash"
+                        onClick={() => handleDeleteQuestion(question)}
+                        style={{ color: "brown" }}
+                      ></i>
+                    </TableCell>
+                  )}
+                  {addToTemplate && (
+                    <TableCell scope="col" className="text-center">
+                      {!questionInExamTemplate.includes(question._id) ? (
+                        <button
+                          className="btn btn-outline-success"
+                          onClick={() => handleQuestionToTemplate(question._id)}
+                        >
+                          Add
+                        </button>
+                      ) : (
+                        <button className="btn btn-success" disabled>
+                          Added
+                        </button>
+                      )}
+                    </TableCell>
+                  )}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </div>
+
+      <Modal show={showQuestionTypeModal} onHide={handleShowQuestionTypeModal}>
+        <Modal.Header>
+          <Modal.Title>Add Question</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="d-grid gap-2">
+            <button
+              className="btn btn-success"
+              type="button"
+              name="SingleCorrect"
+              onClick={handleAddQuestion}
+            >
+              Single Correct Question
+            </button>
+            <button
+              className="btn btn-success"
+              type="button"
+              name="MultiCorrect"
+              onClick={handleAddQuestion}
+            >
+              Multi Correct Question
+            </button>
+            <button
+              className="btn btn-success"
+              type="button"
+              name="Integer"
+              onClick={handleAddQuestion}
+            >
+              Integer Type Question
+            </button>
+            <button
+              className="btn btn-success"
+              type="button"
+              name="MultiCorrect"
+              onClick={handleAddQuestion}
+            >
+              Comprehensive Question
+            </button>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="danger" onClick={handleShowQuestionTypeModal}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      <Modal
+        show={showQuestionModal.SingleCorrect}
+        onHide={() => handleCloseAddQuestion("SingleCorrect")}
+        dialogClassName="modal-xl"
+      >
+        <Modal.Header>
+          <Modal.Title>Single Correct Question</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <SingleCorrectQuestion
+            handleCloseAddQuestion={handleCloseAddQuestion}
+          />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="danger"
+            name="SingleCorrect"
+            onClick={() => handleCloseAddQuestion("SingleCorrect")}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal
+        show={showQuestionModal.MultiCorrect}
+        onHide={() => handleCloseAddQuestion("MultiCorrect")}
+        dialogClassName="modal-xl"
+      >
+        <Modal.Header>
+          <Modal.Title>Multi Correct Question</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <MultiCorrectQuestion />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="danger"
+            name="MultiCorrect"
+            onClick={() => handleCloseAddQuestion("MultiCorrect")}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      <Modal
+        show={showQuestionModal.Integer}
+        onHide={() => handleCloseAddQuestion("Integer")}
+        dialogClassName="modal-xl"
+      >
+        <Modal.Header>
+          <Modal.Title>Integer Type Question</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <IntegerType />
+        </Modal.Body>
+        <Modal.Footer>
+          <Button
+            variant="danger"
+            name="Integer"
+            onClick={() => handleCloseAddQuestion("Integer")}
+          >
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
 
       <Modal
         show={showViewQuestion}

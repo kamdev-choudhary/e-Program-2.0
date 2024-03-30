@@ -1,117 +1,215 @@
+import React from "react";
+import { useState, useEffect } from "react";
+
+import Box from "@mui/material/Box";
+import InputLabel from "@mui/material/InputLabel";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+
+const API_URL = "http://127.0.0.1:5000/api";
+
 export default function ViewQuestion(props) {
+  const [academic, setAcademic] = useState([]);
+  const [filterData, setFilterData] = useState({
+    classes: "",
+    subject: "",
+    topic: "",
+    subtopic: "",
+    difficulty_level: "",
+    timeRequired: "",
+    target: "",
+    examTemplates: "",
+  });
+  const [questionData, setQuestionData] = useState({
+    classes: "",
+    subject: "",
+    topic: "",
+    subtopic: "",
+    questionType: "singleCorrect",
+    isApproved: "No",
+    questionText: "",
+    option1: "",
+    option2: "",
+    option3: "",
+    option4: "",
+    correctAnswer: "",
+    solution: "",
+  });
+
+  const handleFilterDataChange = (e) => {
+    setFilterData({ ...filterData, [e.target.name]: e.target.value });
+  };
+
+  const uniqueClasses = [...new Set(academic.map((item) => item.class))];
+  const uniqueSubjects = [...new Set(academic.map((item) => item.subject))];
+  const uniqueTopic = [...new Set(academic.map((item) => item.topic))];
+
+  useEffect(() => {
+    fetch(`${API_URL}/admin/academic`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => setAcademic(data.academic))
+      .catch((error) => setError(error.message));
+  }, []);
   return (
     <>
       <div className="row">
-        <div className="col-md-4 mb-2">
-          <div className="input-group flex-nowrap rounded border border-success">
-            <span
-              className="input-group-text bg-success text-light"
-              id="addon-wrapping"
-            >
-              Class
-            </span>
-            <select className="form-control" name="question[className]">
-              <option value="">-- Select class --</option>
-              <option value="IX">className - 09</option>
-              <option value="X">className - 10</option>
-            </select>
-          </div>
+        <div className="col-md-3 mb-3">
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Class</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="classes"
+                label="Class"
+                value={filterData.classes}
+                onChange={handleFilterDataChange}
+              >
+                {uniqueClasses.map((classes, index) => (
+                  <MenuItem key={index} value={classes}>
+                    {classes}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
         </div>
-        <div className="col-md-4 mb-2">
-          <div className="input-group flex-nowrap rounded border border-success">
-            <span
-              className="input-group-text bg-success text-light"
-              id="addon-wrapping"
-            >
-              Subject
-            </span>
-            <select className="form-control">
-              <option value="">-- Select Subject --</option>
-              <option value="physics">PHYSICS</option>
-              <option value="chemistry">CHEMISTRY</option>
-              <option value="mathematics">MATHEMATICS</option>
-              <option value="biology">BIOLOGY</option>
-            </select>
-          </div>
+        <div className="col-md-3 mb-2">
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Subject</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="subject"
+                label="Subject"
+                value={filterData.subject}
+                onChange={handleFilterDataChange}
+              >
+                {uniqueSubjects.map((subject, index) => (
+                  <MenuItem key={index} value={subject}>
+                    {subject}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
         </div>
-        <div className="col-md-4 mb-2">
-          <div className="input-group flex-nowrap rounded border border-success">
-            <span
-              className="input-group-text bg-success text-light"
-              id="addon-wrapping"
-            >
-              Topic
-            </span>
-            <select className="form-control" name="question[className]">
-              <option value="">-- Select Topic --</option>
-              <option value="IX">Topic 1</option>
-              <option value="X">Topic 2</option>
-            </select>
-          </div>
+        <div className="col-md-3 mb-2">
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Topic</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="topic"
+                label="topic"
+                value={filterData.topic}
+                onChange={handleFilterDataChange}
+              >
+                {uniqueTopic.map((topic, index) => (
+                  <MenuItem key={index} value={topic}>
+                    {topic}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
         </div>
-        <div className="col-md-4 mb-2">
-          <div className="input-group flex-nowrap rounded border border-success">
-            <span
-              className="input-group-text bg-success text-light"
-              id="addon-wrapping"
-            >
-              Sub Topic
-            </span>
-            <select className="form-control" name="question[className]">
-              <option value="">-- Select Subject --</option>
-              <option value="IX">className - 09</option>
-              <option value="X">className - 10</option>
-            </select>
-          </div>
+        <div className="col-md-3 mb-2">
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Sub Topic</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="subtopic"
+                label="subtopic"
+                value={filterData.subtopic}
+                onChange={handleFilterDataChange}
+              >
+                {uniqueSubjects.map((subject, index) => (
+                  <MenuItem key={index} value={subject}>
+                    {subject}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
         </div>
-        <div className="col-md-4 mb-2">
-          <div className="input-group flex-nowrap rounded border border-success">
-            <span
-              className="input-group-text bg-success text-light"
-              id="addon-wrapping"
-            >
-              Difficulty Level
-            </span>
-            <select className="form-control" name="question[className]">
-              <option value="">-- Select Subject --</option>
-              <option value="IX">className - 09</option>
-              <option value="X">className - 10</option>
-            </select>
-          </div>
+        <div className="col-md-3 mb-2">
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">
+                DiffiCulty Level
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="difficulty_level"
+                label="difficulty_level"
+                value={filterData.difficulty_level}
+                onChange={handleFilterDataChange}
+              >
+                {uniqueSubjects.map((subject, index) => (
+                  <MenuItem key={index} value={subject}>
+                    {subject}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
         </div>
-        <div className="col-md-4 mb-2">
-          <div className="input-group flex-nowrap rounded border border-success">
-            <span
-              className="input-group-text bg-success text-light"
-              id="addon-wrapping"
-            >
-              Time Required
-            </span>
-            <select className="form-control" name="question[className]">
-              <option value="">-- Select Subject --</option>
-              <option value="IX">className - 09</option>
-              <option value="X">className - 10</option>
-            </select>
-          </div>
+        <div className="col-md-3 mb-2">
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">
+                Time Required
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="timeRequired"
+                label="timeRequired"
+                value={filterData.timeRequired}
+                onChange={handleFilterDataChange}
+              >
+                {uniqueSubjects.map((subject, index) => (
+                  <MenuItem key={index} value={subject}>
+                    {subject}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
         </div>
-        <div className="col-md-4 mb-2">
-          <div className="input-group flex-nowrap rounded border border-success">
-            <span
-              className="input-group-text bg-success text-light"
-              id="addon-wrapping"
-            >
-              Question Target
-            </span>
-            <select className="form-control" name="question[className]">
-              <option value="">-- Select Target --</option>
-              <option value="IX">JEE</option>
-              <option value="X">NEET</option>
-            </select>
-          </div>
+        <div className="col-md-3 mb-2">
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+              <InputLabel id="demo-simple-select-label">Target</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="target"
+                label="target"
+                value={filterData.target}
+                onChange={handleFilterDataChange}
+              >
+                <MenuItem value="Both">Both</MenuItem>
+                <MenuItem value="JEE">JEE</MenuItem>
+                <MenuItem value="NEET">NEET</MenuItem>
+              </Select>
+            </FormControl>
+          </Box>
         </div>
-
-        <hr className="mt-2" />
       </div>
+
       {/* Single Correct */}
       <div className="col-12 mt-2 p-2 border rounded">
         <div className="mb-3 ">
@@ -226,6 +324,7 @@ export default function ViewQuestion(props) {
             value={props.currQuestion.solution}
             rows="5"
             placeholder="Enter question"
+            readOnly
           ></textarea>
         </div>
       </div>

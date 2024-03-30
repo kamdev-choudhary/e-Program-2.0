@@ -3,8 +3,13 @@ const app = express();
 const connectDB = require("./utils/connectDB");
 const errorMiddleware = require("./middlewares/error-middleware");
 const cors = require("cors");
+const bodyParser = require("body-parser");
 
 const PORT = 5000;
+
+app.use(cors());
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
 const authRouter = require("./routers/auth-router");
 const lectureRouter = require("./routers/lectureRouter");
@@ -12,9 +17,6 @@ const questionRouter = require("./routers/questionRoute");
 const materialRouter = require("./routers/materialRoute");
 const adminRoute = require("./routers/adminRoute");
 const examRouter = require("./routers/examRouter");
-
-app.use(cors());
-app.use(express.json());
 
 app.get("/", (req, res) => {
   res.status(200).send("This is Home Page");
