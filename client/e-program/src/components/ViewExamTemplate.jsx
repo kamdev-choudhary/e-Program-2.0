@@ -11,8 +11,8 @@ import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
-import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const API_URL = "http://127.0.0.1:5000/api";
 
@@ -79,6 +79,51 @@ export default function ViewExamTemplate(props) {
           />
         </div>
       </div>
+      <hr />
+      <TableContainer component={Paper}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead className="bg bg-dark ">
+            <TableRow>
+              <TableCell align="center" className="text-white">
+                Batch
+              </TableCell>
+              <TableCell align="center" className="text-white">
+                Date
+              </TableCell>
+              <TableCell align="center" className="text-white">
+                Start Time
+              </TableCell>
+              <TableCell align="center" className="text-white">
+                End Time
+              </TableCell>
+              <TableCell align="center" className="text-white">
+                Remove
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {examTemplate.questionTypes && (
+              <>
+                <TableRow>
+                  <TableCell align="center">Single Correct</TableCell>
+                  <TableCell align="center">
+                    {examTemplate.questionTypes.singleCorrect.totalQuestions}
+                  </TableCell>
+                  <TableCell align="center">
+                    {examTemplate.questionTypes.singleCorrect.positiveMarks}
+                  </TableCell>
+                  <TableCell align="center">
+                    {examTemplate.questionTypes.singleCorrect.partialMarks}
+                  </TableCell>
+                  <TableCell align="center">
+                    <DeleteIcon />
+                  </TableCell>
+                </TableRow>
+              </>
+            )}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       <hr />
       <TableContainer component={Paper}>

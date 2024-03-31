@@ -2,7 +2,6 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 
 module.exports.login = async (req, res) => {
-  console.log("pahuch gaye bhai");
   try {
     const { email, password } = req.body;
     const userExist = await User.findOne({ email: email });
@@ -31,7 +30,6 @@ module.exports.login = async (req, res) => {
 
 module.exports.register = async (req, res) => {
   const { name, email, password, mobile } = req.body;
-  console.log(req.body);
 
   try {
     let userExist = await User.findOne({ email: email });
@@ -55,5 +53,43 @@ module.exports.register = async (req, res) => {
   } catch (err) {
     console.error(err);
     return res.status(500).json("Internal Server Error");
+  }
+};
+
+// GETTING USER DATA
+
+module.exports.getUserData = async (req, res, next) => {
+  const { id } = req.params;
+  try {
+    const user = await User.findOne({ _id: id }, { password: 0 });
+    if (user) {
+      res.status(200).json({ user });
+    } else {
+      res.status(400).json("User Not available");
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+// UPDATE USER DATA
+
+module.exports.updateUserData = async (req, res, next) => {
+  const { id } = req.params;
+  const userDataToUpdate = req.body;
+  try {
+    const updatedUser = await User.findByIdAndUpdate(id, userDataToUpdate, {
+      new: true,
+    });
+    updatedUser.isProfileUpdated = true;
+    updatedUser.save();
+    if (!updatedUser) {
+      res.status(200).json("User not Found");
+    }
+    res
+      .status(200)
+      .json({ message: "User updated successfully", user: updatedUser });
+  } catch (error) {
+    next(error);
   }
 };

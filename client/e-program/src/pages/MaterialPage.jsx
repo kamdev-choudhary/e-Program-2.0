@@ -17,6 +17,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import Base64PDFViewer from "../components/Base64PDFViewer";
+import { useAuth } from "../store/Auth";
 
 const API_URL = "http://127.0.0.1:5000/api";
 
@@ -36,6 +37,8 @@ export default function MaterialPage() {
   const [showAddBook, setShowAddBook] = useState(false);
   const [pdfViewer, setPdfViwer] = useState(false);
   const [refresh, setRefresh] = useState(false);
+
+  const { isAdmin } = useAuth();
 
   const handleAddNewBook = () => {
     setShowAddBook(!showAddBook);
@@ -125,16 +128,18 @@ export default function MaterialPage() {
             />
           </FormControl>
         </div>
-        <div className="col-md-4 d-flex justify-content-center align-items-center">
-          <Fab
-            size="medium"
-            color="primary"
-            aria-label="add"
-            onClick={handleAddNewBook}
-          >
-            <AddIcon />
-          </Fab>
-        </div>
+        {isAdmin && (
+          <div className="col-md-4 d-flex justify-content-center align-items-center">
+            <Fab
+              size="medium"
+              color="primary"
+              aria-label="add"
+              onClick={handleAddNewBook}
+            >
+              <AddIcon />
+            </Fab>
+          </div>
+        )}
       </div>
 
       <Modal

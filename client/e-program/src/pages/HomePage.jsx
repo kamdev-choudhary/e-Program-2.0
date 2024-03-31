@@ -1,11 +1,10 @@
 import React from "react";
-import Base64 from "../components/Base64";
-import HitAndTry from "../components/HitAndTry";
+import StudentProfile from "../components/StudentProfile";
 
 export default function HomePage() {
   return (
     <>
-      <HitAndTry />
+      <StudentProfile />
     </>
   );
 }

@@ -8,6 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [userConrol, setUserControl] = useState([]);
   let isAdmin = false;
   let accountType = "student";
+  let userId = "";
 
   const storeTokenInLS = (serverToken) => {
     localStorage.setItem("token", serverToken);
@@ -19,7 +20,7 @@ export const AuthProvider = ({ children }) => {
     const decoded = jwtDecode(token);
     isAdmin = decoded.isAdmin;
     accountType = decoded.accountType;
-    console.log(isAdmin);
+    userId = decoded.userId;
   }
 
   const logoutUser = () => {
@@ -29,7 +30,14 @@ export const AuthProvider = ({ children }) => {
 
   return (
     <AuthContext.Provider
-      value={{ isLoggedIn, isAdmin, accountType, storeTokenInLS, logoutUser }}
+      value={{
+        isLoggedIn,
+        isAdmin,
+        accountType,
+        userId,
+        storeTokenInLS,
+        logoutUser,
+      }}
     >
       {children}
     </AuthContext.Provider>

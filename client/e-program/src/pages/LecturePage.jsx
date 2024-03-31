@@ -22,7 +22,7 @@ function CollapsibleTable({ lectures, playLecture }) {
     <div>
       <TableContainer component={Paper}>
         <Table aria-label="simple table">
-          <TableHead className="bg bg-success ">
+          <TableHead className="bg bg-primary ">
             <TableRow>
               <TableCell align="center" className="text-white">
                 Chapter Name
@@ -135,14 +135,10 @@ export default function LecturePage() {
         </div>
       </div>
       <div className="row lecture-container">
-        <hr className="sticky-top" />
-        <div
-          className="col-md-6"
-          style={{ maxHeight: "80vh", overflowY: "auto" }}
-        >
-          <TableContainer component={Paper}>
+        <div className="col-md-6">
+          <TableContainer component={Paper} style={{ maxHeight: "80vh" }}>
             <Table aria-label="simple table">
-              <TableHead className="bg bg-success ">
+              <TableHead className="bg bg-success sticky-top">
                 <TableRow>
                   <TableCell align="center" className="text-white">
                     Class
@@ -164,12 +160,7 @@ export default function LecturePage() {
                     {(index === 0 ||
                       chapterName !==
                         Object.keys(lecturesByChapter)[index - 1]) && (
-                      <TableRow
-                        key={index}
-                        sx={{
-                          "&:last-child td, &:last-child th": { border: 0 },
-                        }}
-                      >
+                      <TableRow>
                         <TableCell
                           align="center"
                           onClick={() => toggleChapter(chapterName)}

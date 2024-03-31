@@ -1,8 +1,34 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { useAuth } from "../store/Auth";
+import StudentProfile from "../components/StudentProfile";
+
+const API_URL = "http://127.0.0.1:5000/api";
+
 export default function DashboardPage() {
+  const { userId } = useAuth();
+  const [user, setUser] = useState([]);
+  const [error, setError] = useState("");
+
+  useEffect(() => {
+    fetch(`${API_URL}/auth/user/${userId}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => setUser(data.user))
+      .catch((error) => setError(error.message));
+  }, []);
+
   return (
     <>
-      <p>Dashboard Page</p>
+      {user && !user.isProfileUpdated && (
+        <div>
+          <h5>Update Your Profile</h5>
+          <StudentProfile user={user} />
+        </div>
+      )}
     </>
   );
 }

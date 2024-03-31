@@ -6,27 +6,51 @@ const jwt = require("jsonwebtoken");
 const userSchema = new Schema({
   name: {
     type: String,
-    required: true, // corrected typo
+    required: true,
   },
+
   email: {
     type: String,
-    required: true, // corrected typo
+    required: true,
   },
+
   mobile: {
     type: String,
-    required: true, // corrected typo
+    required: true,
   },
+
   isAdmin: {
     type: Boolean,
     default: false,
   },
+
   accountType: {
     type: String,
     default: "student",
   },
-  password: {
-    type: String,
+
+  password: String,
+
+  isProfileUpdated: {
+    type: Boolean,
+    default: false,
   },
+
+  currentClass: String,
+
+  batch: String,
+
+  addressLineOne: String,
+
+  addressLineTwo: String,
+
+  city: String,
+
+  district: String,
+
+  state: String,
+
+  pinCode: Number,
 });
 
 userSchema.pre("save", async function (next) {

@@ -30,7 +30,7 @@ app.use("/api/materials", materialRouter);
 app.use("/api/exams", examRouter);
 
 app.use("/*", (req, res) => {
-  res.send("Backend for DAKSHANA");
+  res.send("Backend ");
 });
 
 app.use(errorMiddleware);

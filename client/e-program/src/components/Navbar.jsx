@@ -110,16 +110,6 @@ function Navbar() {
         </Modal.Header>
         <Modal.Body>
           <UserPage handleshowUserPage={handleshowUserPage} />
-          <div className="m-1 mt-2 text-center">
-            New to Dakshana
-            <NavLink
-              to="/register"
-              className="text-decoration-none ms-2 p-1"
-              onClick={handleshowUserPage}
-            >
-              Register
-            </NavLink>
-          </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="danger" onClick={handleshowUserPage}>
