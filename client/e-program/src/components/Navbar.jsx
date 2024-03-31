@@ -1,16 +1,25 @@
 import "./Navbar.css";
-import { NavLink } from "react-router-dom";
-import { Modal, Button } from "react-bootstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import "bootstrap/dist/js/bootstrap";
+import { NavLink } from "react-router-dom";
+import { Modal } from "react-bootstrap";
 import UserPage from "./UserLogin";
 import { useState } from "react";
+import { useAuth } from "../store/Auth";
+import Button from "@mui/material/Button";
 
 function Navbar() {
+  const { isLoggedIn, logoutUser, isAdmin, accountType } = useAuth();
+
+  const handleLogoutUser = () => {
+    logoutUser();
+  };
+
   const [showUserPage, setShowUserPage] = useState(false);
   function handleshowUserPage() {
     setShowUserPage(!showUserPage);
   }
+
   return (
     <>
       <nav className="navbar navbar-expand-lg bg-body-tertiary">
@@ -31,61 +40,63 @@ function Navbar() {
           </button>
           <div className="collapse navbar-collapse" id="navbarNavDropdown">
             <ul className="navbar-nav">
-              <li className="nav-item">
-                <NavLink to="/admin" className="nav-link " aria-current="page">
-                  Admin
-                </NavLink>
-              </li>
+              {isAdmin && (
+                <li className="nav-item">
+                  <NavLink
+                    to="/admin"
+                    className="nav-link "
+                    aria-current="page"
+                  >
+                    Admin
+                  </NavLink>
+                </li>
+              )}
+              {accountType === "student" && (
+                <li className="nav-item">
+                  <NavLink to="/dashboard" className="nav-link">
+                    DashBoard
+                  </NavLink>
+                </li>
+              )}
               <li className="nav-item">
                 <NavLink to="/lectures" className="nav-link">
                   Lectures
                 </NavLink>
               </li>
-
               <li className="nav-item">
                 <NavLink to="/materials" className="nav-link">
                   Materials
                 </NavLink>
               </li>
+              {isAdmin && (
+                <li className="nav-item">
+                  <NavLink to="/question-bank" className="nav-link">
+                    Question Bank
+                  </NavLink>
+                </li>
+              )}
               <li className="nav-item">
-                <NavLink to="/question bank" className="nav-link">
-                  Question Bank
-                </NavLink>
-              </li>
-              <li className="nav-item dropdown ml-5">
-                <NavLink
-                  className="nav-link dropdown-toggle"
-                  role="button"
-                  data-bs-toggle="dropdown"
-                  aria-expanded="false"
-                >
-                  Exam
-                </NavLink>
-                <ul className="dropdown-menu bg-light">
-                  <li>
-                    <NavLink
-                      to="/offlineexams"
-                      className="dropdown-item bg-light text-dark"
-                    >
-                      Offline
-                    </NavLink>
-                  </li>
-                  <li>
-                    <NavLink
-                      to="/onlineexams"
-                      className="dropdown-item bg-light text-dark"
-                    >
-                      Online
-                    </NavLink>
-                  </li>
-                </ul>
-              </li>
-              <li className="nav-item ">
-                <NavLink className="nav-link " onClick={handleshowUserPage}>
-                  Login
+                <NavLink to="/exams" className="nav-link">
+                  Exams
                 </NavLink>
               </li>
             </ul>
+
+            <div className="ms-auto m-2">
+              {isLoggedIn ? (
+                <NavLink className="nav-link  " onClick={handleLogoutUser}>
+                  <Button variant="contained" color="error">
+                    Logout
+                  </Button>
+                </NavLink>
+              ) : (
+                <NavLink className="nav-link" onClick={handleshowUserPage}>
+                  <Button variant="contained" color="success">
+                    Login or Signup
+                  </Button>
+                </NavLink>
+              )}
+            </div>
           </div>
         </div>
       </nav>
@@ -98,7 +109,7 @@ function Navbar() {
           <Modal.Title>Login to Website</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <UserPage />
+          <UserPage handleshowUserPage={handleshowUserPage} />
           <div className="m-1 mt-2 text-center">
             New to Dakshana
             <NavLink

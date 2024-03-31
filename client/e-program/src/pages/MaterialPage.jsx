@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { Modal, Button } from "react-bootstrap";
 
-import axios from "axios";
-
 import Input from "@mui/material/Input";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
@@ -37,6 +35,7 @@ export default function MaterialPage() {
   });
   const [showAddBook, setShowAddBook] = useState(false);
   const [pdfViewer, setPdfViwer] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   const handleAddNewBook = () => {
     setShowAddBook(!showAddBook);
@@ -61,8 +60,6 @@ export default function MaterialPage() {
   };
 
   const handleOnSubmit = async (e) => {
-    console.log(newBook);
-
     fetch("http://127.0.0.1:5000/api/materials/savenewbook", {
       method: "POST",
       headers: {
@@ -70,7 +67,13 @@ export default function MaterialPage() {
       },
       body: JSON.stringify(newBook),
     })
-      .then((response) => response.json())
+      .then((response) => {
+        response.json();
+        if (response.ok) {
+          handleAddNewBook();
+          setRefresh(!refresh);
+        }
+      })
       .then((data) => {
         console.log("Success:", data);
       })
@@ -94,7 +97,6 @@ export default function MaterialPage() {
     setPdfViwer(!pdfViewer);
   };
 
-  console.log(base64String);
   useEffect(() => {
     fetch(`${API_URL}/materials`)
       .then((response) => {
@@ -105,35 +107,33 @@ export default function MaterialPage() {
       })
       .then((data) => setBooks(data.books))
       .catch((error) => setError(error.message));
-  }, []);
+  }, [refresh]);
 
   return (
     <>
       {error && <div>Error: {error}</div>}
       <div className="row">
-        <div className="row mb-2 mt-2">
-          <div className="col-md-8 ">
-            <FormControl fullWidth sx={{ m: 1 }}>
-              <OutlinedInput
-                id="outlined-adornment-amount"
-                startAdornment={
-                  <InputAdornment position="start">
-                    Search <SearchIcon />
-                  </InputAdornment>
-                }
-              />
-            </FormControl>
-          </div>
-          <div className="col-md-4 d-flex justify-content-center align-items-center">
-            <Fab
-              size="medium"
-              color="primary"
-              aria-label="add"
-              onClick={handleAddNewBook}
-            >
-              <AddIcon />
-            </Fab>
-          </div>
+        <div className="col-md-8 ">
+          <FormControl fullWidth sx={{ m: 1 }}>
+            <OutlinedInput
+              id="outlined-adornment-amount"
+              startAdornment={
+                <InputAdornment position="start">
+                  Search <SearchIcon />
+                </InputAdornment>
+              }
+            />
+          </FormControl>
+        </div>
+        <div className="col-md-4 d-flex justify-content-center align-items-center">
+          <Fab
+            size="medium"
+            color="primary"
+            aria-label="add"
+            onClick={handleAddNewBook}
+          >
+            <AddIcon />
+          </Fab>
         </div>
       </div>
 

@@ -106,12 +106,14 @@ export default function Users() {
                 }}
               >
                 <TableCell align="center">{index + 1}</TableCell>
-                <TableCell align="center">{user.username}</TableCell>
+                <TableCell align="center">{user.name}</TableCell>
                 <TableCell align="center">{user.email}</TableCell>
                 <TableCell align="center">{user.mobile}</TableCell>
                 <TableCell align="center">{user.accountType}</TableCell>
                 <TableCell align="center">
-                  <Button size="sm">View</Button>
+                  <Button variant="outlined" size="sm">
+                    View
+                  </Button>
                 </TableCell>
               </TableRow>
             ))}

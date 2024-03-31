@@ -20,9 +20,13 @@ export default function RegisterPage() {
   });
 
   const handleChange = (e) => {
-    const { name, value } = e.target;
-    setUser({ ...user, [name]: value });
-
+    if (e.target.name !== "mobile") {
+      const { name, value } = e.target;
+      setUser({ ...user, [name]: value });
+    } else {
+      const value = e.target.value.replace(/\D/g, "").slice(0, 10);
+      setUser({ ...user, mobile: value });
+    }
     // Validation logic
     switch (name) {
       case "name":
@@ -44,13 +48,27 @@ export default function RegisterPage() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    // Perform validation
     const isValid = validateForm();
 
     // If form is valid, submit
     if (isValid) {
-      console.log("Form submitted successfully!");
+      fetch("http://127.0.0.1:5000/api/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(user),
+      })
+        .then((response) => {
+          response.json();
+          console.log(response);
+        })
+        .then((data) => {
+          console.log("Success:", data);
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
     } else {
       console.log("Form submission failed. Please check all fields.");
     }
@@ -111,15 +129,17 @@ export default function RegisterPage() {
               />
               <TextField
                 label="Mobile"
-                type="number"
+                type="text"
                 value={user.mobile}
                 id="mobile"
                 name="mobile"
                 onChange={handleChange}
                 error={Boolean(errors.mobile)}
                 helperText={errors.mobile}
+                inputProps={{ maxLength: 10 }}
                 style={{ marginBottom: "20px" }}
               />
+
               <TextField
                 label="Password"
                 type="password"

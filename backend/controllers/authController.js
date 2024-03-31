@@ -2,6 +2,7 @@ const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 
 module.exports.login = async (req, res) => {
+  console.log("pahuch gaye bhai");
   try {
     const { email, password } = req.body;
     const userExist = await User.findOne({ email: email });
@@ -10,44 +11,49 @@ module.exports.login = async (req, res) => {
       return res.status(400).json("Invalid credential");
     }
 
-    const user = await bcrypt.compare(password, userExist.password);
+    // Compare the provided password with the hashed password
+    const isPasswordValid = await bcrypt.compare(password, userExist.password);
 
-    if (user) {
-      res.status(200).json({
+    if (isPasswordValid) {
+      return res.status(200).json({
         msg: "Login Successful",
         token: await userExist.generateToken(),
         userId: userExist._id.toString(),
       });
     } else {
-      res.status(500).json({ msg: "invalid email or Password" });
+      return res.status(401).json({ msg: "Invalid email or password" });
     }
   } catch (error) {
-    res.status(500).json("Internal Server Error");
+    console.error(error);
+    return res.status(500).json("Internal Server Error");
   }
 };
 
 module.exports.register = async (req, res) => {
-  let { username, email, password } = req.body;
-
-  let userExist = await User.findOne({ email: email });
-
-  if (userExist) {
-    return res.status(400).json("Email already Registered");
-  }
+  const { name, email, password, mobile } = req.body;
+  console.log(req.body);
 
   try {
+    let userExist = await User.findOne({ email: email });
+
+    if (userExist) {
+      return res.status(400).json("Email already Registered");
+    }
+
     const newUser = await User.create({
-      username,
+      name,
       email,
       password,
+      mobile,
     });
-    res.status(200).json({
-      msg: "registration Successful",
+
+    return res.status(200).json({
+      msg: "Registration Successful",
       token: await newUser.generateToken(),
       userId: newUser._id.toString(),
     });
   } catch (err) {
-    console.log(err);
-    res.status(501).json("internal server Error");
+    console.error(err);
+    return res.status(500).json("Internal Server Error");
   }
 };

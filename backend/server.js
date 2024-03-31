@@ -11,7 +11,7 @@ app.use(cors());
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 
-const authRouter = require("./routers/auth-router");
+const authRouter = require("./routers/authRouter");
 const lectureRouter = require("./routers/lectureRouter");
 const questionRouter = require("./routers/questionRoute");
 const materialRouter = require("./routers/materialRoute");

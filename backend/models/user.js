@@ -4,17 +4,17 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 
 const userSchema = new Schema({
-  username: {
+  name: {
     type: String,
-    require: true,
+    required: true, // corrected typo
   },
   email: {
     type: String,
-    require: true,
+    required: true, // corrected typo
   },
-  phone: {
+  mobile: {
     type: String,
-    require: true,
+    required: true, // corrected typo
   },
   isAdmin: {
     type: Boolean,
@@ -33,14 +33,15 @@ userSchema.pre("save", async function (next) {
   const user = this;
 
   if (!user.isModified("password")) {
-    next();
+    return next();
   }
   try {
     const saltRound = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(user.password, saltRound);
     user.password = hashPassword;
+    return next();
   } catch (err) {
-    next(err);
+    return next(err);
   }
 });
 
@@ -48,15 +49,14 @@ userSchema.methods.generateToken = async function () {
   try {
     return jwt.sign(
       {
-        userId: this._id.toString,
+        userId: this._id.toString(),
         email: this.email,
-        userType: this.userType,
-        isAdmin: this.isAdmin,
         accountType: this.accountType,
+        isAdmin: this.isAdmin,
       },
       process.env.JWT_KEY,
       {
-        expiresIn: "20d",
+        expiresIn: "15d",
       }
     );
   } catch (err) {

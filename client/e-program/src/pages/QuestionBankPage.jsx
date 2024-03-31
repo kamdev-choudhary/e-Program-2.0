@@ -25,6 +25,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
+import Snackbar from "@mui/material/Snackbar";
 
 const API_URL = "http://127.0.0.1:5000/api";
 
@@ -49,11 +50,24 @@ export default function QuestionBankPage() {
   const [showQuestionTypeModal, setShowQuestionTypeModal] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [showViewQuestion, setShowViewQuestion] = useState(false);
+  const [open, setOpen] = useState(false);
   const [showQuestionModal, setShowQuestionModal] = useState({
     SingleCorrect: false,
     MultiCorrect: false,
     Integer: false,
   });
+
+  const handleClick = () => {
+    setOpen(true);
+  };
+
+  const handleClose = (event, reason) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setOpen(false);
+  };
 
   const [filterData, setFilterData] = useState({
     classes: "",
@@ -197,6 +211,12 @@ export default function QuestionBankPage() {
 
   return (
     <>
+      <Snackbar
+        open={open}
+        autoHideDuration={5000}
+        onClose={handleClose}
+        message="This Snackbar will be dismissed in 5 seconds."
+      />
       <div className="row">
         <div className="col-md-3 mb-3">
           <Box sx={{ minWidth: 120 }}>
