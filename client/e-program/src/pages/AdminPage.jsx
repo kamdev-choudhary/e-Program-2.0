@@ -255,6 +255,9 @@ export default function AdminPage() {
                         <TableCell align="center">{index + 1}</TableCell>
                         <TableCell align="center">{batch.batchName}</TableCell>
                         <TableCell align="center">{batch.batchClass}</TableCell>
+                        <TableCell align="center">
+                          {batch.batchStream}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -593,8 +596,8 @@ export default function AdminPage() {
             label="Batch Stream"
             fullWidth
             id="batchStream"
-            name="BatchStream"
-            value={batch.BatchStream}
+            name="batchStream"
+            value={batch.batchStream}
             onChange={handleBatchInputChange}
             style={{ marginBottom: "20px" }}
           />

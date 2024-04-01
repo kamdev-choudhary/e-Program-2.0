@@ -7,12 +7,23 @@ import UserPage from "./UserLogin";
 import { useState } from "react";
 import { useAuth } from "../store/Auth";
 import Button from "@mui/material/Button";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
 
 function Navbar() {
-  const { isLoggedIn, logoutUser, isAdmin, accountType } = useAuth();
+  const { isLoggedIn, logoutUser, isAdmin, accountType, name } = useAuth();
 
   const handleLogoutUser = () => {
     logoutUser();
+  };
+
+  const [anchorEl, setAnchorEl] = useState(null);
+  const open = Boolean(anchorEl);
+  const handleClick = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
   };
 
   const [showUserPage, setShowUserPage] = useState(false);
@@ -84,11 +95,35 @@ function Navbar() {
 
             <div className="ms-auto m-2">
               {isLoggedIn ? (
-                <NavLink className="nav-link  " onClick={handleLogoutUser}>
-                  <Button variant="contained" color="error">
-                    Logout
+                <div>
+                  <Button
+                    id="demo-positioned-button"
+                    aria-controls={open ? "demo-positioned-menu" : undefined}
+                    aria-haspopup="true"
+                    aria-expanded={open ? "true" : undefined}
+                    onClick={handleClick}
+                  >
+                    Welcome, {name}
                   </Button>
-                </NavLink>
+                  <Menu
+                    id="demo-positioned-menu"
+                    aria-labelledby="demo-positioned-button"
+                    anchorEl={anchorEl}
+                    open={open}
+                    onClose={handleClose}
+                    anchorOrigin={{
+                      vertical: "top",
+                      horizontal: "left",
+                    }}
+                    transformOrigin={{
+                      vertical: "top",
+                      horizontal: "left",
+                    }}
+                  >
+                    <MenuItem onClick={handleClose}>Profile</MenuItem>
+                    <MenuItem onClick={handleLogoutUser}>Logout</MenuItem>
+                  </Menu>
+                </div>
               ) : (
                 <NavLink className="nav-link" onClick={handleshowUserPage}>
                   <Button variant="contained" color="success">

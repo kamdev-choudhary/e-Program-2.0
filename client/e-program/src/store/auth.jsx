@@ -21,6 +21,7 @@ export const AuthProvider = ({ children }) => {
     isAdmin = decoded.isAdmin;
     accountType = decoded.accountType;
     userId = decoded.userId;
+    name = decoded.name;
   }
 
   const logoutUser = () => {
@@ -35,6 +36,7 @@ export const AuthProvider = ({ children }) => {
         isAdmin,
         accountType,
         userId,
+        name,
         storeTokenInLS,
         logoutUser,
       }}
