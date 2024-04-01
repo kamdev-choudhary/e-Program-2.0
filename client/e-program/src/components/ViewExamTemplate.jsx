@@ -7,12 +7,16 @@ import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
-import Box from "@mui/material/Box";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import DeleteIcon from "@mui/icons-material/Delete";
+import Fab from "@mui/material/Fab";
+import AddIcon from "@mui/icons-material/Add";
+import Box from "@mui/material/Box";
+import Button from "@mui/material/Button";
+import Modal from "@mui/material/Modal";
 
 const API_URL = "http://127.0.0.1:5000/api";
 
@@ -20,6 +24,7 @@ export default function ViewExamTemplate(props) {
   const [examTemplate, setExamTemplate] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [ShowAddExamToBatch, setShowAddExamToBatch] = useState(false);
 
   useEffect(() => {
     fetch(`${API_URL}/exams/templates/${props.currTemplate._id}`)
@@ -34,13 +39,27 @@ export default function ViewExamTemplate(props) {
     setLoading(false);
   }, []);
 
+  const handleShowAddExamToBatch = () => {
+    setShowAddExamToBatch(!ShowAddExamToBatch);
+  };
+
   if (examTemplate && examTemplate.questionTypes) {
     const questionTypeKeys = Object.keys(examTemplate.questionTypes);
     const templatedetail = examTemplate.questionTypes;
-    console.log(templatedetail);
   }
 
-  console.log(examTemplate);
+  const style = {
+    position: "absolute",
+    top: "30%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    bgcolor: "background.paper",
+    boxShadow: 24,
+    p: 3,
+    borderRadius: 4,
+  };
+
   const handleExamTemplateChange = (e, index) => {
     const { name, value } = e.target;
     const updatedExamTemplate = [...examTemplate];
@@ -80,6 +99,48 @@ export default function ViewExamTemplate(props) {
         </div>
       </div>
       <hr />
+      <div className="row d-flex text-end mb-2 ">
+        <div className="col-md-12 ">
+          <Fab
+            size="small"
+            color="primary"
+            aria-label="add"
+            onClick={handleShowAddExamToBatch}
+          >
+            <AddIcon />
+          </Fab>
+        </div>
+      </div>
+      <Modal
+        open={ShowAddExamToBatch}
+        onClose={handleShowAddExamToBatch}
+        aria-labelledby="modal-modal-title"
+        aria-describedby="modal-modal-description"
+      >
+        <Box sx={style}>
+          <Typography id="modal-modal-title" variant="h6" component="h2">
+            Add Exam to Batch
+          </Typography>
+          <hr />
+          <TextField
+            label="Full Name"
+            fullWidth
+            id="name"
+            name="name"
+            style={{ marginBottom: "20px" }}
+          />
+          <TextField
+            label="Full Name"
+            fullWidth
+            id="name"
+            name="name"
+            style={{ marginBottom: "20px" }}
+          />
+          <Button variant="contained" color="success">
+            Save
+          </Button>
+        </Box>
+      </Modal>
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead className="bg bg-dark ">

@@ -10,15 +10,56 @@ import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
 
+import AppBar from "@mui/material/AppBar";
+import Box from "@mui/material/Box";
+import Toolbar from "@mui/material/Toolbar";
+import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import Switch from "@mui/material/Switch";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormGroup from "@mui/material/FormGroup";
+
+import { styled, useTheme } from "@mui/material/styles";
+import Drawer from "@mui/material/Drawer";
+import CssBaseline from "@mui/material/CssBaseline";
+import MuiAppBar from "@mui/material/AppBar";
+import List from "@mui/material/List";
+import Divider from "@mui/material/Divider";
+import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
+import ChevronRightIcon from "@mui/icons-material/ChevronRight";
+import ListItem from "@mui/material/ListItem";
+import ListItemButton from "@mui/material/ListItemButton";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import InboxIcon from "@mui/icons-material/MoveToInbox";
+import MailIcon from "@mui/icons-material/Mail";
+import Link from "@mui/material/Link";
+
 function Navbar() {
   const { isLoggedIn, logoutUser, isAdmin, accountType, name } = useAuth();
+
+  const drawerWidth = 240;
+
+  const [auth, setAuth] = useState(true);
+  const [anchorEl2, setAnchorEl2] = useState(null);
+  const [open, setOpen] = useState(false);
+
+  const handleChange = (event) => {
+    setAuth(event.target.checked);
+  };
+
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
 
   const handleLogoutUser = () => {
     logoutUser();
   };
 
   const [anchorEl, setAnchorEl] = useState(null);
-  const open = Boolean(anchorEl);
+  // const open = Boolean(anchorEl);
   const handleClick = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -30,111 +71,106 @@ function Navbar() {
   function handleshowUserPage() {
     setShowUserPage(!showUserPage);
   }
+  const toggleDrawer = (newOpen) => () => {
+    setOpen(newOpen);
+  };
+
+  const DrawerList = (
+    <Box
+      sx={{ width: 250 }}
+      role="presentation"
+      onClick={() => toggleDrawer(false)}
+    >
+      <List>
+        {["Admin", "Lectures", "Question Bank", "Exams"].map((text, index) => (
+          <ListItem key={text} disablePadding>
+            <ListItemButton
+              component={Link}
+              to={
+                text === "Question Bank"
+                  ? "/question-bank"
+                  : `/${text.toLowerCase()}`
+              }
+            >
+              <ListItemIcon>
+                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+              </ListItemIcon>
+              <ListItemText primary={text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+      <Divider />
+    </Box>
+  );
 
   return (
     <>
-      <nav className="navbar navbar-expand-lg bg-body-tertiary">
-        <div className="container-fluid">
-          <NavLink className="navbar-brand" to="/">
-            <img src="/brand-logo.jpg" alt="" />
-          </NavLink>
-          <button
-            className="navbar-toggler"
-            type="button"
-            data-bs-toggle="collapse"
-            data-bs-target="#navbarNavDropdown"
-            aria-controls="navbarNavDropdown"
-            aria-expanded="false"
-            aria-label="Toggle navigation"
-          >
-            <span className="navbar-toggler-icon"></span>
-          </button>
-          <div className="collapse navbar-collapse" id="navbarNavDropdown">
-            <ul className="navbar-nav">
-              {isAdmin && (
-                <li className="nav-item">
-                  <NavLink
-                    to="/admin"
-                    className="nav-link "
-                    aria-current="page"
-                  >
-                    Admin
-                  </NavLink>
-                </li>
-              )}
-              {accountType === "student" && (
-                <li className="nav-item">
-                  <NavLink to="/dashboard" className="nav-link">
-                    DashBoard
-                  </NavLink>
-                </li>
-              )}
-              <li className="nav-item">
-                <NavLink to="/lectures" className="nav-link">
-                  Lectures
-                </NavLink>
-              </li>
-              <li className="nav-item">
-                <NavLink to="/materials" className="nav-link">
-                  Materials
-                </NavLink>
-              </li>
-              {isAdmin && (
-                <li className="nav-item">
-                  <NavLink to="/question-bank" className="nav-link">
-                    Question Bank
-                  </NavLink>
-                </li>
-              )}
-              <li className="nav-item">
-                <NavLink to="/exams" className="nav-link">
-                  Exams
-                </NavLink>
-              </li>
-            </ul>
+      <Box sx={{ flexGrow: 1 }}>
+        <AppBar position="static">
+          <Toolbar>
+            <IconButton
+              onClick={toggleDrawer(true)}
+              size="large"
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              sx={{ mr: 2 }}
+            >
+              <MenuIcon />
+            </IconButton>
+            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+              Dakshana
+            </Typography>
+            {isLoggedIn ? (
+              <div>
+                <IconButton
+                  size="small"
+                  aria-label="account of current user"
+                  aria-controls="menu-appbar"
+                  aria-haspopup="true"
+                  onClick={handleMenu}
+                  color="inherit"
+                >
+                  Welcome, {name}
+                  <AccountCircle />
+                </IconButton>
+                <Menu
+                  id="menu-appbar"
+                  anchorEl={anchorEl}
+                  anchorOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  keepMounted
+                  transformOrigin={{
+                    vertical: "top",
+                    horizontal: "right",
+                  }}
+                  open={Boolean(anchorEl)}
+                  onClose={handleClose}
+                >
+                  <MenuItem onClick={handleClose}>Profile</MenuItem>
+                  <MenuItem onClick={handleClose}>My account</MenuItem>
+                  <MenuItem onClick={handleLogoutUser}>Logout</MenuItem>
+                </Menu>
+              </div>
+            ) : (
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handleshowUserPage}
+              >
+                Login
+              </Button>
+            )}
+          </Toolbar>
+        </AppBar>
+      </Box>
+      <Drawer open={open} onClose={toggleDrawer(false)}>
+        {DrawerList}
+      </Drawer>
 
-            <div className="ms-auto m-2">
-              {isLoggedIn ? (
-                <div>
-                  <Button
-                    id="demo-positioned-button"
-                    aria-controls={open ? "demo-positioned-menu" : undefined}
-                    aria-haspopup="true"
-                    aria-expanded={open ? "true" : undefined}
-                    onClick={handleClick}
-                  >
-                    Welcome, {name}
-                  </Button>
-                  <Menu
-                    id="demo-positioned-menu"
-                    aria-labelledby="demo-positioned-button"
-                    anchorEl={anchorEl}
-                    open={open}
-                    onClose={handleClose}
-                    anchorOrigin={{
-                      vertical: "top",
-                      horizontal: "left",
-                    }}
-                    transformOrigin={{
-                      vertical: "top",
-                      horizontal: "left",
-                    }}
-                  >
-                    <MenuItem onClick={handleClose}>Profile</MenuItem>
-                    <MenuItem onClick={handleLogoutUser}>Logout</MenuItem>
-                  </Menu>
-                </div>
-              ) : (
-                <NavLink className="nav-link" onClick={handleshowUserPage}>
-                  <Button variant="contained" color="success">
-                    Login or Signup
-                  </Button>
-                </NavLink>
-              )}
-            </div>
-          </div>
-        </div>
-      </nav>
       <Modal
         show={showUserPage}
         onHide={handleshowUserPage}

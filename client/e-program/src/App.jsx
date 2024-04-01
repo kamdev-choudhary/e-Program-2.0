@@ -17,7 +17,7 @@ function App() {
     <AuthProvider>
       <BrowserRouter>
         <Navbar />
-        <div className="container">
+        <div className="container mt-3">
           <Routes>
             <Route path="/" element={<DashboardPage />} />
             <Route path="/dashboard" element={<DashboardPage />} />

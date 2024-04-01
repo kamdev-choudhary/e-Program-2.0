@@ -153,7 +153,7 @@ export default function AdminPage() {
 
   return (
     <>
-      <div className="row mt-2 container">
+      <div className="row mt-2 ">
         <div className="col-md-3 rounded ">
           <List sx={style}>
             <ListItem onClick={() => handleAdminContent("dashboard")}>
