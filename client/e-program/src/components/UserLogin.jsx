@@ -1,7 +1,7 @@
 import { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import { useAuth } from "../store/Auth";
+import { useAuth } from "../components/Auth";
 
 import Avatar from "@mui/material/Avatar";
 import CssBaseline from "@mui/material/CssBaseline";

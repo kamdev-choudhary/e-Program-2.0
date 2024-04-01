@@ -68,15 +68,6 @@ const examTemplateSchema = new Schema({
       ref: "Question",
     },
   ],
-  examActiveFor: [
-    {
-      class: String,
-      batch: String,
-      examDate: String,
-      startTime: String,
-      endTime: String,
-    },
-  ],
 });
 
 const ExamTemplate = mongoose.model("ExamTemplate", examTemplateSchema);

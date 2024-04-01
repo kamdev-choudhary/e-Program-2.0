@@ -5,7 +5,7 @@ import { NavLink } from "react-router-dom";
 import { Modal } from "react-bootstrap";
 import UserPage from "./UserLogin";
 import { useState } from "react";
-import { useAuth } from "../store/Auth";
+import { useAuth } from "../components/Auth";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
@@ -15,35 +15,22 @@ import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
+import Avatar from "@mui/material/Avatar";
 import MenuIcon from "@mui/icons-material/Menu";
 import AccountCircle from "@mui/icons-material/AccountCircle";
-import Switch from "@mui/material/Switch";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormGroup from "@mui/material/FormGroup";
-
-import { styled, useTheme } from "@mui/material/styles";
-import Drawer from "@mui/material/Drawer";
-import CssBaseline from "@mui/material/CssBaseline";
-import MuiAppBar from "@mui/material/AppBar";
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ListItem from "@mui/material/ListItem";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import InboxIcon from "@mui/icons-material/MoveToInbox";
-import MailIcon from "@mui/icons-material/Mail";
-import Link from "@mui/material/Link";
+import Drawer from "@mui/material/Drawer";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import List from "@mui/material/List";
+import Divider from "@mui/material/Divider";
 
 function Navbar() {
   const { isLoggedIn, logoutUser, isAdmin, accountType, name } = useAuth();
 
   const drawerWidth = 240;
-
-  const [auth, setAuth] = useState(true);
-  const [anchorEl2, setAnchorEl2] = useState(null);
   const [open, setOpen] = useState(false);
 
   const handleChange = (event) => {
@@ -82,23 +69,77 @@ function Navbar() {
       onClick={() => toggleDrawer(false)}
     >
       <List>
-        {["Admin", "Lectures", "Question Bank", "Exams"].map((text, index) => (
-          <ListItem key={text} disablePadding>
-            <ListItemButton
-              component={Link}
-              to={
-                text === "Question Bank"
-                  ? "/question-bank"
-                  : `/${text.toLowerCase()}`
-              }
-            >
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            marginTop: "1rem",
+          }}
+        >
+          <Avatar
+            alt="Remy Sharp"
+            src="./main_logo.png"
+            sx={{ width: 70, height: 70 }}
+          />
+        </div>
+        {isAdmin && (
+          <NavLink to="/admin" style={{ textDecoration: "none" }}>
+            <ListItem>
+              <ListItemButton>
+                <ListItemIcon>
+                  <AdminPanelSettingsIcon />
+                </ListItemIcon>
+                <ListItemText
+                  primary={"Admin"}
+                  onClick={() => toggleDrawer(false)}
+                />
+              </ListItemButton>
+            </ListItem>
+          </NavLink>
+        )}
+        <NavLink to="/lectures" style={{ textDecoration: "none" }}>
+          <ListItem>
+            <ListItemButton>
               <ListItemIcon>
-                {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                <AdminPanelSettingsIcon />
               </ListItemIcon>
-              <ListItemText primary={text} />
+              <ListItemText primary={"Lecturess"} />
             </ListItemButton>
           </ListItem>
-        ))}
+        </NavLink>
+        {isAdmin && (
+          <NavLink to="/question-bank" style={{ textDecoration: "none" }}>
+            <ListItem>
+              <ListItemButton>
+                <ListItemIcon>
+                  <AdminPanelSettingsIcon />
+                </ListItemIcon>
+                <ListItemText primary={"Question Bank"} />
+              </ListItemButton>
+            </ListItem>
+          </NavLink>
+        )}
+        <NavLink to="/materials" style={{ textDecoration: "none" }}>
+          <ListItem>
+            <ListItemButton>
+              <ListItemIcon>
+                <AdminPanelSettingsIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Study Materials"} />
+            </ListItemButton>
+          </ListItem>
+        </NavLink>
+        <NavLink to="/exams" style={{ textDecoration: "none" }}>
+          <ListItem>
+            <ListItemButton>
+              <ListItemIcon>
+                <AdminPanelSettingsIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Exams"} />
+            </ListItemButton>
+          </ListItem>
+        </NavLink>
       </List>
       <Divider />
     </Box>
@@ -150,7 +191,12 @@ function Navbar() {
                   open={Boolean(anchorEl)}
                   onClose={handleClose}
                 >
-                  <MenuItem onClick={handleClose}>Profile</MenuItem>
+                  <NavLink
+                    to="/profile"
+                    style={{ textDecoration: "none", color: "#000" }}
+                  >
+                    <MenuItem>Profile</MenuItem>
+                  </NavLink>
                   <MenuItem onClick={handleClose}>My account</MenuItem>
                   <MenuItem onClick={handleLogoutUser}>Logout</MenuItem>
                 </Menu>

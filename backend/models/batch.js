@@ -1,11 +1,11 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const ExamTemplate = require("./examTemplate");
-const User = require("./user");
-
 const batchSchema = new Schema({
-  batchName: String,
+  batchName: {
+    type: String,
+    required: true,
+  },
   batchClass: String,
   batchStream: String,
   scholars: [
@@ -14,10 +14,18 @@ const batchSchema = new Schema({
       ref: "User",
     },
   ],
-  exams: [
+  examTemplates: [
     {
       type: Schema.Types.ObjectId,
-      ref: "examTemplate",
+      ref: "ExamTemplate",
+    },
+  ],
+  slots: [
+    {
+      examTemplateId: String,
+      examDate: String,
+      examStartTime: String,
+      examEndTime: String,
     },
   ],
 });

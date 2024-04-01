@@ -1,6 +1,5 @@
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import Navbar from "./components/Navbar";
-import HomePage from "./pages/HomePage";
 import DashboardPage from "./pages/StudentDashboardPage";
 import ExamPage from "./pages/ExamPage";
 import LecturePage from "./pages/LecturePage";
@@ -9,8 +8,8 @@ import AdminPage from "./pages/AdminPage";
 import QuestionBankPage from "./pages/QuestionBankPage";
 import ErrorPage from "./components/ErrorPage";
 import RegisterPage from "./pages/RegisterPage";
-import { AuthProvider, useAuth } from "./store/Auth"; // Import AuthProvider and useAuth
-import HitAndTy from "./components/HitAndTry";
+import { AuthProvider, useAuth } from "./components/Auth";
+import StudentProfile from "./components/StudentProfile";
 
 function App() {
   return (
@@ -27,7 +26,7 @@ function App() {
             <Route path="/question-bank" element={<QuestionBankProtected />} />
             <Route path="/admin/*" element={<AdminRoute />} />
             <Route path="/register" element={<RegisterPage />} />
-            <Route path="/exp" element={<HitAndTy />} />
+            <Route path="/profile" element={<StudentProfile />} />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
         </div>

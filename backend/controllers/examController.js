@@ -1,5 +1,6 @@
 const ExamTemplate = require("../models/examTemplate");
 const Question = require("../models/questions");
+const Batch = require("../models/batch");
 
 module.exports.addToTemplate = async (req, res, next) => {
   let { questionId, examTemplateId } = req.body;
@@ -45,6 +46,25 @@ module.exports.createTemplate = async (req, res, next) => {
     newTemplate.examId = +examId + 1;
     await newTemplate.save();
     res.status(200).json("Template Created Successfully");
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.addToBatch = async (req, res, next) => {
+  try {
+    const examTemplate = await ExamTemplate.findById(req.body.examTemplateId);
+    const batch = await Batch.findById(req.body.batchId);
+    const newSlotData = {
+      examTemplateId: req.body.examTemplateId,
+      examDate: req.body.testDate,
+      examStartTime: req.body.startTime,
+      examEndTime: req.body.endTime,
+    };
+    batch.examTemplates.push(examTemplate);
+    batch.slots.push(newSlotData);
+    batch.save();
+    examTemplate.save();
   } catch (error) {
     next(error);
   }

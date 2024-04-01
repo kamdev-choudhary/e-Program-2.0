@@ -1,4 +1,7 @@
 import { useEffect, useState } from "react";
+
+import { Modal, Button } from "react-bootstrap";
+
 import TextField from "@mui/material/TextField";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -6,18 +9,19 @@ import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 import Paper from "@mui/material/Paper";
 import Card from "@mui/material/Card";
 import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
+import Box from "@mui/material/Box";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Modal from "@mui/material/Modal";
-
 const API_URL = "http://127.0.0.1:5000/api";
 
 export default function ViewExamTemplate(props) {
@@ -25,6 +29,8 @@ export default function ViewExamTemplate(props) {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(true);
   const [ShowAddExamToBatch, setShowAddExamToBatch] = useState(false);
+  const [addToBatch, setAddToBatch] = useState([]);
+  const [batches, setBatches] = useState([]);
 
   useEffect(() => {
     fetch(`${API_URL}/exams/templates/${props.currTemplate._id}`)
@@ -34,10 +40,54 @@ export default function ViewExamTemplate(props) {
         }
         return response.json();
       })
-      .then((data) => setExamTemplate(data.examTemplate))
+      .then((data) => {
+        setExamTemplate(data.examTemplate);
+        setAddToBatch({ ...addToBatch, examTemplateId: data.examTemplate._id });
+      })
       .catch((error) => setError(error.message));
-    setLoading(false);
+
+    fetch(`${API_URL}/batch`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setBatches(data.batches);
+      })
+      .catch((error) => setError(error.message));
   }, []);
+
+  const handleAddToBatchSubmit = () => {
+    console.log(addToBatch);
+    fetch(`${API_URL}/exams/addtobatch`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(addToBatch),
+    });
+  };
+
+  const handleAddToBatchInput = (e) => {
+    if (e.target.name === "batchName") {
+      const selectedBatchName = e.target.value;
+      const selectedBatch = batches.find(
+        (batch) => batch.batchName === selectedBatchName
+      );
+
+      if (selectedBatch) {
+        setAddToBatch({
+          ...addToBatch,
+          batchId: selectedBatch._id,
+          [e.target.name]: selectedBatchName,
+        });
+      }
+    } else {
+      setAddToBatch({ ...addToBatch, [e.target.name]: e.target.value });
+    }
+  };
 
   const handleShowAddExamToBatch = () => {
     setShowAddExamToBatch(!ShowAddExamToBatch);
@@ -76,25 +126,25 @@ export default function ViewExamTemplate(props) {
         <div className="col-md-6">
           <TextField
             fullWidth
-            id="outlined-basic-1" // Unique id
+            id="examName" // Unique id
             variant="outlined"
             label="Test Name"
             name="examName"
             InputLabelProps={{ shrink: true }}
             value={examTemplate.examName || ""}
-            onChange={(e) => handleExamTemplateChange(e, 0)} // Pass index 0 for first item
+            onChange={(e) => handleExamTemplateChange(e, 0)}
           />
         </div>
         <div className="col-md-6">
           <TextField
             fullWidth
-            id="outlined-basic-2" // Unique id
+            id="examPattern" // Unique id
             variant="outlined"
             label="Exam Pattern"
             name="examPattern" // Unique name
             InputLabelProps={{ shrink: true }}
             value={examTemplate.examPattern || ""}
-            onChange={(e) => handleExamTemplateChange(e, 0)} // Pass index 0 for first item
+            onChange={(e) => handleExamTemplateChange(e, 0)}
           />
         </div>
       </div>
@@ -111,36 +161,7 @@ export default function ViewExamTemplate(props) {
           </Fab>
         </div>
       </div>
-      <Modal
-        open={ShowAddExamToBatch}
-        onClose={handleShowAddExamToBatch}
-        aria-labelledby="modal-modal-title"
-        aria-describedby="modal-modal-description"
-      >
-        <Box sx={style}>
-          <Typography id="modal-modal-title" variant="h6" component="h2">
-            Add Exam to Batch
-          </Typography>
-          <hr />
-          <TextField
-            label="Full Name"
-            fullWidth
-            id="name"
-            name="name"
-            style={{ marginBottom: "20px" }}
-          />
-          <TextField
-            label="Full Name"
-            fullWidth
-            id="name"
-            name="name"
-            style={{ marginBottom: "20px" }}
-          />
-          <Button variant="contained" color="success">
-            Save
-          </Button>
-        </Box>
-      </Modal>
+
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead className="bg bg-dark ">
@@ -343,6 +364,82 @@ export default function ViewExamTemplate(props) {
             </div>
           ))}
       </div>
+      <Modal
+        show={ShowAddExamToBatch}
+        onHide={handleShowAddExamToBatch}
+        dialogClassName="modal-m"
+      >
+        <Modal.Header> View Question</Modal.Header>
+        <Modal.Body>
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth>
+              <InputLabel id="batch-label">Batch Name</InputLabel>
+              <Select
+                labelId="select-batch-label"
+                id="select-batch"
+                name="batchName"
+                value={addToBatch.batchName}
+                onChange={handleAddToBatchInput}
+                label="Batch Name"
+              >
+                {batches &&
+                  batches.map((batch, index) => (
+                    <MenuItem key={batch._id} value={batch.batchName}>
+                      {batch.batchName}
+                    </MenuItem>
+                  ))}
+              </Select>
+            </FormControl>
+          </Box>
+          <TextField
+            margin="normal"
+            fullWidth
+            label="Test Date"
+            type="date"
+            id="testDate"
+            value={addToBatch.testDate}
+            onChange={handleAddToBatchInput}
+            name="testDate"
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <TextField
+            margin="normal"
+            fullWidth
+            label="Start Time"
+            type="time"
+            id="startTime"
+            value={addToBatch.startTime}
+            onChange={handleAddToBatchInput}
+            name="startTime"
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <TextField
+            margin="normal"
+            fullWidth
+            label="Start Time"
+            type="time"
+            id="endTime"
+            value={addToBatch.endTime}
+            onChange={handleAddToBatchInput}
+            name="endTime"
+            InputLabelProps={{
+              shrink: true,
+            }}
+          />
+          <Button variant="success" onClick={handleAddToBatchSubmit}>
+            Save
+          </Button>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="danger" onClick={handleShowAddExamToBatch}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
     </>
   );
 }

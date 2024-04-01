@@ -36,6 +36,8 @@ export default function Users() {
       .catch((error) => setError(error.message));
   }, []);
 
+  console.log(users);
+
   return (
     <>
       <div className="row">

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../store/Auth";
+import { useAuth } from "../components/Auth";
 import StudentProfile from "../components/StudentProfile";
 
 const API_URL = "http://127.0.0.1:5000/api";

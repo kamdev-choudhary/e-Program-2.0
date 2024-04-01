@@ -17,7 +17,7 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import Base64PDFViewer from "../components/Base64PDFViewer";
-import { useAuth } from "../store/Auth";
+import { useAuth } from "../components/Auth";
 
 const API_URL = "http://127.0.0.1:5000/api";
 
