@@ -102,7 +102,7 @@ export default function ViewExamTemplate(props) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {examTemplate.questionTypes && (
+            {examTemplate.examAddedFor && (
               <>
                 <TableRow>
                   <TableCell align="center">Single Correct</TableCell>

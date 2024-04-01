@@ -1,54 +1,28 @@
-import React from "react";
+import * as React from "react";
+import Typography from "@mui/material/Typography";
+import Pagination from "@mui/material/Pagination";
+import Stack from "@mui/material/Stack";
 
-class HItAndTry extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      base64String: "",
-    };
-  }
-
-  // Function to convert PDF file to Base64 string
-  pdfToBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-
-      // Event triggered when file reading is successfully completed
-      reader.onload = () => {
-        const base64String = reader.result.split(",")[1]; // Extract Base64 string from data URL
-        resolve(base64String);
-      };
-
-      // Event triggered if an error occurs while reading the file
-      reader.onerror = () => {
-        reject(reader.error);
-      };
-
-      // Read the PDF file as a Data URL
-      reader.readAsDataURL(file);
-    });
+export default function HitAndTy() {
+  const [page, setPage] = React.useState(1);
+  const handleChange = (event, value) => {
+    setPage(value);
   };
 
-  handleFileChange = async (event) => {
-    const file = event.target.files[0];
-
-    try {
-      const base64String = await this.pdfToBase64(file);
-      this.setState({ base64String });
-      console.log(base64String); // Base64 string of the PDF file
-    } catch (error) {
-      console.error("Error converting PDF to Base64:", error);
-    }
-  };
-
-  render() {
-    return (
-      <div>
-        <input type="file" onChange={this.handleFileChange} />
-        <div>Base64 String: {this.state.base64String}</div>
-      </div>
-    );
-  }
+  return (
+    <Stack spacing={2}>
+      <Typography>Page: {page}</Typography>
+      <Typography>Page: {page}</Typography>
+      <Typography>Page: {page}</Typography>
+      <Typography>Page: {page}</Typography>
+      <Typography>Page: {page}</Typography>
+      <Typography>Page: {page}</Typography>
+      <Typography>Page: {page}</Typography>
+      <Typography>Page: {page}</Typography>
+      <Typography>Page: {page}</Typography>
+      <Typography>Page: {page}</Typography>
+      <Pagination count={200} page={page} onChange={handleChange} />
+      <Pagination count={200} page={page} onChange={handleChange} />
+    </Stack>
+  );
 }
-
-export default HItAndTry;

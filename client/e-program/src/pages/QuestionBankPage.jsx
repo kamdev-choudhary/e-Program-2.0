@@ -220,7 +220,7 @@ export default function QuestionBankPage() {
       <div className="row">
         <div className="col-md-3 mb-3">
           <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth>
+            <FormControl fullWidth size="small" size="small">
               <InputLabel id="demo-simple-select-label">Class</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -241,7 +241,7 @@ export default function QuestionBankPage() {
         </div>
         <div className="col-md-3 mb-2">
           <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth>
+            <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">Subject</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -262,7 +262,7 @@ export default function QuestionBankPage() {
         </div>
         <div className="col-md-3 mb-2">
           <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth>
+            <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">Topic</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -283,7 +283,7 @@ export default function QuestionBankPage() {
         </div>
         <div className="col-md-3 mb-2">
           <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth>
+            <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">Sub Topic</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -304,7 +304,7 @@ export default function QuestionBankPage() {
         </div>
         <div className="col-md-3 mb-2">
           <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth>
+            <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">
                 DiffiCulty Level
               </InputLabel>
@@ -327,7 +327,7 @@ export default function QuestionBankPage() {
         </div>
         <div className="col-md-3 mb-2">
           <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth>
+            <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">
                 Time Required
               </InputLabel>
@@ -350,7 +350,7 @@ export default function QuestionBankPage() {
         </div>
         <div className="col-md-3 mb-2">
           <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth>
+            <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">Target</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -369,7 +369,7 @@ export default function QuestionBankPage() {
         </div>
         <div className="col-md-3 mb-2">
           <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth>
+            <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">Exam Group</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -441,9 +441,9 @@ export default function QuestionBankPage() {
       </div>
       <hr />
       <div className="mt-2">
-        <TableContainer component={Paper}>
+        <TableContainer component={Paper} style={{ maxHeight: "80vh" }}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead className="bg bg-success ">
+            <TableHead className="bg bg-success sticky-top">
               <TableRow>
                 <TableCell align="center" className="text-white">
                   Question ID

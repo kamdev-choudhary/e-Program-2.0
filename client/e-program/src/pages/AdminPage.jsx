@@ -41,6 +41,51 @@ export default function AdminPage() {
   const [refresh, setRefresh] = useState(false);
   const [currTemplate, setCurrTemplate] = useState([]);
   const [showExamTemplateModal, setShowExamTemplateModal] = useState(false);
+  const [showAddBatchModal, setShowAddBatchModal] = useState(false);
+  const [batch, setBatch] = useState([]);
+  const [batches, setBatches] = useState([]);
+
+  const handleBatchInputChange = (e) => {
+    setBatch({ ...batch, [e.target.name]: e.target.value });
+    console.log(batch);
+  };
+
+  useEffect(() => {
+    fetch(`${API_URL}/batch`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => setBatches(data.batches))
+      .catch((error) => setError(error.message));
+  }, [refresh]);
+
+  const handleSaveBatch = () => {
+    fetch(`${API_URL}/batch/addnew`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(batch),
+    })
+      .then((response) => {
+        response.json();
+        if (response.ok) {
+        }
+      })
+      .then((data) => {
+        console.log("Success:", data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
+  const handleShowAddBatch = () => {
+    setShowAddBatchModal(!showAddBatchModal);
+  };
 
   const handleShowExamTemplateModal = () => {
     setShowExamTemplateModal(!showExamTemplateModal);
@@ -123,6 +168,10 @@ export default function AdminPage() {
               <ListItemText primary="Exam Master" />
             </ListItem>
             <Divider component="li" />
+            <ListItem onClick={() => handleAdminContent("batch")}>
+              <ListItemText primary="Batch Master" />
+            </ListItem>
+            <Divider component="li" />
           </List>
         </div>
         <div className="col-md-9 border rounded p-2">
@@ -141,6 +190,76 @@ export default function AdminPage() {
               </p>
               <hr />
               <Users />
+            </div>
+          )}
+          {ShowAdminContent === "batch" && (
+            <div>
+              <p className="text-center mt-2 h4 border rounded p-2 bg-success text-white">
+                Batch Control
+              </p>
+              <div className="row">
+                <div className="col-md-10">
+                  <FormControl fullWidth sx={{ m: 1 }} size="small">
+                    <OutlinedInput
+                      id="outlined-adornment-amount"
+                      startAdornment={
+                        <InputAdornment position="start">
+                          Search <SearchIcon />
+                        </InputAdornment>
+                      }
+                    />
+                  </FormControl>
+                </div>
+                <div className="col-2 d-flex justify-content-center align-items-center">
+                  <Fab
+                    size="small"
+                    color="primary"
+                    aria-label="add"
+                    onClick={handleShowAddBatch}
+                  >
+                    <AddIcon />
+                  </Fab>
+                </div>
+              </div>
+              <hr />
+              <TableContainer component={Paper}>
+                <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                  <TableHead className="bg bg-success ">
+                    <TableRow>
+                      <TableCell align="center" className="text-white">
+                        SN
+                      </TableCell>
+                      <TableCell align="center" className="text-white">
+                        Batch Name
+                      </TableCell>
+                      <TableCell align="center" className="text-white">
+                        Batch Class
+                      </TableCell>
+                      <TableCell align="center" className="text-white">
+                        Preparing For
+                      </TableCell>
+
+                      <TableCell align="center" className="text-white">
+                        Scholar Count
+                      </TableCell>
+                    </TableRow>
+                  </TableHead>
+                  <TableBody>
+                    {batches.map((batch, index) => (
+                      <TableRow
+                        key={batch._id}
+                        sx={{
+                          "&:last-child td, &:last-child th": { border: 0 },
+                        }}
+                      >
+                        <TableCell align="center">{index + 1}</TableCell>
+                        <TableCell align="center">{batch.batchName}</TableCell>
+                        <TableCell align="center">{batch.batchClass}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </TableContainer>
             </div>
           )}
           {ShowAdminContent === "exam" && (
@@ -174,7 +293,6 @@ export default function AdminPage() {
                     </Fab>
                   </div>
                 </div>
-                <div className="content"></div>
               </div>
               <Modal
                 show={showAddExamTemplate}
@@ -431,6 +549,8 @@ export default function AdminPage() {
           )}
         </div>
       </div>
+
+      {/* Modal For Show Exam Template */}
       <Modal
         show={showExamTemplateModal}
         onHide={handleShowExamTemplateModal}
@@ -442,6 +562,48 @@ export default function AdminPage() {
         </Modal.Body>
         <Modal.Footer>
           <Button variant="danger" onClick={handleShowExamTemplateModal}>
+            Close
+          </Button>
+        </Modal.Footer>
+      </Modal>
+
+      {/* Modal For adding Batch */}
+      <Modal show={showAddBatchModal} onHide={handleShowAddBatch}>
+        <Modal.Header>Add Batch</Modal.Header>
+        <Modal.Body>
+          <TextField
+            label="Batch Name"
+            fullWidth
+            id="batchName"
+            name="batchName"
+            value={batch.batchName}
+            onChange={handleBatchInputChange}
+            style={{ marginBottom: "20px" }}
+          />
+          <TextField
+            label="Batch Class"
+            fullWidth
+            id="batchClass"
+            name="batchClass"
+            value={batch.batchClass}
+            onChange={handleBatchInputChange}
+            style={{ marginBottom: "20px" }}
+          />
+          <TextField
+            label="Batch Stream"
+            fullWidth
+            id="batchStream"
+            name="BatchStream"
+            value={batch.BatchStream}
+            onChange={handleBatchInputChange}
+            style={{ marginBottom: "20px" }}
+          />
+          <Button variant="success" onClick={handleSaveBatch}>
+            Save
+          </Button>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="danger" onClick={handleShowAddBatch}>
             Close
           </Button>
         </Modal.Footer>

@@ -10,6 +10,7 @@ import QuestionBankPage from "./pages/QuestionBankPage";
 import ErrorPage from "./components/ErrorPage";
 import RegisterPage from "./pages/RegisterPage";
 import { AuthProvider, useAuth } from "./store/Auth"; // Import AuthProvider and useAuth
+import HitAndTy from "./components/HitAndTry";
 
 function App() {
   return (
@@ -26,6 +27,7 @@ function App() {
             <Route path="/question-bank" element={<QuestionBankProtected />} />
             <Route path="/admin/*" element={<AdminRoute />} />
             <Route path="/register" element={<RegisterPage />} />
+            <Route path="/exp" element={<HitAndTy />} />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
         </div>
