@@ -77,6 +77,7 @@ userSchema.methods.generateToken = async function () {
         email: this.email,
         accountType: this.accountType,
         isAdmin: this.isAdmin,
+        name: this.name,
       },
       process.env.JWT_KEY,
       {

@@ -220,7 +220,7 @@ export default function QuestionBankPage() {
       <div className="row">
         <div className="col-md-3 mb-3">
           <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth size="small" size="small">
+            <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">Class</InputLabel>
               <Select
                 labelId="demo-simple-select-label"

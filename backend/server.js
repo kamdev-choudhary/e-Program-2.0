@@ -17,6 +17,7 @@ const questionRouter = require("./routers/questionRoute");
 const materialRouter = require("./routers/materialRoute");
 const adminRoute = require("./routers/adminRoute");
 const examRouter = require("./routers/examRouter");
+const batchRouter = require("./routers/batchRoute");
 
 app.get("/", (req, res) => {
   res.status(200).send("This is Home Page");
@@ -28,6 +29,7 @@ app.use("/api/lectures", lectureRouter);
 app.use("/api/questionbank", questionRouter);
 app.use("/api/materials", materialRouter);
 app.use("/api/exams", examRouter);
+app.use("/api/batch", batchRouter);
 
 app.use("/*", (req, res) => {
   res.send("Backend ");
