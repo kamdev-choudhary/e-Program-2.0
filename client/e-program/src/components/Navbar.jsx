@@ -1,6 +1,5 @@
 import "./Navbar.css";
 import "bootstrap/dist/css/bootstrap.min.css";
-import "bootstrap/dist/js/bootstrap";
 import { NavLink } from "react-router-dom";
 import { Modal } from "react-bootstrap";
 import UserPage from "./UserLogin";
@@ -26,16 +25,13 @@ import Drawer from "@mui/material/Drawer";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
+import React, { useEffect } from "react";
 
 function Navbar() {
   const { isLoggedIn, logoutUser, isAdmin, accountType, name } = useAuth();
 
   const drawerWidth = 240;
   const [open, setOpen] = useState(false);
-
-  const handleChange = (event) => {
-    setAuth(event.target.checked);
-  };
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
@@ -74,7 +70,7 @@ function Navbar() {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            marginTop: "1rem",
+            marginTop: "2rem",
           }}
         >
           <Avatar
@@ -85,7 +81,7 @@ function Navbar() {
         </div>
         {isAdmin && (
           <NavLink to="/admin" style={{ textDecoration: "none" }}>
-            <ListItem>
+            <ListItem onClick={toggleDrawer(false)}>
               <ListItemButton>
                 <ListItemIcon>
                   <AdminPanelSettingsIcon />
@@ -100,17 +96,17 @@ function Navbar() {
         )}
         <NavLink to="/lectures" style={{ textDecoration: "none" }}>
           <ListItem>
-            <ListItemButton>
+            <ListItemButton onClick={toggleDrawer(false)}>
               <ListItemIcon>
                 <AdminPanelSettingsIcon />
               </ListItemIcon>
-              <ListItemText primary={"Lecturess"} />
+              <ListItemText primary={"Lectures"} />
             </ListItemButton>
           </ListItem>
         </NavLink>
         {isAdmin && (
           <NavLink to="/question-bank" style={{ textDecoration: "none" }}>
-            <ListItem>
+            <ListItem onClick={toggleDrawer(false)}>
               <ListItemButton>
                 <ListItemIcon>
                   <AdminPanelSettingsIcon />
@@ -121,7 +117,7 @@ function Navbar() {
           </NavLink>
         )}
         <NavLink to="/materials" style={{ textDecoration: "none" }}>
-          <ListItem>
+          <ListItem onClick={toggleDrawer(false)}>
             <ListItemButton>
               <ListItemIcon>
                 <AdminPanelSettingsIcon />
@@ -130,16 +126,18 @@ function Navbar() {
             </ListItemButton>
           </ListItem>
         </NavLink>
-        <NavLink to="/exams" style={{ textDecoration: "none" }}>
-          <ListItem>
-            <ListItemButton>
-              <ListItemIcon>
-                <AdminPanelSettingsIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Exams"} />
-            </ListItemButton>
-          </ListItem>
-        </NavLink>
+        {isLoggedIn && !isAdmin && (
+          <NavLink to="/exams" style={{ textDecoration: "none" }}>
+            <ListItem onClick={toggleDrawer(false)}>
+              <ListItemButton>
+                <ListItemIcon>
+                  <AdminPanelSettingsIcon />
+                </ListItemIcon>
+                <ListItemText primary={"Exams"} />
+              </ListItemButton>
+            </ListItem>
+          </NavLink>
+        )}
       </List>
       <Divider />
     </Box>
@@ -147,7 +145,7 @@ function Navbar() {
 
   return (
     <>
-      <Box sx={{ flexGrow: 1 }}>
+      <Box sx={{ flexGrow: 2 }}>
         <AppBar position="static">
           <Toolbar>
             <IconButton
@@ -160,8 +158,11 @@ function Navbar() {
             >
               <MenuIcon />
             </IconButton>
+
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              Dakshana
+              <NavLink to="/" className="text-white text-decoration-none">
+                Dakshana
+              </NavLink>
             </Typography>
             {isLoggedIn ? (
               <div>

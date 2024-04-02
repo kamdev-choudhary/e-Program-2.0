@@ -47,7 +47,6 @@ export default function AdminPage() {
 
   const handleBatchInputChange = (e) => {
     setBatch({ ...batch, [e.target.name]: e.target.value });
-    console.log(batch);
   };
 
   useEffect(() => {

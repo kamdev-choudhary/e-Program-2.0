@@ -4,7 +4,7 @@ import StudentProfile from "../components/StudentProfile";
 export default function HomePage() {
   return (
     <>
-      <StudentProfile />
+      <p>This is Home Page</p>
     </>
   );
 }

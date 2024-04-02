@@ -308,7 +308,7 @@ export default function StudentProfile({ user }) {
                 </div>
               </Paper>
             </Box>
-            {student.isProfileUpdated === false && (
+            {!student.isProfileUpdated === false && (
               <div className="row text-end gap-2 d-flex">
                 <div className="col m-2">
                   <Button

@@ -49,7 +49,6 @@ export default function UserPage(props) {
   const defaultTheme = createTheme();
   const handleSubmitUserLogin = async (e) => {
     e.preventDefault();
-    console.log(user);
     const response = await fetch(`${API_URL}/auth/login`, {
       method: "POST",
       headers: {
@@ -60,7 +59,6 @@ export default function UserPage(props) {
 
     if (response.ok) {
       const data = await response.json();
-      console.log(data);
       storeTokenInLS(data.token);
       setUser({
         email: "",

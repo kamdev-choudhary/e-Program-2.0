@@ -7,12 +7,13 @@ import MaterialPage from "./pages/MaterialPage";
 import AdminPage from "./pages/AdminPage";
 import QuestionBankPage from "./pages/QuestionBankPage";
 import ErrorPage from "./components/ErrorPage";
+import HomePage from "./pages/HomePage";
 import RegisterPage from "./pages/RegisterPage";
 import { AuthProvider, useAuth } from "./components/Auth";
 import StudentProfile from "./components/StudentProfile";
 
 function App() {
-  const { accounType } = useAuth();
+  const { accounType, isLoggedIn } = useAuth();
   return (
     <AuthProvider>
       <BrowserRouter>
@@ -22,9 +23,7 @@ function App() {
             {}
             <Route
               path="/"
-              element={
-                accounType === "admin" ? <AdminRoute /> : <DashboardPage />
-              }
+              element={accounType === "admin" ? <AdminRoute /> : <HomePage />}
             />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/exams" element={<ExamPage />} />
