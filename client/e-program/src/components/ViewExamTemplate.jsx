@@ -59,6 +59,8 @@ export default function ViewExamTemplate(props) {
       .catch((error) => setError(error.message));
   }, []);
 
+  console.log(batches);
+
   const handleAddToBatchSubmit = () => {
     console.log(addToBatch);
     fetch(`${API_URL}/exams/addtobatch`, {
@@ -184,24 +186,22 @@ export default function ViewExamTemplate(props) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {examTemplate.examAddedFor && (
-              <>
-                <TableRow>
-                  <TableCell align="center">Single Correct</TableCell>
-                  <TableCell align="center">
-                    {examTemplate.questionTypes.singleCorrect.totalQuestions}
-                  </TableCell>
-                  <TableCell align="center">
-                    {examTemplate.questionTypes.singleCorrect.positiveMarks}
-                  </TableCell>
-                  <TableCell align="center">
-                    {examTemplate.questionTypes.singleCorrect.partialMarks}
-                  </TableCell>
-                  <TableCell align="center">
-                    <DeleteIcon />
-                  </TableCell>
-                </TableRow>
-              </>
+            {batches.map((batch, index) =>
+              batch.slots.map((examTemp, index) => (
+                <>
+                  <TableRow key={index}>
+                    <TableCell align="center">{batch.batchName}</TableCell>
+                    <TableCell align="center">{examTemp.examDate}</TableCell>
+                    <TableCell align="center">
+                      {examTemp.examStartTime}
+                    </TableCell>
+                    <TableCell align="center">{examTemp.examEndTime}</TableCell>
+                    <TableCell align="center">
+                      <DeleteIcon />
+                    </TableCell>
+                  </TableRow>
+                </>
+              ))
             )}
           </TableBody>
         </Table>
@@ -288,7 +288,7 @@ export default function ViewExamTemplate(props) {
       <div className="div d-flex gap-3 row">
         {examTemplate.questions &&
           examTemplate.questions.map((question, index) => (
-            <div className="questions" key={question._id}>
+            <div className="questions" key={index}>
               <Card sx={{ minWidth: 275 }}>
                 <CardContent>
                   <div className="row d-flex gap-2">

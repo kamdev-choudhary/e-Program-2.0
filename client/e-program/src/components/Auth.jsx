@@ -9,6 +9,7 @@ export const AuthProvider = ({ children }) => {
   let isAdmin = false;
   let accountType = "student";
   let userId = "";
+  let batchId = "";
 
   const storeTokenInLS = (serverToken) => {
     localStorage.setItem("token", serverToken);
@@ -22,11 +23,15 @@ export const AuthProvider = ({ children }) => {
     accountType = decoded.accountType;
     userId = decoded.userId;
     name = decoded.name;
+    batchId = decoded.batchId;
   }
 
   const logoutUser = () => {
     localStorage.removeItem("token");
     setToken("");
+    isAdmin = false;
+    accountType = "";
+    batchId = "";
   };
 
   return (
@@ -36,6 +41,7 @@ export const AuthProvider = ({ children }) => {
         isAdmin,
         accountType,
         userId,
+        batchId,
         name,
         storeTokenInLS,
         logoutUser,

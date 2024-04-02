@@ -5,6 +5,10 @@ import { styled } from "@mui/material/styles";
 import { useEffect, useState } from "react";
 import Edit from "@mui/icons-material/Edit";
 import Button from "@mui/material/Button";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 
 import { useAuth } from "../components/Auth";
 
@@ -14,6 +18,7 @@ export default function StudentProfile({ user }) {
   const [student, setStudent] = useState({});
   const [refresh, setRefresh] = useState(false);
   const [error, setError] = useState("");
+  const [batches, setBatches] = useState([]);
 
   useEffect(() => {
     if (user) {
@@ -35,13 +40,38 @@ export default function StudentProfile({ user }) {
         setStudent(data.user);
       })
       .catch((error) => setError(error.message));
+    fetch(`${API_URL}/batch`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        setBatches(data.batches);
+      })
+      .catch((error) => setError(error.message));
   }, {});
 
   console.log(student);
 
   const handleUserInputChange = (e) => {
-    const { name, value } = e.target;
-    setStudent({ ...student, [name]: value });
+    if (e.target.name === "batchName") {
+      const selectedBatchName = e.target.value;
+      const selectedBatch = batches.find(
+        (batch) => batch.batchName === selectedBatchName
+      );
+
+      if (selectedBatch) {
+        setStudent({
+          ...student,
+          batchId: selectedBatch._id,
+          [e.target.name]: selectedBatchName,
+        });
+      }
+    } else {
+      setStudent({ ...student, [e.target.name]: e.target.value });
+    }
   };
 
   const handleUpdateStudentData = () => {
@@ -156,16 +186,29 @@ export default function StudentProfile({ user }) {
                       />
                     </div>
                     <div className="col-md-6 mb-3">
-                      <TextField
-                        fullWidth
-                        id="student-batch"
-                        label="Batch"
-                        name="batch"
-                        size="small"
-                        value={student.batch}
-                        onChange={handleUserInputChange}
-                        InputLabelProps={{ shrink: true }}
-                      />
+                      <Box sx={{ minWidth: 120 }} size="small">
+                        <FormControl fullWidth>
+                          <InputLabel id="batch-label">Batch Name</InputLabel>
+                          <Select
+                            labelId="select-batch-label"
+                            id="select-batch"
+                            name="batchName"
+                            value={student.batchName}
+                            onChange={handleUserInputChange}
+                            label="Batch Name"
+                          >
+                            {batches &&
+                              batches.map((batch, index) => (
+                                <MenuItem
+                                  key={batch._id}
+                                  value={batch.batchName}
+                                >
+                                  {batch.batchName}
+                                </MenuItem>
+                              ))}
+                          </Select>
+                        </FormControl>
+                      </Box>
                     </div>
                   </div>
                 </div>

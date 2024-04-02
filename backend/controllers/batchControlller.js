@@ -18,3 +18,13 @@ module.exports.AddBatch = async (req, res, next) => {
     next(error);
   }
 };
+
+module.exports.getCurrBatch = async (req, res, next) => {
+  try {
+    let { id } = req.params;
+    const batch = await Batch.findById(id);
+    res.status(200).json({ batch });
+  } catch (error) {
+    next(error);
+  }
+};

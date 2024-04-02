@@ -12,21 +12,28 @@ import { AuthProvider, useAuth } from "./components/Auth";
 import StudentProfile from "./components/StudentProfile";
 
 function App() {
+  const { accounType } = useAuth();
   return (
     <AuthProvider>
       <BrowserRouter>
         <Navbar />
         <div className="container mt-3">
           <Routes>
-            <Route path="/" element={<DashboardPage />} />
+            {}
+            <Route
+              path="/"
+              element={
+                accounType === "admin" ? <AdminRoute /> : <DashboardPage />
+              }
+            />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/exams" element={<ExamPage />} />
             <Route path="/lectures" element={<LecturePage />} />
             <Route path="/materials" element={<MaterialPage />} />
+            <Route path="/register" element={<RegisterPage />} />
+            <Route path="/profile" element={<ProfileProtected />} />
             <Route path="/question-bank" element={<QuestionBankProtected />} />
             <Route path="/admin/*" element={<AdminRoute />} />
-            <Route path="/register" element={<RegisterPage />} />
-            <Route path="/profile" element={<StudentProfile />} />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
         </div>
@@ -39,6 +46,11 @@ function AdminRoute() {
   const { isAdmin } = useAuth();
 
   return isAdmin ? <AdminPage /> : <Navigate to="/" replace />;
+}
+
+function ProfileProtected() {
+  const { isLoggedIn } = useAuth();
+  return isLoggedIn ? <StudentProfile /> : <Navigate to="/" replace />;
 }
 
 function QuestionBankProtected() {

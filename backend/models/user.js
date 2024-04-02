@@ -38,7 +38,9 @@ const userSchema = new Schema({
 
   currentClass: String,
 
-  batch: String,
+  batchId: String,
+
+  batchName: String,
 
   addressLineOne: String,
 
@@ -78,6 +80,7 @@ userSchema.methods.generateToken = async function () {
         accountType: this.accountType,
         isAdmin: this.isAdmin,
         name: this.name,
+        batchId: this.batchId,
       },
       process.env.JWT_KEY,
       {

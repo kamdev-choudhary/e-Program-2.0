@@ -3,8 +3,40 @@ import Paper from "@mui/material/Paper";
 import Button from "@mui/material/Button";
 import Stack from "@mui/material/Stack";
 import { styled } from "@mui/material/styles";
+import { useState, useEffect } from "react";
+import { useAuth } from "../components/Auth";
+
+const API_URL = "http://127.0.0.1:5000/api";
 
 export default function OnlineExams() {
+  const [studentBatch, setStudentBatch] = useState([]);
+  const [error, setError] = useState("");
+
+  const { batchId } = useAuth();
+
+  useEffect(() => {
+    fetch(`${API_URL}/batch/${batchId}`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => setStudentBatch(data.batch))
+      .catch((error) => setError(error.message));
+  }, []);
+
+  const currentDate = new Date(Date.now());
+  const year = currentDate.getFullYear();
+  const month = String(currentDate.getMonth() + 1).padStart(2, "0"); // Month is zero-based
+  const day = String(currentDate.getDate()).padStart(2, "0");
+  const hours = String(currentDate.getHours()).padStart(2, "0");
+  const minutes = String(currentDate.getMinutes()).padStart(2, "0");
+  const seconds = String(currentDate.getSeconds()).padStart(2, "0");
+
+  const formattedDateTime = `${year}-${month}-${day} ${hours}:${minutes}:${seconds}`;
+  console.log(formattedDateTime);
+
   const ExamsPaper = styled(Paper)(({ theme }) => ({
     width: 300,
     // height: 120,
