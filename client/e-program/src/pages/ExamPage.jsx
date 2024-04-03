@@ -6,9 +6,10 @@ import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import OnlineExams from "../components/OnlineExams";
 import OfflineExams from "../components/OfflineExams";
+import { useState } from "react";
 
 export default function ExamPage() {
-  const [value, setValue] = React.useState("1");
+  const [value, setValue] = useState("1");
 
   const handleChange = (event, newValue) => {
     setValue(newValue);

@@ -49,6 +49,8 @@ export default function OnlineExams() {
     return <div>Loading...</div>;
   }
 
+  console.log(studentBatch);
+
   const ExamsPaper = styled(Paper)(({ theme }) => ({
     width: 300,
     padding: theme.spacing(2),
@@ -61,7 +63,7 @@ export default function OnlineExams() {
       <>
         {studentBatch.slots.map((slot, index) => (
           <p key={index}>
-            {slot.examStartTime + " " + currTime + " " + currDate}
+            {/* {new Date(slot.examDate + " " + slot.examStartTime)} */}
           </p>
         ))}
       </>
@@ -83,7 +85,12 @@ export default function OnlineExams() {
             <hr />
             <Stack direction="row" spacing={2}>
               {studentBatch.slots.map((slot, index) => {
-                if (slot.examDate === currDate) {
+                if (
+                  new Date(slot.examDate + " " + slot.examStartTime) <=
+                    new Date(currDate + " " + currTime) &&
+                  new Date(currDate + " " + currTime) <=
+                    new Date(slot.examDate + " " + slot.examEndTime)
+                ) {
                   const examTemplate = studentBatch.examTemplates.find(
                     (examTemplate) => examTemplate._id === slot.examTemplateId
                   );
@@ -130,23 +137,47 @@ export default function OnlineExams() {
             </div>
             <hr />
             <Stack direction="row" spacing={2}>
-              <ExamsPaper square={false}>
-                <div className="row d-flex gap-2 ">
-                  <div className="col-12 ">
-                    <h5>Exam Name</h5>
-                  </div>
-                  <hr />
-                  <div className="col-12">Scheduled On : </div>
-                  <div className="col-12">Exam Marks : </div>
-                  <div className="col-12">Exam Pattern : </div>
-                  <div className="col-12">Exam Start time : </div>
+              {studentBatch.slots.map((slot, index) => {
+                if (
+                  new Date(slot.examDate + " " + slot.examStartTime) >
+                  new Date(currDate + " " + currTime)
+                ) {
+                  const examTemplate = studentBatch.examTemplates.find(
+                    (examTemplate) => examTemplate._id === slot.examTemplateId
+                  );
+                  if (examTemplate) {
+                    return (
+                      <ExamsPaper square={false} key={index} elevation={5}>
+                        <div className="row d-flex gap-2 ">
+                          <div className="col-12 ">
+                            <h5>Exam Name : {examTemplate.examName}</h5>
+                          </div>
+                          <hr />
+                          <div className="col-12">
+                            Scheduled On : {slot.examDate}
+                          </div>
+                          <div className="col-12">Exam Marks : </div>
+                          <div className="col-12">
+                            Exam Pattern : {examTemplate.examPattern}
+                          </div>
+                          <div className="col-12">
+                            Exam Start time : {slot.examStartTime}{" "}
+                          </div>
+                          <div className="col-12">
+                            Exam End time : {slot.examEndTime}{" "}
+                          </div>
 
-                  <hr />
-                  <Button disabled variant="contained" color="success">
-                    Upcoming
-                  </Button>
-                </div>
-              </ExamsPaper>
+                          <hr />
+                          <Button disabled variant="contained" color="success">
+                            Upcoming
+                          </Button>
+                        </div>
+                      </ExamsPaper>
+                    );
+                  }
+                }
+                return null;
+              })}
             </Stack>
           </div>
         </Paper>
@@ -175,33 +206,49 @@ export default function OnlineExams() {
             </Stack>
           </div>
         </Paper>
-        <Paper sx={{ padding: "1rem" }} elevation={10}>
-          <div className="row">
-            <div className="col-md-12">
-              <h4>Missed</h4>
-            </div>
-            <hr />
-            <Stack direction="row" spacing={2}>
-              <ExamsPaper square={false}>
-                <div className="row d-flex gap-2 ">
-                  <div className="col-12 ">
-                    <h5>Exam Name</h5>
-                  </div>
-                  <hr />
-                  <div className="col-12">Scheduled On : </div>
-                  <div className="col-12">Exam Marks : </div>
-                  <div className="col-12">Exam Pattern : </div>
-                  <div className="col-12">Exam Start time : </div>
+        <Stack direction="row" spacing={2}>
+          {studentBatch.slots.map((slot, index) => {
+            if (
+              new Date(currDate + " " + currTime) >
+              new Date(slot.examDate + " " + slot.examEndTime)
+            ) {
+              const examTemplate = studentBatch.examTemplates.find(
+                (examTemplate) => examTemplate._id === slot.examTemplateId
+              );
+              if (examTemplate) {
+                return (
+                  <ExamsPaper square={false} key={index} elevation={5}>
+                    <div className="row d-flex gap-2 ">
+                      <div className="col-12 ">
+                        <h5>Exam Name : {examTemplate.examName}</h5>
+                      </div>
+                      <hr />
+                      <div className="col-12">
+                        Scheduled On : {slot.examDate}
+                      </div>
+                      <div className="col-12">Exam Marks : </div>
+                      <div className="col-12">
+                        Exam Pattern : {examTemplate.examPattern}
+                      </div>
+                      <div className="col-12">
+                        Exam Start time : {slot.examStartTime}{" "}
+                      </div>
+                      <div className="col-12">
+                        Exam End time : {slot.examEndTime}{" "}
+                      </div>
 
-                  <hr />
-                  <Button disabled variant="contained" color="error">
-                    Missed
-                  </Button>
-                </div>
-              </ExamsPaper>
-            </Stack>
-          </div>
-        </Paper>
+                      <hr />
+                      <Button disabled variant="contained" color="success">
+                        Missed
+                      </Button>
+                    </div>
+                  </ExamsPaper>
+                );
+              }
+            }
+            return null;
+          })}
+        </Stack>
       </Box>
     </>
   );
