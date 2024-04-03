@@ -19,7 +19,7 @@ import TextField from "@mui/material/TextField";
 import Base64PDFViewer from "../components/Base64PDFViewer";
 import { useAuth } from "../components/Auth";
 
-const API_URL = "http://127.0.0.1:5000/api";
+const API_URL = "http://10.0.12.85:5000/api";
 
 export default function MaterialPage() {
   const [books, setBooks] = useState([]);
@@ -63,7 +63,7 @@ export default function MaterialPage() {
   };
 
   const handleOnSubmit = async (e) => {
-    fetch("http://127.0.0.1:5000/api/materials/savenewbook", {
+    fetch("http://10.0.12.85:5000/api/materials/savenewbook", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

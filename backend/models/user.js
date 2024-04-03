@@ -36,6 +36,18 @@ const userSchema = new Schema({
     default: false,
   },
 
+  exams: [
+    {
+      examId: {
+        type: String,
+      },
+      examStatus: {
+        type: String,
+        default: "Not Started",
+      },
+    },
+  ],
+
   currentClass: String,
 
   batchId: String,

@@ -14,7 +14,7 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
 
-const API_URL = "http://127.0.0.1:5000/api";
+const API_URL = "http://10.0.12.85:5000/api";
 
 // Collapsible Table Component
 function CollapsibleTable({ lectures, playLecture }) {
