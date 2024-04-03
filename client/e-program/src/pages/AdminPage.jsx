@@ -27,7 +27,7 @@ import Select from "@mui/material/Select";
 
 import ViewExamTemplate from "../components/ViewExamTemplate";
 
-const API_URL = "http://10.0.12.85:5000/api";
+const API_URL = "http://127.0.0.1:5000/api";
 
 export default function AdminPage() {
   const [showAddExamTemplate, setShowAddExamTemplate] = useState(false);
@@ -110,7 +110,7 @@ export default function AdminPage() {
   };
 
   const handleCreateTemplate = () => {
-    fetch("http://10.0.12.85:5000/api/exams/createtemplate", {
+    fetch("http://127.0.0.1:5000/api/exams/createtemplate", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

@@ -27,7 +27,7 @@ import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
 import Snackbar from "@mui/material/Snackbar";
 
-const API_URL = "http://10.0.12.85:5000/api";
+const API_URL = "http://127.0.0.1:5000/api";
 
 export default function QuestionBankPage() {
   const [error, setError] = useState("");
@@ -122,7 +122,7 @@ export default function QuestionBankPage() {
 
   // Delete Question
   const handleDeleteQuestion = (question) => {
-    fetch("http://10.0.12.85:5000/api/questionbank", {
+    fetch("http://127.0.0.1:5000/api/questionbank", {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",
@@ -146,7 +146,7 @@ export default function QuestionBankPage() {
       questionId: Id,
       examTemplateId: selectedTemplate,
     });
-    fetch("http://10.0.12.85:5000/api/exams/addtotemplate", {
+    fetch("http://127.0.0.1:5000/api/exams/addtotemplate", {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

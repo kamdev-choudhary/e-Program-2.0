@@ -52,7 +52,7 @@ export default function RegisterPage() {
 
     // If form is valid, submit
     if (isValid) {
-      fetch("http://10.0.12.85:5000/api/auth/register", {
+      fetch("http://127.0.0.1:5000/api/auth/register", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

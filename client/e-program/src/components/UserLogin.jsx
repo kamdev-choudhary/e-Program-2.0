@@ -15,7 +15,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 import { createTheme, ThemeProvider } from "@mui/material/styles";
 
-const API_URL = "http://10.0.12.85:5000/api";
+const API_URL = "http://127.0.0.1:5000/api";
 
 export default function UserPage(props) {
   const { storeTokenInLS } = useAuth();

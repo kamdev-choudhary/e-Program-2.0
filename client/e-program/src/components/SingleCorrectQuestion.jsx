@@ -28,7 +28,7 @@ export default function SingleCorrectQuestion(props) {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log("QUestion data:", questionData);
-    fetch("http://10.0.12.85:5000/api/questionbank", {
+    fetch("http://127.0.0.1:5000/api/questionbank", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
