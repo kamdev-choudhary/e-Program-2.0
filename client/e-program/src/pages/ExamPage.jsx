@@ -7,9 +7,21 @@ import TabPanel from "@mui/lab/TabPanel";
 import OnlineExams from "../components/OnlineExams";
 import OfflineExams from "../components/OfflineExams";
 import { useState } from "react";
+import ExamStarted from "../components/ExamStarted";
 
 export default function ExamPage() {
   const [value, setValue] = useState("1");
+  const [examStarted, setExamStarted] = useState(false);
+  const [examTemplateId, setExamTemplateId] = useState(null);
+
+  const handleExamStart = (templateId) => {
+    setExamStarted(true);
+    setExamTemplateId(templateId);
+  };
+
+  if (examStarted) {
+    return <ExamStarted templateId={examTemplateId} />;
+  }
 
   const handleChange = (event, newValue) => {
     setValue(newValue);
@@ -25,7 +37,7 @@ export default function ExamPage() {
             </TabList>
           </Box>
           <TabPanel value="1">
-            <OnlineExams />
+            <OnlineExams handleExamStart={handleExamStart} />
           </TabPanel>
           <TabPanel value="2">
             <OfflineExams />

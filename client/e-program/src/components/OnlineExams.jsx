@@ -8,14 +8,19 @@ import { useAuth } from "../components/Auth";
 
 const API_URL = "http://127.0.0.1:5000/api";
 
-export default function OnlineExams() {
+export default function OnlineExams({ handleExamStart }) {
   const [studentBatch, setStudentBatch] = useState([]);
   const [error, setError] = useState("");
   const [refresh, setRefresh] = useState(false);
   const [currDate, setCurrDate] = useState("");
   const [currTime, setCurrTime] = useState("");
+  const [startExam, setStartExam] = useState("");
 
   const { batchId } = useAuth();
+
+  const handleExamStartButtonClick = (examTemplateId) => {
+    handleExamStart(examTemplateId);
+  };
 
   useEffect(() => {
     fetch(`${API_URL}/batch/${batchId}`)
@@ -28,7 +33,6 @@ export default function OnlineExams() {
       .then((data) => setStudentBatch(data.batch))
       .catch((error) => setError(error.message));
 
-    // Update current date and time every second
     const intervalId = setInterval(() => {
       const currentDate = new Date();
       const year = currentDate.getFullYear();
@@ -36,7 +40,7 @@ export default function OnlineExams() {
       const day = String(currentDate.getDate()).padStart(2, "0");
       const hours = String(currentDate.getHours()).padStart(2, "0");
       const minutes = String(currentDate.getMinutes()).padStart(2, "0");
-      const seconds = String(currentDate.getSeconds()).padStart(2, "0");
+      // const seconds = String(currentDate.getSeconds()).padStart(2, "0");
 
       setCurrDate(`${year}-${month}-${day}`);
       setCurrTime(`${hours}:${minutes}`);
@@ -49,8 +53,6 @@ export default function OnlineExams() {
     return <div>Loading...</div>;
   }
 
-  console.log(studentBatch);
-
   const ExamsPaper = styled(Paper)(({ theme }) => ({
     width: 300,
     padding: theme.spacing(2),
@@ -60,13 +62,6 @@ export default function OnlineExams() {
 
   return (
     <>
-      <>
-        {studentBatch.slots.map((slot, index) => (
-          <p key={index}>
-            {/* {new Date(slot.examDate + " " + slot.examStartTime)} */}
-          </p>
-        ))}
-      </>
       <Box
         sx={{
           display: "flex",
@@ -117,7 +112,13 @@ export default function OnlineExams() {
                           </div>
 
                           <hr />
-                          <Button variant="contained" color="success">
+                          <Button
+                            variant="contained"
+                            color="success"
+                            onClick={() =>
+                              handleExamStartButtonClick(examTemplate._id)
+                            }
+                          >
                             Start Exam
                           </Button>
                         </div>
@@ -206,49 +207,57 @@ export default function OnlineExams() {
             </Stack>
           </div>
         </Paper>
-        <Stack direction="row" spacing={2}>
-          {studentBatch.slots.map((slot, index) => {
-            if (
-              new Date(currDate + " " + currTime) >
-              new Date(slot.examDate + " " + slot.examEndTime)
-            ) {
-              const examTemplate = studentBatch.examTemplates.find(
-                (examTemplate) => examTemplate._id === slot.examTemplateId
-              );
-              if (examTemplate) {
-                return (
-                  <ExamsPaper square={false} key={index} elevation={5}>
-                    <div className="row d-flex gap-2 ">
-                      <div className="col-12 ">
-                        <h5>Exam Name : {examTemplate.examName}</h5>
-                      </div>
-                      <hr />
-                      <div className="col-12">
-                        Scheduled On : {slot.examDate}
-                      </div>
-                      <div className="col-12">Exam Marks : </div>
-                      <div className="col-12">
-                        Exam Pattern : {examTemplate.examPattern}
-                      </div>
-                      <div className="col-12">
-                        Exam Start time : {slot.examStartTime}{" "}
-                      </div>
-                      <div className="col-12">
-                        Exam End time : {slot.examEndTime}{" "}
-                      </div>
+        <Paper sx={{ padding: "1rem" }} elevation={10}>
+          <div className="row">
+            <div className="col-md-12">
+              <h4>Missed</h4>
+            </div>
+            <hr />
+            <Stack direction="row" spacing={2}>
+              {studentBatch.slots.map((slot, index) => {
+                if (
+                  new Date(currDate + " " + currTime) >
+                  new Date(slot.examDate + " " + slot.examEndTime)
+                ) {
+                  const examTemplate = studentBatch.examTemplates.find(
+                    (examTemplate) => examTemplate._id === slot.examTemplateId
+                  );
+                  if (examTemplate) {
+                    return (
+                      <ExamsPaper square={false} key={index} elevation={5}>
+                        <div className="row d-flex gap-2 ">
+                          <div className="col-12 ">
+                            <h5>Exam Name : {examTemplate.examName}</h5>
+                          </div>
+                          <hr />
+                          <div className="col-12">
+                            Scheduled On : {slot.examDate}
+                          </div>
+                          <div className="col-12">Exam Marks : </div>
+                          <div className="col-12">
+                            Exam Pattern : {examTemplate.examPattern}
+                          </div>
+                          <div className="col-12">
+                            Exam Start time : {slot.examStartTime}{" "}
+                          </div>
+                          <div className="col-12">
+                            Exam End time : {slot.examEndTime}{" "}
+                          </div>
 
-                      <hr />
-                      <Button disabled variant="contained" color="success">
-                        Missed
-                      </Button>
-                    </div>
-                  </ExamsPaper>
-                );
-              }
-            }
-            return null;
-          })}
-        </Stack>
+                          <hr />
+                          <Button disabled variant="contained" color="success">
+                            Missed
+                          </Button>
+                        </div>
+                      </ExamsPaper>
+                    );
+                  }
+                }
+                return null;
+              })}
+            </Stack>
+          </div>
+        </Paper>
       </Box>
     </>
   );

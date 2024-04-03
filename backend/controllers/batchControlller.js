@@ -24,10 +24,6 @@ module.exports.getCurrBatch = async (req, res, next) => {
     let { id } = req.params;
     const batch = await Batch.findById(id).populate({
       path: "examTemplates",
-      populate: {
-        path: "questions",
-        model: "Question",
-      },
     });
 
     res.status(200).json({ batch });
