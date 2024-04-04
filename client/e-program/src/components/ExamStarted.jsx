@@ -26,6 +26,7 @@ export default function ExamStarted({ templateId }) {
   const [examTemplate, setExamTemplate] = useState();
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
   const [error, setError] = useState("");
+  const [value, setValue] = useState("");
 
   const handleNextQuestion = () => {
     setCurrentQuestionIndex((prevIndex) => prevIndex + 1);
@@ -50,8 +51,6 @@ export default function ExamStarted({ templateId }) {
       })
       .catch((error) => setError(error.message));
   }, [templateId]);
-
-  const [value, setValue] = useState("");
 
   const handleChange = (event) => {
     setValue(event.target.value);
@@ -194,13 +193,29 @@ export default function ExamStarted({ templateId }) {
               <Typography>Expanded default</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <Typography>
-                <Stack direction="row" spacing={2}>
-                  <Avatar alt="Remy Sharp" src="/broken-image.jpg">
-                    B
-                  </Avatar>
-                </Stack>
-              </Typography>
+              <Grid container spacing={1}>
+                {examTemplate &&
+                  examTemplate.questions &&
+                  examTemplate.questions.map((question, index) => (
+                    <Grid item key={index}>
+                      <Avatar
+                        alt="Remy Sharp"
+                        src="/broken-image.jpg"
+                        sx={{
+                          bgcolor:
+                            currentQuestionIndex === index
+                              ? "#28844f"
+                              : undefined,
+                          height: 35,
+                          width: 35,
+                        }}
+                        onClick={() => setCurrentQuestionIndex(index)}
+                      >
+                        {index + 1}
+                      </Avatar>
+                    </Grid>
+                  ))}
+              </Grid>
             </AccordionDetails>
           </Accordion>
         </Grid>

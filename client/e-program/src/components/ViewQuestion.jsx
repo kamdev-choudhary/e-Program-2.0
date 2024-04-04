@@ -45,6 +45,8 @@ export default function ViewQuestion(props) {
   const uniqueSubjects = [...new Set(academic.map((item) => item.subject))];
   const uniqueTopic = [...new Set(academic.map((item) => item.topic))];
 
+  return <p>Hi</p>;
+
   useEffect(() => {
     fetch(`${API_URL}/admin/academic`)
       .then((response) => {
@@ -147,7 +149,7 @@ export default function ViewQuestion(props) {
           <Box sx={{ minWidth: 120 }}>
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">
-                DiffiCulty Level
+                Difficulty Level
               </InputLabel>
               <Select
                 labelId="demo-simple-select-label"

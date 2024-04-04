@@ -188,7 +188,7 @@ export default function OnlineExams({ handleExamStart }) {
               <h4>Appeared</h4>
             </div>
             <hr />
-            <Stack direction="row" spacing={2}>
+            {/* <Stack direction="row" spacing={2}>
               <ExamsPaper square={false}>
                 <div className="row d-flex gap-2 ">
                   <div className="col-12 ">
@@ -204,7 +204,7 @@ export default function OnlineExams({ handleExamStart }) {
                   <Button variant="contained">View Result</Button>
                 </div>
               </ExamsPaper>
-            </Stack>
+            </Stack> */}
           </div>
         </Paper>
         <Paper sx={{ padding: "1rem" }} elevation={10}>

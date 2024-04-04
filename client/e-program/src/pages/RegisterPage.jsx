@@ -1,8 +1,9 @@
 import { useState } from "react";
 import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
-import FormControl from "@mui/material/FormControl";
-import FormLabel from "@mui/material/FormLabel";
+import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 
 export default function RegisterPage() {
   const [user, setUser] = useState({
@@ -10,6 +11,7 @@ export default function RegisterPage() {
     email: "",
     mobile: "",
     password: "",
+    currentClass: "",
   });
 
   const [errors, setErrors] = useState({
@@ -17,16 +19,12 @@ export default function RegisterPage() {
     email: "",
     mobile: "",
     password: "",
+    currentClass: "",
   });
 
   const handleChange = (e) => {
-    if (e.target.name !== "mobile") {
-      const { name, value } = e.target;
-      setUser({ ...user, [name]: value });
-    } else {
-      const value = e.target.value.replace(/\D/g, "").slice(0, 10);
-      setUser({ ...user, mobile: value });
-    }
+    const { name, value } = e.target;
+
     // Validation logic
     switch (name) {
       case "name":
@@ -41,16 +39,22 @@ export default function RegisterPage() {
       case "password":
         setErrors({ ...errors, password: value ? "" : "Password is required" });
         break;
+      case "currentClass":
+        setErrors({
+          ...errors,
+          currentClass: value ? "" : "Class is required",
+        });
+        break;
       default:
         break;
     }
+
+    setUser({ ...user, [name]: value });
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
     const isValid = validateForm();
-
-    // If form is valid, submit
     if (isValid) {
       fetch("http://127.0.0.1:5000/api/auth/register", {
         method: "POST",
@@ -59,10 +63,7 @@ export default function RegisterPage() {
         },
         body: JSON.stringify(user),
       })
-        .then((response) => {
-          response.json();
-          console.log(response);
-        })
+        .then((response) => response.json())
         .then((data) => {
           console.log("Success:", data);
         })
@@ -76,9 +77,8 @@ export default function RegisterPage() {
 
   const validateForm = () => {
     let isValid = true;
-    const newErrors = { ...errors };
+    const newErrors = {};
 
-    // Validate each field
     for (const key in user) {
       if (!user[key]) {
         isValid = false;
@@ -96,70 +96,91 @@ export default function RegisterPage() {
 
   return (
     <>
-      <div className="text-center">
+      <Paper sx={{ padding: 4 }} style={{ height: 650 }} elevation={4}>
         <img
           src="./brand-logo.jpg"
           alt="Brand-logo"
-          style={{ height: "100px" }}
+          style={{ height: "100px", marginLeft: "45%" }}
         />
+        <Typography variant="h4">Registration Form</Typography>
         <hr />
-        <div className="row border p-3">
-          <div className="col-md-12">
-            <FormControl fullWidth>
-              <FormLabel>Registration Form</FormLabel>
-              <TextField
-                label="Full Name"
-                value={user.name}
-                id="name"
-                name="name"
-                onChange={handleChange}
-                error={Boolean(errors.name)}
-                helperText={errors.name}
-                style={{ marginBottom: "20px" }}
-              />
-              <TextField
-                label="Email"
-                value={user.email}
-                id="email"
-                name="email"
-                onChange={handleChange}
-                error={Boolean(errors.email)}
-                helperText={errors.email}
-                style={{ marginBottom: "20px" }}
-              />
-              <TextField
-                label="Mobile"
-                type="text"
-                value={user.mobile}
-                id="mobile"
-                name="mobile"
-                onChange={handleChange}
-                error={Boolean(errors.mobile)}
-                helperText={errors.mobile}
-                inputProps={{ maxLength: 10 }}
-                style={{ marginBottom: "20px" }}
-              />
-
-              <TextField
-                label="Password"
-                type="password"
-                value={user.password}
-                id="password"
-                name="password"
-                onChange={handleChange}
-                error={Boolean(errors.password)}
-                helperText={errors.password}
-                style={{ marginBottom: "20px" }}
-              />
-            </FormControl>
-          </div>
-          <div className="col-md-12 text-center">
-            <Button variant="contained" color="primary" onClick={handleSubmit}>
+        <Grid container spacing={2} padding={2}>
+          <Grid item md={6} sm={12} padding={1}>
+            <TextField
+              label="Full Name"
+              value={user.name}
+              fullWidth
+              id="name"
+              name="name"
+              onChange={handleChange}
+              error={Boolean(errors.name)}
+              helperText={errors.name}
+              style={{ marginBottom: "20px" }}
+            />
+          </Grid>
+          <Grid item md={6} sm={12} padding={1}>
+            <TextField
+              label="Email"
+              value={user.email}
+              fullWidth
+              id="email"
+              name="email"
+              onChange={handleChange}
+              error={Boolean(errors.email)}
+              helperText={errors.email}
+              style={{ marginBottom: "20px" }}
+            />
+          </Grid>
+          <Grid item md={6} sm={12} padding={1}>
+            <TextField
+              label="Mobile"
+              type="text"
+              value={user.mobile}
+              fullWidth
+              id="mobile"
+              name="mobile"
+              onChange={handleChange}
+              error={Boolean(errors.mobile)}
+              helperText={errors.mobile}
+              inputProps={{ maxLength: 10 }}
+              style={{ marginBottom: "20px" }}
+            />
+          </Grid>
+          <Grid item md={6} sm={12} padding={1}>
+            <TextField
+              label="Password"
+              type="password"
+              fullWidth
+              value={user.password}
+              id="password"
+              name="password"
+              onChange={handleChange}
+              error={Boolean(errors.password)}
+              helperText={errors.password}
+              style={{ marginBottom: "20px" }}
+            />
+          </Grid>
+          <Grid item md={6} sm={12} padding={1}>
+            <TextField
+              label="Current Class"
+              type="text"
+              fullWidth
+              value={user.currentClass}
+              id="currentClass"
+              name="currentClass"
+              onChange={handleChange}
+              error={Boolean(errors.currentClass)}
+              helperText={errors.currentClass}
+              style={{ marginBottom: "20px" }}
+            />
+          </Grid>
+          <Grid item md={12} sm={12} style={{ textAlign: "center" }}>
+            <Button variant="contained" color="success" onClick={handleSubmit}>
               Submit
             </Button>
-          </div>
-        </div>
-      </div>
+          </Grid>
+        </Grid>
+      </Paper>
     </>
   );
 }
