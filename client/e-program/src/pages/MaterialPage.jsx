@@ -19,7 +19,7 @@ import TextField from "@mui/material/TextField";
 import Base64PDFViewer from "../components/Base64PDFViewer";
 import { useAuth } from "../components/Auth";
 
-const API_URL = "http://10.0.12.85:5000/api";
+const API_URL = "http://127.0.0.1:5000/api";
 
 export default function MaterialPage() {
   const [books, setBooks] = useState([]);
@@ -37,6 +37,7 @@ export default function MaterialPage() {
   const [showAddBook, setShowAddBook] = useState(false);
   const [pdfViewer, setPdfViwer] = useState(false);
   const [refresh, setRefresh] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
 
   const { isAdmin } = useAuth();
 
@@ -63,7 +64,7 @@ export default function MaterialPage() {
   };
 
   const handleOnSubmit = async (e) => {
-    fetch("http://10.0.12.85:5000/api/materials/savenewbook", {
+    fetch("http://127.0.0.1:5000/api/materials/savenewbook", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -112,6 +113,18 @@ export default function MaterialPage() {
       .catch((error) => setError(error.message));
   }, [refresh]);
 
+  const handleSearchInputChange = (event) => {
+    setSearchInput(event.target.value);
+  };
+
+  const filteredBooks = books.filter((book) =>
+    Object.values(book).some(
+      (field) =>
+        (typeof field === "string" || typeof field === "number") &&
+        field.toString().toLowerCase().includes(searchInput.toLowerCase())
+    )
+  );
+
   return (
     <>
       {error && <div>Error: {error}</div>}
@@ -125,6 +138,8 @@ export default function MaterialPage() {
                   Search <SearchIcon />
                 </InputAdornment>
               }
+              value={searchInput}
+              onChange={handleSearchInputChange}
             />
           </FormControl>
         </div>
@@ -272,7 +287,7 @@ export default function MaterialPage() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {books.map((book, index) => (
+            {filteredBooks.map((book, index) => (
               <TableRow
                 key={book._id}
                 sx={{
@@ -285,7 +300,7 @@ export default function MaterialPage() {
                 <TableCell className="text-center">{book.subject}</TableCell>
                 <TableCell className="text-center">{book.category}</TableCell>
                 <TableCell className="text-center">
-                  {book.PublishingYear}
+                  {book.publishingYear}
                 </TableCell>
                 <TableCell align="center">
                   <Button

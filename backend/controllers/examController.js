@@ -7,9 +7,14 @@ module.exports.addToTemplate = async (req, res, next) => {
   try {
     let currTemplate = await ExamTemplate.findById(examTemplateId);
     let question = await Question.findById(questionId);
-    currTemplate.questions.push(question);
-    await currTemplate.save();
-    res.status(200).json("Successfully Added to source");
+
+    if (!currTemplate.questions.some((q) => q.equals(question._id))) {
+      currTemplate.questions.push(question);
+      await currTemplate.save();
+      res.status(200).json("Successfully Added to source");
+    } else {
+      res.status(200).json("Question already exists in the template");
+    }
   } catch (error) {
     next(error);
   }

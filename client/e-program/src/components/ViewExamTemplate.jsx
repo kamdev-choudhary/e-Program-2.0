@@ -22,7 +22,7 @@ import Box from "@mui/material/Box";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
-const API_URL = "http://10.0.12.85:5000/api";
+const API_URL = "http://127.0.0.1:5000/api";
 
 export default function ViewExamTemplate(props) {
   const [examTemplate, setExamTemplate] = useState([]);
@@ -59,7 +59,7 @@ export default function ViewExamTemplate(props) {
       .catch((error) => setError(error.message));
   }, []);
 
-  console.log(batches);
+  console.log(examTemplate);
 
   const handleAddToBatchSubmit = () => {
     console.log(addToBatch);
@@ -289,13 +289,13 @@ export default function ViewExamTemplate(props) {
         {examTemplate.questions &&
           examTemplate.questions.map((question, index) => (
             <div className="questions" key={index}>
-              <Card sx={{ minWidth: 275 }}>
+              <Card sx={{ minWidth: 275 }} elevation={5}>
                 <CardContent>
                   <div className="row d-flex gap-2">
                     <div className="col-md-3">
                       <Typography
                         sx={{ fontSize: 14 }}
-                        color="text.secondary"
+                        color="text.primary"
                         gutterBottom
                       >
                         Question Number : {index + 1}
@@ -304,7 +304,7 @@ export default function ViewExamTemplate(props) {
                     <div className="col-md-3">
                       <Typography
                         sx={{ fontSize: 14 }}
-                        color="text.secondary"
+                        color="text.primary"
                         gutterBottom
                       >
                         Question ID : {question.questionId}
@@ -313,7 +313,7 @@ export default function ViewExamTemplate(props) {
                     <div className="col-md-3">
                       <Typography
                         sx={{ fontSize: 14 }}
-                        color="text.secondary"
+                        color="text.primary"
                         gutterBottom
                       >
                         Subject : {question.subject}
@@ -322,7 +322,7 @@ export default function ViewExamTemplate(props) {
                     <div className="col-md-3">
                       <Typography
                         sx={{ fontSize: 14 }}
-                        color="text.secondary"
+                        color="text.primary"
                         gutterBottom
                       >
                         Topic : {question.topic}
@@ -331,7 +331,7 @@ export default function ViewExamTemplate(props) {
                     <div className="col-md-3">
                       <Typography
                         sx={{ fontSize: 14 }}
-                        color="text.secondary"
+                        color="text.primary"
                         gutterBottom
                       >
                         Sub Topic: {question.subtopic}
@@ -340,7 +340,7 @@ export default function ViewExamTemplate(props) {
                     <div className="col-md-3">
                       <Typography
                         sx={{ fontSize: 14 }}
-                        color="text.secondary"
+                        color="text.primary"
                         gutterBottom
                       >
                         Difficulty Level : {question.difficultyLevel}
@@ -349,7 +349,7 @@ export default function ViewExamTemplate(props) {
                     <div className="col-md-12">
                       <TextField
                         fullWidth
-                        id="outlined-basic-1" // Unique id
+                        id="outlined-basic-1"
                         variant="outlined"
                         name="examName"
                         InputLabelProps={{ shrink: true }}

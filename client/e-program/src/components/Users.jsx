@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import React from "react";
-
+// Importing MUI Components
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -23,6 +23,8 @@ const API_URL = "http://127.0.0.1:5000/api";
 export default function Users() {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState("");
+  const [searchInput, setSearchInput] = useState("");
+  const [accountTypeFilter, setAccountTypeFilter] = useState("student");
 
   useEffect(() => {
     fetch(`${API_URL}/admin/users`)
@@ -36,24 +38,43 @@ export default function Users() {
       .catch((error) => setError(error.message));
   }, []);
 
-  console.log(users);
+  const handleAccounTypeChange = (event) => {
+    setAccountTypeFilter(event.target.value);
+  };
+
+  const handleSearchInputChange = (event) => {
+    setSearchInput(event.target.value);
+  };
+
+  const filteredUsers = users.filter(
+    (user) =>
+      Object.values(user).some(
+        (field) =>
+          (typeof field === "string" || typeof field === "number") &&
+          field.toString().toLowerCase().includes(searchInput.toLowerCase())
+      ) && user.accountType.toLowerCase() === accountTypeFilter.toLowerCase()
+  );
 
   return (
     <>
       <div className="row">
-        <div className="col-md-6 text-center">
-          <FormControl fullWidth>
-            <OutlinedInput
-              id="outlined-adornment-amount"
-              startAdornment={
-                <InputAdornment position="start">
-                  Search <SearchIcon />
-                </InputAdornment>
-              }
-            />
-          </FormControl>
+        <div className="col-md-8 text-center">
+          <Box sx={{ minWidth: 110, minHeight: 50 }}>
+            <FormControl fullWidth>
+              <OutlinedInput
+                id="outlined-adornment-amount"
+                startAdornment={
+                  <InputAdornment position="start">
+                    Search <SearchIcon />
+                  </InputAdornment>
+                }
+                value={searchInput}
+                onChange={handleSearchInputChange}
+              />
+            </FormControl>
+          </Box>
         </div>
-        <div className="col-md-6 mb-2">
+        <div className="col-md-4 ">
           <Box sx={{ minWidth: 110, minHeight: 50 }}>
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">
@@ -63,7 +84,8 @@ export default function Users() {
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 label="User Type"
-                value="student"
+                value={accountTypeFilter}
+                onChange={handleAccounTypeChange}
               >
                 <MenuItem value="student" selected>
                   Student
@@ -100,7 +122,7 @@ export default function Users() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((user, index) => (
+            {filteredUsers.map((user, index) => (
               <TableRow
                 key={user._id}
                 sx={{

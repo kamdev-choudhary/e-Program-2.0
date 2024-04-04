@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import Users from "../components/Users";
+import AcademicInfo from "../components/AcademicInfo";
 import React from "react";
 import { Modal, Button, ModalBody } from "react-bootstrap";
 import OutlinedInput from "@mui/material/OutlinedInput";
@@ -24,6 +25,8 @@ import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import Select from "@mui/material/Select";
+import EditIcon from "@mui/icons-material/Edit";
+import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 
 import ViewExamTemplate from "../components/ViewExamTemplate";
 
@@ -171,6 +174,10 @@ export default function AdminPage() {
               <ListItemText primary="Batch Master" />
             </ListItem>
             <Divider component="li" />
+            <ListItem onClick={() => handleAdminContent("academic")}>
+              <ListItemText primary="Academic Master" />
+            </ListItem>
+            <Divider component="li" />
           </List>
         </div>
         <div className="col-md-9 border rounded p-2">
@@ -189,6 +196,15 @@ export default function AdminPage() {
               </p>
               <hr />
               <Users />
+            </div>
+          )}
+          {ShowAdminContent === "academic" && (
+            <div>
+              <p className="text-center mt-2 h4 border rounded p-2 bg-success text-white">
+                Academic Controllers
+              </p>
+              <hr />
+              <AcademicInfo />
             </div>
           )}
           {ShowAdminContent === "batch" && (
@@ -512,6 +528,9 @@ export default function AdminPage() {
                       <TableCell align="center" className="text-white">
                         Details
                       </TableCell>
+                      <TableCell align="center" className="text-white">
+                        Delete
+                      </TableCell>
                     </TableRow>
                   </TableHead>
                   <TableBody>
@@ -541,6 +560,9 @@ export default function AdminPage() {
                           >
                             View
                           </Button>
+                        </TableCell>
+                        <TableCell align="center">
+                          <DeleteRoundedIcon />
                         </TableCell>
                       </TableRow>
                     ))}

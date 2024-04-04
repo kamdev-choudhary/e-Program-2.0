@@ -7,7 +7,7 @@ module.exports.login = async (req, res) => {
     const userExist = await User.findOne({ email: email });
 
     if (!userExist) {
-      return res.status(400).json("Invalid credential");
+      return res.status(400).json("Email or Password is incorrect");
     }
 
     // Compare the provided password with the hashed password

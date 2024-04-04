@@ -20,10 +20,10 @@ async function main() {
 }
 
 const initDB = async () => {
-  await Lecture.deleteMany({});
-  await Lecture.insertMany(initdata.data);
-  await Academic.deleteMany({});
-  await Academic.insertMany(academicData.data);
+  // await Lecture.deleteMany({});
+  // await Lecture.insertMany(initdata.data);
+  // await Academic.deleteMany({});
+  // await Academic.insertMany(academicData.data);
   console.log(`data was initialised`);
 };
 

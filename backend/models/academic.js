@@ -1,11 +1,41 @@
 const mongoose = require("mongoose");
 
-const academicSchema = new mongoose.Schema({
-  class: String,
-  subject: String,
-  topic: String,
+const subtopicSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
 });
 
-const Academic = mongoose.model("Class", academicSchema);
+const topicSchema = new mongoose.Schema({
+  className: String,
+  name: {
+    type: String,
+    required: true,
+  },
+  subtopics: [subtopicSchema],
+});
+
+const subjectSchema = new mongoose.Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  topics: [topicSchema],
+});
+
+const academicSchema = new mongoose.Schema({
+  classes: [
+    {
+      type: String,
+    },
+  ],
+  subjects: [subjectSchema],
+  difficultyLevel: [{ type: String }],
+  timeRequired: [{ type: String }],
+  target: [{ type: String }],
+});
+
+const Academic = mongoose.model("Academic", academicSchema);
 
 module.exports = Academic;

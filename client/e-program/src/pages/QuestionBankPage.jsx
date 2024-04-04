@@ -24,49 +24,49 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
 import Fab from "@mui/material/Fab";
+import IconButton from "@mui/material/IconButton";
 import AddIcon from "@mui/icons-material/Add";
+import ClearIcon from "@mui/icons-material/Clear";
 import Snackbar from "@mui/material/Snackbar";
+import Alert from "@mui/material/Alert";
 
 const API_URL = "http://127.0.0.1:5000/api";
 
 export default function QuestionBankPage() {
   const [error, setError] = useState("");
-
+  const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState("");
   const [questions, setQuestions] = useState([]);
   const [currQuestion, setCurrentQuestion] = useState([]);
   const [examTemplates, setExamTemplates] = useState([]);
   const [questionInExamTemplate, setQuestionInExamTemplate] = useState([]);
   const [selectedTemplate, setSelectedTemplate] = useState("");
-
   const [questionAddToTemplate, setQuestionAddToTemplate] = useState({
     questionId: "",
     examTemplateId: "",
   });
-
   const [academic, setAcademic] = useState([]);
-
   const [editMode, setEditMode] = useState(false);
-  const [addToTemplate, setAddToTemplate] = useState(false);
   const [showQuestionTypeModal, setShowQuestionTypeModal] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [showViewQuestion, setShowViewQuestion] = useState(false);
-  const [open, setOpen] = useState(false);
   const [showQuestionModal, setShowQuestionModal] = useState({
     SingleCorrect: false,
     MultiCorrect: false,
     Integer: false,
   });
+  const [searchInput, setSearchInput] = useState("");
 
-  const handleClick = () => {
-    setOpen(true);
+  // Snackbar
+  const handleOpenSnackbar = () => {
+    setOpenSuccessSnackbar(true);
   };
 
-  const handleClose = (event, reason) => {
+  const handleCloseSnackbar = (event, reason) => {
     if (reason === "clickaway") {
       return;
     }
-
-    setOpen(false);
+    setOpenSuccessSnackbar(false);
   };
 
   const [filterData, setFilterData] = useState({
@@ -84,10 +84,9 @@ export default function QuestionBankPage() {
     setFilterData({ ...filterData, [e.target.name]: e.target.value });
   };
 
-  const uniqueClasses = [...new Set(academic.map((item) => item.class))];
-  const uniqueSubjects = [...new Set(academic.map((item) => item.subject))];
-  const uniqueTopic = [...new Set(academic.map((item) => item.topic))];
+  // const
 
+  // Fetch Question Bank
   useEffect(() => {
     fetch(`${API_URL}/questionbank`)
       .then((response) => {
@@ -109,14 +108,14 @@ export default function QuestionBankPage() {
       .then((data) => setExamTemplates(data.examTemplates))
       .catch((error) => setError(error.message));
 
-    fetch(`${API_URL}/admin/academic`)
+    fetch(`${API_URL}/academic`)
       .then((response) => {
         if (!response.ok) {
           throw new Error("Network response was not ok");
         }
         return response.json();
       })
-      .then((data) => setAcademic(data.academic))
+      .then((data) => setAcademic(data.academic[0]))
       .catch((error) => setError(error.message));
   }, [showQuestionModal, showQuestionTypeModal, refresh]);
 
@@ -139,27 +138,38 @@ export default function QuestionBankPage() {
     setRefresh(!refresh);
   };
 
-  //Add Question to Group
+  console.log(academic);
+
   const handleQuestionToTemplate = (Id) => {
-    setQuestionAddToTemplate({
+    const updatedQuestionAddToTemplate = {
       ...questionAddToTemplate,
       questionId: Id,
       examTemplateId: selectedTemplate,
-    });
-    fetch("http://127.0.0.1:5000/api/exams/addtotemplate", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(questionAddToTemplate),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Success:", data);
+    };
+    setQuestionAddToTemplate(updatedQuestionAddToTemplate);
+
+    if (updatedQuestionAddToTemplate) {
+      fetch("http://127.0.0.1:5000/api/exams/addtotemplate", {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(updatedQuestionAddToTemplate),
       })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          setSnackbarMessage(data);
+          handleOpenSnackbar();
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    }
     setRefresh(!refresh);
   };
 
@@ -169,10 +179,6 @@ export default function QuestionBankPage() {
 
   const handleChangeEditMode = () => {
     setEditMode(!editMode);
-  };
-
-  const handleAddToTemplate = () => {
-    setAddToTemplate(!addToTemplate);
   };
 
   const handleShowViewQuestion = (question) => {
@@ -209,14 +215,38 @@ export default function QuestionBankPage() {
     }
   };
 
+  const clearSelectedTemplate = () => {
+    setSelectedTemplate("");
+  };
+
+  const handleSearchInputChange = (event) => {
+    setSearchInput(event.target.value);
+  };
+
+  const filterdQuestions = questions.filter((question) =>
+    Object.values(question).some(
+      (field) =>
+        (typeof field === "string" || typeof field === "number") &&
+        field.toString().toLowerCase().includes(searchInput.toLowerCase())
+    )
+  );
+
   return (
     <>
       <Snackbar
-        open={open}
-        autoHideDuration={5000}
-        onClose={handleClose}
-        message="This Snackbar will be dismissed in 5 seconds."
-      />
+        open={openSuccessSnackbar}
+        autoHideDuration={2000}
+        onClose={handleCloseSnackbar}
+      >
+        <Alert
+          onClose={handleCloseSnackbar}
+          severity="success"
+          variant="filled"
+          sx={{ width: "100%" }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
       <div className="row">
         <div className="col-md-3 mb-3">
           <Box sx={{ minWidth: 120 }}>
@@ -230,11 +260,13 @@ export default function QuestionBankPage() {
                 value={filterData.classes}
                 onChange={handleFilterDataChange}
               >
-                {uniqueClasses.map((classes, index) => (
-                  <MenuItem key={index} value={classes}>
-                    {classes}
-                  </MenuItem>
-                ))}
+                {academic &&
+                  academic.classes &&
+                  academic.classes.map((classes, index) => (
+                    <MenuItem key={index} value={classes}>
+                      {classes}
+                    </MenuItem>
+                  ))}
               </Select>
             </FormControl>
           </Box>
@@ -251,11 +283,13 @@ export default function QuestionBankPage() {
                 value={filterData.subject}
                 onChange={handleFilterDataChange}
               >
-                {uniqueSubjects.map((subject, index) => (
-                  <MenuItem key={index} value={subject}>
-                    {subject}
-                  </MenuItem>
-                ))}
+                {academic &&
+                  academic.subjects &&
+                  academic.subjects.map((subject, index) => (
+                    <MenuItem key={index} value={subject}>
+                      {subject.name}
+                    </MenuItem>
+                  ))}
               </Select>
             </FormControl>
           </Box>
@@ -272,11 +306,11 @@ export default function QuestionBankPage() {
                 value={filterData.topic}
                 onChange={handleFilterDataChange}
               >
-                {uniqueTopic.map((topic, index) => (
+                {/* {uniqueTopic.map((topic, index) => (
                   <MenuItem key={index} value={topic}>
                     {topic}
                   </MenuItem>
-                ))}
+                ))} */}
               </Select>
             </FormControl>
           </Box>
@@ -293,11 +327,11 @@ export default function QuestionBankPage() {
                 value={filterData.subtopic}
                 onChange={handleFilterDataChange}
               >
-                {uniqueSubjects.map((subject, index) => (
+                {/* {uniqueSubjects.map((subject, index) => (
                   <MenuItem key={index} value={subject}>
                     {subject}
                   </MenuItem>
-                ))}
+                ))} */}
               </Select>
             </FormControl>
           </Box>
@@ -306,21 +340,23 @@ export default function QuestionBankPage() {
           <Box sx={{ minWidth: 120 }}>
             <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">
-                DiffiCulty Level
+                Difficulty Level
               </InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
-                name="difficulty_level"
-                label="difficulty_level"
+                name="difficultyLevel"
+                label="difficultyLevel"
                 value={filterData.difficulty_level}
                 onChange={handleFilterDataChange}
               >
-                {uniqueSubjects.map((subject, index) => (
-                  <MenuItem key={index} value={subject}>
-                    {subject}
-                  </MenuItem>
-                ))}
+                {academic &&
+                  academic.difficultyLevel &&
+                  academic.difficultyLevel.map((dLevel, index) => (
+                    <MenuItem key={index} value={dLevel}>
+                      {dLevel}
+                    </MenuItem>
+                  ))}
               </Select>
             </FormControl>
           </Box>
@@ -339,11 +375,13 @@ export default function QuestionBankPage() {
                 value={filterData.timeRequired}
                 onChange={handleFilterDataChange}
               >
-                {uniqueSubjects.map((subject, index) => (
-                  <MenuItem key={index} value={subject}>
-                    {subject}
-                  </MenuItem>
-                ))}
+                {academic &&
+                  academic.timeRequired &&
+                  academic.timeRequired.map((time, index) => (
+                    <MenuItem key={index} value={time}>
+                      {time}
+                    </MenuItem>
+                  ))}
               </Select>
             </FormControl>
           </Box>
@@ -360,30 +398,13 @@ export default function QuestionBankPage() {
                 value={filterData.target}
                 onChange={handleFilterDataChange}
               >
-                <MenuItem value="Both">Both</MenuItem>
-                <MenuItem value="JEE">JEE</MenuItem>
-                <MenuItem value="NEET">NEET</MenuItem>
-              </Select>
-            </FormControl>
-          </Box>
-        </div>
-        <div className="col-md-3 mb-2">
-          <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth size="small">
-              <InputLabel id="demo-simple-select-label">Exam Group</InputLabel>
-              <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                name="examTemplate"
-                label="Exam Group"
-                value={selectedTemplate}
-                onChange={handleSelectedTemplate}
-              >
-                {examTemplates.map((examTemplate, index) => (
-                  <MenuItem key={index} value={examTemplate._id}>
-                    {examTemplate.examName}
-                  </MenuItem>
-                ))}
+                {academic &&
+                  academic.target &&
+                  academic.target.map((tget, index) => (
+                    <MenuItem key={index} value={tget}>
+                      {tget}
+                    </MenuItem>
+                  ))}
               </Select>
             </FormControl>
           </Box>
@@ -392,15 +413,16 @@ export default function QuestionBankPage() {
       <hr />
       <div className="row ">
         <div className="col-md-6 ">
-          <FormControl fullWidth>
+          <FormControl fullWidth size="small">
             <OutlinedInput
               id="outlined-adornment-amount"
-              size="small"
               startAdornment={
                 <InputAdornment position="start">
                   Search <SearchIcon />
                 </InputAdornment>
               }
+              value={searchInput}
+              onChange={handleSearchInputChange}
             />
           </FormControl>
         </div>
@@ -414,7 +436,7 @@ export default function QuestionBankPage() {
             <AddIcon />
           </Fab>
         </div>
-        <div className="col-md-2 d-flex justify-content-center align-items-center">
+        <div className="col-md-1 d-flex justify-content-center align-items-center">
           <FormControlLabel
             control={
               <Switch
@@ -426,17 +448,33 @@ export default function QuestionBankPage() {
             label="Delete"
           />
         </div>
-        <div className="col-md-2 d-flex justify-content-center align-items-center">
-          <FormControlLabel
-            control={
-              <Switch
-                checked={addToTemplate}
-                onChange={handleAddToTemplate}
-                inputProps={{ "aria-label": "controlled" }}
-              />
-            }
-            label="Add to Source"
-          />
+        <div className="col-md-3 mb-2">
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth size="small">
+              <InputLabel id="demo-simple-select-label">Exam Group</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="examTemplate"
+                label="Exam Group"
+                value={selectedTemplate}
+                onChange={handleSelectedTemplate}
+                endAdornment={
+                  selectedTemplate && (
+                    <IconButton size="small" onClick={clearSelectedTemplate}>
+                      <ClearIcon />
+                    </IconButton>
+                  )
+                }
+              >
+                {examTemplates.map((examTemplate, index) => (
+                  <MenuItem key={index} value={examTemplate._id}>
+                    {examTemplate.examName}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          </Box>
         </div>
       </div>
       <hr />
@@ -474,15 +512,15 @@ export default function QuestionBankPage() {
                     Delete
                   </TableCell>
                 )}
-                {addToTemplate && (
+                {selectedTemplate && (
                   <TableCell className="text-white" align="center">
-                    Add
+                    Add to Group
                   </TableCell>
                 )}
               </TableRow>
             </TableHead>
             <TableBody>
-              {questions.map((question, index) => (
+              {filterdQuestions.map((question, index) => (
                 <TableRow
                   key={question._id}
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
@@ -515,7 +553,7 @@ export default function QuestionBankPage() {
                       ></i>
                     </TableCell>
                   )}
-                  {addToTemplate && (
+                  {selectedTemplate && (
                     <TableCell scope="col" className="text-center">
                       {!questionInExamTemplate.includes(question._id) ? (
                         <button
