@@ -45,6 +45,7 @@ export default function QuestionBankPage() {
     questionId: "",
     examTemplateId: "",
   });
+
   const [academic, setAcademic] = useState([]);
   const [editMode, setEditMode] = useState(false);
   const [showQuestionTypeModal, setShowQuestionTypeModal] = useState(false);
@@ -56,6 +57,8 @@ export default function QuestionBankPage() {
     Integer: false,
   });
   const [searchInput, setSearchInput] = useState("");
+  const [filteredTopics, setFilteredTopics] = useState([]);
+  const [filteredSubtopics, setFilteredSubtopics] = useState([]);
 
   // Snackbar
   const handleOpenSnackbar = () => {
@@ -74,7 +77,7 @@ export default function QuestionBankPage() {
     subject: "",
     topic: "",
     subtopic: "",
-    difficulty_level: "",
+    difficultyLevel: "",
     timeRequired: "",
     target: "",
     examTemplates: "",
@@ -83,8 +86,6 @@ export default function QuestionBankPage() {
   const handleFilterDataChange = (e) => {
     setFilterData({ ...filterData, [e.target.name]: e.target.value });
   };
-
-  // const
 
   // Fetch Question Bank
   useEffect(() => {
@@ -137,8 +138,6 @@ export default function QuestionBankPage() {
       });
     setRefresh(!refresh);
   };
-
-  console.log(academic);
 
   const handleQuestionToTemplate = (Id) => {
     const updatedQuestionAddToTemplate = {
@@ -231,6 +230,26 @@ export default function QuestionBankPage() {
     )
   );
 
+  useEffect(() => {
+    if (filterData.classes && filterData.subject) {
+      const selectedSubjectData = academic.subjects.find(
+        (subject) => subject.name === filterData.subject
+      );
+      const filteredTopics = selectedSubjectData.topics.filter(
+        (topic) => topic.className === filterData.classes
+      );
+      setFilteredTopics(filteredTopics);
+    }
+  }, [filterData.classes, filterData.subject, academic.subjects]);
+
+  useEffect(() => {
+    if (filteredTopics.length > 0) {
+      const filteredSubtopics = filteredTopics.flatMap(
+        (topic) => topic.subtopics
+      );
+      setFilteredSubtopics(filteredSubtopics);
+    }
+  }, [filteredTopics]);
   return (
     <>
       <Snackbar
@@ -286,7 +305,7 @@ export default function QuestionBankPage() {
                 {academic &&
                   academic.subjects &&
                   academic.subjects.map((subject, index) => (
-                    <MenuItem key={index} value={subject}>
+                    <MenuItem key={index} value={subject.name}>
                       {subject.name}
                     </MenuItem>
                   ))}
@@ -306,11 +325,12 @@ export default function QuestionBankPage() {
                 value={filterData.topic}
                 onChange={handleFilterDataChange}
               >
-                {/* {uniqueTopic.map((topic, index) => (
-                  <MenuItem key={index} value={topic}>
-                    {topic}
-                  </MenuItem>
-                ))} */}
+                {filteredTopics &&
+                  filteredTopics.map((topics, index) => (
+                    <MenuItem key={index} value={topics.name}>
+                      {topics.name}
+                    </MenuItem>
+                  ))}
               </Select>
             </FormControl>
           </Box>
@@ -327,11 +347,11 @@ export default function QuestionBankPage() {
                 value={filterData.subtopic}
                 onChange={handleFilterDataChange}
               >
-                {/* {uniqueSubjects.map((subject, index) => (
-                  <MenuItem key={index} value={subject}>
-                    {subject}
+                {filteredSubtopics.map((subTopic, index) => (
+                  <MenuItem key={index} value={subTopic.name}>
+                    {subTopic.name}
                   </MenuItem>
-                ))} */}
+                ))}
               </Select>
             </FormControl>
           </Box>
@@ -347,7 +367,7 @@ export default function QuestionBankPage() {
                 id="demo-simple-select"
                 name="difficultyLevel"
                 label="difficultyLevel"
-                value={filterData.difficulty_level}
+                value={filterData.difficultyLevel}
                 onChange={handleFilterDataChange}
               >
                 {academic &&
@@ -542,7 +562,7 @@ export default function QuestionBankPage() {
                   <TableCell align="center">{question.topic}</TableCell>
                   <TableCell align="center">{question.subtopic}</TableCell>
                   <TableCell align="center">
-                    {question.difficulty_level}
+                    {question.difficultyLevel}
                   </TableCell>
                   {editMode && (
                     <TableCell scope="col" className="text-center">

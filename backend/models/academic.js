@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const subtopicSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
   },
 });
 
@@ -11,7 +10,6 @@ const topicSchema = new mongoose.Schema({
   className: String,
   name: {
     type: String,
-    required: true,
   },
   subtopics: [subtopicSchema],
 });
@@ -19,7 +17,6 @@ const topicSchema = new mongoose.Schema({
 const subjectSchema = new mongoose.Schema({
   name: {
     type: String,
-    required: true,
   },
   topics: [topicSchema],
 });

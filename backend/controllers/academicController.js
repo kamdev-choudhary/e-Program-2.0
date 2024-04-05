@@ -11,14 +11,10 @@ module.exports.academicData = async (req, res, next) => {
 
 module.exports.updateAcademicData = async (req, res, next) => {
   try {
-    const { classes } = req.body;
-    const updatedAcademic = await Academic.findOneAndUpdate(
-      {},
-      { $push: { classes: classes } },
-      { new: true }
-    );
-    console.log("Updated Academic Data:", updatedAcademic);
-    res.json(updatedAcademic);
+    const academic = await Academic.findOne({});
+    console.log(academic);
+    academic.subjects.push(req.body);
+    academic.save();
   } catch (error) {
     console.error("Error:", error);
     res.status(500).json({ error: "Internal Server Error" });
