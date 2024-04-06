@@ -13,7 +13,7 @@ import { AuthProvider, useAuth } from "./components/Auth";
 import StudentProfile from "./components/StudentProfile";
 
 function App() {
-  const { accounType, isLoggedIn } = useAuth();
+  const { accountType, isLoggedIn } = useAuth();
   return (
     <AuthProvider>
       <BrowserRouter>
@@ -23,7 +23,7 @@ function App() {
             {}
             <Route
               path="/"
-              element={accounType === "admin" ? <AdminRoute /> : <HomePage />}
+              element={accountType === "admin" ? <AdminRoute /> : <HomePage />}
             />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/exams" element={<ExamPage />} />

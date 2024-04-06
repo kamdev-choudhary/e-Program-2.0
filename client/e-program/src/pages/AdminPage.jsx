@@ -158,23 +158,48 @@ export default function AdminPage() {
       <div className="row mt-2 ">
         <div className="col-md-3 rounded ">
           <List sx={style}>
-            <ListItem onClick={() => handleAdminContent("dashboard")}>
+            <ListItem
+              onClick={() => handleAdminContent("dashboard")}
+              sx={{
+                color: ShowAdminContent === "dashboard" ? "red" : "inherit",
+              }}
+            >
               <ListItemText primary="Dashboard" />
             </ListItem>
             <Divider component="li" />
-            <ListItem onClick={() => handleAdminContent("users")}>
+            <ListItem
+              onClick={() => handleAdminContent("users")}
+              sx={{
+                color: ShowAdminContent === "users" ? "red" : "inherit",
+              }}
+            >
               <ListItemText primary="User Master" />
             </ListItem>
             <Divider component="li" />
-            <ListItem onClick={() => handleAdminContent("exam")}>
+            <ListItem
+              onClick={() => handleAdminContent("exam")}
+              sx={{
+                color: ShowAdminContent === "exam" ? "red" : "inherit",
+              }}
+            >
               <ListItemText primary="Exam Master" />
             </ListItem>
             <Divider component="li" />
-            <ListItem onClick={() => handleAdminContent("batch")}>
+            <ListItem
+              onClick={() => handleAdminContent("batch")}
+              sx={{
+                color: ShowAdminContent === "batch" ? "red" : "inherit",
+              }}
+            >
               <ListItemText primary="Batch Master" />
             </ListItem>
             <Divider component="li" />
-            <ListItem onClick={() => handleAdminContent("academic")}>
+            <ListItem
+              onClick={() => handleAdminContent("academic")}
+              sx={{
+                color: ShowAdminContent === "academic" ? "red" : "inherit",
+              }}
+            >
               <ListItemText primary="Academic Master" />
             </ListItem>
             <Divider component="li" />
