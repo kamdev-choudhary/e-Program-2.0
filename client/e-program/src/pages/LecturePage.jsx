@@ -109,7 +109,7 @@ export default function LecturePage() {
   const filteredLectures = lectures.filter(
     (lecture) =>
       (lecture.class === selectedClass || lecture.class === "") &&
-      (lecture.subject === selectedSubject || lecture.subject === "") &&
+      (selectedSubject === "" || lecture.subject === selectedSubject) &&
       Object.values(lecture).some(
         (field) =>
           (typeof field === "string" || typeof field === "number") &&
@@ -171,9 +171,10 @@ export default function LecturePage() {
                   id="selectedSubject"
                   name="selectedSubject"
                   label="Subject"
-                  value={selectedSubject}
+                  value={selectedSubject === "all" ? "All" : selectedSubject}
                   onChange={(e) => setSelectedSubject(e.target.value)}
                 >
+                  <MenuItem value="">All</MenuItem>
                   {academic &&
                     academic.subjects &&
                     academic.subjects.map((subject, index) => (
