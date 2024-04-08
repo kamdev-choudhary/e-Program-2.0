@@ -9,10 +9,6 @@
     overflow: hidden; /* Hide overflow to prevent horizontal scrolling */
   }
 
-  .col-md-6:last-child {
-    margin-top: 20px; /* Add margin between the two columns on mobile */
-  }
-
   .table-responsive {
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
