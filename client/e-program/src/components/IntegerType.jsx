@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import TinyBox from "./TinyBox";
+import { TinyBox } from "./TinyBox";
 
 export default function MultiCorrectQuestion() {
   const [questionData, setQuestionData] = useState({

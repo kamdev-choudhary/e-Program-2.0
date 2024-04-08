@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import Users from "../components/Users";
 import AcademicInfo from "../components/AcademicInfo";
 import React from "react";
-import { Modal, Button, ModalBody } from "react-bootstrap";
+import { Modal, Button } from "react-bootstrap";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
 import FormControl from "@mui/material/FormControl";
@@ -21,14 +21,10 @@ import ListItem from "@mui/material/ListItem";
 import ListItemText from "@mui/material/ListItemText";
 import Divider from "@mui/material/Divider";
 import TextField from "@mui/material/TextField";
-import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import MenuItem from "@mui/material/MenuItem";
-import Select from "@mui/material/Select";
-import EditIcon from "@mui/icons-material/Edit";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 
 import ViewExamTemplate from "../components/ViewExamTemplate";
+import CreateExamTemplate from "../components/CreateExamTemplate";
 
 const API_URL = "http://127.0.0.1:5000/api";
 
@@ -37,10 +33,7 @@ export default function AdminPage() {
   const [ShowAdminContent, setShowAdminContent] = useState("dashboard");
   const [examTemplates, setExamTemplates] = useState([]);
   const [error, setError] = useState("");
-  const [newExamTemplate, setNewExamTemplate] = useState({
-    examName: "",
-    examPattern: "",
-  });
+
   const [refresh, setRefresh] = useState(false);
   const [currTemplate, setCurrTemplate] = useState([]);
   const [showExamTemplateModal, setShowExamTemplateModal] = useState(false);
@@ -75,6 +68,7 @@ export default function AdminPage() {
       .then((response) => {
         response.json();
         if (response.ok) {
+          handleShowAddBatch();
         }
       })
       .then((data) => {
@@ -100,35 +94,12 @@ export default function AdminPage() {
     }
   };
 
-  const handleNewExamTemplate = (e) => {
-    setNewExamTemplate({ ...newExamTemplate, [e.target.name]: e.target.value });
-  };
-
   const handleAdminContent = (view) => {
     setShowAdminContent(view);
   };
 
   const handleShowAddTemplate = () => {
     setShowAddExamTemplate(!showAddExamTemplate);
-  };
-
-  const handleCreateTemplate = () => {
-    fetch("http://127.0.0.1:5000/api/exams/createtemplate", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(newExamTemplate),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Success:", data);
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
-    handleShowAddTemplate();
-    setRefresh(!refresh);
   };
 
   useEffect(() => {
@@ -298,6 +269,9 @@ export default function AdminPage() {
                         <TableCell align="center">
                           {batch.batchStream}
                         </TableCell>
+                        <TableCell align="center">
+                          {batch.scholars.length}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
@@ -344,188 +318,9 @@ export default function AdminPage() {
               >
                 <Modal.Header>Create Exam Template</Modal.Header>
                 <Modal.Body>
-                  <form>
-                    <div class="form-group col-md-12 p-2">
-                      <TextField
-                        fullWidth
-                        label="Exam Name"
-                        value={newExamTemplate.examName}
-                        onChange={handleNewExamTemplate}
-                        id="examName"
-                        name="examName"
-                        style={{ marginBottom: "20px" }}
-                      />
-                      <div className="row">
-                        <div className="col-md-6">
-                          <Box sx={{ minWidth: 120 }}>
-                            <FormControl fullWidth>
-                              <InputLabel id="demo-simple-select-label">
-                                Target
-                              </InputLabel>
-                              <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                name="examPattern"
-                                label="Exam Pattern"
-                                value={newExamTemplate.examPattern}
-                                onChange={handleNewExamTemplate}
-                              >
-                                <MenuItem value="JEE">JEE</MenuItem>
-                                <MenuItem value="NEET">NEET</MenuItem>
-                              </Select>
-                            </FormControl>
-                          </Box>
-                        </div>
-                        <div className="col-md-6">
-                          <Box sx={{ minWidth: 120 }}>
-                            <FormControl fullWidth>
-                              <InputLabel id="demo-simple-select-label">
-                                Pattern
-                              </InputLabel>
-                              <Select
-                                labelId="demo-simple-select-label"
-                                id="demo-simple-select"
-                                name="examPattern"
-                                label="Pattern"
-                              >
-                                <MenuItem value="JEE">JEE Main</MenuItem>
-                                <MenuItem value="JEE">JEE Advanced</MenuItem>
-                                <MenuItem value="NEET">NEET</MenuItem>
-                              </Select>
-                            </FormControl>
-                          </Box>
-                        </div>
-                      </div>
-                    </div>
-                    <div className="container mb-2">
-                      <TableContainer component={Paper}>
-                        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                          <TableHead className="bg bg-success ">
-                            <TableRow>
-                              <TableCell align="center" className="text-white">
-                                Question Type
-                              </TableCell>
-                              <TableCell align="center" className="text-white">
-                                # of Questions
-                              </TableCell>
-                              <TableCell align="center" className="text-white">
-                                Positive Marks
-                              </TableCell>
-                              <TableCell align="center" className="text-white">
-                                Partial
-                              </TableCell>
-                              <TableCell align="center" className="text-white">
-                                Negative Marks
-                              </TableCell>
-                            </TableRow>
-                          </TableHead>
-                          <TableBody>
-                            <TableRow>
-                              <TableCell align="center">
-                                Single Correct
-                              </TableCell>
-                              <TableCell align="center">
-                                <TextField
-                                  id="outlined-size-small"
-                                  size="small"
-                                  type="number"
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <TextField
-                                  id="outlined-size-small"
-                                  size="small"
-                                  type="number"
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <TextField
-                                  id="outlined-size-small"
-                                  size="small"
-                                  type="number"
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <TextField
-                                  id="outlined-size-small"
-                                  size="small"
-                                  type="number"
-                                />
-                              </TableCell>
-                            </TableRow>
-                            <TableRow>
-                              <TableCell align="center">
-                                Multi Correct
-                              </TableCell>
-                              <TableCell align="center">
-                                <TextField
-                                  id="outlined-size-small"
-                                  size="small"
-                                  type="number"
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <TextField
-                                  id="outlined-size-small"
-                                  size="small"
-                                  type="number"
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <TextField
-                                  id="outlined-size-small"
-                                  size="small"
-                                  type="number"
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <TextField
-                                  id="outlined-size-small"
-                                  size="small"
-                                  type="number"
-                                />
-                              </TableCell>
-                            </TableRow>
-
-                            <TableRow>
-                              <TableCell align="center">Integer Type</TableCell>
-                              <TableCell align="center">
-                                <TextField
-                                  id="outlined-size-small"
-                                  size="small"
-                                  type="number"
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <TextField
-                                  id="outlined-size-small"
-                                  size="small"
-                                  type="number"
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <TextField
-                                  id="outlined-size-small"
-                                  size="small"
-                                  type="number"
-                                />
-                              </TableCell>
-                              <TableCell align="center">
-                                <TextField
-                                  id="outlined-size-small"
-                                  size="small"
-                                  type="number"
-                                />
-                              </TableCell>
-                            </TableRow>
-                          </TableBody>
-                        </Table>
-                      </TableContainer>
-                    </div>
-                    <div className="submit-button text-center">
-                      <Button onClick={handleCreateTemplate}>Create</Button>
-                    </div>
-                  </form>
+                  <CreateExamTemplate
+                    handleShowAddTemplate={handleShowAddTemplate}
+                  />
                 </Modal.Body>
                 <Modal.Footer>
                   <Button variant="danger" onClick={handleShowAddTemplate}>

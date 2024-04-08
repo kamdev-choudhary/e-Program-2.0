@@ -8,7 +8,6 @@ import AdminPage from "./pages/AdminPage";
 import QuestionBankPage from "./pages/QuestionBankPage";
 import ErrorPage from "./components/ErrorPage";
 import HomePage from "./pages/HomePage";
-import RegisterPage from "./pages/RegisterPage";
 import { AuthProvider, useAuth } from "./components/Auth";
 import StudentProfile from "./components/StudentProfile";
 
@@ -29,7 +28,6 @@ function App() {
             <Route path="/exams" element={<ExamPage />} />
             <Route path="/lectures" element={<LecturePage />} />
             <Route path="/materials" element={<MaterialPage />} />
-            <Route path="/register" element={<RegisterPage />} />
             <Route path="/profile" element={<ProfileProtected />} />
             <Route path="/question-bank" element={<QuestionBankProtected />} />
             <Route path="/admin/*" element={<AdminRoute />} />
@@ -45,6 +43,11 @@ function AdminRoute() {
   const { isAdmin } = useAuth();
 
   return isAdmin ? <AdminPage /> : <Navigate to="/" replace />;
+}
+
+function NotLoggedIn() {
+  const { isLoggedIn } = useAuth();
+  return !isLoggedIn ? <RegisterPage /> : <Navigate to="/" replace />;
 }
 
 function ProfileProtected() {

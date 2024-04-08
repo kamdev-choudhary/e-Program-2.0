@@ -24,11 +24,16 @@ const examTemplateSchema = new Schema({
         type: Number,
         default: 0,
       },
+      addedQuestions: Number,
       positiveMarks: {
         type: Number,
         default: 0,
       },
       negativeMarks: {
+        type: Number,
+        default: 0,
+      },
+      partialMarks: {
         type: Number,
         default: 0,
       },
@@ -38,6 +43,7 @@ const examTemplateSchema = new Schema({
         type: Number,
         default: 0,
       },
+      addedQuestions: Number,
       positiveMarks: {
         type: Number,
         default: 0,
@@ -45,6 +51,10 @@ const examTemplateSchema = new Schema({
       negativeMarks: {
         type: Number,
         default: 0,
+      },
+      partialMarks: {
+        type: Number,
+        default: 1,
       },
     },
     integerType: {
@@ -52,11 +62,16 @@ const examTemplateSchema = new Schema({
         type: Number,
         default: 0,
       },
+      addedQuestions: Number,
       positiveMarks: {
         type: Number,
         default: 0,
       },
       negativeMarks: {
+        type: Number,
+        default: 0,
+      },
+      partialMarks: {
         type: Number,
         default: 0,
       },

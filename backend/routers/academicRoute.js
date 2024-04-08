@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express(express.Router);
-const academiController = require("../controllers/academicController");
+const academicController = require("../controllers/academicController");
 
-router.route("/").get(academiController.academicData);
+router.route("/").get(academicController.academicData);
 
-router.route("/update").put(academiController.updateAcademicData);
+router.route("/update").put(academicController.updateAcademicData);
 
 module.exports = router;

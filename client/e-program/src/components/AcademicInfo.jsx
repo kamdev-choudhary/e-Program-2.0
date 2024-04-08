@@ -1,14 +1,6 @@
 import React from "react";
 import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import TextField from "@mui/material/TextField";
 import Button from "@mui/material/Button";
 import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
@@ -89,11 +81,14 @@ export default function AcademicInfo() {
   useEffect(() => {
     if (filteredTopics.length > 0) {
       const filteredSubtopics = filteredTopics
-        .filter((topic) => !selectedTopic || topic.name === selectedTopic) // Filter by selected topic if it's chosen
+        .filter((topic) => !selectedTopic || topic.name === selectedTopic)
         .flatMap((topic) => topic.subtopics);
       setFilteredSubtopics(filteredSubtopics);
     }
   }, [filteredTopics, selectedTopic]);
+
+  // console.log(selectedTopic);
+  // console.log(filteredSubtopics);
 
   return (
     <>
@@ -230,7 +225,12 @@ export default function AcademicInfo() {
               {filteredTopics &&
                 filteredTopics.map((topic, index) => (
                   <React.Fragment key={index}>
-                    <ListItemButton onClick={() => handleTopicClick(index)}>
+                    <ListItemButton
+                      onClick={() => {
+                        handleTopicClick(index);
+                        setSelectedTopic(topic);
+                      }}
+                    >
                       <ListItemText primary={`${index + 1} ${topic.name}`} />
                       {openNestedList[index] ? <ExpandLess /> : <ExpandMore />}
                     </ListItemButton>
@@ -239,11 +239,18 @@ export default function AcademicInfo() {
                       timeout="auto"
                       unmountOnExit
                     >
-                      <List component="div" disablePadding>
-                        <ListItemButton sx={{ pl: 4 }}>
-                          <ListItemText primary="Starred" />
-                        </ListItemButton>
-                      </List>
+                      {selectedTopic &&
+                        selectedTopic.subtopics &&
+                        selectedTopic.subtopics.map((subtopic, index) => (
+                          <List component="div" disablePadding>
+                            <ListItemButton sx={{ pl: 4 }}>
+                              <ListItemText
+                                key={index}
+                                primary={subtopic.name}
+                              />
+                            </ListItemButton>
+                          </List>
+                        ))}
                     </Collapse>
                   </React.Fragment>
                 ))}

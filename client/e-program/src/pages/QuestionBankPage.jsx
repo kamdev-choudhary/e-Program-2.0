@@ -7,10 +7,10 @@ import IntegerType from "../components/IntegerType";
 import ViewQuestion from "../components/ViewQuestion";
 
 import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import Select from "@mui/material/Select";
+import InputLabel from "@mui/material/InputLabel";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -145,6 +145,7 @@ export default function QuestionBankPage() {
       questionId: Id,
       examTemplateId: selectedTemplate,
     };
+
     setQuestionAddToTemplate(updatedQuestionAddToTemplate);
 
     if (updatedQuestionAddToTemplate) {
@@ -235,21 +236,24 @@ export default function QuestionBankPage() {
       const selectedSubjectData = academic.subjects.find(
         (subject) => subject.name === filterData.subject
       );
-      const filteredTopics = selectedSubjectData.topics.filter(
-        (topic) => topic.className === filterData.classes
-      );
-      setFilteredTopics(filteredTopics);
+      if (selectedSubjectData) {
+        const filteredTopics = selectedSubjectData.topics.filter(
+          (topic) => topic.className === filterData.classes
+        );
+        setFilteredTopics(filteredTopics);
+      }
     }
   }, [filterData.classes, filterData.subject, academic.subjects]);
 
   useEffect(() => {
     if (filteredTopics.length > 0) {
-      const filteredSubtopics = filteredTopics.flatMap(
-        (topic) => topic.subtopics
-      );
+      const filteredSubtopics = filteredTopics
+        .filter((topic) => !filterData.topic || topic.name === filterData.topic)
+        .flatMap((topic) => topic.subtopics);
       setFilteredSubtopics(filteredSubtopics);
     }
-  }, [filteredTopics]);
+  }, [filteredTopics, filterData.topic]);
+
   return (
     <>
       <Snackbar
@@ -318,8 +322,8 @@ export default function QuestionBankPage() {
             <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">Topic</InputLabel>
               <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
+                labelId="Topic Selection"
+                id="selectTopic"
                 name="topic"
                 label="topic"
                 value={filterData.topic}
@@ -546,7 +550,10 @@ export default function QuestionBankPage() {
                   sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
                 >
                   <TableCell align="center">{question.questionId}</TableCell>
-                  <TableCell>{question.questionText}</TableCell>
+                  <TableCell
+                    dangerouslySetInnerHTML={{ __html: question.questionText }}
+                  />
+
                   <TableCell align="center">
                     <Button
                       size="sm"
@@ -652,8 +659,13 @@ export default function QuestionBankPage() {
           <Modal.Title>Single Correct Question</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          {filterData.classes}
           <SingleCorrectQuestion
             handleCloseAddQuestion={handleCloseAddQuestion}
+            selectedClass={filterData.classes}
+            selectedSubject={filterData.subject}
+            selectedTopic={filterData.topic}
+            selectedSubtopic={filterData.subtopic}
           />
         </Modal.Body>
         <Modal.Footer>

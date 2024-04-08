@@ -8,6 +8,7 @@ const batchSchema = new Schema({
   },
   batchClass: String,
   batchStream: String,
+  batchYear: String,
   scholars: [
     {
       type: Schema.Types.ObjectId,

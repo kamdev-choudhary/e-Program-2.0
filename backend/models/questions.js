@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const questionSchema = new Schema({
-  classes: Number,
+  classes: String,
   questionId: String,
   subject: String,
   topic: String,

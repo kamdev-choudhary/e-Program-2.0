@@ -9,6 +9,19 @@ module.exports.addToTemplate = async (req, res, next) => {
     let question = await Question.findById(questionId);
 
     if (!currTemplate.questions.some((q) => q.equals(question._id))) {
+      switch (question.questionType) {
+        case "singleCorrect":
+          currTemplate.questionTypes.singleCorrect.addedQuestions++;
+          break;
+        case "multiCorrect":
+          currTemplate.questionTypes.multiCorrect.addedQuestions++;
+          break;
+        case "integerType":
+          currTemplate.questionTypes.integerType.addedQuestions++;
+          break;
+        default:
+          break;
+      }
       currTemplate.questions.push(question);
       await currTemplate.save();
       res.status(200).json("Successfully Added to source");

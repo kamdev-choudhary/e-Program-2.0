@@ -186,21 +186,17 @@ export default function ViewExamTemplate(props) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {batches.map((batch, index) =>
-              batch.slots.map((examTemp, index) => (
-                <>
-                  <TableRow key={index}>
-                    <TableCell align="center">{batch.batchName}</TableCell>
-                    <TableCell align="center">{examTemp.examDate}</TableCell>
-                    <TableCell align="center">
-                      {examTemp.examStartTime}
-                    </TableCell>
-                    <TableCell align="center">{examTemp.examEndTime}</TableCell>
-                    <TableCell align="center">
-                      <DeleteIcon />
-                    </TableCell>
-                  </TableRow>
-                </>
+            {batches.map((batch, batchIndex) =>
+              batch.slots.map((examTemp, examIndex) => (
+                <TableRow key={`${batchIndex}-${examIndex}`}>
+                  <TableCell align="center">{batch.batchName}</TableCell>
+                  <TableCell align="center">{examTemp.examDate}</TableCell>
+                  <TableCell align="center">{examTemp.examStartTime}</TableCell>
+                  <TableCell align="center">{examTemp.examEndTime}</TableCell>
+                  <TableCell align="center">
+                    <DeleteIcon />
+                  </TableCell>
+                </TableRow>
               ))
             )}
           </TableBody>
@@ -217,6 +213,9 @@ export default function ViewExamTemplate(props) {
               </TableCell>
               <TableCell align="center" className="text-white">
                 # of Questions
+              </TableCell>
+              <TableCell align="center" className="text-white">
+                Added Questions
               </TableCell>
               <TableCell align="center" className="text-white">
                 Positive Marks
@@ -237,6 +236,9 @@ export default function ViewExamTemplate(props) {
                   <TableCell align="center">
                     {examTemplate.questionTypes.singleCorrect.totalQuestions}
                   </TableCell>
+                  <TableCell align="center" style={{ color: "red" }}>
+                    {examTemplate.questionTypes.singleCorrect.addedQuestions}
+                  </TableCell>
                   <TableCell align="center">
                     {examTemplate.questionTypes.singleCorrect.positiveMarks}
                   </TableCell>
@@ -252,6 +254,9 @@ export default function ViewExamTemplate(props) {
                   <TableCell align="center">
                     {examTemplate.questionTypes.multiCorrect.totalQuestions}
                   </TableCell>
+                  <TableCell align="center" style={{ color: "red" }}>
+                    {examTemplate.questionTypes.multiCorrect.addedQuestions}
+                  </TableCell>
                   <TableCell align="center">
                     {examTemplate.questionTypes.multiCorrect.positiveMarks}
                   </TableCell>
@@ -266,6 +271,9 @@ export default function ViewExamTemplate(props) {
                   <TableCell align="center">Ineteger Type</TableCell>
                   <TableCell align="center">
                     {examTemplate.questionTypes.integerType.totalQuestions}
+                  </TableCell>
+                  <TableCell align="center" style={{ color: "red" }}>
+                    {examTemplate.questionTypes.integerType.addedQuestions}
                   </TableCell>
                   <TableCell align="center">
                     {examTemplate.questionTypes.integerType.positiveMarks}

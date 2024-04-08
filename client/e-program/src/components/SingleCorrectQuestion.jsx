@@ -1,6 +1,27 @@
-import { useState } from "react";
+import React, { useState, useEffect } from "react";
+import Box from "@mui/material/Box";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import Select from "@mui/material/Select";
+import InputLabel from "@mui/material/InputLabel";
+
+import { TinyBox, TinyBox2 } from "./TinyBox";
+import Checkbox from "@mui/material/Checkbox";
+import Button from "@mui/material/Button";
+
+import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import FormLabel from "@mui/material/FormLabel";
+import Stack from "@mui/material/Stack";
+
+const API_URL = "http://127.0.0.1:5000/api";
 
 export default function SingleCorrectQuestion(props) {
+  const [academic, setAcademic] = useState([]);
+  const [error, setError] = useState("");
+  const [filteredTopics, setFilteredTopics] = useState([]);
+  const [filteredSubtopics, setFilteredSubtopics] = useState([]); // Added filteredSubtopics state
   const [questionData, setQuestionData] = useState({
     classes: "",
     subject: "",
@@ -17,6 +38,33 @@ export default function SingleCorrectQuestion(props) {
     solution: "",
   });
 
+  useEffect(() => {
+    if (props.selectedSubject) {
+      setQuestionData((prevQuestionData) => ({
+        ...prevQuestionData,
+        subject: props.selectedSubject,
+      }));
+    }
+    if (props.selectedClass) {
+      setQuestionData((prevQuestionData) => ({
+        ...prevQuestionData,
+        classes: props.selectedClass,
+      }));
+    }
+  }, [props.selectedClass, props.selectedSubject]); // Added props.selectedSubject as dependency
+
+  useEffect(() => {
+    fetch(`${API_URL}/academic`)
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => setAcademic(data.academic[0]))
+      .catch((error) => setError(error.message));
+  }, []);
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setQuestionData({
@@ -27,8 +75,8 @@ export default function SingleCorrectQuestion(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    console.log("QUestion data:", questionData);
-    fetch("http://127.0.0.1:5000/api/questionbank", {
+
+    fetch(`${API_URL}/questionbank`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -45,207 +93,298 @@ export default function SingleCorrectQuestion(props) {
       });
   };
 
+  useEffect(() => {
+    if (questionData.classes && questionData.subject && academic.subjects) {
+      const selectedSubjectData = academic.subjects.find(
+        (subject) => subject.name === questionData.subject
+      );
+      if (selectedSubjectData) {
+        const filteredTopics = selectedSubjectData.topics.filter(
+          (topic) => topic.className === questionData.classes
+        );
+        setFilteredTopics(filteredTopics);
+      }
+    }
+  }, [questionData.classes, questionData.subject, academic.subjects]);
+
+  useEffect(() => {
+    if (filteredTopics.length > 0) {
+      const filteredSubtopics = filteredTopics
+        .filter(
+          (topic) => !questionData.topic || topic.name === questionData.topic
+        )
+        .flatMap((topic) => topic.subtopics);
+      setFilteredSubtopics(filteredSubtopics);
+    }
+  }, [filteredTopics, questionData.topic]);
+
+  const handleTinyBoxChange = (name, newContent) => {
+    setQuestionData((prevQuestion) => ({
+      ...prevQuestion,
+      [name]: newContent,
+    }));
+  };
+
+  console.log(questionData);
+
   return (
     <>
-      <form onSubmit={handleSubmit} noValidate className="needs-validation">
-        <div className="container mt-2 border rounded">
-          <div className="row mt-2">
-            <div className="col-md-4 mb-2">
-              <div className="input-group flex-nowrap rounded border border-success">
-                <span
-                  className="input-group-text bg-success text-light"
-                  id="addon-wrapping"
+      <div className="container mt-2 border rounded">
+        <div className="row mt-2">
+          <div className="col-md-3 mb-3">
+            <Box sx={{ minWidth: 120 }}>
+              <FormControl fullWidth size="small">
+                <InputLabel id="demo-simple-select-label">Class</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
+                  name="classes"
+                  label="Class"
+                  value={questionData.classes}
+                  onChange={handleInputChange}
                 >
-                  Subject
-                </span>
-                <select
-                  className="form-control"
+                  {academic &&
+                    academic.classes &&
+                    academic.classes.map((classes, index) => (
+                      <MenuItem key={index} value={classes}>
+                        {classes}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+            </Box>
+          </div>
+          <div className="col-md-3 mb-2">
+            <Box sx={{ minWidth: 120 }}>
+              <FormControl fullWidth size="small">
+                <InputLabel id="demo-simple-select-label">Subject</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
                   name="subject"
+                  label="Subject"
                   value={questionData.subject}
                   onChange={handleInputChange}
                 >
-                  <option value="">-- Select Subject --</option>
-                  <option value="physics">Physics</option>
-                  <option value="chemistry">Chemistry</option>
-                  <option value="mathematics">Mathematics</option>
-                  <option value="biology">Biology</option>
-                </select>
-              </div>
-            </div>
-            <div className="col-md-4 mb-2">
-              <div className="input-group flex-nowrap rounded border border-success">
-                <span
-                  className="input-group-text bg-success text-light"
-                  id="addon-wrapping"
-                >
-                  Topic
-                </span>
-                <select
-                  className="form-control"
+                  {academic &&
+                    academic.subjects &&
+                    academic.subjects.map((subject, index) => (
+                      <MenuItem key={index} value={subject.name}>
+                        {subject.name}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+            </Box>
+          </div>
+          <div className="col-md-3 mb-2">
+            <Box sx={{ minWidth: 120 }}>
+              <FormControl fullWidth size="small">
+                <InputLabel id="demo-simple-select-label">Topic</InputLabel>
+                <Select
+                  labelId="Topic Selection"
+                  id="selectTopic"
                   name="topic"
+                  label="topic"
                   value={questionData.topic}
                   onChange={handleInputChange}
                 >
-                  <option value="">-- Select Topic --</option>
-                  <option value="topic 1">Topic 1</option>
-                  <option value="topic 2">Topic 2</option>
-                  <option value="topic 3">Topic 3</option>
-                  <option value="topic 4">Topic 4</option>
-                  <option value="topic 5">Topic 5</option>
-                </select>
-              </div>
-            </div>
-            <div className="col-md-4 mb-2">
-              <div className="input-group flex-nowrap rounded border border-success">
-                <span
-                  className="input-group-text bg-success text-light"
-                  id="addon-wrapping"
-                >
-                  Sub-topic
-                </span>
-                <select
-                  className="form-control"
+                  {filteredTopics &&
+                    filteredTopics.map((topics, index) => (
+                      <MenuItem key={index} value={topics.name}>
+                        {topics.name}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+            </Box>
+          </div>
+          <div className="col-md-3 mb-2">
+            <Box sx={{ minWidth: 120 }}>
+              <FormControl fullWidth size="small">
+                <InputLabel id="demo-simple-select-label">Sub Topic</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="demo-simple-select"
                   name="subtopic"
+                  label="subtopic"
                   value={questionData.subtopic}
                   onChange={handleInputChange}
                 >
-                  <option value="">-- Select Sub Topic --</option>
-                  <option value="subtopic 1">Subtopic 1</option>
-                  <option value="subtopic 2">subtopic 2</option>
-                </select>
-              </div>
-            </div>
+                  {filteredSubtopics.length > 0 ? (
+                    filteredSubtopics.map((subTopic, index) => (
+                      <MenuItem key={index} value={subTopic.name}>
+                        {subTopic.name}
+                      </MenuItem>
+                    ))
+                  ) : (
+                    <MenuItem value="">No Subtopics available</MenuItem>
+                  )}
+                </Select>
+              </FormControl>
+            </Box>
           </div>
         </div>
-
-        <div className="col-12 mt-2 p-2 border rounded">
-          <div className="mb-3">
-            <textarea
-              name="questionText"
-              value={questionData.questionText}
-              onChange={handleInputChange}
-              id="questionText mt-3"
-              className="form-control mt-3"
-              cols="30"
-              rows="10"
-              placeholder="Enter question"
-              required
-            ></textarea>
-            <div className="invalid-feedback">Please add a question</div>
-          </div>
-          <h4 className="text-center mt-2 ">Options</h4>
-          <div className="input-group mb-3">
-            <div className="input-group-text bg-success text-light">
-              <input
-                className="form-check-input mt-0"
-                type="radio"
-                id="option1"
-                name="correctAnswer"
-                value="1"
-                checked={questionData.correctAnswer === "1"}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <input
-              type="text"
-              className="form-control"
-              name="option1"
-              value={questionData.option1}
-              onChange={handleInputChange}
-              placeholder="option 1"
-              required
-            />
-          </div>
-          <div className="input-group mb-3">
-            <div className="input-group-text bg-success text-light">
-              <input
-                className="form-check-input mt-0"
-                type="radio"
-                id="option2"
-                name="correctAnswer"
-                value="2"
-                checked={questionData.correctAnswer === "2"}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <input
-              type="text"
-              className="form-control"
-              name="option2"
-              value={questionData.option2}
-              onChange={handleInputChange}
-              placeholder="option 2"
-              required
-            />
-          </div>
-          <div className="input-group mb-3">
-            <div className="input-group-text bg-success text-light">
-              <input
-                className="form-check-input mt-0"
-                type="radio"
-                id="option3"
-                name="correctAnswer"
-                value="3"
-                checked={questionData.correctAnswer === "3"}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <input
-              type="text"
-              className="form-control"
-              name="option3"
-              value={questionData.option3}
-              onChange={handleInputChange}
-              placeholder="option 3"
-              required
-            />
-          </div>
-          <div className="input-group mb-3">
-            <div className="input-group-text bg-success text-light">
-              <input
-                className="form-check-input mt-0"
-                type="radio"
-                id="option4"
-                name="correctAnswer"
-                value="4"
-                checked={questionData.correctAnswer === "4"}
-                onChange={handleInputChange}
-                required
-              />
-            </div>
-            <input
-              type="text"
-              className="form-control"
-              name="option4"
-              value={questionData.option4}
-              onChange={handleInputChange}
-              placeholder="option 4"
-              required
-            />
-          </div>
+      </div>
+      <Paper sx={{ padding: 4 }} elevation={4}>
+        <>
+          <FormControl>
+            <Typography>Question</Typography>
+            <Grid container fullWidth>
+              <Grid item>
+                <TinyBox
+                  content={questionData.questionText}
+                  onContentChange={(newContent) =>
+                    handleTinyBoxChange("questionText", newContent)
+                  }
+                />
+              </Grid>
+            </Grid>
+          </FormControl>
           <hr />
-          <div className="input-group">
-            <span className="input-group-text bg-success text-light">
-              Solution
-            </span>
-            <textarea
-              className="form-control"
-              rows="1"
-              aria-label="With textarea"
-              name="solution"
-              value={questionData.solution}
-              onChange={handleInputChange}
-              required
-            ></textarea>
-          </div>
-          <div className="text-center m-2 ">
-            <button className="btn btn-success ">Save</button>
-          </div>
-        </div>
-      </form>
+          <FormControl fullWidth>
+            <FormLabel id="demo-controlled-radio-buttons-group">
+              Options
+            </FormLabel>
+            <Grid container spacing={1}>
+              <Grid item xs={12} sm={1}>
+                <Typography>1</Typography>
+              </Grid>
+              <Grid item xs={12} sm={1}>
+                <Checkbox
+                  color="success"
+                  name="correctAnswer"
+                  value="1"
+                  checked={questionData.correctAnswer === "1"}
+                  onChange={handleInputChange}
+                />
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sm={10}
+                style={{ height: "100%", width: "100%" }}
+              >
+                <TinyBox2
+                  content={questionData.option1}
+                  onContentChange={(newContent) =>
+                    handleTinyBoxChange("option1", newContent)
+                  }
+                />
+              </Grid>
+            </Grid>
+            <Grid container spacing={2} marginTop={1}>
+              <Grid item xs={12} sm={1}>
+                <Typography>2</Typography>
+              </Grid>
+              <Grid item xs={12} sm={1}>
+                <Checkbox
+                  color="success"
+                  name="correctAnswer"
+                  value="2"
+                  checked={questionData.correctAnswer === "2"}
+                  onChange={handleInputChange}
+                />
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sm={10}
+                style={{ height: "100%", width: "100%" }}
+              >
+                <TinyBox2
+                  content={questionData.option2}
+                  onContentChange={(newContent) =>
+                    handleTinyBoxChange("option2", newContent)
+                  }
+                />
+              </Grid>
+            </Grid>
+            <Grid container spacing={2} marginTop={1}>
+              <Grid item xs={12} sm={1}>
+                <Typography>3</Typography>
+              </Grid>
+              <Grid item xs={12} sm={1}>
+                <Checkbox
+                  color="success"
+                  name="correctAnswer"
+                  value="3"
+                  checked={questionData.correctAnswer === "3"}
+                  onChange={handleInputChange}
+                />
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sm={10}
+                style={{ height: "100%", width: "100%" }}
+              >
+                <TinyBox2
+                  content={questionData.option3}
+                  onContentChange={(newContent) =>
+                    handleTinyBoxChange("option3", newContent)
+                  }
+                />
+              </Grid>
+            </Grid>
+            <Grid container spacing={2} marginTop={1}>
+              <Grid item xs={12} sm={1}>
+                <Typography>4</Typography>
+              </Grid>
+              <Grid item xs={12} sm={1}>
+                <Checkbox
+                  color="success"
+                  name="correctAnswer"
+                  value="4"
+                  checked={questionData.correctAnswer === "4"}
+                  onChange={handleInputChange}
+                />
+              </Grid>
+              <Grid
+                item
+                xs={12}
+                sm={10}
+                style={{ height: "100%", width: "100%" }}
+              >
+                <TinyBox2
+                  content={questionData.option4}
+                  onContentChange={(newContent) =>
+                    handleTinyBoxChange("option4", newContent)
+                  }
+                />
+              </Grid>
+            </Grid>
+
+            <hr />
+            <Typography>Solution</Typography>
+            <Grid container>
+              <Grid item fullWidth>
+                <TinyBox
+                  content={questionData.solution}
+                  onContentChange={(newContent) =>
+                    handleTinyBoxChange("solution", newContent)
+                  }
+                />
+              </Grid>
+            </Grid>
+          </FormControl>
+        </>
+        <Stack
+          spacing={2}
+          padding={0}
+          direction="row"
+          style={{
+            bottom: 0,
+            right: 0,
+            marginTop: 20,
+          }}
+          justifyContent="flex-end" // Align items to the right side
+        >
+          <Button variant="contained" onClick={handleSubmit}>
+            Save
+          </Button>
+        </Stack>
+      </Paper>
     </>
   );
 }

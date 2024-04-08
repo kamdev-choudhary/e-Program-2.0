@@ -2,7 +2,6 @@ import "./Navbar.css";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { NavLink } from "react-router-dom";
 import { Modal } from "react-bootstrap";
-import UserPage from "./UserLogin";
 import { useState } from "react";
 import { useAuth } from "../components/Auth";
 import Button from "@mui/material/Button";
@@ -26,34 +25,32 @@ import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import React, { useEffect } from "react";
+import AuthPage from "./AuthPage";
 
 function Navbar() {
-  const { isLoggedIn, logoutUser, isAdmin, accountType, name } = useAuth();
+  const { isLoggedIn, logoutUser, isAdmin, name } = useAuth();
 
-  const drawerWidth = 240;
+  const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
+  const [showUserPage, setShowUserPage] = useState(false);
 
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
 
-  const handleLogoutUser = () => {
-    logoutUser();
-  };
-
-  const [anchorEl, setAnchorEl] = useState(null);
-  // const open = Boolean(anchorEl);
-  const handleClick = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
   const handleClose = () => {
     setAnchorEl(null);
   };
 
-  const [showUserPage, setShowUserPage] = useState(false);
-  function handleshowUserPage() {
+  const handleLogoutUser = () => {
+    logoutUser();
+    handleClose(); // Close the menu after logout
+  };
+
+  const handleshowUserPage = () => {
     setShowUserPage(!showUserPage);
-  }
+  };
+
   const toggleDrawer = (newOpen) => () => {
     setOpen(newOpen);
   };
@@ -196,7 +193,7 @@ function Navbar() {
                     to="/profile"
                     style={{ textDecoration: "none", color: "#000" }}
                   >
-                    <MenuItem>Profile</MenuItem>
+                    <MenuItem onClick={handleClose}>Profile</MenuItem>
                   </NavLink>
                   <MenuItem onClick={handleClose}>My account</MenuItem>
                   <MenuItem onClick={handleLogoutUser}>Logout</MenuItem>
@@ -208,7 +205,7 @@ function Navbar() {
                 color="success"
                 onClick={handleshowUserPage}
               >
-                Login
+                Login or Sign Up
               </Button>
             )}
           </Toolbar>
@@ -223,11 +220,9 @@ function Navbar() {
         onHide={handleshowUserPage}
         dialogClassName="modal-md"
       >
-        <Modal.Header>
-          <Modal.Title>Login to Website</Modal.Title>
-        </Modal.Header>
+        <Modal.Header></Modal.Header>
         <Modal.Body>
-          <UserPage handleshowUserPage={handleshowUserPage} />
+          <AuthPage handleshowUserPage={handleshowUserPage} />
         </Modal.Body>
         <Modal.Footer>
           <Button variant="danger" onClick={handleshowUserPage}>

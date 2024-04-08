@@ -1,5 +1,6 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
+const Batch = require("../models/batch");
 
 module.exports.login = async (req, res) => {
   try {
@@ -29,7 +30,7 @@ module.exports.login = async (req, res) => {
 };
 
 module.exports.register = async (req, res) => {
-  const { name, email, password, mobile } = req.body;
+  const { name, email, password, mobile, currentClass } = req.body;
 
   try {
     let userExist = await User.findOne({ email: email });
@@ -43,7 +44,15 @@ module.exports.register = async (req, res) => {
       email,
       password,
       mobile,
+      currentClass,
     });
+
+    const batch = await Batch.findOne({ batchClass: newUser.currentClass });
+    newUser.batchId = batch._id;
+    newUser.save();
+
+    batch.scholars.push(newUser);
+    batch.save();
 
     return res.status(200).json({
       msg: "Registration Successful",
