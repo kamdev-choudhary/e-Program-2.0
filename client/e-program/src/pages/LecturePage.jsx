@@ -16,6 +16,7 @@ import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
+import Button from "@mui/material/Button";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -225,6 +226,15 @@ export default function LecturePage() {
         </div>
         {showVideoPopup && (
           <div className="col-md-6 videoBox ">
+            <Button
+              variant="outlined"
+              size="small"
+              sx={{ marginBottom: 1 }}
+              color="error"
+              onClick={() => setShowVideoPopup(false)}
+            >
+              Close
+            </Button>
             <div className="popup">
               <YouTubeVideo videoId={currVID} />
             </div>
