@@ -17,6 +17,7 @@ import SearchIcon from "@mui/icons-material/Search";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import Button from "@mui/material/Button";
+import Grid from "@mui/material/Grid";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -69,6 +70,7 @@ export default function LecturePage() {
   const [showVideoPopup, setShowVideoPopup] = useState(false);
   const [selectedClass, setSelectedClass] = useState("IX");
   const [academic, setAcademic] = useState([]);
+  const [selectedSubject, setSelectedSubject] = useState("");
 
   const handleFilterTextChange = (e) => {
     setFilterText(e.target.value);
@@ -107,6 +109,7 @@ export default function LecturePage() {
   const filteredLectures = lectures.filter(
     (lecture) =>
       (lecture.class === selectedClass || lecture.class === "") &&
+      (lecture.subject === selectedSubject || lecture.subject === "") &&
       Object.values(lecture).some(
         (field) =>
           (typeof field === "string" || typeof field === "number") &&
@@ -136,29 +139,54 @@ export default function LecturePage() {
     <>
       {error && <div>Error: {error}</div>}
       <div className="row mb-2 mt-4">
-        <div className="col-md-4 mb-1">
-          <FormControl fullWidth size="small">
-            <InputLabel id="demo-simple-select-label">Class</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="selectedClass"
-              name="selectedClass"
-              label="Class"
-              value={selectedClass}
-              onChange={(e) => setSelectedClass(e.target.value)}
-            >
-              {academic &&
-                academic.classes &&
-                academic.classes.map((classes, index) => (
-                  <MenuItem key={index} value={classes}>
-                    {"Class : "}
-                    {classes}
-                  </MenuItem>
-                ))}
-            </Select>
-          </FormControl>
+        <div className="col-md-5 mb-1">
+          <Grid container spacing={2}>
+            <Grid item xs={6} sm={6} md={6} lg={6} xl={6}>
+              <FormControl fullWidth size="small">
+                <InputLabel id="demo-simple-select-label">Class</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="selectedClass"
+                  name="selectedClass"
+                  label="Class"
+                  value={selectedClass}
+                  onChange={(e) => setSelectedClass(e.target.value)}
+                >
+                  {academic &&
+                    academic.classes &&
+                    academic.classes.map((classes, index) => (
+                      <MenuItem key={index} value={classes}>
+                        {"Class : "}
+                        {classes}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={6} sm={6} md={6} lg={6} xl={6}>
+              <FormControl fullWidth size="small">
+                <InputLabel id="demo-simple-select-label">Subject</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="selectedSubject"
+                  name="selectedSubject"
+                  label="Subject"
+                  value={selectedSubject}
+                  onChange={(e) => setSelectedSubject(e.target.value)}
+                >
+                  {academic &&
+                    academic.subjects &&
+                    academic.subjects.map((subject, index) => (
+                      <MenuItem key={index} value={subject.name}>
+                        {subject.name}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+            </Grid>
+          </Grid>
         </div>
-        <div className="col-md-8 text-center">
+        <div className="col-md-7 text-center">
           <FormControl fullWidth size="small">
             <OutlinedInput
               id="outlined-adornment-amount"

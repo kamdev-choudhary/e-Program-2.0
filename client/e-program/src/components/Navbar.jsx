@@ -21,6 +21,9 @@ import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
 import Drawer from "@mui/material/Drawer";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
+import QuizIcon from "@mui/icons-material/Quiz";
+import OndemandVideoRoundedIcon from "@mui/icons-material/OndemandVideoRounded";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import React, { useEffect } from "react";
@@ -94,7 +97,7 @@ function Navbar() {
           <ListItem>
             <ListItemButton onClick={toggleDrawer(false)}>
               <ListItemIcon>
-                <AdminPanelSettingsIcon />
+                <OndemandVideoRoundedIcon />
               </ListItemIcon>
               <ListItemText primary={"Lectures"} />
             </ListItemButton>
@@ -105,7 +108,7 @@ function Navbar() {
             <ListItem onClick={toggleDrawer(false)}>
               <ListItemButton>
                 <ListItemIcon>
-                  <AdminPanelSettingsIcon />
+                  <QuizIcon />
                 </ListItemIcon>
                 <ListItemText primary={"Question Bank"} />
               </ListItemButton>
@@ -116,7 +119,7 @@ function Navbar() {
           <ListItem onClick={toggleDrawer(false)}>
             <ListItemButton>
               <ListItemIcon>
-                <AdminPanelSettingsIcon />
+                <LibraryBooksIcon />
               </ListItemIcon>
               <ListItemText primary={"Study Materials"} />
             </ListItemButton>

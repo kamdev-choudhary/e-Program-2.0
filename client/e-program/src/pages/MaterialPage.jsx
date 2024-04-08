@@ -129,7 +129,7 @@ export default function MaterialPage() {
       {error && <div>Error: {error}</div>}
       <div className="row">
         <div className="col-md-8 ">
-          <FormControl fullWidth sx={{ m: 1 }}>
+          <FormControl fullWidth sx={{ m: 1 }} size="small">
             <OutlinedInput
               id="outlined-adornment-amount"
               startAdornment={
@@ -145,10 +145,10 @@ export default function MaterialPage() {
         {isAdmin && (
           <div className="col-md-4 d-flex justify-content-center align-items-center">
             <Fab
-              size="medium"
               color="primary"
               aria-label="add"
               onClick={handleAddNewBook}
+              size="small"
             >
               <AddIcon />
             </Fab>
@@ -316,10 +316,10 @@ export default function MaterialPage() {
         </Table>
       </TableContainer>
 
-      <Modal show={pdfViewer}>
+      <Modal show={pdfViewer} onHide={() => setPdfViwer(false)}>
         <Modal.Header>PDF Viewer</Modal.Header>
         <Modal.Body>
-          <Base64PDFViewer base64String={base64String} />
+          <>View PDF</>
         </Modal.Body>
       </Modal>
     </>
