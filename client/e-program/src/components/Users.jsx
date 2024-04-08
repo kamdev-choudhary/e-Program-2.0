@@ -60,7 +60,7 @@ export default function Users() {
   return (
     <>
       <Grid container fullWidth sx={{ gap: 2 }}>
-        <Grid item md={5} xs={6}>
+        <Grid item md={5}>
           <Box>
             <FormControl fullWidth>
               <OutlinedInput
@@ -76,7 +76,7 @@ export default function Users() {
             </FormControl>
           </Box>
         </Grid>
-        <Grid item md={5} xs={6}>
+        <Grid item md={5}>
           <Box>
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">
