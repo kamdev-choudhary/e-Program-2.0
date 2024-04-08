@@ -17,6 +17,8 @@ import Box from "@mui/material/Box";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -57,9 +59,9 @@ export default function Users() {
 
   return (
     <>
-      <div className="row">
-        <div className="col-md-8 text-center">
-          <Box sx={{ minWidth: 110, minHeight: 50 }}>
+      <Grid container fullWidth sx={{ gap: 2 }}>
+        <Grid item md={5} xs={6}>
+          <Box>
             <FormControl fullWidth>
               <OutlinedInput
                 id="outlined-adornment-amount"
@@ -73,9 +75,9 @@ export default function Users() {
               />
             </FormControl>
           </Box>
-        </div>
-        <div className="col-md-4 ">
-          <Box sx={{ minWidth: 110, minHeight: 50 }}>
+        </Grid>
+        <Grid item md={5} xs={6}>
+          <Box>
             <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">
                 Account Type
@@ -94,8 +96,9 @@ export default function Users() {
               </Select>
             </FormControl>
           </Box>
-        </div>
-      </div>
+        </Grid>
+      </Grid>
+
       <hr />
       <TableContainer component={Paper}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
