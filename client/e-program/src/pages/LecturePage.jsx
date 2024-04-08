@@ -36,25 +36,18 @@ function CollapsibleTable({ lectures, playLecture }) {
           </TableHead>
           <TableBody>
             {lectures.map((lecture, lectureIndex) => (
-              <React.Fragment key={lectureIndex}>
-                <TableRow
-                  key={lectureIndex}
-                  sx={{
-                    "&:last-child td, &:last-child th": { border: 0 },
-                  }}
-                >
-                  <TableCell align="center">{lecture.chapterName}</TableCell>
-                  <TableCell align="center">{lecture.lectureNumber}</TableCell>
-                  <TableCell align="center">
-                    <span
-                      className="btn btn-sm btn-outline-danger"
-                      onClick={() => playLecture(lecture.videoId)}
-                    >
-                      <i className="fa-brands fa-youtube"></i> &nbsp;Play
-                    </span>
-                  </TableCell>
-                </TableRow>
-              </React.Fragment>
+              <TableRow key={lectureIndex}>
+                <TableCell align="center">{lecture.chapterName}</TableCell>
+                <TableCell align="center">{lecture.lectureNumber}</TableCell>
+                <TableCell align="center">
+                  <span
+                    className="btn btn-sm btn-outline-danger"
+                    onClick={() => playLecture(lecture.videoId)}
+                  >
+                    <i className="fa-brands fa-youtube"></i> &nbsp;Play
+                  </span>
+                </TableCell>
+              </TableRow>
             ))}
           </TableBody>
         </Table>
@@ -69,9 +62,10 @@ export default function LecturePage() {
   const [collapsedChapter, setCollapsedChapter] = useState(null);
   const [currVID, setCurrVID] = useState(null);
   const [filterText, setFilterText] = useState("");
+  const [showVideoPopup, setShowVideoPopup] = useState(false);
 
   const handleFilterTextChange = (e) => {
-    setFilterText(e.value);
+    setFilterText(e.target.value);
   };
 
   useEffect(() => {
@@ -97,12 +91,19 @@ export default function LecturePage() {
       .catch((error) => setError(error.message));
   }, []);
 
-  // Function to toggle visibility of lectures for a particular chapter
+  const filteredLectures = lectures.filter((lecture) =>
+    Object.values(lecture).some(
+      (field) =>
+        (typeof field === "string" || typeof field === "number") &&
+        field.toString().toLowerCase().includes(filterText.toLowerCase())
+    )
+  );
+
   const toggleChapter = (chapterName) => {
     setCollapsedChapter(collapsedChapter === chapterName ? null : chapterName);
   };
 
-  const lecturesByChapter = lectures.reduce((acc, lecture) => {
+  const lecturesByChapter = filteredLectures.reduce((acc, lecture) => {
     const { chapterName } = lecture;
     if (!acc[chapterName]) {
       acc[chapterName] = [];
@@ -111,9 +112,9 @@ export default function LecturePage() {
     return acc;
   }, {});
 
-  // Function to set the current video ID when Play button is clicked
   const playLecture = (videoId) => {
     setCurrVID(videoId);
+    setShowVideoPopup(true);
   };
 
   return (
@@ -124,6 +125,7 @@ export default function LecturePage() {
           <FormControl fullWidth sx={{ m: 1 }} size="small">
             <OutlinedInput
               id="outlined-adornment-amount"
+              onChange={handleFilterTextChange}
               startAdornment={
                 <InputAdornment position="start">
                   Search <SearchIcon />
@@ -139,7 +141,16 @@ export default function LecturePage() {
             <Table aria-label="simple table">
               <TableHead className="bg bg-success sticky-top">
                 <TableRow>
-                  <TableCell align="center" className="text-white">
+                  <TableCell
+                    className="text-white"
+                    align="left"
+                    sx={{
+                      maxWidth: "130px",
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      whiteSpace: "nowrap",
+                    }}
+                  >
                     Class
                   </TableCell>
                   <TableCell align="center" className="text-white">
@@ -159,34 +170,21 @@ export default function LecturePage() {
                     {(index === 0 ||
                       chapterName !==
                         Object.keys(lecturesByChapter)[index - 1]) && (
-                      <TableRow>
-                        <TableCell
-                          align="center"
-                          onClick={() => toggleChapter(chapterName)}
-                        >
+                      <TableRow onClick={() => toggleChapter(chapterName)}>
+                        <TableCell align="center">
                           {lecturesByChapter[chapterName][0].class}
                         </TableCell>
-                        <TableCell
-                          align="center"
-                          onClick={() => toggleChapter(chapterName)}
-                        >
+                        <TableCell align="center">
                           {lecturesByChapter[chapterName][0].subject}
                         </TableCell>
-                        <TableCell
-                          align="center"
-                          onClick={() => toggleChapter(chapterName)}
-                        >
+                        <TableCell align="center">
                           {lecturesByChapter[chapterName][0].chapterName}
                         </TableCell>
-                        <TableCell
-                          align="center"
-                          onClick={() => toggleChapter(chapterName)}
-                        >
+                        <TableCell align="center">
                           {lecturesByChapter[chapterName].length}
                         </TableCell>
                       </TableRow>
                     )}
-                    {/* Render lectures for the chapter if it's expanded */}
                     {collapsedChapter === chapterName && (
                       <TableRow key={index + "-collapse"}>
                         <TableCell colSpan="4">
@@ -203,9 +201,16 @@ export default function LecturePage() {
             </Table>
           </TableContainer>
         </div>
-        <div className="col-md-6 videoBox ">
-          <YouTubeVideo videoId={currVID} />
-        </div>
+        {showVideoPopup && (
+          <div className="col-md-6 videoBox ">
+            <div className="popup">
+              <span className="close" onClick={() => setShowVideoPopup(false)}>
+                &times;
+              </span>
+              <YouTubeVideo videoId={currVID} />
+            </div>
+          </div>
+        )}
       </div>
     </>
   );
