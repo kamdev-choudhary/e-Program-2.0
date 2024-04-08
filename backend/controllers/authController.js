@@ -11,7 +11,6 @@ module.exports.login = async (req, res) => {
       return res.status(400).json("Email or Password is incorrect");
     }
 
-    // Compare the provided password with the hashed password
     const isPasswordValid = await bcrypt.compare(password, userExist.password);
 
     if (isPasswordValid) {
@@ -49,6 +48,7 @@ module.exports.register = async (req, res) => {
 
     const batch = await Batch.findOne({ batchClass: newUser.currentClass });
     newUser.batchId = batch._id;
+    newUser.batchName = batch.batchName;
     newUser.save();
 
     batch.scholars.push(newUser);

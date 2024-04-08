@@ -1,4 +1,5 @@
 const Question = require("../models/questions");
+const ExamTemplate = require("../models/examTemplate");
 
 module.exports.viewQuestion = async (req, res, next) => {
   try {
@@ -55,8 +56,50 @@ module.exports.saveQuestion = async (req, res) => {
 // Delete Question
 
 module.exports.deleteQuestion = async (req, res) => {
-  const DeletedQuestion = await Question.findOneAndDelete({
-    _id: req.body._id,
-  });
-  res.status(200).json("Question Deleted Succesfully");
+  try {
+    const deletedQuestion = await Question.findOneAndDelete({
+      _id: req.body._id,
+    });
+
+    // If no question was found and deleted, respond with an error
+    if (!deletedQuestion) {
+      return res.status(404).json({ error: "Question not found" });
+    }
+
+    for (const templateId of deletedQuestion.inTemplateId) {
+      const template = await ExamTemplate.findById(templateId);
+      if (template) {
+        // Check if the question is present in the template
+        const questionIndex = template.questions.findIndex((q) =>
+          q.equals(deletedQuestion._id)
+        );
+        if (questionIndex !== -1) {
+          // Remove the question from the template's questions array
+          template.questions.splice(questionIndex, 1);
+
+          // Update addedQuestions count based on question type
+          switch (deletedQuestion.questionType) {
+            case "singleCorrect":
+              template.questionTypes.singleCorrect.addedQuestions--;
+              break;
+            case "multiCorrect":
+              template.questionTypes.multiCorrect.addedQuestions--;
+              break;
+            case "integerType":
+              template.questionTypes.integerType.addedQuestions--;
+              break;
+            default:
+              break;
+          }
+
+          await template.save();
+        }
+      }
+    }
+
+    res.status(200).json({ message: "Question deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting question:", error);
+    res.status(500).json({ error: "Internal server error" });
+  }
 };

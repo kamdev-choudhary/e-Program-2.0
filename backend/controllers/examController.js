@@ -24,6 +24,9 @@ module.exports.addToTemplate = async (req, res, next) => {
       }
       currTemplate.questions.push(question);
       await currTemplate.save();
+
+      question.inTemplateId.push(currTemplate._id);
+      question.save();
       res.status(200).json("Successfully Added to source");
     } else {
       res.status(200).json("Question already exists in the template");

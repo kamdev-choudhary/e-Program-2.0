@@ -99,6 +99,8 @@ export default function StudentProfile({ user }) {
     textAlign: "left",
   }));
 
+  console.log(student.batchName);
+
   return (
     <>
       {student && (

@@ -21,6 +21,11 @@ const questionSchema = new Schema({
   option4: String,
   correctAnswer: String,
   solution: String,
+  inTemplateId: [
+    {
+      type: String,
+    },
+  ],
 });
 
 const Question = mongoose.model("Question", questionSchema);
