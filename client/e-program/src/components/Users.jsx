@@ -62,7 +62,7 @@ export default function Users() {
       <Grid container fullWidth sx={{ gap: 2 }}>
         <Grid item md={5}>
           <Box>
-            <FormControl fullWidth>
+            <FormControl fullWidth size="small">
               <OutlinedInput
                 id="outlined-adornment-amount"
                 startAdornment={
@@ -78,7 +78,7 @@ export default function Users() {
         </Grid>
         <Grid item md={5}>
           <Box>
-            <FormControl fullWidth>
+            <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">
                 Account Type
               </InputLabel>

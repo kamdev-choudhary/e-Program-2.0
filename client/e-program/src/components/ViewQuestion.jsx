@@ -16,8 +16,6 @@ import Stack from "@mui/material/Stack";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
-const label = { inputProps: { "aria-label": "Checkbox demo" } };
-
 export default function ViewQuestion(props) {
   const [academic, setAcademicData] = useState([]);
   const [error, setError] = useState(null);
@@ -74,298 +72,301 @@ export default function ViewQuestion(props) {
       [name]: newContent,
     }));
   };
-
-  console.log(question);
   return (
     <>
-      <Paper sx={{ padding: 4 }} elevation={4}>
-        <>
-          <Typography>
-            <div className="row">
-              <div className="col-md-3 mb-3">
-                <Box sx={{ minWidth: 120 }}>
-                  <FormControl fullWidth size="small">
-                    <InputLabel id="class-label">Class</InputLabel>
-                    <Select
-                      labelId="class-label"
-                      id="class-select"
-                      value={question.classes || ""}
-                      label="Class"
-                      name="classes"
-                      onChange={handleChange}
-                    >
-                      {academic.classes &&
-                        academic.classes.map((classes, index) => (
-                          <MenuItem key={index} value={classes}>
-                            {classes}
-                          </MenuItem>
-                        ))}
-                    </Select>
-                  </FormControl>
-                </Box>
-              </div>
-              <div className="col-md-3 mb-2">
-                <Box sx={{ minWidth: 120 }}>
-                  <FormControl fullWidth size="small">
-                    <InputLabel id="subject-label">Subject</InputLabel>
-                    <Select
-                      labelId="subject-label"
-                      label="Subject"
-                      id="subject-select"
-                      name="subject"
-                      value={question.subject || ""}
-                      onChange={handleChange}
-                    >
-                      {academic.subjects &&
-                        academic.subjects.map((subject, index) => (
-                          <MenuItem key={index} value={subject.name}>
-                            {subject.name}
-                          </MenuItem>
-                        ))}
-                    </Select>
-                  </FormControl>
-                </Box>
-              </div>
-              <div className="col-md-3 mb-2">
-                <Box sx={{ minWidth: 120 }}>
-                  <FormControl fullWidth size="small">
-                    <InputLabel id="topic-label">Topic</InputLabel>
-                    <Select
-                      labelId="topic-label"
-                      id="selectTopic"
-                      name="topic"
-                      label="Topic"
-                      value={question.topic || ""}
-                      onChange={handleChange}
-                    >
-                      {filteredTopics &&
-                        filteredTopics.map((topic, index) => (
-                          <MenuItem key={index} value={topic.name}>
-                            {topic.name}
-                          </MenuItem>
-                        ))}
-                    </Select>
-                  </FormControl>
-                </Box>
-              </div>
-
-              <div className="col-md-3 mb-2">
-                <Box sx={{ minWidth: 120 }}>
-                  <FormControl fullWidth size="small">
-                    <InputLabel id="subtopic-label">Subtopic</InputLabel>
-                    <Select
-                      labelId="subtopic-label"
-                      id="selectSubtopic"
-                      name="subtopic"
-                      label="Subtopic"
-                      value={question.subtopic || ""}
-                      onChange={handleChange}
-                    >
-                      {filteredSubtopics &&
-                        filteredSubtopics.map((subtopic, index) => (
-                          <MenuItem key={index} value={subtopic.name}>
-                            {subtopic.name}
-                          </MenuItem>
-                        ))}
-                    </Select>
-                  </FormControl>
-                </Box>
-              </div>
-
-              <div className="col-md-3 mb-2">
-                <Box sx={{ minWidth: 120 }}>
-                  <FormControl fullWidth size="small">
-                    <InputLabel id="demo-simple-select-label">
-                      Difficulty Level
-                    </InputLabel>
-                    <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      name="difficultyLevel"
-                      label="difficultyLevel"
-                      value={question.difficultyLevel || ""}
-                      onChange={handleChange}
-                    >
-                      {academic &&
-                        academic.difficultyLevel &&
-                        academic.difficultyLevel.map((dLevel, index) => (
-                          <MenuItem key={index} value={dLevel}>
-                            {dLevel}
-                          </MenuItem>
-                        ))}
-                    </Select>
-                  </FormControl>
-                </Box>
-              </div>
-              <div className="col-md-3 mb-2">
-                <Box sx={{ minWidth: 120 }}>
-                  <FormControl fullWidth size="small">
-                    <InputLabel id="demo-simple-select-label">
-                      Time Required
-                    </InputLabel>
-                    <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      name="timeRequired"
-                      label="timeRequired"
-                      value={question.timeRequired || ""}
-                      onChange={handleChange}
-                    >
-                      {academic &&
-                        academic.timeRequired &&
-                        academic.timeRequired.map((time, index) => (
-                          <MenuItem key={index} value={time}>
-                            {time}
-                          </MenuItem>
-                        ))}
-                    </Select>
-                  </FormControl>
-                </Box>
-              </div>
-              <div className="col-md-3 mb-2">
-                <Box sx={{ minWidth: 120 }}>
-                  <FormControl fullWidth size="small">
-                    <InputLabel id="demo-simple-select-label">
-                      Target
-                    </InputLabel>
-                    <Select
-                      labelId="demo-simple-select-label"
-                      id="demo-simple-select"
-                      name="target"
-                      label="target"
-                      value={question.target || ""}
-                      onChange={handleChange}
-                    >
-                      {academic &&
-                        academic.target &&
-                        academic.target.map((tget, index) => (
-                          <MenuItem key={index} value={tget}>
-                            {tget}
-                          </MenuItem>
-                        ))}
-                    </Select>
-                  </FormControl>
-                </Box>
-              </div>
+      <Paper elevation={6} sx={{ padding: "20px" }}>
+        <Typography>
+          <div className="row">
+            <div className="col-md-3 mb-3">
+              <Box sx={{ minWidth: 120 }}>
+                <FormControl fullWidth size="small">
+                  <InputLabel id="class-label">Class</InputLabel>
+                  <Select
+                    labelId="class-label"
+                    id="class-select"
+                    value={question.classes || ""}
+                    label="Class"
+                    name="classes"
+                    onChange={handleChange}
+                  >
+                    {academic.classes &&
+                      academic.classes.map((classes, index) => (
+                        <MenuItem key={index} value={classes}>
+                          {classes}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </FormControl>
+              </Box>
             </div>
-          </Typography>
+            <div className="col-md-3 mb-2">
+              <Box sx={{ minWidth: 120 }}>
+                <FormControl fullWidth size="small">
+                  <InputLabel id="subject-label">Subject</InputLabel>
+                  <Select
+                    labelId="subject-label"
+                    label="Subject"
+                    id="subject-select"
+                    name="subject"
+                    value={question.subject || ""}
+                    onChange={handleChange}
+                  >
+                    {academic.subjects &&
+                      academic.subjects.map((subject, index) => (
+                        <MenuItem key={index} value={subject.name}>
+                          {subject.name}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </div>
+            <div className="col-md-3 mb-2">
+              <Box sx={{ minWidth: 120 }}>
+                <FormControl fullWidth size="small">
+                  <InputLabel id="topic-label">Topic</InputLabel>
+                  <Select
+                    labelId="topic-label"
+                    id="selectTopic"
+                    name="topic"
+                    label="Topic"
+                    value={question.topic || ""}
+                    onChange={handleChange}
+                  >
+                    {filteredTopics &&
+                      filteredTopics.map((topic, index) => (
+                        <MenuItem key={index} value={topic.name}>
+                          {topic.name}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </div>
+
+            <div className="col-md-3 mb-2">
+              <Box sx={{ minWidth: 120 }}>
+                <FormControl fullWidth size="small">
+                  <InputLabel id="subtopic-label">Subtopic</InputLabel>
+                  <Select
+                    labelId="subtopic-label"
+                    id="selectSubtopic"
+                    name="subtopic"
+                    label="Subtopic"
+                    value={question.subtopic || ""}
+                    onChange={handleChange}
+                  >
+                    {filteredSubtopics &&
+                      filteredSubtopics.map((subtopic, index) => (
+                        <MenuItem key={index} value={subtopic.name}>
+                          {subtopic.name}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </div>
+
+            <div className="col-md-3 mb-2">
+              <Box sx={{ minWidth: 120 }}>
+                <FormControl fullWidth size="small">
+                  <InputLabel id="demo-simple-select-label">
+                    Difficulty Level
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    name="difficultyLevel"
+                    label="difficultyLevel"
+                    value={question.difficultyLevel || ""}
+                    onChange={handleChange}
+                  >
+                    {academic &&
+                      academic.difficultyLevel &&
+                      academic.difficultyLevel.map((dLevel, index) => (
+                        <MenuItem key={index} value={dLevel}>
+                          {dLevel}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </div>
+            <div className="col-md-3 mb-2">
+              <Box sx={{ minWidth: 120 }}>
+                <FormControl fullWidth size="small">
+                  <InputLabel id="demo-simple-select-label">
+                    Time Required
+                  </InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    name="timeRequired"
+                    label="timeRequired"
+                    value={question.timeRequired || ""}
+                    onChange={handleChange}
+                  >
+                    {academic &&
+                      academic.timeRequired &&
+                      academic.timeRequired.map((time, index) => (
+                        <MenuItem key={index} value={time}>
+                          {time}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </div>
+            <div className="col-md-3 mb-2">
+              <Box sx={{ minWidth: 120 }}>
+                <FormControl fullWidth size="small">
+                  <InputLabel id="demo-simple-select-label">Target</InputLabel>
+                  <Select
+                    labelId="demo-simple-select-label"
+                    id="demo-simple-select"
+                    name="target"
+                    label="target"
+                    value={question.target || ""}
+                    onChange={handleChange}
+                  >
+                    {academic &&
+                      academic.target &&
+                      academic.target.map((tget, index) => (
+                        <MenuItem key={index} value={tget}>
+                          {tget}
+                        </MenuItem>
+                      ))}
+                  </Select>
+                </FormControl>
+              </Box>
+            </div>
+          </div>
+        </Typography>
+        <hr />
+        <FormControl>
+          <Typography>Question</Typography>
+          <Grid container fullWidth>
+            <Grid item>
+              <TinyBox
+                content={question.questionText}
+                onContentChange={(newContent) =>
+                  handleTinyBoxChange("questionText", newContent)
+                }
+              />
+            </Grid>
+          </Grid>
+        </FormControl>
+        <hr />
+        <FormControl fullWidth>
+          <FormLabel id="demo-controlled-radio-buttons-group">
+            Options
+          </FormLabel>
+          <Grid container spacing={1}>
+            <Grid item xs={12} sm={1} alignContent="center">
+              <Typography variant="h5" align="center">
+                1
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={1} alignContent="center">
+              <Checkbox color="success" />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sm={10}
+              style={{ height: "100%", width: "100%" }}
+            >
+              <TinyBox2
+                content={question.option1}
+                onContentChange={(newContent) =>
+                  handleTinyBoxChange("option1", newContent)
+                }
+              />
+            </Grid>
+          </Grid>
+          <Grid container spacing={2} marginTop={1}>
+            <Grid item xs={12} sm={1} alignContent="center">
+              <Typography variant="h5" align="center">
+                2
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={1} alignContent="center">
+              <Checkbox color="success" />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sm={10}
+              style={{ height: "100%", width: "100%" }}
+            >
+              <TinyBox2
+                content={question.option2}
+                onContentChange={(newContent) =>
+                  handleTinyBoxChange("option2", newContent)
+                }
+              />
+            </Grid>
+          </Grid>
+          <Grid container spacing={2} marginTop={1}>
+            <Grid item xs={12} sm={1} alignContent="center">
+              <Typography variant="h5" align="center">
+                3
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={1} alignContent="center">
+              <Checkbox color="success" />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sm={10}
+              style={{ height: "100%", width: "100%" }}
+            >
+              <TinyBox2
+                content={question.option3}
+                onContentChange={(newContent) =>
+                  handleTinyBoxChange("option3", newContent)
+                }
+              />
+            </Grid>
+          </Grid>
+          <Grid container spacing={2} marginTop={1}>
+            <Grid item xs={12} sm={1} alignContent="center">
+              <Typography variant="h5" align="center">
+                4
+              </Typography>
+            </Grid>
+            <Grid item xs={12} sm={1} alignContent="center">
+              <Checkbox color="success" />
+            </Grid>
+            <Grid
+              item
+              xs={12}
+              sm={10}
+              style={{ height: "100%", width: "100%" }}
+            >
+              <TinyBox2
+                content={question.option4}
+                onContentChange={(newContent) =>
+                  handleTinyBoxChange("option4", newContent)
+                }
+              />
+            </Grid>
+          </Grid>
           <hr />
-          <FormControl>
-            <Typography>Question</Typography>
-            <Grid container fullWidth>
-              <Grid item>
-                <TinyBox
-                  content={question.questionText}
-                  onContentChange={(newContent) =>
-                    handleTinyBoxChange("questionText", newContent)
-                  }
-                />
-              </Grid>
+          <Typography>Solution</Typography>
+          <Grid container>
+            <Grid item fullWidth>
+              <TinyBox2
+                content={question.solution}
+                onContentChange={(newContent) =>
+                  handleTinyBoxChange("solution", newContent)
+                }
+              />
             </Grid>
-          </FormControl>
-          <hr />
-          <FormControl fullWidth>
-            <FormLabel id="demo-controlled-radio-buttons-group">
-              Options
-            </FormLabel>
-            <Grid container spacing={1}>
-              <Grid item xs={12} sm={1}>
-                <Typography>1</Typography>
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Checkbox color="success" />
-              </Grid>
-              <Grid
-                item
-                xs={12}
-                sm={10}
-                style={{ height: "100%", width: "100%" }}
-              >
-                <TinyBox2
-                  content={question.option1}
-                  onContentChange={(newContent) =>
-                    handleTinyBoxChange("option1", newContent)
-                  }
-                />
-              </Grid>
-            </Grid>
-            <Grid container spacing={2} marginTop={1}>
-              <Grid item xs={12} sm={1}>
-                <Typography>2</Typography>
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Checkbox color="success" />
-              </Grid>
-              <Grid
-                item
-                xs={12}
-                sm={10}
-                style={{ height: "100%", width: "100%" }}
-              >
-                <TinyBox2
-                  content={question.option2}
-                  onContentChange={(newContent) =>
-                    handleTinyBoxChange("option2", newContent)
-                  }
-                />
-              </Grid>
-            </Grid>
-            <Grid container spacing={2} marginTop={1}>
-              <Grid item xs={12} sm={1}>
-                <Typography>3</Typography>
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Checkbox color="success" />
-              </Grid>
-              <Grid
-                item
-                xs={12}
-                sm={10}
-                style={{ height: "100%", width: "100%" }}
-              >
-                <TinyBox2
-                  content={question.option3}
-                  onContentChange={(newContent) =>
-                    handleTinyBoxChange("option3", newContent)
-                  }
-                />
-              </Grid>
-            </Grid>
-            <Grid container spacing={2} marginTop={1}>
-              <Grid item xs={12} sm={1}>
-                <Typography>4</Typography>
-              </Grid>
-              <Grid item xs={12} sm={1}>
-                <Checkbox color="success" />
-              </Grid>
-              <Grid
-                item
-                xs={12}
-                sm={10}
-                style={{ height: "100%", width: "100%" }}
-              >
-                <TinyBox2
-                  content={question.option4}
-                  onContentChange={(newContent) =>
-                    handleTinyBoxChange("option4", newContent)
-                  }
-                />
-              </Grid>
-            </Grid>
-            <hr />
-            <Typography>Solution</Typography>
-            <Grid container>
-              <Grid item fullWidth>
-                <TinyBox
-                  content={question.solution}
-                  onContentChange={(newContent) =>
-                    handleTinyBoxChange("solution", newContent)
-                  }
-                />
-              </Grid>
-            </Grid>
-          </FormControl>
-        </>
+          </Grid>
+        </FormControl>
+
         <Stack
           spacing={2}
           padding={0}

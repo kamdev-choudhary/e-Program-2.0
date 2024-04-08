@@ -134,7 +134,13 @@ export default function AdminPage() {
             <ListItem
               onClick={() => handleAdminContent("dashboard")}
               sx={{
-                color: ShowAdminContent === "dashboard" ? "red" : "inherit",
+                color: ShowAdminContent === "dashboard" ? "white" : "inherit",
+                backgroundColor:
+                  ShowAdminContent === "dashboard" ? "#28844f" : "inherit",
+                borderRadius:
+                  ShowAdminContent === "dashboard"
+                    ? "5px 5px 0  0 "
+                    : "inherit",
               }}
             >
               <ListItemText primary="Dashboard" />
@@ -143,7 +149,9 @@ export default function AdminPage() {
             <ListItem
               onClick={() => handleAdminContent("users")}
               sx={{
-                color: ShowAdminContent === "users" ? "red" : "inherit",
+                color: ShowAdminContent === "users" ? "white" : "inherit",
+                backgroundColor:
+                  ShowAdminContent === "users" ? "#28844f" : "inherit",
               }}
             >
               <ListItemText primary="User Master" />
@@ -152,7 +160,9 @@ export default function AdminPage() {
             <ListItem
               onClick={() => handleAdminContent("exam")}
               sx={{
-                color: ShowAdminContent === "exam" ? "red" : "inherit",
+                color: ShowAdminContent === "exam" ? "white" : "inherit",
+                backgroundColor:
+                  ShowAdminContent === "exam" ? "#28844f" : "inherit",
               }}
             >
               <ListItemText primary="Exam Master" />
@@ -161,7 +171,9 @@ export default function AdminPage() {
             <ListItem
               onClick={() => handleAdminContent("batch")}
               sx={{
-                color: ShowAdminContent === "batch" ? "red" : "inherit",
+                color: ShowAdminContent === "batch" ? "white" : "inherit",
+                backgroundColor:
+                  ShowAdminContent === "batch" ? "#28844f" : "inherit",
               }}
             >
               <ListItemText primary="Batch Master" />
@@ -170,7 +182,11 @@ export default function AdminPage() {
             <ListItem
               onClick={() => handleAdminContent("academic")}
               sx={{
-                color: ShowAdminContent === "academic" ? "red" : "inherit",
+                color: ShowAdminContent === "academic" ? "White" : "inherit",
+                backgroundColor:
+                  ShowAdminContent === "academic" ? "#28844f" : "inherit",
+                borderRadius:
+                  ShowAdminContent === "academic" ? " 0 0 5px 5px" : "inherit",
               }}
             >
               <ListItemText primary="Academic Master" />

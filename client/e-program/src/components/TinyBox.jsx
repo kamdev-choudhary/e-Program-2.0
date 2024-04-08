@@ -7,7 +7,7 @@ export function TinyBox(props) {
     <Editor
       apiKey="o9adc3d0e8icjmn90btn0tfps73vsqpqqry3xb7do5xyqnxm"
       init={{
-        plugins: " image lists table wordcount powerPaste",
+        plugins: " image lists table wordcount ",
         toolbar:
           "undo redo | blocks fontfamily fontsize | bold italic underline  charmap | typography | lineheight | checklist numlist bullist indent outdent | removeformat",
         tinycomments_mode: "embedded",
