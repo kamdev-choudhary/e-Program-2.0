@@ -17,7 +17,7 @@ import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
 
-const API_URL = "http://127.0.0.1:5000/api";
+const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 export default function ExamStarted({ templateId }) {
   const theme = useTheme();

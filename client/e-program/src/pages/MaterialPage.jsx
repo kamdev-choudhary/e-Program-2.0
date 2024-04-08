@@ -19,7 +19,7 @@ import TextField from "@mui/material/TextField";
 import Base64PDFViewer from "../components/Base64PDFViewer";
 import { useAuth } from "../components/Auth";
 
-const API_URL = "http://127.0.0.1:5000/api";
+const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 export default function MaterialPage() {
   const [books, setBooks] = useState([]);

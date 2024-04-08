@@ -26,7 +26,7 @@ import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import ViewExamTemplate from "../components/ViewExamTemplate";
 import CreateExamTemplate from "../components/CreateExamTemplate";
 
-const API_URL = "http://127.0.0.1:5000/api";
+const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 export default function AdminPage() {
   const [showAddExamTemplate, setShowAddExamTemplate] = useState(false);
@@ -44,6 +44,8 @@ export default function AdminPage() {
   const handleBatchInputChange = (e) => {
     setBatch({ ...batch, [e.target.name]: e.target.value });
   };
+
+  // console.log(REACT_APP_API_URL);
 
   useEffect(() => {
     fetch(`${API_URL}/batch`)

@@ -17,7 +17,8 @@ import ListItemText from "@mui/material/ListItemText";
 import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
-const API_URL = "http://127.0.0.1:5000/api";
+
+const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 export default function AcademicInfo() {
   const [academic, setAcademic] = useState({});

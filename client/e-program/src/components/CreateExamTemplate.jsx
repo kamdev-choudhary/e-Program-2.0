@@ -14,6 +14,8 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 
+const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
+
 export default function (handleShowAddTemplate) {
   const [newExamTemplate, setNewExamTemplate] = useState({
     examName: "",
@@ -44,7 +46,7 @@ export default function (handleShowAddTemplate) {
   });
 
   const handleCreateTemplate = () => {
-    fetch("http://127.0.0.1:5000/api/exams/createtemplate", {
+    fetch(`${API_URL}/exams/createtemplate`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

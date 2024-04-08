@@ -19,7 +19,7 @@ import { createTheme, ThemeProvider } from "@mui/material/styles";
 import { useAuth } from "./Auth";
 import { Navigate } from "react-router-dom";
 
-const API_URL = "http://127.0.0.1:5000/api";
+const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 export default function AuthPage({ handleshowUserPage }) {
   const [showRegisterPage, setShowRegisterPage] = useState(false);

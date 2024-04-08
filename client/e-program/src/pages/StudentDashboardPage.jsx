@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { useAuth } from "../components/Auth";
 import StudentProfile from "../components/StudentProfile";
 
-const API_URL = "http://127.0.0.1:5000/api";
+const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 export default function DashboardPage() {
   const { userId } = useAuth();

@@ -22,7 +22,8 @@ import Box from "@mui/material/Box";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
-const API_URL = "http://127.0.0.1:5000/api";
+
+const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 export default function ViewExamTemplate(props) {
   const [examTemplate, setExamTemplate] = useState([]);
