@@ -137,7 +137,7 @@ export default function LecturePage() {
 
   return (
     <>
-      {error && <div>Error: {error}</div>}
+      {error && <div> Error: {error}</div>}
       <div className="row mb-2 mt-4">
         <div className="col-md-5 mb-1">
           <Grid container spacing={2}>

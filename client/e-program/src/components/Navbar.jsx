@@ -24,6 +24,7 @@ import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import QuizIcon from "@mui/icons-material/Quiz";
 import OndemandVideoRoundedIcon from "@mui/icons-material/OndemandVideoRounded";
+import DescriptionIcon from "@mui/icons-material/Description";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import React, { useEffect } from "react";
@@ -130,7 +131,7 @@ function Navbar() {
             <ListItem onClick={toggleDrawer(false)}>
               <ListItemButton>
                 <ListItemIcon>
-                  <AdminPanelSettingsIcon />
+                  <DescriptionIcon />
                 </ListItemIcon>
                 <ListItemText primary={"Exams"} />
               </ListItemButton>
