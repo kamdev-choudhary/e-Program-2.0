@@ -16,7 +16,6 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
-import Base64PDFViewer from "../components/Base64PDFViewer";
 import { useAuth } from "../components/Auth";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
