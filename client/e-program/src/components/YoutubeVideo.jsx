@@ -1,12 +1,17 @@
 import React from "react";
 
-const YouTubeVideo = ({ videoId, width, height }) => {
+const YouTubeVideo = ({ videoId }) => {
   return (
-    <div style={{ width: width, height: height }}>
+    <div style={{ position: "relative", width: "100%", paddingTop: "56.25%" }}>
       <iframe
-        width="100%"
-        height="325rem"
         src={`https://www.youtube.com/embed/${videoId}`}
+        style={{
+          position: "absolute",
+          top: "0",
+          left: "0",
+          width: "100%",
+          height: "100%",
+        }}
         title="YouTube video player"
         frameBorder="0"
         allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"

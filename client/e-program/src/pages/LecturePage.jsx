@@ -135,7 +135,7 @@ export default function LecturePage() {
     <>
       {error && <div>Error: {error}</div>}
       <div className="row mb-2 mt-4">
-        <div className="col-md-4">
+        <div className="col-md-4 mb-1">
           <FormControl fullWidth size="small">
             <InputLabel id="demo-simple-select-label">Class</InputLabel>
             <Select
@@ -226,11 +226,9 @@ export default function LecturePage() {
         {showVideoPopup && (
           <div className="col-md-6 videoBox ">
             <div className="popup">
-              <span className="close" onClick={() => setShowVideoPopup(false)}>
-                &times;
-              </span>
               <YouTubeVideo videoId={currVID} />
             </div>
+            <p>{currVID}</p>
           </div>
         )}
       </div>
