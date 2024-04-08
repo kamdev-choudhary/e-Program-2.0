@@ -11,8 +11,11 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import FormControl from "@mui/material/FormControl";
 import OutlinedInput from "@mui/material/OutlinedInput";
+import MenuItem from "@mui/material/MenuItem";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -63,10 +66,19 @@ export default function LecturePage() {
   const [currVID, setCurrVID] = useState(null);
   const [filterText, setFilterText] = useState("");
   const [showVideoPopup, setShowVideoPopup] = useState(false);
+  const [selectedClass, setSelectedClass] = useState("IX");
+  const [academic, setAcademic] = useState([]);
 
   const handleFilterTextChange = (e) => {
     setFilterText(e.target.value);
   };
+  useEffect(() => {
+    fetch(`${API_URL}/academic`)
+      .then((response) => response.json())
+      .then((data) => {
+        setAcademic(data.academic[0]);
+      });
+  }, []);
 
   useEffect(() => {
     fetch(`${API_URL}/lectures`)
@@ -91,12 +103,14 @@ export default function LecturePage() {
       .catch((error) => setError(error.message));
   }, []);
 
-  const filteredLectures = lectures.filter((lecture) =>
-    Object.values(lecture).some(
-      (field) =>
-        (typeof field === "string" || typeof field === "number") &&
-        field.toString().toLowerCase().includes(filterText.toLowerCase())
-    )
+  const filteredLectures = lectures.filter(
+    (lecture) =>
+      (lecture.class === selectedClass || lecture.class === "") &&
+      Object.values(lecture).some(
+        (field) =>
+          (typeof field === "string" || typeof field === "number") &&
+          field.toString().toLowerCase().includes(filterText.toLowerCase())
+      )
   );
 
   const toggleChapter = (chapterName) => {
@@ -120,9 +134,31 @@ export default function LecturePage() {
   return (
     <>
       {error && <div>Error: {error}</div>}
-      <div className="row mb-2">
-        <div className="col-md-12 text-center">
-          <FormControl fullWidth sx={{ m: 1 }} size="small">
+      <div className="row mb-2 mt-4">
+        <div className="col-md-4">
+          <FormControl fullWidth size="small">
+            <InputLabel id="demo-simple-select-label">Class</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="selectedClass"
+              name="selectedClass"
+              label="Class"
+              value={selectedClass}
+              onChange={(e) => setSelectedClass(e.target.value)}
+            >
+              {academic &&
+                academic.classes &&
+                academic.classes.map((classes, index) => (
+                  <MenuItem key={index} value={classes}>
+                    {"Class : "}
+                    {classes}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+        </div>
+        <div className="col-md-8 text-center">
+          <FormControl fullWidth size="small">
             <OutlinedInput
               id="outlined-adornment-amount"
               onChange={handleFilterTextChange}
@@ -135,24 +171,13 @@ export default function LecturePage() {
           </FormControl>
         </div>
       </div>
+      <hr />
       <div className="row lecture-container">
         <div className="col-md-6">
           <TableContainer component={Paper} style={{ maxHeight: "80vh" }}>
             <Table aria-label="simple table">
               <TableHead className="bg bg-success sticky-top">
                 <TableRow>
-                  <TableCell
-                    className="text-white"
-                    align="left"
-                    sx={{
-                      maxWidth: "130px",
-                      overflow: "hidden",
-                      textOverflow: "ellipsis",
-                      whiteSpace: "nowrap",
-                    }}
-                  >
-                    Class
-                  </TableCell>
                   <TableCell align="center" className="text-white">
                     Subject
                   </TableCell>
@@ -171,9 +196,6 @@ export default function LecturePage() {
                       chapterName !==
                         Object.keys(lecturesByChapter)[index - 1]) && (
                       <TableRow onClick={() => toggleChapter(chapterName)}>
-                        <TableCell align="center">
-                          {lecturesByChapter[chapterName][0].class}
-                        </TableCell>
                         <TableCell align="center">
                           {lecturesByChapter[chapterName][0].subject}
                         </TableCell>
