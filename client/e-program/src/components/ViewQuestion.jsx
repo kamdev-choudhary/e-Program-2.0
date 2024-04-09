@@ -23,7 +23,6 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
   const [filteredTopics, setFilteredTopics] = useState([]);
   const [filteredSubtopics, setFilteredSubtopics] = useState([]);
   const [question, setQuestion] = useState(currQuestion);
-  const [academicLoaded, setAcademicLoaded] = useState(false);
 
   const fetchAcademicData = useCallback(() => {
     fetch(`${API_URL}/academic`)
@@ -35,7 +34,6 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
       })
       .then((data) => {
         setAcademicData(data.academic[0]);
-        setAcademicLoaded(true);
       })
       .catch((error) => setError(error.message));
   }, []);
@@ -100,188 +98,198 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
 
   return (
     <>
-      <Paper elevation={6} sx={{ padding: "15px" }}>
-        <div className="row">
-          <div className="col-md-3 mb-3">
-            <Box sx={{ minWidth: 120 }}>
-              <FormControl fullWidth size="small">
-                <InputLabel id="class-label">Class</InputLabel>
-                <Select
-                  labelId="class-label"
-                  id="class-select"
-                  value={question.classes || ""}
-                  label="Class"
-                  name="classes"
-                  onChange={handleChange}
-                >
-                  {academic && academic.classes
-                    ? academic.classes.map((classes, index) => (
-                        <MenuItem key={index} value={classes}>
-                          {classes}
-                        </MenuItem>
-                      ))
-                    : question.classes && (
-                        <MenuItem value={question.classes}>
-                          {question.classes}
-                        </MenuItem>
-                      )}
-                </Select>
-              </FormControl>
-            </Box>
-          </div>
-          <div className="col-md-3 mb-2">
-            <Box sx={{ minWidth: 120 }}>
-              <FormControl fullWidth size="small">
-                <InputLabel id="subject-label">Subject</InputLabel>
-                <Select
-                  labelId="subject-label"
-                  label="Subject"
-                  id="subject-select"
-                  name="subject"
-                  value={question.subject}
-                  onChange={handleChange}
-                >
-                  {academic && academic.subjects
-                    ? academic.subjects.map((subject, index) => (
-                        <MenuItem key={index} value={subject.name}>
-                          {subject.name}
-                        </MenuItem>
-                      ))
-                    : question.subject && (
-                        <MenuItem value={question.subject}>
-                          {question.subject}
-                        </MenuItem>
-                      )}
-                </Select>
-              </FormControl>
-            </Box>
-          </div>
-          <div className="col-md-3 mb-2">
-            <Box sx={{ minWidth: 120 }}>
-              <FormControl fullWidth size="small">
-                <InputLabel id="topic-label">Topic</InputLabel>
-                <Select
-                  labelId="topic-label"
-                  id="selectTopic"
-                  name="topic"
-                  label="Topic"
-                  value={question.topic || ""}
-                  onChange={handleChange}
-                >
-                  {filteredTopics
-                    ? filteredTopics.map((topic, index) => (
-                        <MenuItem key={index} value={topic.name}>
-                          {topic.name}
-                        </MenuItem>
-                      ))
-                    : question.topic && (
-                        <MenuItem value={question.topic}>
-                          {question.topic}
-                        </MenuItem>
-                      )}
-                </Select>
-              </FormControl>
-            </Box>
-          </div>
-          {/* <div className="col-md-3 mb-2">
-            <Box sx={{ minWidth: 120 }}>
-              <FormControl fullWidth size="small">
-                <InputLabel id="subtopic-label">Subtopic</InputLabel>
-                <Select
-                  labelId="subtopic-label"
-                  id="selectSubtopic"
-                  name="subtopic"
-                  label="Subtopic"
-                  value={question.subtopic || ""}
-                  onChange={handleChange}
-                >
-                  {filteredSubtopics &&
-                    filteredSubtopics.map((subtopic, index) => (
-                      <MenuItem key={index} value={subtopic.name}>
-                        {subtopic.name}
+      <div className="row">
+        <div className="col-md-3 mb-3">
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth size="small">
+              <InputLabel id="class-label">Class</InputLabel>
+              <Select
+                labelId="class-label"
+                id="class-select"
+                value={question.classes || ""}
+                label="Class"
+                name="classes"
+                onChange={handleChange}
+              >
+                {academic && academic.classes
+                  ? academic.classes.map((classes, index) => (
+                      <MenuItem key={index} value={classes}>
+                        {classes}
                       </MenuItem>
-                    ))}
-                </Select>
-              </FormControl>
-            </Box>
-          </div> */}
-          {/* <div className="col-md-3 mb-2">
-            <Box sx={{ minWidth: 120 }}>
-              <FormControl fullWidth size="small">
-                <InputLabel id="demo-simple-select-label">
-                  Difficulty Level
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  name="difficultyLevel"
-                  label="difficultyLevel"
-                  value={question.difficultyLevel || ""}
-                  onChange={handleChange}
-                >
-                  {academic &&
-                    academic.difficultyLevel &&
-                    academic.difficultyLevel.map((dLevel, index) => (
-                      <MenuItem key={index} value={dLevel}>
-                        {dLevel}
+                    ))
+                  : question.classes && (
+                      <MenuItem value={question.classes}>
+                        {question.classes}
                       </MenuItem>
-                    ))}
-                </Select>
-              </FormControl>
-            </Box>
-          </div> */}
-          {/* <div className="col-md-3 mb-2">
-            <Box sx={{ minWidth: 120 }}>
-              <FormControl fullWidth size="small">
-                <InputLabel id="demo-simple-select-label">
-                  Time Required
-                </InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  name="timeRequired"
-                  label="timeRequired"
-                  value={question.timeRequired || ""}
-                  onChange={handleChange}
-                >
-                  {academic &&
-                    academic.timeRequired &&
-                    academic.timeRequired.map((time, index) => (
+                    )}
+              </Select>
+            </FormControl>
+          </Box>
+        </div>
+        <div className="col-md-3 mb-3">
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth size="small">
+              <InputLabel id="subject-label">Subject</InputLabel>
+              <Select
+                labelId="subject-label"
+                label="Subject"
+                id="subject-select"
+                name="subject"
+                value={question.subject}
+                onChange={handleChange}
+              >
+                {academic && academic.subjects
+                  ? academic.subjects.map((subject, index) => (
+                      <MenuItem key={index} value={subject.name}>
+                        {subject.name}
+                      </MenuItem>
+                    ))
+                  : question.subject && (
+                      <MenuItem value={question.subject}>
+                        {question.subject}
+                      </MenuItem>
+                    )}
+              </Select>
+            </FormControl>
+          </Box>
+        </div>
+        <div className="col-md-3 mb-3">
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth size="small">
+              <InputLabel id="topic-label">Topic</InputLabel>
+              <Select
+                labelId="topic-label"
+                id="selectTopic"
+                name="topic"
+                label="Topic"
+                value={question.topic || ""}
+                onChange={handleChange}
+              >
+                {filteredTopics
+                  ? filteredTopics.map((topic, index) => (
+                      <MenuItem key={index} value={topic.name}>
+                        {topic.name}
+                      </MenuItem>
+                    ))
+                  : question.topic && (
+                      <MenuItem value={question.topic}>
+                        {question.topic}
+                      </MenuItem>
+                    )}
+              </Select>
+            </FormControl>
+          </Box>
+        </div>
+        <div className="col-md-3 mb-3">
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth size="small">
+              <InputLabel id="subtopic-label">Subtopic</InputLabel>
+              <Select
+                labelId="subtopic-label"
+                id="selectSubtopic"
+                name="subtopic"
+                label="Subtopic"
+                value={question.subtopic || ""}
+                onChange={handleChange}
+              >
+                {filteredSubtopics &&
+                  filteredSubtopics.map((subtopic, index) => (
+                    <MenuItem key={index} value={subtopic.name}>
+                      {subtopic.name}
+                    </MenuItem>
+                  ))}
+              </Select>
+            </FormControl>
+          </Box>
+        </div>
+        <div className="col-md-3 mb-3">
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth size="small">
+              <InputLabel id="demo-simple-select-label">
+                Difficulty Level
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="difficultyLevel"
+                label="difficultyLevel"
+                value={question.difficultyLevel || ""}
+                onChange={handleChange}
+              >
+                {academic && academic.difficultyLevel
+                  ? academic.difficultyLevel.map((Dlevel, index) => (
+                      <MenuItem key={index} value={Dlevel}>
+                        {Dlevel}
+                      </MenuItem>
+                    ))
+                  : question.difficultyLevel && (
+                      <MenuItem value={question.difficultyLevel}>
+                        {question.difficultyLevel}
+                      </MenuItem>
+                    )}
+              </Select>
+            </FormControl>
+          </Box>
+        </div>
+        <div className="col-md-3 mb-3">
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth size="small">
+              <InputLabel id="demo-simple-select-label">
+                Time Required
+              </InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="timeRequired"
+                label="timeRequired"
+                value={question.timeRequired || ""}
+                onChange={handleChange}
+              >
+                {academic && academic.timeRequired
+                  ? academic.timeRequired.map((time, index) => (
                       <MenuItem key={index} value={time}>
                         {time}
                       </MenuItem>
-                    ))}
-                </Select>
-              </FormControl>
-            </Box>
-          </div> */}
-          {/* <div className="col-md-3 mb-2">
-            <Box sx={{ minWidth: 120 }}>
-              <FormControl fullWidth size="small">
-                <InputLabel id="demo-simple-select-label">Target</InputLabel>
-                <Select
-                  labelId="demo-simple-select-label"
-                  id="demo-simple-select"
-                  name="target"
-                  label="target"
-                  value={question.target || ""}
-                  onChange={handleChange}
-                >
-                  {academic &&
-                    academic.target &&
-                    academic.target.map((tget, index) => (
+                    ))
+                  : question.timeRequired && (
+                      <MenuItem value={question.timeRequired}>
+                        {question.timeRequired}
+                      </MenuItem>
+                    )}
+              </Select>
+            </FormControl>
+          </Box>
+        </div>
+        <div className="col-md-3 mb-3">
+          <Box sx={{ minWidth: 120 }}>
+            <FormControl fullWidth size="small">
+              <InputLabel id="demo-simple-select-label">Target</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="demo-simple-select"
+                name="target"
+                label="target"
+                value={question.target || ""}
+                onChange={handleChange}
+              >
+                {academic && academic.target
+                  ? academic.target.map((tget, index) => (
                       <MenuItem key={index} value={tget}>
                         {tget}
                       </MenuItem>
-                    ))}
-                </Select>
-              </FormControl>
-            </Box>
-          </div> */}
+                    ))
+                  : question.target && (
+                      <MenuItem value={question.target}>
+                        {question.target}
+                      </MenuItem>
+                    )}
+              </Select>
+            </FormControl>
+          </Box>
         </div>
-      </Paper>
-      <hr />
-      <Paper elevation={6} sx={{ padding: "10px" }}>
+      </div>
+      <hr style={{ color: "#000" }} />
+      <div style={{ padding: "10px" }}>
         <FormControl fullWidth>
           <Typography>Question</Typography>
           <Grid container fullWidth>
@@ -295,9 +303,7 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
             </Grid>
           </Grid>
         </FormControl>
-      </Paper>
-      <hr />
-      <Paper elevation={6} sx={{ padding: "10px" }}>
+        <hr />
         <FormControl fullWidth>
           <FormLabel id="demo-controlled-radio-buttons-group">
             Options
@@ -415,9 +421,7 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
             </Grid>
           </Grid>
         </FormControl>
-      </Paper>
-      <hr />
-      <Paper elevation={6} sx={{ padding: "10px" }}>
+        <hr />
         <Typography>Solution</Typography>
         <Grid container>
           <Grid item fullWidth>
@@ -429,26 +433,26 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
             />
           </Grid>
         </Grid>
-      </Paper>
 
-      <Stack
-        spacing={2}
-        padding={0}
-        direction="row"
-        style={{ bottom: 0, right: 0, marginTop: 20 }}
-        justifyContent="flex-end"
-      >
-        <Button variant="contained" onClick={() => updateQuestion(false)}>
-          Save
-        </Button>
-        <Button
-          variant="contained"
-          color="success"
-          onClick={() => updateQuestion(true)}
+        <Stack
+          spacing={2}
+          padding={0}
+          direction="row"
+          style={{ bottom: 0, right: 0, marginTop: 20 }}
+          justifyContent="flex-end"
         >
-          Save and Approve
-        </Button>
-      </Stack>
+          <Button variant="contained" onClick={() => updateQuestion(false)}>
+            Save
+          </Button>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => updateQuestion(true)}
+          >
+            Save and Approve
+          </Button>
+        </Stack>
+      </div>
     </>
   );
 };

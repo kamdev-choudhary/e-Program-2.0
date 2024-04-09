@@ -1,42 +1,66 @@
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
+import { AuthProvider, useAuth } from "./components/Auth";
 import Navbar from "./components/Navbar";
+import ErrorPage from "./components/ErrorPage";
+import AdminPage from "./pages/AdminPage";
+import HomePage from "./pages/HomePage";
 import DashboardPage from "./pages/StudentDashboardPage";
 import ExamPage from "./pages/ExamPage";
 import LecturePage from "./pages/LecturePage";
 import MaterialPage from "./pages/MaterialPage";
-import AdminPage from "./pages/AdminPage";
 import QuestionBankPage from "./pages/QuestionBankPage";
-import ErrorPage from "./components/ErrorPage";
-import HomePage from "./pages/HomePage";
-import { AuthProvider, useAuth } from "./components/Auth";
-import StudentProfile from "./components/StudentProfile";
-import ExamMaster from "./pages/ExamMaster";
 import UserMaster from "./pages/UserMaster";
 import AcademicPage from "./pages/AcademicPage";
+import StudentProfile from "./components/StudentProfile";
+import ExamMaster from "./pages/ExamMaster";
 
 function App() {
-  const { accountType, isLoggedIn } = useAuth();
+  const { accountType } = useAuth();
+
   return (
     <AuthProvider>
       <BrowserRouter>
         <Navbar />
         <div className="container mt-3">
           <Routes>
-            {}
             <Route
               path="/"
-              element={accountType === "admin" ? <AdminRoute /> : <HomePage />}
+              element={accountType === "admin" ? <AdminPage /> : <HomePage />}
             />
             <Route path="/dashboard" element={<DashboardPage />} />
             <Route path="/exams" element={<ExamPage />} />
             <Route path="/lectures" element={<LecturePage />} />
             <Route path="/materials" element={<MaterialPage />} />
-            <Route path="/profile" element={<ProfileProtected />} />
-            <Route path="/question-bank" element={<QuestionBankProtected />} />
-            <Route path="/admin/*" element={<AdminRoute />} />
-            <Route path="/users" element={<UserMaster />} />
-            <Route path="/academic" element={<AcademicPage />} />
-            <Route path="/examtemplate" element={<ExamMaster />} />
+            <Route
+              path="/profile"
+              element={<ProtectedRoute Component={StudentProfile} />}
+            />
+            <Route
+              path="/question-bank"
+              element={<ProtectedRoute Component={QuestionBankPage} />}
+            />
+            <Route
+              path="/admin/*"
+              element={<ProtectedRoute Component={AdminPage} isAdminRequired />}
+            />
+            <Route
+              path="/users"
+              element={
+                <ProtectedRoute Component={UserMaster} isAdminRequired />
+              }
+            />
+            <Route
+              path="/academic"
+              element={
+                <ProtectedRoute Component={AcademicPage} isAdminRequired />
+              }
+            />
+            <Route
+              path="/examtemplate"
+              element={
+                <ProtectedRoute Component={ExamMaster} isAdminRequired />
+              }
+            />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
         </div>
@@ -45,26 +69,18 @@ function App() {
   );
 }
 
-function AdminRoute() {
-  const { isAdmin } = useAuth();
+function ProtectedRoute({ Component, isAdminRequired }) {
+  const { isLoggedIn, isAdmin } = useAuth();
 
-  return isAdmin ? <AdminPage /> : <Navigate to="/" replace />;
-}
+  if (isAdminRequired && !isAdmin) {
+    return <Navigate to="/" replace />;
+  }
 
-function NotLoggedIn() {
-  const { isLoggedIn } = useAuth();
-  return !isLoggedIn ? <RegisterPage /> : <Navigate to="/" replace />;
-}
+  if (!isLoggedIn) {
+    return <Navigate to="/" replace />;
+  }
 
-function ProfileProtected() {
-  const { isLoggedIn } = useAuth();
-  return isLoggedIn ? <StudentProfile /> : <Navigate to="/" replace />;
-}
-
-function QuestionBankProtected() {
-  const { isAdmin } = useAuth();
-
-  return isAdmin ? <QuestionBankPage /> : <Navigate to="/" replace />;
+  return <Component />;
 }
 
 export default App;

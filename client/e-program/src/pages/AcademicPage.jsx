@@ -1,5 +1,4 @@
-import React from "react";
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { Modal } from "react-bootstrap";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
@@ -38,12 +37,13 @@ export default function AcademicPage() {
   const [academic, setAcademic] = useState({});
   const [selectedSubject, setSelectedSubject] = useState("");
   const [selectedClass, setSelectedClass] = useState("");
-  const [batches, setBatches] = useState([]);
-  const [batch, setBatch] = useState([]);
-  const [showAddBatchModal, setShowAddBatchModal] = useState(false);
-
   const [selectedTopic, setSelectedTopic] = useState("");
+  const [batches, setBatches] = useState([]);
+  const [batch, setBatch] = useState({});
+  const [showAddBatchModal, setShowAddBatchModal] = useState(false);
   const [filteredTopics, setFilteredTopics] = useState([]);
+  const [filteredSubtopics, setFilteredSubtopics] = useState([]);
+  const [openNestedList, setOpenNestedList] = useState([]);
 
   useEffect(() => {
     fetch(`${API_URL}/academic`)
@@ -61,14 +61,11 @@ export default function AcademicPage() {
       },
       body: JSON.stringify(batch),
     })
-      .then((response) => {
-        response.json();
-        if (response.ok) {
+      .then((response) => response.json())
+      .then((data) => {
+        if (data.ok) {
           handleShowAddBatch();
         }
-      })
-      .then((data) => {
-        console.log("Success:", data);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -88,20 +85,32 @@ export default function AcademicPage() {
         return response.json();
       })
       .then((data) => setBatches(data.batches))
-      .catch((error) => setError(error.message));
+      .catch((error) => console.error("Error:", error));
   }, []);
 
   useEffect(() => {
-    fetch(`${API_URL}/academic`)
-      .then((response) => response.json())
-      .then((data) => {
-        setAcademic(data.academic[0]);
-      });
-  }, []);
+    if (academic.subjects) {
+      const selectedSubjectData = academic.subjects.find(
+        (subject) => subject.name === selectedSubject
+      );
+      if (selectedSubjectData) {
+        const filteredTopics = selectedSubjectData.topics.filter(
+          (topic) => topic.className === selectedClass
+        );
+        setFilteredTopics(filteredTopics);
+        setOpenNestedList(new Array(filteredTopics.length).fill(false));
+      }
+    }
+  }, [academic.subjects, selectedSubject, selectedClass]);
 
-  const [openNestedList, setOpenNestedList] = useState(
-    new Array(filteredTopics.length).fill(false)
-  );
+  useEffect(() => {
+    if (filteredTopics.length > 0) {
+      const filteredSubtopics = filteredTopics.flatMap(
+        (topic) => topic.subtopics
+      );
+      setFilteredSubtopics(filteredSubtopics);
+    }
+  }, [filteredTopics]);
 
   const handleTopicClick = (index) => {
     setOpenNestedList((prevOpenNestedList) => {
@@ -115,6 +124,8 @@ export default function AcademicPage() {
     setShowAddBatchModal(!showAddBatchModal);
   };
 
+  console.log(selectedClass);
+  console.log(selectedSubject);
   return (
     <>
       <div>
@@ -127,7 +138,7 @@ export default function AcademicPage() {
             Batches
           </AccordionSummary>
           <>
-            <Paper elevation={6} sx={{ padding: "10px" }}>
+            <Paper elevation={4} sx={{ padding: "10px" }}>
               <div className="row">
                 <div className="col-md-11">
                   <FormControl fullWidth sx={{ m: 1 }} size="small">
@@ -401,7 +412,6 @@ export default function AcademicPage() {
               Target or Stream
             </InputLabel>
             <Select
-              labelId="demo-simple-select-label"
               id="batchStream"
               name="batchStream"
               label="Target or Stream"
@@ -431,275 +441,3 @@ export default function AcademicPage() {
     </>
   );
 }
-
-// export default function AcademicInfo() {
-//   const [academic, setAcademic] = useState({});
-//   const [classData, setClassData] = useState([]);
-//   const [updateAcademic, setUpdateAcademic] = useState({});
-//   const [filteredTopics, setFilteredTopics] = useState([]);
-//   const [filteredSubtopics, setFilteredSubtopics] = useState([]);
-//   const [className, setClassName] = useState("");
-//   const [subjectName, setSubjectName] = useState("");
-//   const [topicName, setTopicName] = useState("");
-//   const [subtopicName, setSubtopicName] = useState("");
-//   const [errors, setErrors] = useState({
-//     classes: "",
-//   });
-
-//   useEffect(() => {
-//     fetch(`${API_URL}/academic`)
-//       .then((response) => response.json())
-//       .then((data) => {
-//         setAcademic(data.academic[0]);
-//       });
-//   }, []);
-
-//   console.log(academic);
-
-//   const [selectedSubject, setSelectedSubject] = useState("");
-//   const [selectedClass, setSelectedClass] = useState("");
-//   const [newAcademicData, setNewAcademicData] = useState({
-//     subject: "",
-//   });
-
-//   useEffect(() => {
-//     if (selectedClass && selectedSubject) {
-//       const selectedSubjectData = academic.subjects.find(
-//         (subject) => subject.name === selectedSubject
-//       );
-//       const filteredTopics = selectedSubjectData.topics.filter(
-//         (topic) => topic.className === selectedClass
-//       );
-//       setFilteredTopics(filteredTopics);
-//     }
-//   }, [selectedClass, selectedSubject, academic.subjects]);
-
-//   useEffect(() => {
-//     if (filteredTopics.length > 0) {
-//       const filteredSubtopics = filteredTopics.flatMap(
-//         (topic) => topic.subtopics
-//       );
-//       setFilteredSubtopics(filteredSubtopics);
-//     }
-//   }, [filteredTopics]);
-
-//   const handleUpdateAcademicData = () => {
-//     fetch(`${API_URL}/academic`, {
-//       method: "PUT",
-//       headers: {
-//         "Content-Type": "application/json",
-//       },
-//       body: JSON.stringify(newAcademicData),
-//     })
-//       .then((response) => {
-//         if (!response.ok) {
-//           throw new Error("Network response was not ok");
-//         }
-//         return response.json();
-//       })
-//       .then((data) => {
-//         console.log("Data updated successfully", data);
-//       })
-//       .catch((error) => {
-//         console.error("Error updating data:", error);
-//       });
-//   };
-
-//   console.log(selectedSubject);
-
-//   const style = {
-//     py: 0,
-//     width: "100%",
-//     maxWidth: 360,
-//     borderRadius: 2,
-//     border: "1px solid",
-//     borderColor: "divider",
-//     backgroundColor: "background.paper",
-//   };
-
-//   const handleSubmit = async (event) => {
-//     event.preventDefault();
-
-//     try {
-//       const newSubtopic = { name: subtopicName };
-//       const newTopic = { className, name: topicName, subtopics: [newSubtopic] };
-//       const newSubject = { name: subjectName, topics: [newTopic] };
-//       console.log(newSubject);
-//       fetch(`${API_URL}/academic/update2`, {
-//         method: "PUT",
-//         headers: {
-//           "Content-Type": "application/json",
-//         },
-//         body: JSON.stringify(newSubject),
-//       })
-//         .then((response) => {
-//           if (!response.ok) {
-//             throw new Error("Network response was not ok");
-//           }
-//           return response.json();
-//         })
-//         .then((data) => {
-//           console.log("Data updated successfully", data);
-//         })
-//         .catch((error) => {
-//           console.error("Error updating data:", error);
-//         });
-
-//       console.log("New data added successfully");
-//     } catch (error) {
-//       console.error("Error adding new data:", error);
-//     }
-//   };
-
-//   console.log(selectedClass);
-//   console.log(selectedSubject);
-
-//   return (
-//     <>
-//       {/* <form onSubmit={handleSubmit}>
-//         <input
-//           type="text"
-//           placeholder="Class Name"
-//           value={className}
-//           onChange={(e) => setClassName(e.target.value)}
-//         />
-//         <input
-//           type="text"
-//           placeholder="Subject Name"
-//           value={subjectName}
-//           onChange={(e) => setSubjectName(e.target.value)}
-//         />
-//         <input
-//           type="text"
-//           placeholder="Topic Name"
-//           value={topicName}
-//           onChange={(e) => setTopicName(e.target.value)}
-//         />
-//         <input
-//           type="text"
-//           placeholder="Subtopic Name"
-//           value={subtopicName}
-//           onChange={(e) => setSubtopicName(e.target.value)}
-//         />
-//         <button type="submit">Submit</button>
-//       </form> */}
-//       <div>
-//         <Accordion>
-//           <AccordionSummary
-//             expandIcon={<ExpandMoreIcon />}
-//             aria-controls="panel1-content"
-//             id="panel1-header"
-//           >
-//             Classes
-//           </AccordionSummary>
-//           {academic &&
-//             academic.classes &&
-//             academic.classes.map((className, index) => (
-//               <AccordionDetails key={index}>{className}</AccordionDetails>
-//             ))}
-//         </Accordion>
-//         <Accordion>
-//           <AccordionSummary
-//             expandIcon={<ExpandMoreIcon />}
-//             aria-controls="panel1-content"
-//             id="panel1-header"
-//           >
-//             Targets
-//           </AccordionSummary>
-//           {academic &&
-//             academic.target &&
-//             academic.target.map((tget, index) => (
-//               <AccordionDetails key={index}>{tget}</AccordionDetails>
-//             ))}
-//         </Accordion>
-//         <Accordion>
-//           <AccordionSummary
-//             expandIcon={<ExpandMoreIcon />}
-//             aria-controls="panel1-content"
-//             id="panel1-header"
-//           >
-//             Difficulty Level
-//           </AccordionSummary>
-//           {academic &&
-//             academic.difficultyLevel &&
-//             academic.difficultyLevel.map((dLevel, index) => (
-//               <AccordionDetails key={index}>{dLevel}</AccordionDetails>
-//             ))}
-//         </Accordion>
-//         <Accordion>
-//           <AccordionSummary
-//             expandIcon={<ExpandMoreIcon />}
-//             aria-controls="panel1-content"
-//             id="panel1-header"
-//           >
-//             Time Required
-//           </AccordionSummary>
-//           {academic &&
-//             academic.timeRequired &&
-//             academic.timeRequired.map((time, index) => (
-//               <AccordionDetails key={index}>{time}</AccordionDetails>
-//             ))}
-//         </Accordion>
-//         <Accordion>
-//           <AccordionSummary
-//             expandIcon={<ExpandMoreIcon />}
-//             aria-controls="panel1-content"
-//             id="panel1-header"
-//           >
-//             Subject Details
-//           </AccordionSummary>
-//           <div className="row">
-//             <div className="col-md-3">
-//               <Box component="section" sx={{ p:1 }}>
-//                 <List sx={style}>
-//                   {academic &&
-//                     academic.classes &&
-//                     academic.classes.map((className, index) => (
-//                       <>
-//                         <ListItem onClick={() => setSelectedClass(className)}>
-//                           <ListItemText primary={className} />
-//                         </ListItem>
-//                         <Divider component="li" />
-//                       </>
-//                     ))}
-//                 </List>
-//               </Box>
-//             </div>
-//             <div className="col-md-3">
-//               <Box component="section" sx={{ p: 2 }}>
-//                 <List sx={style}>
-//                   {academic &&
-//                     academic.subjects &&
-//                     academic.subjects.map((subject, index) => (
-//                       <>
-//                         <ListItem onClick={() => setSelectedSubject(subject)}>
-//                           <ListItemText primary={subject.name} />
-//                         </ListItem>
-//                         <Divider component="li" />
-//                       </>
-//                     ))}
-//                 </List>
-//               </Box>
-//             </div>
-//             <div className="col-md-3">
-//               <Box component="section" sx={{ p: 2 }}>
-//                 <List sx={style}>
-//                   {academic &&
-//                     academic.subjects &&
-//                     academic.subjects.map((subject, index) => (
-//                       <>
-//                         <ListItem>
-//                           <ListItemText primary={subject.name} />
-//                         </ListItem>
-//                         <Divider component="li" />
-//                       </>
-//                     ))}
-//                 </List>
-//               </Box>
-//             </div>
-//           </div>
-//         </Accordion>
-//       </div>
-//     </>
-//   );
-// }

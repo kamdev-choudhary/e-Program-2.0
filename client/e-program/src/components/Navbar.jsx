@@ -82,44 +82,43 @@ function Navbar() {
           />
         </div>
         {isAdmin && (
-          <NavLink to="/admin" style={{ textDecoration: "none" }}>
-            <ListItem onClick={toggleDrawer(false)}>
-              <ListItemButton>
-                <ListItemIcon>
-                  <AdminPanelSettingsIcon />
-                </ListItemIcon>
-                <ListItemText
-                  primary={"DashBoard"}
-                  onClick={() => toggleDrawer(false)}
-                />
-              </ListItemButton>
-            </ListItem>
-          </NavLink>
+          <>
+            <NavLink to="/admin" style={{ textDecoration: "none" }}>
+              <ListItem onClick={toggleDrawer(false)}>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <AdminPanelSettingsIcon />
+                  </ListItemIcon>
+                  <ListItemText
+                    primary={"DashBoard"}
+                    onClick={() => toggleDrawer(false)}
+                  />
+                </ListItemButton>
+              </ListItem>
+            </NavLink>
+            <NavLink to="/academic" style={{ textDecoration: "none" }}>
+              <ListItem onClick={toggleDrawer(false)}>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <SchoolIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={"Academic"} />
+                </ListItemButton>
+              </ListItem>
+            </NavLink>
+            <NavLink to="/users" style={{ textDecoration: "none" }}>
+              <ListItem onClick={toggleDrawer(false)}>
+                <ListItemButton>
+                  <ListItemIcon>
+                    <PeopleAltIcon />
+                  </ListItemIcon>
+                  <ListItemText primary={"User Master"} />
+                </ListItemButton>
+              </ListItem>
+            </NavLink>
+          </>
         )}
-        {isAdmin && (
-          <NavLink to="/academic" style={{ textDecoration: "none" }}>
-            <ListItem onClick={toggleDrawer(false)}>
-              <ListItemButton>
-                <ListItemIcon>
-                  <SchoolIcon />
-                </ListItemIcon>
-                <ListItemText primary={"Academic"} />
-              </ListItemButton>
-            </ListItem>
-          </NavLink>
-        )}
-        {isAdmin && (
-          <NavLink to="/users" style={{ textDecoration: "none" }}>
-            <ListItem onClick={toggleDrawer(false)}>
-              <ListItemButton>
-                <ListItemIcon>
-                  <PeopleAltIcon />
-                </ListItemIcon>
-                <ListItemText primary={"User Master"} />
-              </ListItemButton>
-            </ListItem>
-          </NavLink>
-        )}
+
         {isAdmin && (
           <NavLink to="/question-bank" style={{ textDecoration: "none" }}>
             <ListItem onClick={toggleDrawer(false)}>
