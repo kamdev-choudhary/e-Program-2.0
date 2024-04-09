@@ -122,7 +122,7 @@ export default function QuestionBankPage() {
 
   // Delete Question
   const handleDeleteQuestion = (question) => {
-    fetch("http://127.0.0.1:5000/api/questionbank", {
+    fetch(`${API_URL}/questionbank`, {
       method: "DELETE",
       headers: {
         "Content-Type": "application/json",

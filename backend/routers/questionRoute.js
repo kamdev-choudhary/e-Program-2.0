@@ -8,4 +8,6 @@ router
   .post(questionController.saveQuestion)
   .delete(questionController.deleteQuestion);
 
+router.route("/update").put(questionController.updateQuestion);
+
 module.exports = router;

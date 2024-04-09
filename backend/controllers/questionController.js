@@ -103,3 +103,15 @@ module.exports.deleteQuestion = async (req, res) => {
     res.status(500).json({ error: "Internal server error" });
   }
 };
+
+module.exports.updateQuestion = async (req, res, next) => {
+  try {
+    const question = await Question.findOneAndUpdate(
+      { _id: req.body._id },
+      req.body,
+      { new: true }
+    );
+  } catch (error) {
+    next(error);
+  }
+};

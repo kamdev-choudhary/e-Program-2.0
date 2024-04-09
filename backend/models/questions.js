@@ -9,7 +9,7 @@ const questionSchema = new Schema({
   subtopic: String,
   difficultyLevel: String,
   questionType: String,
-  timeRequired: Number,
+  timeRequired: String,
   isApproved: {
     type: String,
     default: "no",

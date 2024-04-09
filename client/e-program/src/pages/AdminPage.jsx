@@ -5,6 +5,9 @@ import React from "react";
 import { Modal, Button } from "react-bootstrap";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import SearchIcon from "@mui/icons-material/Search";
 import Fab from "@mui/material/Fab";
@@ -40,12 +43,11 @@ export default function AdminPage() {
   const [showAddBatchModal, setShowAddBatchModal] = useState(false);
   const [batch, setBatch] = useState([]);
   const [batches, setBatches] = useState([]);
+  const [academic, setAcademic] = useState([]);
 
   const handleBatchInputChange = (e) => {
     setBatch({ ...batch, [e.target.name]: e.target.value });
   };
-
-  // console.log(REACT_APP_API_URL);
 
   useEffect(() => {
     fetch(`${API_URL}/batch`)
@@ -57,7 +59,15 @@ export default function AdminPage() {
       })
       .then((data) => setBatches(data.batches))
       .catch((error) => setError(error.message));
-  }, [refresh]);
+  }, [refresh, batches]);
+
+  useEffect(() => {
+    fetch(`${API_URL}/academic`)
+      .then((response) => response.json())
+      .then((data) => {
+        setAcademic(data.academic[0]);
+      });
+  }, []);
 
   const handleSaveBatch = () => {
     fetch(`${API_URL}/batch/addnew`, {
@@ -440,26 +450,49 @@ export default function AdminPage() {
             name="batchName"
             value={batch.batchName}
             onChange={handleBatchInputChange}
-            style={{ marginBottom: "20px" }}
+            style={{ marginBottom: "10px" }}
           />
-          <TextField
-            label="Batch Class"
-            fullWidth
-            id="batchClass"
-            name="batchClass"
-            value={batch.batchClass}
-            onChange={handleBatchInputChange}
-            style={{ marginBottom: "20px" }}
-          />
-          <TextField
-            label="Batch Stream"
-            fullWidth
-            id="batchStream"
-            name="batchStream"
-            value={batch.batchStream}
-            onChange={handleBatchInputChange}
-            style={{ marginBottom: "20px" }}
-          />
+          <FormControl fullWidth sx={{ marginBottom: 1 }}>
+            <InputLabel id="demo-simple-select-label">Class</InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="batchClass"
+              name="batchClass"
+              label="Class"
+              value={batch.batchClass || ""}
+              onChange={handleBatchInputChange}
+            >
+              {academic &&
+                academic.classes &&
+                academic.classes.map((classes, index) => (
+                  <MenuItem key={index} value={classes}>
+                    {classes}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+          <FormControl fullWidth sx={{ marginBottom: 1 }}>
+            <InputLabel id="demo-simple-select-label">
+              Target or Stream
+            </InputLabel>
+            <Select
+              labelId="demo-simple-select-label"
+              id="batchStream"
+              name="batchStream"
+              label="Target or Stream"
+              value={batch.batchStream || ""}
+              onChange={handleBatchInputChange}
+            >
+              {academic &&
+                academic.target &&
+                academic.target.map((tget, index) => (
+                  <MenuItem key={index} value={tget}>
+                    {tget}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+
           <Button variant="success" onClick={handleSaveBatch}>
             Save
           </Button>

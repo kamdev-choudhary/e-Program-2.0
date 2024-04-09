@@ -26,6 +26,24 @@ export default function ViewQuestion(props) {
     isApproved: "Yes",
   });
 
+  function updateQuestion() {
+    setQuestion({ ...question, isApproved: "No" });
+    fetch(`${API_URL}/questionbank/update`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(question),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Success:", data);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  }
+
   useEffect(() => {
     fetch(`${API_URL}/academic`)
       .then((response) => {
@@ -378,7 +396,9 @@ export default function ViewQuestion(props) {
           }}
           justifyContent="flex-end" // Align items to the right side
         >
-          <Button variant="contained">Save</Button>
+          <Button variant="contained" onClick={updateQuestion}>
+            Save
+          </Button>
           <Button variant="contained" color="success">
             Save and Approve
           </Button>
