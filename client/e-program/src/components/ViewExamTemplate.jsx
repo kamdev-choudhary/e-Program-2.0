@@ -60,8 +60,6 @@ export default function ViewExamTemplate(props) {
       .catch((error) => setError(error.message));
   }, []);
 
-  console.log(examTemplate);
-
   const handleAddToBatchSubmit = () => {
     console.log(addToBatch);
     fetch(`${API_URL}/exams/addtobatch`, {
@@ -378,7 +376,7 @@ export default function ViewExamTemplate(props) {
         onHide={handleShowAddExamToBatch}
         dialogClassName="modal-m"
       >
-        <Modal.Header> View Question</Modal.Header>
+        <Modal.Header> Add exam to template</Modal.Header>
         <Modal.Body>
           <Box sx={{ minWidth: 120 }}>
             <FormControl fullWidth>

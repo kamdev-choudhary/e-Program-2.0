@@ -728,7 +728,10 @@ export default function QuestionBankPage() {
       >
         <Modal.Header> View Question</Modal.Header>
         <Modal.Body>
-          <ViewQuestion currQuestion={currQuestion} />
+          <ViewQuestion
+            currQuestion={currQuestion}
+            handleShowViewQuestion={handleShowViewQuestion}
+          />
         </Modal.Body>
         <Modal.Footer>
           <Button variant="danger" onClick={handleShowViewQuestion}>

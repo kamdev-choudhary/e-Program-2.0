@@ -23,12 +23,14 @@ import Drawer from "@mui/material/Drawer";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import QuizIcon from "@mui/icons-material/Quiz";
+import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import OndemandVideoRoundedIcon from "@mui/icons-material/OndemandVideoRounded";
 import DescriptionIcon from "@mui/icons-material/Description";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import React, { useEffect } from "react";
 import AuthPage from "./AuthPage";
+import SchoolIcon from "@mui/icons-material/School";
 
 function Navbar() {
   const { isLoggedIn, logoutUser, isAdmin, name } = useAuth();
@@ -87,23 +89,37 @@ function Navbar() {
                   <AdminPanelSettingsIcon />
                 </ListItemIcon>
                 <ListItemText
-                  primary={"Admin"}
+                  primary={"DashBoard"}
                   onClick={() => toggleDrawer(false)}
                 />
               </ListItemButton>
             </ListItem>
           </NavLink>
         )}
-        <NavLink to="/lectures" style={{ textDecoration: "none" }}>
-          <ListItem>
-            <ListItemButton onClick={toggleDrawer(false)}>
-              <ListItemIcon>
-                <OndemandVideoRoundedIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Lectures"} />
-            </ListItemButton>
-          </ListItem>
-        </NavLink>
+        {isAdmin && (
+          <NavLink to="/academic" style={{ textDecoration: "none" }}>
+            <ListItem onClick={toggleDrawer(false)}>
+              <ListItemButton>
+                <ListItemIcon>
+                  <SchoolIcon />
+                </ListItemIcon>
+                <ListItemText primary={"Academic"} />
+              </ListItemButton>
+            </ListItem>
+          </NavLink>
+        )}
+        {isAdmin && (
+          <NavLink to="/users" style={{ textDecoration: "none" }}>
+            <ListItem onClick={toggleDrawer(false)}>
+              <ListItemButton>
+                <ListItemIcon>
+                  <PeopleAltIcon />
+                </ListItemIcon>
+                <ListItemText primary={"User Master"} />
+              </ListItemButton>
+            </ListItem>
+          </NavLink>
+        )}
         {isAdmin && (
           <NavLink to="/question-bank" style={{ textDecoration: "none" }}>
             <ListItem onClick={toggleDrawer(false)}>
@@ -116,6 +132,29 @@ function Navbar() {
             </ListItem>
           </NavLink>
         )}
+        {isAdmin && (
+          <NavLink to="/examtemplate" style={{ textDecoration: "none" }}>
+            <ListItem onClick={toggleDrawer(false)}>
+              <ListItemButton>
+                <ListItemIcon>
+                  <DescriptionIcon />
+                </ListItemIcon>
+                <ListItemText primary={"Exam Master"} />
+              </ListItemButton>
+            </ListItem>
+          </NavLink>
+        )}
+
+        <NavLink to="/lectures" style={{ textDecoration: "none" }}>
+          <ListItem>
+            <ListItemButton onClick={toggleDrawer(false)}>
+              <ListItemIcon>
+                <OndemandVideoRoundedIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Lectures"} />
+            </ListItemButton>
+          </ListItem>
+        </NavLink>
         <NavLink to="/materials" style={{ textDecoration: "none" }}>
           <ListItem onClick={toggleDrawer(false)}>
             <ListItemButton>

@@ -63,7 +63,6 @@ export default function (handleShowAddTemplate) {
     handleShowAddTemplate();
   };
 
-  console.log(newExamTemplate);
   const handleTemplateInputChange = (e) => {
     const { name, value } = e.target;
     setNewExamTemplate((prevState) => ({

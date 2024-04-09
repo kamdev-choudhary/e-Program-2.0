@@ -22,7 +22,7 @@ import Typography from "@mui/material/Typography";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
-export default function Users() {
+export default function UserMaster() {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState("");
   const [searchInput, setSearchInput] = useState("");

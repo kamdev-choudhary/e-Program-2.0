@@ -10,6 +10,9 @@ import ErrorPage from "./components/ErrorPage";
 import HomePage from "./pages/HomePage";
 import { AuthProvider, useAuth } from "./components/Auth";
 import StudentProfile from "./components/StudentProfile";
+import ExamMaster from "./pages/ExamMaster";
+import UserMaster from "./pages/UserMaster";
+import AcademicPage from "./pages/AcademicPage";
 
 function App() {
   const { accountType, isLoggedIn } = useAuth();
@@ -31,6 +34,9 @@ function App() {
             <Route path="/profile" element={<ProfileProtected />} />
             <Route path="/question-bank" element={<QuestionBankProtected />} />
             <Route path="/admin/*" element={<AdminRoute />} />
+            <Route path="/users" element={<UserMaster />} />
+            <Route path="/academic" element={<AcademicPage />} />
+            <Route path="/examtemplate" element={<ExamMaster />} />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
         </div>

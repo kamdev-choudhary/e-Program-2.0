@@ -10,6 +10,7 @@ const questionSchema = new Schema({
   difficultyLevel: String,
   questionType: String,
   timeRequired: String,
+  target: String,
   isApproved: {
     type: String,
     default: "no",

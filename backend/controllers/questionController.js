@@ -111,6 +111,7 @@ module.exports.updateQuestion = async (req, res, next) => {
       req.body,
       { new: true }
     );
+    res.status(200).json({ Success: "Question Updated Successfully" });
   } catch (error) {
     next(error);
   }
