@@ -19,3 +19,13 @@ module.exports.saveNewBook = async (req, res, next) => {
     next(error);
   }
 };
+
+module.exports.deleteBook = async (req, res, next) => {
+  let { id } = req.params;
+  try {
+    const deleteBook = await Library.findOneAndDelete({ _id: id });
+    res.status(200).json("Successfully deleted the book");
+  } catch (error) {
+    next(error);
+  }
+};

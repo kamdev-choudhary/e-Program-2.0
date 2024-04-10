@@ -13,7 +13,7 @@ import {
   FormLabel,
   Stack,
 } from "@mui/material";
-import { TinyBox, TinyBox2 } from "./TinyBox";
+import { TinyBox, TinyBox2, TinyBoxReadOnly } from "./TinyBox";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -23,6 +23,8 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
   const [filteredTopics, setFilteredTopics] = useState([]);
   const [filteredSubtopics, setFilteredSubtopics] = useState([]);
   const [question, setQuestion] = useState(currQuestion);
+  const [readOnly, setReadOnly] = useState(question.isApproved === "Yes");
+  const [editMode, setEditMode] = useState(false);
 
   const fetchAcademicData = useCallback(() => {
     fetch(`${API_URL}/academic`)
@@ -109,6 +111,7 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
                 value={question.classes || ""}
                 label="Class"
                 name="classes"
+                readOnly={readOnly}
                 onChange={handleChange}
               >
                 {academic && academic.classes
@@ -135,6 +138,7 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
                 label="Subject"
                 id="subject-select"
                 name="subject"
+                readOnly={readOnly}
                 value={question.subject}
                 onChange={handleChange}
               >
@@ -162,6 +166,7 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
                 id="selectTopic"
                 name="topic"
                 label="Topic"
+                readOnly={readOnly}
                 value={question.topic || ""}
                 onChange={handleChange}
               >
@@ -188,6 +193,7 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
                 labelId="subtopic-label"
                 id="selectSubtopic"
                 name="subtopic"
+                readOnly={readOnly}
                 label="Subtopic"
                 value={question.subtopic || ""}
                 onChange={handleChange}
@@ -212,6 +218,7 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
                 name="difficultyLevel"
+                readOnly={readOnly}
                 label="difficultyLevel"
                 value={question.difficultyLevel || ""}
                 onChange={handleChange}
@@ -242,6 +249,7 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
                 id="demo-simple-select"
                 name="timeRequired"
                 label="timeRequired"
+                readOnly={readOnly}
                 value={question.timeRequired || ""}
                 onChange={handleChange}
               >
@@ -269,6 +277,7 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
                 id="demo-simple-select"
                 name="target"
                 label="target"
+                readOnly={readOnly}
                 value={question.target || ""}
                 onChange={handleChange}
               >
@@ -294,12 +303,16 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
           <Typography>Question</Typography>
           <Grid container fullWidth>
             <Grid item>
-              <TinyBox
-                content={question.questionText}
-                onContentChange={(newContent) =>
-                  handleTinyBoxChange("questionText", newContent)
-                }
-              />
+              {readOnly ? (
+                <TinyBoxReadOnly content={question.questionText} height={200} />
+              ) : (
+                <TinyBox
+                  content={question.questionText}
+                  onContentChange={(newContent) =>
+                    handleTinyBoxChange("questionText", newContent)
+                  }
+                />
+              )}
             </Grid>
           </Grid>
         </FormControl>

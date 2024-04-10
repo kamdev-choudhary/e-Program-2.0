@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Modal, Button } from "react-bootstrap";
+import { Modal } from "react-bootstrap";
 
 import Input from "@mui/material/Input";
 import Fab from "@mui/material/Fab";
@@ -8,11 +8,15 @@ import FormControl from "@mui/material/FormControl";
 import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
+import Button from "@mui/material/Button";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
 import TableContainer from "@mui/material/TableContainer";
 import TableHead from "@mui/material/TableHead";
+import MenuItem from "@mui/material/MenuItem";
+import InputLabel from "@mui/material/InputLabel";
+import Select from "@mui/material/Select";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
@@ -21,6 +25,7 @@ import { useAuth } from "../components/Auth";
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 export default function MaterialPage() {
+  const { isAdmin } = useAuth();
   const [books, setBooks] = useState([]);
   const [error, setError] = useState(null);
   const [currBook, setCurrBook] = useState([]);
@@ -37,8 +42,14 @@ export default function MaterialPage() {
   const [pdfViewer, setPdfViwer] = useState(false);
   const [refresh, setRefresh] = useState(false);
   const [searchInput, setSearchInput] = useState("");
+  const [academic, setAcademic] = useState([]);
 
-  const { isAdmin } = useAuth();
+  useEffect(() => {
+    fetch(`${API_URL}/academic`)
+      .then((response) => response.json())
+      .then((data) => setAcademic(data.academic[0]))
+      .then((error) => console.log("Error", error));
+  }, []);
 
   const handleAddNewBook = () => {
     setShowAddBook(!showAddBook);
@@ -62,8 +73,10 @@ export default function MaterialPage() {
     }
   };
 
+  console.log(academic);
+
   const handleOnSubmit = async (e) => {
-    fetch("http://127.0.0.1:5000/api/materials/savenewbook", {
+    fetch(`${API_URL}/materials/savenewbook`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -74,6 +87,7 @@ export default function MaterialPage() {
         response.json();
         if (response.ok) {
           handleAddNewBook();
+          setShowAddBook(!showAddBook);
           setRefresh(!refresh);
         }
       })
@@ -83,15 +97,6 @@ export default function MaterialPage() {
       .catch((error) => {
         console.error("Error:", error);
       });
-
-    // setNewBook({
-    //   title: "",
-    //   bookID: "",
-    //   subject: "",
-    //   category: "",
-    //   author: "",
-    //   PublishingYear: "",
-    // });
   };
 
   const handleViewBook = (book) => {
@@ -123,6 +128,17 @@ export default function MaterialPage() {
         field.toString().toLowerCase().includes(searchInput.toLowerCase())
     )
   );
+
+  const handleDeleteBook = (id) => {
+    console.log(id);
+    fetch(`${API_URL}/materials/${id}`, {
+      method: "DELETE",
+    })
+      .then((response) => response.json())
+      .then((data) => console.log("Success", data))
+      .catch((error) => console.log("Error", error));
+    setRefresh(!refresh);
+  };
 
   return (
     <>
@@ -159,7 +175,7 @@ export default function MaterialPage() {
       <Modal
         show={showAddBook}
         onHide={handleAddNewBook}
-        dialogClassName="modal-xl"
+        dialogClassName="modal-md"
       >
         <Modal.Header>
           <Modal.Title>Add New Books</Modal.Title>
@@ -200,15 +216,26 @@ export default function MaterialPage() {
               />
             </div>
             <div className="col-md-12">
-              <TextField
-                fullWidth
-                label="Subject"
-                id="bookId"
-                name="subject"
-                value={newBook.subject}
-                onChange={handleNewBookChange}
-                style={{ marginBottom: "20px" }}
-              />
+              <FormControl fullWidth>
+                <InputLabel id="demo-simple-select-label">Subject</InputLabel>
+                <Select
+                  labelId="Subject-label"
+                  id="subject"
+                  name="subject"
+                  label="Subject"
+                  value={newBook.subject}
+                  onChange={handleNewBookChange}
+                  style={{ marginBottom: "20px" }}
+                >
+                  {academic &&
+                    academic.subjects &&
+                    academic.subjects.map((subject, index) => (
+                      <MenuItem key={index} value={subject.name}>
+                        {subject.name}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
             </div>
             <div className="col-md-12">
               <TextField
@@ -244,15 +271,19 @@ export default function MaterialPage() {
                 id="file-input"
               />
             </div>
-            <div className="col-md-12 text-center">
-              <Button variant="primary" onClick={handleOnSubmit}>
+            <div className="col-md-12 text-center mt-3">
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handleOnSubmit}
+              >
                 Submit
               </Button>
             </div>
           </div>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="danger" onClick={handleAddNewBook}>
+          <Button variant="contained" color="error" onClick={handleAddNewBook}>
             Close
           </Button>
         </Modal.Footer>
@@ -283,6 +314,11 @@ export default function MaterialPage() {
               <TableCell align="center" className="text-white">
                 View Book
               </TableCell>
+              {isAdmin && (
+                <TableCell align="center" className="text-white">
+                  Delete Boook
+                </TableCell>
+              )}
             </TableRow>
           </TableHead>
           <TableBody>
@@ -304,12 +340,24 @@ export default function MaterialPage() {
                 <TableCell align="center">
                   <Button
                     size="sm"
-                    variant="primary"
+                    variant="outlined"
                     onClick={() => handleViewBook(book)}
                   >
                     view
                   </Button>
                 </TableCell>
+                {isAdmin && (
+                  <TableCell align="center" className="text-white">
+                    <Button
+                      variant="contained"
+                      size="small"
+                      color="error"
+                      onClick={() => handleDeleteBook(book._id)}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                )}
               </TableRow>
             ))}
           </TableBody>

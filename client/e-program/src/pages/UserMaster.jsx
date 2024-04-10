@@ -59,7 +59,7 @@ export default function UserMaster() {
 
   return (
     <>
-      <Grid container fullWidth sx={{ gap: 2 }}>
+      <Grid container sx={{ gap: 2 }}>
         <Grid item md={5}>
           <Box>
             <FormControl fullWidth size="small">
@@ -79,13 +79,11 @@ export default function UserMaster() {
         <Grid item md={5}>
           <Box>
             <FormControl fullWidth size="small">
-              <InputLabel id="demo-simple-select-label">
-                Account Type
-              </InputLabel>
+              <InputLabel id="account-type-label">Account Type</InputLabel>
               <Select
-                labelId="demo-simple-select-label"
-                id="demo-simple-select"
-                label="User Type"
+                labelId="account-type-label"
+                id="account-type"
+                label="Account Type"
                 value={accountTypeFilter}
                 onChange={handleAccounTypeChange}
               >

@@ -149,7 +149,7 @@ export default function QuestionBankPage() {
     setQuestionAddToTemplate(updatedQuestionAddToTemplate);
 
     if (updatedQuestionAddToTemplate) {
-      fetch("http://127.0.0.1:5000/api/exams/addtotemplate", {
+      fetch(`${API_URL}/exams/addtotemplate`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

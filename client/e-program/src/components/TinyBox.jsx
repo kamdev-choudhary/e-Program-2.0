@@ -47,3 +47,19 @@ export function TinyBox2(props) {
     />
   );
 }
+
+export function TinyBoxReadOnly(props) {
+  const { height, content } = props;
+  return (
+    <Editor
+      init={{
+        readonly: true, // Set readonly option based on state variable
+        height: height,
+        width: 750,
+        menubar: false,
+        toolbar: false,
+      }}
+      value={content}
+    />
+  );
+}
