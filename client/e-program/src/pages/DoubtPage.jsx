@@ -3,13 +3,16 @@ import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
 import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
-import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { TinyBox } from "../components/TinyBox";
 import Paper from "@mui/material/Paper";
+import Select from "@mui/material/Select";
+import MenuItem from "@mui/material/MenuItem";
+import FormControl from "@mui/material/FormControl";
+import InputLabel from "@mui/material/InputLabel";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -60,8 +63,8 @@ export default function DoubtPage() {
       });
   };
 
-  const handleChange = (event, newValue) => {
-    setValue(newValue);
+  const handleChange = (event) => {
+    setValue(event.target.value);
   };
 
   const style = {
@@ -89,12 +92,19 @@ export default function DoubtPage() {
               borderColor: "divider",
             }}
           >
-            <TabList onChange={handleChange} aria-label="lab API tabs example">
-              <Tab label="All" value="1" />
-              <Tab label="Unsolved Doubts" value="2" />
-              <Tab label="Solved Doubts" value="3" />
-              <Tab label="Your Doubts" value="4" />
-            </TabList>
+            <FormControl variant="standard" sx={{ width: 200 }}>
+              <Select
+                labelId="tab-select-label"
+                id="tab-select"
+                value={value}
+                onChange={handleChange}
+              >
+                <MenuItem value="1">All</MenuItem>
+                <MenuItem value="2">Unsolved Doubts</MenuItem>
+                <MenuItem value="3">Solved Doubts</MenuItem>
+                <MenuItem value="4">Your Doubts</MenuItem>
+              </Select>
+            </FormControl>
             <Button
               variant="contained"
               color="success"
@@ -105,40 +115,38 @@ export default function DoubtPage() {
           </Box>
 
           <TabPanel value="1">
-            <Paper elevation={3} sx={{ padding: 2 }}>
-              <>
-                {doubts &&
-                  doubts.map((doubt, index) => (
-                    <Box sx={{ marginBottom: 1 }}>
-                      <Paper sx={{ padding: 3 }} elevation={6}>
-                        <Typography sx={{ marginBottom: 1 }}>
-                          Posted By: Anonymous User
-                        </Typography>
-                        <Box border={1} sx={{ padding: 1, borderRadius: 2 }}>
-                          <Typography
-                            dangerouslySetInnerHTML={{
-                              __html: doubt.doubtQuestion,
-                            }}
-                          />
-                        </Box>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            justifyContent: "flex-end",
-                            mt: 2,
+            <>
+              {doubts &&
+                doubts.map((doubt, index) => (
+                  <Box sx={{ marginBottom: 1 }} key={index}>
+                    <Paper sx={{ padding: 3 }} elevation={6}>
+                      <Typography sx={{ marginBottom: 1 }}>
+                        Posted By: Anonymous User
+                      </Typography>
+                      <Box border={1} sx={{ padding: 1, borderRadius: 2 }}>
+                        <Typography
+                          dangerouslySetInnerHTML={{
+                            __html: doubt.doubtQuestion,
                           }}
-                        >
-                          {doubt.doubtSolutions &&
-                            doubt.doubtSolutions.length > 0 && (
-                              <Button>View Solutions</Button>
-                            )}
-                          <Button>Post a solution</Button>
-                        </Box>
-                      </Paper>
-                    </Box>
-                  ))}
-              </>
-            </Paper>
+                        />
+                      </Box>
+                      <Box
+                        sx={{
+                          display: "flex",
+                          justifyContent: "flex-end",
+                          mt: 2,
+                        }}
+                      >
+                        {doubt.doubtSolutions &&
+                          doubt.doubtSolutions.length > 0 && (
+                            <Button>View Solutions</Button>
+                          )}
+                        <Button>Post a solution</Button>
+                      </Box>
+                    </Paper>
+                  </Box>
+                ))}
+            </>
           </TabPanel>
           <TabPanel value="2">Item Two</TabPanel>
           <TabPanel value="3">Item Three</TabPanel>

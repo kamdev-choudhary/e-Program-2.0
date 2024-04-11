@@ -44,8 +44,8 @@ function Navbar() {
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
-    width: "90%", // Set width to 90% of the viewport width
-    maxWidth: 500, // Set maximum width to 500px
+    width: "90%",
+    maxWidth: 500,
     boxShadow: 100,
     backdropFilter: "blur(5px)",
     backgroundColor: "#FFF",
