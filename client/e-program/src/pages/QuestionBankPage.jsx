@@ -273,7 +273,7 @@ export default function QuestionBankPage() {
       <div className="row">
         <div className="col-md-3 mb-3">
           <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth size="small">
+            <FormControl fullWidth size="small" variant="standard">
               <InputLabel id="demo-simple-select-label">Class</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -296,7 +296,7 @@ export default function QuestionBankPage() {
         </div>
         <div className="col-md-3 mb-2">
           <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth size="small">
+            <FormControl fullWidth size="small" variant="standard">
               <InputLabel id="demo-simple-select-label">Subject</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -319,7 +319,7 @@ export default function QuestionBankPage() {
         </div>
         <div className="col-md-3 mb-2">
           <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth size="small">
+            <FormControl fullWidth size="small" variant="standard">
               <InputLabel id="demo-simple-select-label">Topic</InputLabel>
               <Select
                 labelId="Topic Selection"
@@ -341,7 +341,7 @@ export default function QuestionBankPage() {
         </div>
         <div className="col-md-3 mb-2">
           <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth size="small">
+            <FormControl fullWidth size="small" variant="standard">
               <InputLabel id="demo-simple-select-label">Sub Topic</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -362,7 +362,7 @@ export default function QuestionBankPage() {
         </div>
         <div className="col-md-3 mb-2">
           <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth size="small">
+            <FormControl fullWidth size="small" variant="standard">
               <InputLabel id="demo-simple-select-label">
                 Difficulty Level
               </InputLabel>
@@ -387,7 +387,7 @@ export default function QuestionBankPage() {
         </div>
         <div className="col-md-3 mb-2">
           <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth size="small">
+            <FormControl fullWidth size="small" variant="standard">
               <InputLabel id="demo-simple-select-label">
                 Time Required
               </InputLabel>
@@ -412,7 +412,7 @@ export default function QuestionBankPage() {
         </div>
         <div className="col-md-3 mb-2">
           <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth size="small">
+            <FormControl fullWidth size="small" variant="standard">
               <InputLabel id="demo-simple-select-label">Target</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
