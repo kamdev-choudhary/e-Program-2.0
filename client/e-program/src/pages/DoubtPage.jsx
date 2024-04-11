@@ -9,6 +9,7 @@ import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
 import { TinyBox } from "../components/TinyBox";
 import Paper from "@mui/material/Paper";
+import Grid from "@mui/material/Grid";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -17,10 +18,13 @@ import InputLabel from "@mui/material/InputLabel";
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 export default function DoubtPage() {
-  const [value, setValue] = React.useState("1");
+  const [value, setValue] = useState("All");
   const [showAskDoubtForm, setShowAskDoubtForm] = useState(false);
   const [doubts, setDoubts] = useState([]);
+  const [currDoubt, setCurrDoubt] = useState([]);
   const [refresh, setRefresh] = useState(false);
+  const [doubtDetails, setDoubtDetails] = useState(false);
+  const [modalText, setModelText] = useState("");
   const [newDoubt, setNewDoubt] = useState({
     doubtQuestion: "",
   });
@@ -36,7 +40,7 @@ export default function DoubtPage() {
     const data = {
       doubtQuestion: newDoubt.doubtQuestion,
       postedBy: "",
-      posttedById: "",
+      postedById: "",
     };
     fetch(`${API_URL}/doubts/new`, {
       method: "POST",
@@ -46,9 +50,10 @@ export default function DoubtPage() {
       body: JSON.stringify(data),
     })
       .then((response) => {
-        response.json();
         if (response.ok) {
+          return response.json();
         }
+        throw new Error("Network response was not ok.");
       })
       .then((data) => {
         console.log("Success:", data);
@@ -63,8 +68,39 @@ export default function DoubtPage() {
       });
   };
 
-  const handleChange = (event) => {
-    setValue(event.target.value);
+  const handlePostDoubtSolution = () => {
+    const data = {
+      solution: newDoubt.doubtQuestion,
+      postedBy: "",
+      postedById: "",
+    };
+    fetch(`${API_URL}/doubts/${currDoubt._id}`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        if (response.ok) {
+          return response.json();
+        }
+        throw new Error("Network response was not ok.");
+      })
+      .then((data) => {
+        console.log("Success:", data);
+        const updatedDoubt = { ...currDoubt };
+        updatedDoubt.doubtSolutions.push(data.solution); // Assuming the new solution is returned from the server
+        setCurrDoubt(updatedDoubt);
+        setRefresh(!refresh); // Optionally trigger a refresh
+        setShowAskDoubtForm(false);
+        setNewDoubt(() => ({
+          doubtQuestion: "",
+        }));
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
   };
 
   const style = {
@@ -81,78 +117,193 @@ export default function DoubtPage() {
 
   return (
     <>
-      <Box sx={{ width: "100%", typography: "body1" }}>
-        <TabContext value={value}>
+      {!doubtDetails && (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: 2,
+          }}
+        >
+          <FormControl sx={{ minWidth: 200 }} size="small" variant="standard">
+            <Select
+              labelId="demo-select-small-label"
+              id="demo-select-small"
+              value={value}
+              onChange={(e) => setValue(e.target.value)}
+            >
+              <MenuItem value="All">All Doubts</MenuItem>
+              <MenuItem value="solved">Solved Doubts</MenuItem>
+              <MenuItem value="unsolved">Unsolved</MenuItem>
+              <MenuItem value="your">Your Doubts</MenuItem>
+            </Select>
+          </FormControl>
+          <Button
+            variant="contained"
+            color="success"
+            onClick={() => {
+              setShowAskDoubtForm(true), setModelText("Ask a Doubt");
+            }}
+          >
+            Add New
+          </Button>
+        </Box>
+      )}
+      {!doubtDetails && (
+        <>
+          {doubts &&
+            doubts.map((doubt, index) => (
+              <Box sx={{ marginBottom: 1 }} key={index}>
+                <Paper sx={{ padding: 3 }} elevation={6}>
+                  <Box sx={{ flexGrow: 1 }}>
+                    <Grid container spacing={2} justifyContent="space-between">
+                      <Grid item xs={8}>
+                        <Typography>Posted By: Anonymous User</Typography>
+                      </Grid>
+                      <Grid item xs={4} textAlign="right">
+                        <Typography>
+                          Post Time:{" "}
+                          {new Date(doubt.doubtPostedDate).toLocaleDateString()}{" "}
+                          {new Date(doubt.doubtPostedDate).toLocaleTimeString()}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                  <Box border={1} sx={{ padding: 1, borderRadius: 2 }}>
+                    <Typography
+                      sx={{
+                        overflow: "hidden",
+                        maxWidth: "100%",
+                      }}
+                      dangerouslySetInnerHTML={{
+                        __html: doubt.doubtQuestion,
+                      }}
+                    />
+                  </Box>
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      mt: 2,
+                    }}
+                  >
+                    {doubt.doubtSolutions && doubt.doubtSolutions.length > 0 ? (
+                      <Button
+                        variant="outlined"
+                        color="success"
+                        onClick={() => {
+                          setDoubtDetails(true);
+                          setCurrDoubt(doubt);
+                        }}
+                      >
+                        View Solutions
+                      </Button>
+                    ) : (
+                      <Button
+                        variant="outlined"
+                        onClick={() => {
+                          setDoubtDetails(true);
+                          setCurrDoubt(doubt);
+                        }}
+                      >
+                        Post a Solution
+                      </Button>
+                    )}
+                  </Box>
+                </Paper>
+              </Box>
+            ))}
+        </>
+      )}
+      {doubtDetails && (
+        <>
+          <Button
+            variant="outlined"
+            color="error"
+            onClick={() => setDoubtDetails(false)}
+          >
+            Back
+          </Button>
+          <hr />
+          <Typography variant="h5">Question</Typography>
+          <hr />
+          <Paper elevation={6} sx={{ padding: 2, marginTop: 2 }}>
+            <Box border={1} sx={{ padding: 1, borderRadius: 2, marginTop: 2 }}>
+              <Typography
+                sx={{
+                  overflow: "hidden",
+                  maxWidth: "100%",
+                }}
+                dangerouslySetInnerHTML={{
+                  __html: currDoubt.doubtQuestion,
+                }}
+              />
+            </Box>
+          </Paper>
+
+          <hr />
+          <Typography variant="h5">Solutions</Typography>
+          <hr />
           <Box
             sx={{
               display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-              borderBottom: 1,
-              borderColor: "divider",
+              justifyContent: "flex-end",
+              marginBottom: 2,
+              marginTop: 2,
             }}
           >
-            <FormControl variant="standard">
-              <Select
-                labelId="tab-select-label"
-                id="tab-select"
-                value={value}
-                onChange={handleChange}
-              >
-                <MenuItem value="1">All</MenuItem>
-                <MenuItem value="2">Unsolved Doubts</MenuItem>
-                <MenuItem value="3">Solved Doubts</MenuItem>
-                <MenuItem value="4">Your Doubts</MenuItem>
-              </Select>
-            </FormControl>
             <Button
               variant="contained"
               color="success"
-              onClick={() => setShowAskDoubtForm(true)}
+              onClick={() => {
+                setShowAskDoubtForm(true), setModelText("Post a Solution");
+              }}
             >
-              Add New
+              Post a solution
             </Button>
           </Box>
-
-          <TabPanel value="1">
-            <>
-              {doubts &&
-                doubts.map((doubt, index) => (
-                  <Box sx={{ marginBottom: 1 }} key={index}>
-                    <Paper sx={{ padding: 3 }} elevation={6}>
-                      <Typography sx={{ marginBottom: 1 }}>
-                        Posted By: Anonymous User
-                      </Typography>
-                      <Box border={1} sx={{ padding: 1, borderRadius: 2 }}>
-                        <Typography
-                          dangerouslySetInnerHTML={{
-                            __html: doubt.doubtQuestion,
-                          }}
-                        />
-                      </Box>
-                      <Box
-                        sx={{
-                          display: "flex",
-                          justifyContent: "flex-end",
-                          mt: 2,
-                        }}
-                      >
-                        {doubt.doubtSolutions &&
-                          doubt.doubtSolutions.length > 0 && (
-                            <Button>View Solutions</Button>
-                          )}
-                        <Button>Post a solution</Button>
-                      </Box>
-                    </Paper>
+          {currDoubt.doubtSolutions &&
+            currDoubt.doubtSolutions.map((solution, index) => (
+              <Paper elevation={6} sx={{ padding: 2, marginBottom: 2 }}>
+                <>
+                  <Box sx={{ flexGrow: 1 }}>
+                    <Grid container spacing={2} justifyContent="space-between">
+                      <Grid item xs={8}>
+                        <Typography>Posted By: Anonymous User</Typography>
+                      </Grid>
+                      <Grid item xs={4} textAlign="right">
+                        <Typography>
+                          Post Time:{" "}
+                          {new Date(
+                            solution.solutionPostedDate
+                          ).toLocaleDateString()}{" "}
+                          {new Date(
+                            solution.solutionPostedDate
+                          ).toLocaleTimeString()}
+                        </Typography>
+                      </Grid>
+                    </Grid>
                   </Box>
-                ))}
-            </>
-          </TabPanel>
-          <TabPanel value="2">Item Two</TabPanel>
-          <TabPanel value="3">Item Three</TabPanel>
-        </TabContext>
-      </Box>
-
+                  <Box
+                    border={1}
+                    sx={{ padding: 1, borderRadius: 2, marginTop: 2 }}
+                    key={index}
+                  >
+                    <Typography
+                      sx={{
+                        overflow: "hidden",
+                        maxWidth: "100%",
+                      }}
+                      dangerouslySetInnerHTML={{
+                        __html: solution.solution,
+                      }}
+                    />
+                  </Box>
+                </>
+              </Paper>
+            ))}
+        </>
+      )}
       <Modal
         open={showAskDoubtForm}
         onClose={() => setShowAskDoubtForm(false)}
@@ -161,7 +312,7 @@ export default function DoubtPage() {
       >
         <Box sx={style} display="flex" flexDirection="column">
           <Typography id="modal-modal-title" variant="h6" component="h2">
-            Ask a doubt
+            {modalText}
           </Typography>
           <hr />
           <TinyBox
@@ -172,7 +323,6 @@ export default function DoubtPage() {
               }))
             }
           />
-
           <hr />
           <Box sx={{ mt: 2, alignSelf: "flex-end" }}>
             <Button
@@ -183,13 +333,23 @@ export default function DoubtPage() {
             >
               Close
             </Button>
-            <Button
-              variant="contained"
-              color="success"
-              onClick={handlePostDoubt}
-            >
-              Post
-            </Button>
+            {doubtDetails ? (
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handlePostDoubtSolution}
+              >
+                Post solution
+              </Button>
+            ) : (
+              <Button
+                variant="contained"
+                color="success"
+                onClick={handlePostDoubt}
+              >
+                Post
+              </Button>
+            )}
           </Box>
         </Box>
       </Modal>
