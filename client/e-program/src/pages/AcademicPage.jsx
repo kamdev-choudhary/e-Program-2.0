@@ -30,11 +30,17 @@ import ListItemText from "@mui/material/ListItemText";
 import Collapse from "@mui/material/Collapse";
 import ExpandLess from "@mui/icons-material/ExpandLess";
 import ExpandMore from "@mui/icons-material/ExpandMore";
+import Dialog from "@mui/material/Dialog";
+import DialogActions from "@mui/material/DialogActions";
+import DialogContent from "@mui/material/DialogContent";
+import DialogContentText from "@mui/material/DialogContentText";
+import DialogTitle from "@mui/material/DialogTitle";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 export default function AcademicPage() {
   const [academic, setAcademic] = useState({});
+  const [newAcademics, setNewAcademic] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState("");
   const [selectedClass, setSelectedClass] = useState("");
   const [selectedTopic, setSelectedTopic] = useState("");
@@ -44,6 +50,10 @@ export default function AcademicPage() {
   const [filteredTopics, setFilteredTopics] = useState([]);
   const [filteredSubtopics, setFilteredSubtopics] = useState([]);
   const [openNestedList, setOpenNestedList] = useState([]);
+  const [newTopic, setNewTopic] = useState("");
+  const [newsubtopic, setNewsubtopic] = useState("");
+  const [showAddTopicField, setShowAddTopicField] = useState(false);
+  const [refresh, setRefresh] = useState(false);
 
   useEffect(() => {
     fetch(`${API_URL}/academic`)
@@ -51,7 +61,7 @@ export default function AcademicPage() {
       .then((data) => {
         setAcademic(data.academic[0]);
       });
-  }, []);
+  }, [refresh]);
 
   const handleSaveBatch = () => {
     fetch(`${API_URL}/batch/addnew`, {
@@ -103,6 +113,35 @@ export default function AcademicPage() {
     }
   }, [academic.subjects, selectedSubject, selectedClass]);
 
+  const handleAddNewTopic = () => {
+    const data = {
+      selectedClass: selectedClass,
+      selectedSubject: selectedSubject,
+      newTopic: newTopic,
+    };
+
+    fetch(`${API_URL}/academic/update/topic`, {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error("Network response was not ok");
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log("Success:", data);
+        setRefresh(!refresh);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
   useEffect(() => {
     if (filteredTopics.length > 0) {
       const filteredSubtopics = filteredTopics.flatMap(
@@ -124,8 +163,6 @@ export default function AcademicPage() {
     setShowAddBatchModal(!showAddBatchModal);
   };
 
-  console.log(selectedClass);
-  console.log(selectedSubject);
   return (
     <>
       <div>
@@ -324,11 +361,98 @@ export default function AcademicPage() {
             </div>
 
             {selectedSubject && (
-              <div className="col-md-3">
-                <Button variant="contained" color="primary">
-                  Add new topic
-                </Button>
-              </div>
+              <>
+                <div className="col-md-3">
+                  <Button
+                    variant="contained"
+                    color="primary"
+                    onClick={() => setShowAddTopicField(true)}
+                  >
+                    Add new topic
+                  </Button>
+                </div>
+                <React.Fragment>
+                  <Dialog
+                    open={showAddTopicField}
+                    onClose={() => setShowAddTopicField(false)}
+                  >
+                    <DialogContent>
+                      <Box sx={{ padding: 2 }}>
+                        <FormControl
+                          fullWidth
+                          size="small"
+                          sx={{ marginBottom: 2 }}
+                        >
+                          <InputLabel id="demo-simple-select-label">
+                            Class
+                          </InputLabel>
+                          <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            name="classes"
+                            label="Class"
+                            value={selectedClass}
+                            onChange={(event) =>
+                              setSelectedClass(event.target.value)
+                            }
+                          >
+                            {academic &&
+                              academic.classes &&
+                              academic.classes.map((className, index) => (
+                                <MenuItem key={index} value={className}>
+                                  {className}
+                                </MenuItem>
+                              ))}
+                          </Select>
+                        </FormControl>
+                        <FormControl
+                          fullWidth
+                          size="small"
+                          sx={{ marginBottom: 2 }}
+                        >
+                          <InputLabel id="demo-simple-select-label">
+                            Subject
+                          </InputLabel>
+                          <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            name="subject"
+                            label="Subject"
+                            value={selectedSubject}
+                            onChange={(event) =>
+                              setSelectedSubject(event.target.value)
+                            }
+                          >
+                            {academic &&
+                              academic.subjects &&
+                              academic.subjects.map((subject, index) => (
+                                <MenuItem key={index} value={subject.name}>
+                                  {subject.name}
+                                </MenuItem>
+                              ))}
+                          </Select>
+                        </FormControl>
+                        <hr />
+                        <FormControl fullWidth size="small">
+                          <TextField
+                            variant="standard"
+                            label="New Topic"
+                            value={newTopic}
+                            onChange={(e) => setNewTopic(e.target.value)}
+                            fullWidth
+                          />
+                        </FormControl>
+                      </Box>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button onClick={() => setShowAddTopicField(false)}>
+                        Cancel
+                      </Button>
+                      <Button onClick={handleAddNewTopic}>Save</Button>
+                    </DialogActions>
+                  </Dialog>
+                </React.Fragment>
+              </>
             )}
             <List
               sx={{ width: "100%", maxWidth: 360, bgcolor: "background.paper" }}

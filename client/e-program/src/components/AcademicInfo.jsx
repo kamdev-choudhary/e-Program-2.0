@@ -88,8 +88,9 @@ export default function AcademicInfo() {
     }
   }, [filteredTopics, selectedTopic]);
 
-  // console.log(selectedTopic);
-  // console.log(filteredSubtopics);
+  const handleAddNewTopic = () => {
+    console.log(selectedClass, selectedSubject);
+  };
 
   return (
     <>
@@ -208,7 +209,11 @@ export default function AcademicInfo() {
 
             {selectedSubject && (
               <div className="col-md-3">
-                <Button variant="contained" color="primary">
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleAddNewTopic}
+                >
                   Add new topic
                 </Button>
               </div>
