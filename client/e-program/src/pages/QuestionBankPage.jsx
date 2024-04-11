@@ -731,6 +731,7 @@ export default function QuestionBankPage() {
           <ViewQuestion
             currQuestion={currQuestion}
             handleShowViewQuestion={handleShowViewQuestion}
+            setRefresh={setRefresh}
           />
         </Modal.Body>
         <Modal.Footer>

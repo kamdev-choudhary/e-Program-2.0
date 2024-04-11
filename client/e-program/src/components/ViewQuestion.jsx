@@ -17,7 +17,7 @@ import { TinyBox, TinyBox2, TinyBoxReadOnly } from "./TinyBox";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
-const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
+const ViewQuestion = ({ currQuestion, handleShowViewQuestion, setRefresh }) => {
   const [academic, setAcademicData] = useState({});
   const [error, setError] = useState(null);
   const [filteredTopics, setFilteredTopics] = useState([]);
@@ -92,6 +92,7 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
       .then((data) => {
         console.log("Success:", data);
         handleShowViewQuestion();
+        setRefresh(!refresh);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -100,6 +101,15 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
 
   return (
     <>
+      {readOnly && (
+        <div className="row  mb-3">
+          <div className="col-md-1 ms-auto">
+            <Button variant="contained" onClick={() => setReadOnly(false)}>
+              Edit
+            </Button>
+          </div>
+        </div>
+      )}
       <div className="row">
         <div className="col-md-3 mb-3">
           <Box sx={{ minWidth: 120 }}>
@@ -331,6 +341,7 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
                 align="center"
                 value="1"
                 color="success"
+                readOnly={!readOnly}
                 checked={question.correctAnswer === "1"}
                 onChange={handleChange}
               />
@@ -341,12 +352,16 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
               sm={10}
               style={{ height: "100%", width: "100%" }}
             >
-              <TinyBox2
-                content={question.option1}
-                onContentChange={(newContent) =>
-                  handleTinyBoxChange("option1", newContent)
-                }
-              />
+              {readOnly ? (
+                <TinyBoxReadOnly content={question.option1} height={100} />
+              ) : (
+                <TinyBox2
+                  content={question.option1}
+                  onContentChange={(newContent) =>
+                    handleTinyBoxChange("option1", newContent)
+                  }
+                />
+              )}
             </Grid>
           </Grid>
           <Grid container spacing={2} marginTop={1}>
@@ -359,6 +374,7 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
                 align="center"
                 value="2"
                 color="success"
+                readOnly={readOnly}
                 checked={question.correctAnswer === "2"}
                 onChange={handleChange}
               />
@@ -369,12 +385,16 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
               sm={10}
               style={{ height: "100%", width: "100%" }}
             >
-              <TinyBox2
-                content={question.option2}
-                onContentChange={(newContent) =>
-                  handleTinyBoxChange("option2", newContent)
-                }
-              />
+              {readOnly ? (
+                <TinyBoxReadOnly content={question.option2} height={100} />
+              ) : (
+                <TinyBox2
+                  content={question.option2}
+                  onContentChange={(newContent) =>
+                    handleTinyBoxChange("option2", newContent)
+                  }
+                />
+              )}
             </Grid>
           </Grid>
           <Grid container spacing={2} marginTop={1}>
@@ -387,6 +407,7 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
                 align="center"
                 value="3"
                 color="success"
+                readOnly={readOnly}
                 checked={question.correctAnswer === "3"}
                 onChange={handleChange}
               />
@@ -397,24 +418,29 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
               sm={10}
               style={{ height: "100%", width: "100%" }}
             >
-              <TinyBox2
-                content={question.option3}
-                onContentChange={(newContent) =>
-                  handleTinyBoxChange("option3", newContent)
-                }
-              />
+              {readOnly ? (
+                <TinyBoxReadOnly content={question.option3} height={100} />
+              ) : (
+                <TinyBox2
+                  content={question.option3}
+                  onContentChange={(newContent) =>
+                    handleTinyBoxChange("option3", newContent)
+                  }
+                />
+              )}
             </Grid>
           </Grid>
           <Grid container spacing={2} marginTop={1}>
             <Grid item xs={12} sm={1} alignContent="center">
               <Typography align="center">4</Typography>
             </Grid>
-            <Grid item xs={12} sm={1} alignContent="center">
+            <Grid item xs={12} sm={1} alignContent="center" align="center">
               <Checkbox
                 name="correctAnswer"
                 value="4"
                 align="center"
                 color="success"
+                readOnly={readOnly}
                 checked={question.correctAnswer === "4"}
                 onChange={handleChange}
               />
@@ -425,12 +451,16 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
               sm={10}
               style={{ height: "100%", width: "100%" }}
             >
-              <TinyBox2
-                content={question.option4}
-                onContentChange={(newContent) =>
-                  handleTinyBoxChange("option4", newContent)
-                }
-              />
+              {readOnly ? (
+                <TinyBoxReadOnly content={question.option4} height={100} />
+              ) : (
+                <TinyBox2
+                  content={question.option4}
+                  onContentChange={(newContent) =>
+                    handleTinyBoxChange("option4", newContent)
+                  }
+                />
+              )}
             </Grid>
           </Grid>
         </FormControl>
@@ -438,33 +468,43 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion }) => {
         <Typography>Solution</Typography>
         <Grid container>
           <Grid item fullWidth>
-            <TinyBox2
-              content={question.solution}
-              onContentChange={(newContent) =>
-                handleTinyBoxChange("solution", newContent)
-              }
-            />
+            {readOnly ? (
+              <TinyBoxReadOnly
+                content={question.solution}
+                height={100}
+                width={300}
+              />
+            ) : (
+              <TinyBox2
+                content={question.solution}
+                onContentChange={(newContent) =>
+                  handleTinyBoxChange("solution", newContent)
+                }
+              />
+            )}
           </Grid>
         </Grid>
 
-        <Stack
-          spacing={2}
-          padding={0}
-          direction="row"
-          style={{ bottom: 0, right: 0, marginTop: 20 }}
-          justifyContent="flex-end"
-        >
-          <Button variant="contained" onClick={() => updateQuestion(false)}>
-            Save
-          </Button>
-          <Button
-            variant="contained"
-            color="success"
-            onClick={() => updateQuestion(true)}
+        {!readOnly && (
+          <Stack
+            spacing={2}
+            padding={0}
+            direction="row"
+            style={{ bottom: 0, right: 0, marginTop: 20 }}
+            justifyContent="flex-end"
           >
-            Save and Approve
-          </Button>
-        </Stack>
+            <Button variant="contained" onClick={() => updateQuestion(false)}>
+              Save
+            </Button>
+            <Button
+              variant="contained"
+              color="success"
+              onClick={() => updateQuestion(true)}
+            >
+              Save and Approve
+            </Button>
+          </Stack>
+        )}
       </div>
     </>
   );

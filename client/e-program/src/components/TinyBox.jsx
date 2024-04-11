@@ -52,10 +52,11 @@ export function TinyBoxReadOnly(props) {
   const { height, content } = props;
   return (
     <Editor
+      apiKey="o9adc3d0e8icjmn90btn0tfps73vsqpqqry3xb7do5xyqnxm"
       init={{
-        readonly: true, // Set readonly option based on state variable
+        readonly: true,
         height: height,
-        width: 750,
+        width: "100vh",
         menubar: false,
         toolbar: false,
       }}

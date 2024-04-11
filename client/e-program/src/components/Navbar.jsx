@@ -1,6 +1,6 @@
 import "bootstrap/dist/css/bootstrap.min.css";
 import { NavLink } from "react-router-dom";
-import { Modal } from "react-bootstrap";
+import Modal from "@mui/material/Modal";
 import { useState } from "react";
 import { useAuth } from "../components/Auth";
 import Button from "@mui/material/Button";
@@ -39,6 +39,19 @@ function Navbar() {
   const [open, setOpen] = useState(false);
   const [showUserPage, setShowUserPage] = useState(false);
 
+  const style = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    boxShadow: 100,
+    backdropFilter: "blur(5px)",
+    backgroundColor: "#FFF",
+    borderRadius: 2,
+    p: 4,
+  };
+
   const handleMenu = (event) => {
     setAnchorEl(event.currentTarget);
   };
@@ -62,9 +75,14 @@ function Navbar() {
 
   const DrawerList = (
     <Box
-      sx={{ width: 250 }}
       role="presentation"
       onClick={() => toggleDrawer(false)}
+      sx={{
+        width: 250,
+        backdropFilter: "blur(10px)", // Apply blur effect
+        backgroundColor: "rgba(255, 255, 255, 0.5)", // Semi-transparent background
+        borderRadius: "10px", // Optional: Add border radius for better aesthetics
+      }}
     >
       <List>
         <div
@@ -78,7 +96,7 @@ function Navbar() {
           <Avatar
             alt="Remy Sharp"
             src="./main_logo.png"
-            sx={{ width: 70, height: 70 }}
+            sx={{ width: 50, height: 50 }}
           />
         </div>
         {isAdmin && (
@@ -181,10 +199,15 @@ function Navbar() {
     </Box>
   );
 
+  const modalStyle = {
+    backgroundColor: "rgba(255, 255, 255, 0.5)", // Adjust transparency here
+    backdropFilter: "blur(10px)", // Add blur effect
+    border: "none", // Remove border
+  };
   return (
     <>
       <Box sx={{ flexGrow: 2 }}>
-        <AppBar position="static">
+        <AppBar position="static" sx={{ backgroundColor: "#671999" }}>
           <Toolbar>
             <IconButton
               onClick={toggleDrawer(true)}
@@ -252,24 +275,28 @@ function Navbar() {
           </Toolbar>
         </AppBar>
       </Box>
-      <Drawer open={open} onClose={toggleDrawer(false)}>
+      <Drawer
+        open={open}
+        onClose={toggleDrawer(false)}
+        sx={{ backdropFilter: "blur(10px)" }}
+      >
         {DrawerList}
       </Drawer>
 
-      <Modal
-        show={showUserPage}
-        onHide={handleshowUserPage}
-        dialogClassName="modal-md"
-      >
-        <Modal.Header></Modal.Header>
-        <Modal.Body>
+      <Modal open={showUserPage} onClose={handleshowUserPage}>
+        <Box sx={style}>
           <AuthPage handleshowUserPage={handleshowUserPage} />
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="danger" onClick={handleshowUserPage}>
+          <hr />
+          <Button
+            variant="contained"
+            color="error"
+            size="small"
+            onClick={handleshowUserPage}
+            sx={{ position: "fixed", right: 10, bottom: 10 }}
+          >
             Close
           </Button>
-        </Modal.Footer>
+        </Box>
       </Modal>
     </>
   );
