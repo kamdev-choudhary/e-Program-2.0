@@ -92,7 +92,7 @@ export default function DoubtPage() {
               borderColor: "divider",
             }}
           >
-            <FormControl variant="standard" sx={{ width: 200 }}>
+            <FormControl variant="standard">
               <Select
                 labelId="tab-select-label"
                 id="tab-select"
