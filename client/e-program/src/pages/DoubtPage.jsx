@@ -1,9 +1,6 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
 import Box from "@mui/material/Box";
-import Tab from "@mui/material/Tab";
-import TabContext from "@mui/lab/TabContext";
-import TabPanel from "@mui/lab/TabPanel";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
@@ -13,11 +10,13 @@ import Grid from "@mui/material/Grid";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
+import { useAuth } from "../components/Auth";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 export default function DoubtPage() {
+  const { isLoggedIn, isAdmin, name, userId } = useAuth();
+
   const [value, setValue] = useState("All");
   const [showAskDoubtForm, setShowAskDoubtForm] = useState(false);
   const [doubts, setDoubts] = useState([]);
@@ -39,8 +38,8 @@ export default function DoubtPage() {
   const handlePostDoubt = () => {
     const data = {
       doubtQuestion: newDoubt.doubtQuestion,
-      postedBy: "",
-      postedById: "",
+      postedBy: isLoggedIn ? name : "Annonymous ",
+      postedById: isLoggedIn ? userId : "Annonymous ",
     };
     fetch(`${API_URL}/doubts/new`, {
       method: "POST",
@@ -68,11 +67,13 @@ export default function DoubtPage() {
       });
   };
 
+  console.log(isLoggedIn);
+
   const handlePostDoubtSolution = () => {
     const data = {
       solution: newDoubt.doubtQuestion,
-      postedBy: "",
-      postedById: "",
+      postedBy: isLoggedIn ? name : "Annonymous ",
+      postedById: isLoggedIn ? userId : "Annonymous ",
     };
     fetch(`${API_URL}/doubts/${currDoubt._id}`, {
       method: "POST",
@@ -135,7 +136,7 @@ export default function DoubtPage() {
               <MenuItem value="All">All Doubts</MenuItem>
               <MenuItem value="solved">Solved Doubts</MenuItem>
               <MenuItem value="unsolved">Unsolved</MenuItem>
-              <MenuItem value="your">Your Doubts</MenuItem>
+              {isLoggedIn && <MenuItem value="your">Your Doubts</MenuItem>}
             </Select>
           </FormControl>
           <Button
@@ -152,67 +153,96 @@ export default function DoubtPage() {
       {!doubtDetails && (
         <>
           {doubts &&
-            doubts.map((doubt, index) => (
-              <Box sx={{ marginBottom: 1 }} key={index}>
-                <Paper sx={{ padding: 3 }} elevation={6}>
-                  <Box sx={{ flexGrow: 1 }}>
-                    <Grid container spacing={2} justifyContent="space-between">
-                      <Grid item xs={8}>
-                        <Typography>Posted By: Anonymous User</Typography>
+            doubts
+              .filter((doubt) => {
+                if (value === "All") {
+                  return true;
+                } else if (value === "solved") {
+                  return (
+                    doubt.doubtSolutions && doubt.doubtSolutions.length > 0
+                  );
+                } else if (value === "unsolved") {
+                  return !(
+                    doubt.doubtSolutions && doubt.doubtSolutions.length > 0
+                  );
+                } else if (value === "your") {
+                  return doubt.postedById && doubt.postedById === userId;
+                }
+              })
+              .sort(
+                (a, b) =>
+                  new Date(b.doubtPostedDate) - new Date(a.doubtPostedDate)
+              )
+              .map((doubt, index) => (
+                <Box sx={{ marginBottom: 1 }} key={index}>
+                  <Paper sx={{ padding: 3 }} elevation={6}>
+                    <Box sx={{ flexGrow: 1 }}>
+                      <Grid
+                        container
+                        spacing={2}
+                        justifyContent="space-between"
+                      >
+                        <Grid item xs={8}>
+                          <Typography>Posted By: {doubt.postedBy}</Typography>
+                        </Grid>
+                        <Grid item xs={4} textAlign="right">
+                          <Typography>
+                            Post Time:{" "}
+                            {new Date(
+                              doubt.doubtPostedDate
+                            ).toLocaleDateString()}{" "}
+                            {new Date(
+                              doubt.doubtPostedDate
+                            ).toLocaleTimeString()}
+                          </Typography>
+                        </Grid>
                       </Grid>
-                      <Grid item xs={4} textAlign="right">
-                        <Typography>
-                          Post Time:{" "}
-                          {new Date(doubt.doubtPostedDate).toLocaleDateString()}{" "}
-                          {new Date(doubt.doubtPostedDate).toLocaleTimeString()}
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </Box>
-                  <Box border={1} sx={{ padding: 1, borderRadius: 2 }}>
-                    <Typography
+                    </Box>
+                    <Box border={1} sx={{ padding: 1, borderRadius: 2 }}>
+                      <Typography
+                        sx={{
+                          overflow: "hidden",
+                          maxWidth: "100%",
+                        }}
+                        dangerouslySetInnerHTML={{
+                          __html: doubt.doubtQuestion,
+                        }}
+                      />
+                    </Box>
+                    <Box
                       sx={{
-                        overflow: "hidden",
-                        maxWidth: "100%",
+                        display: "flex",
+                        justifyContent: "flex-end",
+                        mt: 2,
                       }}
-                      dangerouslySetInnerHTML={{
-                        __html: doubt.doubtQuestion,
-                      }}
-                    />
-                  </Box>
-                  <Box
-                    sx={{
-                      display: "flex",
-                      justifyContent: "flex-end",
-                      mt: 2,
-                    }}
-                  >
-                    {doubt.doubtSolutions && doubt.doubtSolutions.length > 0 ? (
-                      <Button
-                        variant="outlined"
-                        color="success"
-                        onClick={() => {
-                          setDoubtDetails(true);
-                          setCurrDoubt(doubt);
-                        }}
-                      >
-                        View Solutions
-                      </Button>
-                    ) : (
-                      <Button
-                        variant="outlined"
-                        onClick={() => {
-                          setDoubtDetails(true);
-                          setCurrDoubt(doubt);
-                        }}
-                      >
-                        Post a Solution
-                      </Button>
-                    )}
-                  </Box>
-                </Paper>
-              </Box>
-            ))}
+                    >
+                      {doubt.doubtSolutions &&
+                      doubt.doubtSolutions.length > 0 ? (
+                        <Button
+                          variant="outlined"
+                          color="success"
+                          onClick={() => {
+                            setDoubtDetails(true);
+                            setCurrDoubt(doubt);
+                          }}
+                        >
+                          View Solutions
+                        </Button>
+                      ) : (
+                        <Button
+                          variant="outlined"
+                          onClick={() => {
+                            setDoubtDetails(true);
+                            setCurrDoubt(doubt);
+                          }}
+                        >
+                          Post a Solution
+                        </Button>
+                      )}
+                    </Box>
+                  </Paper>
+                </Box>
+              ))}
         </>
       )}
       {doubtDetails && (
@@ -269,7 +299,7 @@ export default function DoubtPage() {
                   <Box sx={{ flexGrow: 1 }}>
                     <Grid container spacing={2} justifyContent="space-between">
                       <Grid item xs={8}>
-                        <Typography>Posted By: Anonymous User</Typography>
+                        <Typography>Posted By: {solution.postedBy}</Typography>
                       </Grid>
                       <Grid item xs={4} textAlign="right">
                         <Typography>

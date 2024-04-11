@@ -211,14 +211,14 @@ function Navbar() {
   );
 
   const modalStyle = {
-    backgroundColor: "rgba(255, 255, 255, 0.5)", // Adjust transparency here
-    backdropFilter: "blur(10px)", // Add blur effect
-    border: "none", // Remove border
+    backgroundColor: "rgba(255, 255, 255, 0.5)",
+    backdropFilter: "blur(10px)",
+    border: "none",
   };
   return (
     <>
       <Box sx={{ flexGrow: 2 }}>
-        <AppBar position="static" sx={{ backgroundColor: "#671999" }}>
+        <AppBar position="static" sx={{ backgroundColor: "#198754" }}>
           <Toolbar>
             <IconButton
               onClick={toggleDrawer(true)}
