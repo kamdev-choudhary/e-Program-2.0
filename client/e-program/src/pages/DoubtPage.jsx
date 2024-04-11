@@ -8,7 +8,7 @@ import TabPanel from "@mui/lab/TabPanel";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import { TinyBox, TinyBoxReadOnly } from "../components/TinyBox";
+import { TinyBox } from "../components/TinyBox";
 import Paper from "@mui/material/Paper";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
@@ -17,6 +17,7 @@ export default function DoubtPage() {
   const [value, setValue] = React.useState("1");
   const [showAskDoubtForm, setShowAskDoubtForm] = useState(false);
   const [doubts, setDoubts] = useState([]);
+  const [refresh, setRefresh] = useState(false);
   const [newDoubt, setNewDoubt] = useState({
     doubtQuestion: "",
   });
@@ -26,9 +27,7 @@ export default function DoubtPage() {
       .then((response) => response.json())
       .then((data) => setDoubts(data.doubts))
       .catch((error) => console.log("Error", error));
-  }, []);
-
-  console.log(doubts);
+  }, [refresh]);
 
   const handlePostDoubt = () => {
     const data = {
@@ -50,6 +49,11 @@ export default function DoubtPage() {
       })
       .then((data) => {
         console.log("Success:", data);
+        setRefresh(!refresh);
+        setShowAskDoubtForm(false);
+        setNewDoubt(() => ({
+          doubtQuestion: "",
+        }));
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -62,6 +66,7 @@ export default function DoubtPage() {
 
   const style = {
     position: "absolute",
+    width: "90%",
     top: "50%",
     left: "50%",
     transform: "translate(-50%, -50%)",
@@ -100,34 +105,40 @@ export default function DoubtPage() {
           </Box>
 
           <TabPanel value="1">
-            {doubts &&
-              doubts.map((doubt, index) => (
-                <Box>
-                  <Paper sx={{ padding: 3 }} elevation={6}>
-                    <Typography>Posted By: Anonymous User</Typography>
-                    <Box border={0.5} sx={{ padding: 1, borderRadius: 1 }}>
-                      <Typography
-                        dangerouslySetInnerHTML={{
-                          __html: doubt.doubtQuestion,
-                        }}
-                      />
+            <Paper elevation={3} sx={{ padding: 2 }}>
+              <>
+                {doubts &&
+                  doubts.map((doubt, index) => (
+                    <Box sx={{ marginBottom: 1 }}>
+                      <Paper sx={{ padding: 3 }} elevation={6}>
+                        <Typography sx={{ marginBottom: 1 }}>
+                          Posted By: Anonymous User
+                        </Typography>
+                        <Box border={1} sx={{ padding: 1, borderRadius: 2 }}>
+                          <Typography
+                            dangerouslySetInnerHTML={{
+                              __html: doubt.doubtQuestion,
+                            }}
+                          />
+                        </Box>
+                        <Box
+                          sx={{
+                            display: "flex",
+                            justifyContent: "flex-end",
+                            mt: 2,
+                          }}
+                        >
+                          {doubt.doubtSolutions &&
+                            doubt.doubtSolutions.length > 0 && (
+                              <Button>View Solutions</Button>
+                            )}
+                          <Button>Post a solution</Button>
+                        </Box>
+                      </Paper>
                     </Box>
-                    <Box
-                      sx={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        mt: 2,
-                      }}
-                    >
-                      {doubt.doubtSolutions &&
-                        doubt.doubtSolutions.length > 0 && (
-                          <Button>View Solutions</Button>
-                        )}
-                      <Button>Post a solution</Button>
-                    </Box>
-                  </Paper>
-                </Box>
-              ))}
+                  ))}
+              </>
+            </Paper>
           </TabPanel>
           <TabPanel value="2">Item Two</TabPanel>
           <TabPanel value="3">Item Three</TabPanel>
@@ -156,6 +167,14 @@ export default function DoubtPage() {
 
           <hr />
           <Box sx={{ mt: 2, alignSelf: "flex-end" }}>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={() => setShowAskDoubtForm(false)}
+              sx={{ mr: 1 }}
+            >
+              Close
+            </Button>
             <Button
               variant="contained"
               color="success"
