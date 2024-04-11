@@ -218,7 +218,7 @@ function Navbar() {
   return (
     <>
       <Box sx={{ flexGrow: 2 }}>
-        <AppBar position="static" sx={{ backgroundColor: "#198754" }}>
+        <AppBar position="static">
           <Toolbar>
             <IconButton
               onClick={toggleDrawer(true)}
