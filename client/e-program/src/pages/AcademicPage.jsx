@@ -254,68 +254,12 @@ export default function AcademicPage() {
             aria-controls="panel1-content"
             id="panel1-header"
           >
-            Classes
-          </AccordionSummary>
-          {academic &&
-            academic.classes &&
-            academic.classes.map((className, index) => (
-              <AccordionDetails key={index}>{className}</AccordionDetails>
-            ))}
-        </Accordion>
-        <Accordion>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel1-content"
-            id="panel1-header"
-          >
-            Targets
-          </AccordionSummary>
-          {academic &&
-            academic.target &&
-            academic.target.map((tget, index) => (
-              <AccordionDetails key={index}>{tget}</AccordionDetails>
-            ))}
-        </Accordion>
-        <Accordion>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel1-content"
-            id="panel1-header"
-          >
-            Difficulty Level
-          </AccordionSummary>
-          {academic &&
-            academic.difficultyLevel &&
-            academic.difficultyLevel.map((dLevel, index) => (
-              <AccordionDetails key={index}>{dLevel}</AccordionDetails>
-            ))}
-        </Accordion>
-        <Accordion>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel1-content"
-            id="panel1-header"
-          >
-            Time Required
-          </AccordionSummary>
-          {academic &&
-            academic.timeRequired &&
-            academic.timeRequired.map((time, index) => (
-              <AccordionDetails key={index}>{time}</AccordionDetails>
-            ))}
-        </Accordion>
-        <Accordion>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="panel1-content"
-            id="panel1-header"
-          >
             Subject Details
           </AccordionSummary>
           <div className="row p-2">
             <div className="col-md-4 mb-3">
               <Box sx={{ minWidth: 120 }}>
-                <FormControl fullWidth size="small">
+                <FormControl fullWidth size="small" variant="standard">
                   <InputLabel id="demo-simple-select-label">Class</InputLabel>
                   <Select
                     labelId="demo-simple-select-label"
@@ -338,7 +282,7 @@ export default function AcademicPage() {
             </div>
             <div className="col-md-4 mb-2">
               <Box sx={{ minWidth: 120 }}>
-                <FormControl fullWidth size="small">
+                <FormControl fullWidth size="small" variant="standard">
                   <InputLabel id="demo-simple-select-label">Subject</InputLabel>
                   <Select
                     labelId="demo-simple-select-label"
@@ -381,6 +325,7 @@ export default function AcademicPage() {
                         <FormControl
                           fullWidth
                           size="small"
+                          variant="standard"
                           sx={{ marginBottom: 2 }}
                         >
                           <InputLabel id="demo-simple-select-label">
@@ -409,6 +354,7 @@ export default function AcademicPage() {
                           fullWidth
                           size="small"
                           sx={{ marginBottom: 2 }}
+                          variant="standard"
                         >
                           <InputLabel id="demo-simple-select-label">
                             Subject
@@ -432,11 +378,11 @@ export default function AcademicPage() {
                               ))}
                           </Select>
                         </FormControl>
-                        <hr />
+
                         <FormControl fullWidth size="small">
                           <TextField
                             variant="standard"
-                            label="New Topic"
+                            label="New Topic Name"
                             value={newTopic}
                             onChange={(e) => setNewTopic(e.target.value)}
                             fullWidth
@@ -498,6 +444,62 @@ export default function AcademicPage() {
                 ))}
             </List>
           </div>
+        </Accordion>
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1-content"
+            id="panel1-header"
+          >
+            Classes
+          </AccordionSummary>
+          {academic &&
+            academic.classes &&
+            academic.classes.map((className, index) => (
+              <AccordionDetails key={index}>{className}</AccordionDetails>
+            ))}
+        </Accordion>
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1-content"
+            id="panel1-header"
+          >
+            Targets
+          </AccordionSummary>
+          {academic &&
+            academic.target &&
+            academic.target.map((tget, index) => (
+              <AccordionDetails key={index}>{tget}</AccordionDetails>
+            ))}
+        </Accordion>
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1-content"
+            id="panel1-header"
+          >
+            Difficulty Level
+          </AccordionSummary>
+          {academic &&
+            academic.difficultyLevel &&
+            academic.difficultyLevel.map((dLevel, index) => (
+              <AccordionDetails key={index}>{dLevel}</AccordionDetails>
+            ))}
+        </Accordion>
+        <Accordion>
+          <AccordionSummary
+            expandIcon={<ExpandMoreIcon />}
+            aria-controls="panel1-content"
+            id="panel1-header"
+          >
+            Time Required
+          </AccordionSummary>
+          {academic &&
+            academic.timeRequired &&
+            academic.timeRequired.map((time, index) => (
+              <AccordionDetails key={index}>{time}</AccordionDetails>
+            ))}
         </Accordion>
       </div>
       <Modal show={showAddBatchModal} onHide={handleShowAddBatch}>

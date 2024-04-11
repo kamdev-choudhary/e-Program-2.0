@@ -80,7 +80,8 @@ export default function LecturePage() {
       .then((response) => response.json())
       .then((data) => {
         setAcademic(data.academic[0]);
-      });
+      })
+      .catch((error) => console.log(error));
   }, []);
 
   useEffect(() => {

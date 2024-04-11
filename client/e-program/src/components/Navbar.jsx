@@ -6,7 +6,7 @@ import { useAuth } from "../components/Auth";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";
-
+import ForumIcon from "@mui/icons-material/Forum";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
@@ -79,9 +79,9 @@ function Navbar() {
       onClick={() => toggleDrawer(false)}
       sx={{
         width: 250,
-        backdropFilter: "blur(10px)", // Apply blur effect
-        backgroundColor: "rgba(255, 255, 255, 0.5)", // Semi-transparent background
-        borderRadius: "10px", // Optional: Add border radius for better aesthetics
+        backdropFilter: "blur(5px)",
+        backgroundColor: "rgba(255, 255, 255, 0.5)",
+        borderRadius: "10px",
       }}
     >
       <List>
@@ -194,6 +194,16 @@ function Navbar() {
             </ListItem>
           </NavLink>
         )}
+        <NavLink to="/doubts" style={{ textDecoration: "none" }}>
+          <ListItem onClick={toggleDrawer(false)}>
+            <ListItemButton>
+              <ListItemIcon>
+                <ForumIcon />
+              </ListItemIcon>
+              <ListItemText primary={"Doubts"} />
+            </ListItemButton>
+          </ListItem>
+        </NavLink>
       </List>
       <Divider />
     </Box>

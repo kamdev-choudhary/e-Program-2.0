@@ -13,6 +13,7 @@ import UserMaster from "./pages/UserMaster";
 import AcademicPage from "./pages/AcademicPage";
 import StudentProfile from "./components/StudentProfile";
 import ExamMaster from "./pages/ExamMaster";
+import DoubtPage from "./pages/DoubtPage";
 
 function App() {
   const { accountType } = useAuth();
@@ -61,6 +62,7 @@ function App() {
                 <ProtectedRoute Component={ExamMaster} isAdminRequired />
               }
             />
+            <Route path="/doubts" element={<DoubtPage />} />
             <Route path="*" element={<ErrorPage />} />
           </Routes>
         </div>
