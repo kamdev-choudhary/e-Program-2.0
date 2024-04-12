@@ -73,7 +73,6 @@ function RegisterPage({ handleTogglePage, handleshowUserPage }) {
   const handleChange = (e) => {
     const { name, value } = e.target;
 
-    // Validation logic
     switch (name) {
       case "name":
         setErrors({ ...errors, name: value ? "" : "Name is required" });

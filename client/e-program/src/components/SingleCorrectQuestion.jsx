@@ -14,6 +14,7 @@ import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
 import FormLabel from "@mui/material/FormLabel";
 import Stack from "@mui/material/Stack";
+import FormHelperText from "@mui/material/FormHelperText";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -29,6 +30,20 @@ export default function SingleCorrectQuestion(props) {
     subtopic: "",
     questionType: "singleCorrect",
     isApproved: "No",
+    questionText: "",
+    option1: "",
+    option2: "",
+    option3: "",
+    option4: "",
+    correctAnswer: "",
+    solution: "",
+  });
+
+  const [validationError, setValidationError] = useState({
+    classes: "",
+    subject: "",
+    topic: "",
+    subtopic: "",
     questionText: "",
     option1: "",
     option2: "",
@@ -67,6 +82,51 @@ export default function SingleCorrectQuestion(props) {
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
+    let errorMessage = "";
+
+    switch (name) {
+      case "classes":
+        errorMessage = value ? "" : "Class is required";
+        break;
+      case "subject":
+        errorMessage = value ? "" : "Subject is required";
+        break;
+      case "topic":
+        errorMessage = value ? "" : "Topic is required";
+        break;
+      case "subtopic":
+        errorMessage = value ? "" : "Subtopic is required";
+        break;
+      case "questionText":
+        errorMessage = value ? "" : "Question is required";
+        break;
+      case "option1":
+        errorMessage = value ? "" : "Option 1 is required";
+        break;
+      case "option2":
+        errorMessage = value ? "" : "Option 2 is required";
+        break;
+      case "option3":
+        errorMessage = value ? "" : "Option 3 is required";
+        break;
+      case "option4":
+        errorMessage = value ? "" : "Option 4 is required";
+        break;
+      case "correctAnswer":
+        errorMessage = value ? "" : "Correct answer is required";
+        break;
+      case "solution":
+        errorMessage = value ? "" : "Solution is required";
+        break;
+      default:
+        break;
+    }
+    setValidationError({
+      ...validationError,
+      [name]: errorMessage,
+    });
+
+    // Update question data state
     setQuestionData({
       ...questionData,
       [name]: value,
@@ -75,22 +135,43 @@ export default function SingleCorrectQuestion(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-
-    fetch(`${API_URL}/questionbank`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(questionData),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        console.log("Success:", data);
-        props.handleCloseAddQuestion("SingleCorrect");
+    const isValid = validateForm();
+    if (isValid) {
+      fetch(`${API_URL}/questionbank`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(questionData),
       })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+        .then((response) => response.json())
+        .then((data) => {
+          console.log("Success:", data);
+          props.handleCloseAddQuestion("SingleCorrect");
+        })
+        .catch((error) => {
+          console.error("Error:", error);
+        });
+    } else {
+      console.log("Validation failed");
+    }
+  };
+
+  const validateForm = () => {
+    let isValid = true;
+    const NewError = {};
+    for (const key in questionData) {
+      if (!questionData[key]) {
+        isValid = false;
+        NewError[key] = `${
+          key.charAt(0).toUpperCase() + key.slice(1)
+        } is required`;
+      } else {
+        NewError[key] = "";
+      }
+    }
+    setValidationError(NewError);
+    return isValid;
   };
 
   useEffect(() => {
@@ -125,15 +206,17 @@ export default function SingleCorrectQuestion(props) {
     }));
   };
 
-  console.log(questionData);
-
   return (
     <>
       <div className="container mt-2 border rounded">
         <div className="row mt-2">
           <div className="col-md-3 mb-3">
             <Box sx={{ minWidth: 120 }}>
-              <FormControl fullWidth size="small">
+              <FormControl
+                fullWidth
+                size="small"
+                error={Boolean(validationError.classes)}
+              >
                 <InputLabel id="demo-simple-select-label">Class</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
@@ -151,12 +234,17 @@ export default function SingleCorrectQuestion(props) {
                       </MenuItem>
                     ))}
                 </Select>
+                <FormHelperText>{validationError.classes}</FormHelperText>
               </FormControl>
             </Box>
           </div>
           <div className="col-md-3 mb-2">
             <Box sx={{ minWidth: 120 }}>
-              <FormControl fullWidth size="small">
+              <FormControl
+                fullWidth
+                size="small"
+                error={Boolean(validationError.subject)}
+              >
                 <InputLabel id="demo-simple-select-label">Subject</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
@@ -174,12 +262,17 @@ export default function SingleCorrectQuestion(props) {
                       </MenuItem>
                     ))}
                 </Select>
+                <FormHelperText>{validationError.subject}</FormHelperText>
               </FormControl>
             </Box>
           </div>
           <div className="col-md-3 mb-2">
             <Box sx={{ minWidth: 120 }}>
-              <FormControl fullWidth size="small">
+              <FormControl
+                fullWidth
+                size="small"
+                error={Boolean(validationError.topic)}
+              >
                 <InputLabel id="demo-simple-select-label">Topic</InputLabel>
                 <Select
                   labelId="Topic Selection"
@@ -196,12 +289,17 @@ export default function SingleCorrectQuestion(props) {
                       </MenuItem>
                     ))}
                 </Select>
+                <FormHelperText>{validationError.topic}</FormHelperText>
               </FormControl>
             </Box>
           </div>
           <div className="col-md-3 mb-2">
             <Box sx={{ minWidth: 120 }}>
-              <FormControl fullWidth size="small">
+              <FormControl
+                fullWidth
+                size="small"
+                error={Boolean(validationError.subtopic)}
+              >
                 <InputLabel id="demo-simple-select-label">Sub Topic</InputLabel>
                 <Select
                   labelId="demo-simple-select-label"
@@ -221,6 +319,7 @@ export default function SingleCorrectQuestion(props) {
                     <MenuItem value="">No Subtopics available</MenuItem>
                   )}
                 </Select>
+                <FormHelperText>{validationError.subtopic}</FormHelperText>
               </FormControl>
             </Box>
           </div>
@@ -228,7 +327,7 @@ export default function SingleCorrectQuestion(props) {
       </div>
       <Paper sx={{ padding: 4 }} elevation={4}>
         <>
-          <FormControl>
+          <FormControl error={Boolean(validationError.questionText)}>
             <Typography>Question</Typography>
             <Grid container fullWidth>
               <Grid item>
@@ -240,13 +339,18 @@ export default function SingleCorrectQuestion(props) {
                 />
               </Grid>
             </Grid>
+            <FormHelperText>{validationError.questionText}</FormHelperText>
           </FormControl>
           <hr />
           <FormControl fullWidth>
             <FormLabel id="demo-controlled-radio-buttons-group">
               Options
             </FormLabel>
-            <Grid container spacing={1}>
+            <Grid
+              container
+              spacing={1}
+              error={Boolean(validationError.option1)}
+            >
               <Grid item xs={12} sm={1}>
                 <Typography>1</Typography>
               </Grid>
@@ -272,6 +376,7 @@ export default function SingleCorrectQuestion(props) {
                   }
                 />
               </Grid>
+              <FormHelperText>{validationError.option1}</FormHelperText>
             </Grid>
             <Grid container spacing={2} marginTop={1}>
               <Grid item xs={12} sm={1}>
