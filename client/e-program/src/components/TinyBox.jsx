@@ -55,9 +55,9 @@ export function TinyBoxReadOnly(props) {
       apiKey="o9adc3d0e8icjmn90btn0tfps73vsqpqqry3xb7do5xyqnxm"
       init={{
         readonly: true,
-        height: height,
-        width: "100vh",
         menubar: false,
+        height: height,
+        width: "100%",
         toolbar: false,
       }}
       value={content}

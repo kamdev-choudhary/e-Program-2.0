@@ -7,7 +7,6 @@ import {
   Select,
   Checkbox,
   Button,
-  Paper,
   Grid,
   Typography,
   FormLabel,
@@ -110,9 +109,9 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion, setRefresh }) => {
           </div>
         </div>
       )}
-      <div className="row">
-        <div className="col-md-3 mb-3">
-          <Box sx={{ minWidth: 120 }}>
+      <Box sx={{ flexGrow: 1 }} padding={1}>
+        <Grid container spacing={1}>
+          <Grid item xs={12} md={4} lg={3}>
             <FormControl fullWidth size="small">
               <InputLabel id="class-label">Class</InputLabel>
               <Select
@@ -137,10 +136,8 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion, setRefresh }) => {
                     )}
               </Select>
             </FormControl>
-          </Box>
-        </div>
-        <div className="col-md-3 mb-3">
-          <Box sx={{ minWidth: 120 }}>
+          </Grid>
+          <Grid item xs={12} md={4} lg={3}>
             <FormControl fullWidth size="small">
               <InputLabel id="subject-label">Subject</InputLabel>
               <Select
@@ -165,10 +162,8 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion, setRefresh }) => {
                     )}
               </Select>
             </FormControl>
-          </Box>
-        </div>
-        <div className="col-md-3 mb-3">
-          <Box sx={{ minWidth: 120 }}>
+          </Grid>
+          <Grid item xs={12} md={4} lg={3}>
             <FormControl fullWidth size="small">
               <InputLabel id="topic-label">Topic</InputLabel>
               <Select
@@ -193,10 +188,8 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion, setRefresh }) => {
                     )}
               </Select>
             </FormControl>
-          </Box>
-        </div>
-        <div className="col-md-3 mb-3">
-          <Box sx={{ minWidth: 120 }}>
+          </Grid>
+          <Grid item xs={12} md={4} lg={3}>
             <FormControl fullWidth size="small">
               <InputLabel id="subtopic-label">Subtopic</InputLabel>
               <Select
@@ -216,10 +209,8 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion, setRefresh }) => {
                   ))}
               </Select>
             </FormControl>
-          </Box>
-        </div>
-        <div className="col-md-3 mb-3">
-          <Box sx={{ minWidth: 120 }}>
+          </Grid>
+          <Grid item xs={12} md={4} lg={3}>
             <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">
                 Difficulty Level
@@ -246,10 +237,8 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion, setRefresh }) => {
                     )}
               </Select>
             </FormControl>
-          </Box>
-        </div>
-        <div className="col-md-3 mb-3">
-          <Box sx={{ minWidth: 120 }}>
+          </Grid>
+          <Grid item xs={12} md={4} lg={3}>
             <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">
                 Time Required
@@ -276,10 +265,8 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion, setRefresh }) => {
                     )}
               </Select>
             </FormControl>
-          </Box>
-        </div>
-        <div className="col-md-3 mb-3">
-          <Box sx={{ minWidth: 120 }}>
+          </Grid>
+          <Grid item xs={12} md={4} lg={3}>
             <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">Target</InputLabel>
               <Select
@@ -304,208 +291,266 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion, setRefresh }) => {
                     )}
               </Select>
             </FormControl>
-          </Box>
-        </div>
-      </div>
+          </Grid>
+        </Grid>
+      </Box>
       <hr style={{ color: "#000" }} />
-      <div style={{ padding: "10px" }}>
-        <FormControl fullWidth>
-          <Typography>Question</Typography>
-          <Grid container fullWidth>
-            <Grid item>
-              {readOnly ? (
-                <TinyBoxReadOnly content={question.questionText} height={200} />
-              ) : (
-                <TinyBox
-                  content={question.questionText}
-                  onContentChange={(newContent) =>
-                    handleTinyBoxChange("questionText", newContent)
-                  }
-                />
-              )}
-            </Grid>
+      <Box sx={{ padding: 1 }}>
+        <Typography>Question</Typography>
+        {readOnly ? (
+          <TinyBoxReadOnly content={question.questionText} height={200} />
+        ) : (
+          <TinyBox
+            content={question.questionText}
+            onContentChange={(newContent) =>
+              handleTinyBoxChange("questionText", newContent)
+            }
+          />
+        )}
+      </Box>
+      <Box padding={1}>
+        <Grid container spacing={1}>
+          <Grid
+            item
+            xs={12}
+            sm={1}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography>1</Typography>
           </Grid>
-        </FormControl>
-        <hr />
-        <FormControl fullWidth>
-          <FormLabel id="demo-controlled-radio-buttons-group">
-            Options
-          </FormLabel>
-          <Grid container spacing={1}>
-            <Grid item xs={12} sm={1} alignContent="center">
-              <Typography align="center">1</Typography>
-            </Grid>
-            <Grid item xs={12} sm={1} align="center" alignContent="center">
-              <Checkbox
-                name="correctAnswer"
-                align="center"
-                value="1"
-                color="success"
-                readOnly={!readOnly}
-                checked={question.correctAnswer === "1"}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={10}
-              style={{ height: "100%", width: "100%" }}
-            >
-              {readOnly ? (
-                <TinyBoxReadOnly content={question.option1} height={100} />
-              ) : (
-                <TinyBox2
-                  content={question.option1}
-                  onContentChange={(newContent) =>
-                    handleTinyBoxChange("option1", newContent)
-                  }
-                />
-              )}
-            </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={1}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Checkbox
+              color="success"
+              name="option1"
+              checked={question.option1.isCorrect}
+            />
           </Grid>
-          <Grid container spacing={2} marginTop={1}>
-            <Grid item xs={12} sm={1} alignContent="center">
-              <Typography align="center">2</Typography>
-            </Grid>
-            <Grid item xs={12} sm={1} align="center" alignContent="center">
-              <Checkbox
-                name="correctAnswer"
-                align="center"
-                value="2"
-                color="success"
-                readOnly={readOnly}
-                checked={question.correctAnswer === "2"}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={10}
-              style={{ height: "100%", width: "100%" }}
-            >
-              {readOnly ? (
-                <TinyBoxReadOnly content={question.option2} height={100} />
-              ) : (
-                <TinyBox2
-                  content={question.option2}
-                  onContentChange={(newContent) =>
-                    handleTinyBoxChange("option2", newContent)
-                  }
-                />
-              )}
-            </Grid>
-          </Grid>
-          <Grid container spacing={2} marginTop={1}>
-            <Grid item xs={12} sm={1} alignContent="center">
-              <Typography align="center">3</Typography>
-            </Grid>
-            <Grid item xs={12} sm={1} align="center" alignContent="center">
-              <Checkbox
-                name="correctAnswer"
-                align="center"
-                value="3"
-                color="success"
-                readOnly={readOnly}
-                checked={question.correctAnswer === "3"}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={10}
-              style={{ height: "100%", width: "100%" }}
-            >
-              {readOnly ? (
-                <TinyBoxReadOnly content={question.option3} height={100} />
-              ) : (
-                <TinyBox2
-                  content={question.option3}
-                  onContentChange={(newContent) =>
-                    handleTinyBoxChange("option3", newContent)
-                  }
-                />
-              )}
-            </Grid>
-          </Grid>
-          <Grid container spacing={2} marginTop={1}>
-            <Grid item xs={12} sm={1} alignContent="center">
-              <Typography align="center">4</Typography>
-            </Grid>
-            <Grid item xs={12} sm={1} alignContent="center" align="center">
-              <Checkbox
-                name="correctAnswer"
-                value="4"
-                align="center"
-                color="success"
-                readOnly={readOnly}
-                checked={question.correctAnswer === "4"}
-                onChange={handleChange}
-              />
-            </Grid>
-            <Grid
-              item
-              xs={12}
-              sm={10}
-              style={{ height: "100%", width: "100%" }}
-            >
-              {readOnly ? (
-                <TinyBoxReadOnly content={question.option4} height={100} />
-              ) : (
-                <TinyBox2
-                  content={question.option4}
-                  onContentChange={(newContent) =>
-                    handleTinyBoxChange("option4", newContent)
-                  }
-                />
-              )}
-            </Grid>
-          </Grid>
-        </FormControl>
-        <hr />
-        <Typography>Solution</Typography>
-        <Grid container>
-          <Grid item fullWidth>
+          <Grid
+            item
+            xs={12}
+            sm={10}
+            style={{
+              height: "100%",
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
             {readOnly ? (
-              <TinyBoxReadOnly
-                content={question.solution}
-                height={100}
-                width={300}
-              />
+              <TinyBoxReadOnly content={question.option1.text} height={100} />
             ) : (
               <TinyBox2
-                content={question.solution}
+                content={question.option1.text}
                 onContentChange={(newContent) =>
-                  handleTinyBoxChange("solution", newContent)
+                  handleTinyBoxChange("option1", newContent)
                 }
               />
             )}
           </Grid>
         </Grid>
-
-        {!readOnly && (
-          <Stack
-            spacing={2}
-            padding={0}
-            direction="row"
-            style={{ bottom: 0, right: 0, marginTop: 20 }}
-            justifyContent="flex-end"
+      </Box>
+      <Box padding={1}>
+        <Grid container spacing={1}>
+          <Grid
+            item
+            xs={12}
+            sm={1}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
           >
-            <Button variant="contained" onClick={() => updateQuestion(false)}>
-              Save
-            </Button>
-            <Button
-              variant="contained"
+            <Typography>2</Typography>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={1}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Checkbox
               color="success"
-              onClick={() => updateQuestion(true)}
-            >
-              Save and Approve
-            </Button>
-          </Stack>
-        )}
-      </div>
+              name="option1"
+              checked={question.option2.isCorrect}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={10}
+            style={{
+              height: "100%",
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {readOnly ? (
+              <TinyBoxReadOnly content={question.option2.text} height={100} />
+            ) : (
+              <TinyBox2
+                content={question.option2.text}
+                onContentChange={(newContent) =>
+                  handleTinyBoxChange("option2", newContent)
+                }
+              />
+            )}
+          </Grid>
+        </Grid>
+      </Box>
+      <Box padding={1}>
+        <Grid container spacing={1}>
+          <Grid
+            item
+            xs={12}
+            sm={1}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography>3</Typography>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={1}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Checkbox
+              color="success"
+              name="option3"
+              checked={question.option3.isCorrect}
+            />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={10}
+            style={{
+              height: "100%",
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {readOnly ? (
+              <TinyBoxReadOnly content={question.option3.text} height={100} />
+            ) : (
+              <TinyBox2
+                content={question.option3.text}
+                onContentChange={(newContent) =>
+                  handleTinyBoxChange("option3", newContent)
+                }
+              />
+            )}
+          </Grid>
+        </Grid>
+      </Box>
+      <Box padding={1}>
+        <Grid container spacing={1}>
+          <Grid
+            item
+            xs={12}
+            sm={1}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Typography>4</Typography>
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={1}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Checkbox color="success" name="option1" />
+          </Grid>
+          <Grid
+            item
+            xs={12}
+            sm={10}
+            style={{
+              height: "100%",
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {readOnly ? (
+              <TinyBoxReadOnly content={question.option4.text} height={100} />
+            ) : (
+              <TinyBox2
+                content={question.option4.text}
+                onContentChange={(newContent) =>
+                  handleTinyBoxChange("option4", newContent)
+                }
+              />
+            )}
+          </Grid>
+        </Grid>
+      </Box>
+      <Box padding={1}>
+        <Typography>Solutions</Typography>
+        <Grid container spacing={1}>
+          <Grid
+            item
+            xs={12}
+            style={{
+              height: "100%",
+              width: "100%",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            {readOnly ? (
+              <TinyBoxReadOnly content={question.solution} height={100} />
+            ) : (
+              <TinyBox2
+                content={question.solution}
+                onContentChange={(newContent) =>
+                  handleTinyBoxChange("option1", newContent)
+                }
+              />
+            )}
+          </Grid>
+        </Grid>
+      </Box>
     </>
   );
 };
