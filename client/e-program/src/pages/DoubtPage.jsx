@@ -124,7 +124,7 @@ export default function DoubtPage() {
             marginBottom: 2,
           }}
         >
-          <FormControl sx={{ minWidth: 200 }} size="small" variant="standard">
+          <FormControl sx={{ minWidth: 200 }} size="small">
             <Select
               labelId="demo-select-small-label"
               id="demo-select-small"

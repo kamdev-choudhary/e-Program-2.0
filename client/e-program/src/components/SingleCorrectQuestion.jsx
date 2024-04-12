@@ -42,7 +42,6 @@ export default function SingleCorrectQuestion(props) {
       text: "",
       isCorrect: false,
     },
-    correctAnswer: "",
     solution: "",
   });
 
@@ -56,7 +55,6 @@ export default function SingleCorrectQuestion(props) {
     option2: "",
     option3: "",
     option4: "",
-    correctAnswer: "",
     solution: "",
   });
 
@@ -73,7 +71,7 @@ export default function SingleCorrectQuestion(props) {
         classes: props.selectedClass,
       }));
     }
-  }, [props.selectedClass, props.selectedSubject]); // Added props.selectedSubject as dependency
+  }, [props.selectedClass, props.selectedSubject]);
 
   useEffect(() => {
     fetch(`${API_URL}/academic`)
@@ -106,9 +104,6 @@ export default function SingleCorrectQuestion(props) {
         break;
       case "questionText":
         errorMessage = value ? "" : "Question is required";
-        break;
-      case "correctAnswer":
-        errorMessage = value ? "" : "Correct answer is required";
         break;
       case "solution":
         errorMessage = value ? "" : "Solution is required";
@@ -167,6 +162,8 @@ export default function SingleCorrectQuestion(props) {
     setValidationError(NewError);
     return isValid;
   };
+
+  console.log(validationError);
 
   useEffect(() => {
     if (questionData.classes && questionData.subject && academic.subjects) {
@@ -563,8 +560,8 @@ export default function SingleCorrectQuestion(props) {
             <TinyBox2
               content={questionData.option2.text}
               onContentChange={(newContent) =>
-                handleTinyBoxChange("option2", {
-                  ...questionData.option2,
+                handleTinyBoxChange("option4", {
+                  ...questionData.option4,
                   text: newContent,
                 })
               }
