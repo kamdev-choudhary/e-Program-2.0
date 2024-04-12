@@ -172,7 +172,6 @@ function RegisterPage({ handleTogglePage, handleshowUserPage }) {
               value={user.name}
               fullWidth
               id="name"
-              variant="standard"
               name="name"
               onChange={handleChange}
               error={Boolean(errors.name)}
@@ -184,7 +183,6 @@ function RegisterPage({ handleTogglePage, handleshowUserPage }) {
               value={user.email}
               fullWidth
               id="email"
-              variant="standard"
               name="email"
               onChange={handleChange}
               error={Boolean(errors.email)}
@@ -197,7 +195,6 @@ function RegisterPage({ handleTogglePage, handleshowUserPage }) {
               value={user.mobile}
               fullWidth
               id="mobile"
-              variant="standard"
               name="mobile"
               onChange={handleChange}
               error={Boolean(errors.mobile)}
@@ -213,20 +210,18 @@ function RegisterPage({ handleTogglePage, handleshowUserPage }) {
               value={user.password}
               id="password"
               name="password"
-              variant="standard"
               onChange={handleChange}
               error={Boolean(errors.password)}
               helperText={errors.password}
               style={{ marginBottom: "20px" }}
             />
-            <FormControl fullWidth variant="standard">
+            <FormControl fullWidth>
               <InputLabel id="demo-simple-select-label">Class</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="currentClass"
                 name="currentClass"
                 label="Class"
-                variant="standard"
                 value={user.currentClass}
                 onChange={handleChange}
                 error={Boolean(errors.currentClass)}
@@ -404,7 +399,6 @@ function LoginPage({ handleTogglePage, handleshowUserPage }) {
                 onChange={handleInput}
                 id="email"
                 name="email"
-                variant="standard"
                 label="Email Address"
                 error={Boolean(errors.email)}
                 helperText={errors.email}
@@ -417,7 +411,6 @@ function LoginPage({ handleTogglePage, handleshowUserPage }) {
                 fullWidth
                 label="Password"
                 type="password"
-                variant="standard"
                 value={user.password}
                 onChange={handleInput}
                 error={Boolean(errors.password)}

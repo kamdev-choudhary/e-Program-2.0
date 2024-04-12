@@ -5,7 +5,6 @@ import SingleCorrectQuestion from "../components/SingleCorrectQuestion";
 import MultiCorrectQuestion from "../components/MultiCorrectQuestion";
 import IntegerType from "../components/IntegerType";
 import ViewQuestion from "../components/ViewQuestion";
-
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -29,6 +28,8 @@ import AddIcon from "@mui/icons-material/Add";
 import ClearIcon from "@mui/icons-material/Clear";
 import Snackbar from "@mui/material/Snackbar";
 import Alert from "@mui/material/Alert";
+import Grid from "@mui/material/Grid";
+import DeleteIcon from "@mui/icons-material/Delete";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -270,10 +271,10 @@ export default function QuestionBankPage() {
           {snackbarMessage}
         </Alert>
       </Snackbar>
-      <div className="row">
-        <div className="col-md-3 mb-3">
-          <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth size="small" variant="standard">
+      <Box sx={{ flexGrow: 1 }} padding={1}>
+        <Grid container spacing={1}>
+          <Grid item xs={12} md={4} lg={3}>
+            <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">Class</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -292,11 +293,9 @@ export default function QuestionBankPage() {
                   ))}
               </Select>
             </FormControl>
-          </Box>
-        </div>
-        <div className="col-md-3 mb-2">
-          <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth size="small" variant="standard">
+          </Grid>
+          <Grid item xs={12} md={4} lg={3}>
+            <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">Subject</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -315,11 +314,9 @@ export default function QuestionBankPage() {
                   ))}
               </Select>
             </FormControl>
-          </Box>
-        </div>
-        <div className="col-md-3 mb-2">
-          <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth size="small" variant="standard">
+          </Grid>
+          <Grid item xs={12} md={4} lg={3}>
+            <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">Topic</InputLabel>
               <Select
                 labelId="Topic Selection"
@@ -337,11 +334,9 @@ export default function QuestionBankPage() {
                   ))}
               </Select>
             </FormControl>
-          </Box>
-        </div>
-        <div className="col-md-3 mb-2">
-          <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth size="small" variant="standard">
+          </Grid>
+          <Grid item xs={12} md={4} lg={3}>
+            <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">Sub Topic</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -358,11 +353,9 @@ export default function QuestionBankPage() {
                 ))}
               </Select>
             </FormControl>
-          </Box>
-        </div>
-        <div className="col-md-3 mb-2">
-          <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth size="small" variant="standard">
+          </Grid>
+          <Grid item xs={12} md={4} lg={3}>
+            <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">
                 Difficulty Level
               </InputLabel>
@@ -383,11 +376,9 @@ export default function QuestionBankPage() {
                   ))}
               </Select>
             </FormControl>
-          </Box>
-        </div>
-        <div className="col-md-3 mb-2">
-          <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth size="small" variant="standard">
+          </Grid>
+          <Grid item xs={12} md={4} lg={3}>
+            <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">
                 Time Required
               </InputLabel>
@@ -408,11 +399,9 @@ export default function QuestionBankPage() {
                   ))}
               </Select>
             </FormControl>
-          </Box>
-        </div>
-        <div className="col-md-3 mb-2">
-          <Box sx={{ minWidth: 120 }}>
-            <FormControl fullWidth size="small" variant="standard">
+          </Grid>
+          <Grid item xs={12} md={4} lg={3}>
+            <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">Target</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -431,49 +420,66 @@ export default function QuestionBankPage() {
                   ))}
               </Select>
             </FormControl>
-          </Box>
-        </div>
-      </div>
+          </Grid>
+        </Grid>
+      </Box>
       <hr />
-      <div className="row ">
-        <div className="col-md-6 ">
-          <FormControl fullWidth size="small">
-            <OutlinedInput
-              id="outlined-adornment-amount"
-              startAdornment={
-                <InputAdornment position="start">
-                  Search <SearchIcon />
-                </InputAdornment>
-              }
-              value={searchInput}
-              onChange={handleSearchInputChange}
-            />
-          </FormControl>
-        </div>
-        <div className="col-md-2 d-flex justify-content-center align-items-center">
-          <Fab
-            size="small"
-            color="primary"
-            aria-label="add"
-            onClick={handleShowQuestionTypeModal}
-          >
-            <AddIcon />
-          </Fab>
-        </div>
-        <div className="col-md-1 d-flex justify-content-center align-items-center">
-          <FormControlLabel
-            control={
-              <Switch
-                checked={editMode}
-                onChange={handleChangeEditMode}
-                inputProps={{ "aria-label": "controlled" }}
+      <Box sx={{ flexGrow: 1 }} padding={1}>
+        <Grid container spacing={1}>
+          <Grid item xs={12} md={6} lg={6}>
+            <FormControl fullWidth size="small">
+              <OutlinedInput
+                id="outlined-adornment-amount"
+                startAdornment={
+                  <InputAdornment position="start">
+                    Search <SearchIcon />
+                  </InputAdornment>
+                }
+                value={searchInput}
+                onChange={handleSearchInputChange}
               />
-            }
-            label="Delete"
-          />
-        </div>
-        <div className="col-md-3 mb-2">
-          <Box sx={{ minWidth: 120 }}>
+            </FormControl>
+          </Grid>
+          <Grid
+            item
+            xs={6}
+            md={2}
+            lg={1}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <Fab
+              size="small"
+              color="primary"
+              aria-label="add"
+              onClick={handleShowQuestionTypeModal}
+            >
+              <AddIcon />
+            </Fab>
+          </Grid>
+          <Grid
+            item
+            xs={6}
+            md={1}
+            lg={2}
+            style={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <FormControlLabel
+              control={
+                <Switch checked={editMode} onChange={handleChangeEditMode} />
+              }
+              label="Delete"
+            />
+          </Grid>
+
+          <Grid item xs={12} md={3} lg={3}>
             <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">Exam Group</InputLabel>
               <Select
@@ -498,110 +504,104 @@ export default function QuestionBankPage() {
                 ))}
               </Select>
             </FormControl>
-          </Box>
-        </div>
-      </div>
+          </Grid>
+        </Grid>
+      </Box>
       <hr />
-      <div className="mt-2">
-        <TableContainer component={Paper} style={{ maxHeight: "80vh" }}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead className="bg bg-success sticky-top">
-              <TableRow>
-                <TableCell align="center" className="text-white">
-                  Question ID
+      <TableContainer component={Paper} style={{ maxHeight: "80vh" }}>
+        <Table sx={{ minWidth: 650 }} aria-label="simple table">
+          <TableHead className="bg bg-success sticky-top">
+            <TableRow>
+              <TableCell align="center" className="text-white">
+                Question ID
+              </TableCell>
+              <TableCell align="center" className="text-white">
+                Queston
+              </TableCell>
+              <TableCell align="center" className="text-white">
+                View
+              </TableCell>
+              <TableCell align="center" className="text-white">
+                Approved
+              </TableCell>
+              <TableCell align="center" className="text-white">
+                Subject
+              </TableCell>
+              <TableCell align="center" className="text-white">
+                Topic
+              </TableCell>
+              <TableCell align="center" className="text-white">
+                SubTopic
+              </TableCell>
+              <TableCell align="center" className="text-white">
+                D Level
+              </TableCell>
+              {editMode && (
+                <TableCell className="text-white" align="center">
+                  Delete
                 </TableCell>
-                <TableCell align="center" className="text-white">
-                  Queston
+              )}
+              {selectedTemplate && (
+                <TableCell className="text-white" align="center">
+                  Add to Group
                 </TableCell>
-                <TableCell align="center" className="text-white">
-                  View
+              )}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {filterdQuestions.map((question, index) => (
+              <TableRow
+                key={question._id}
+                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+              >
+                <TableCell align="center">{question.questionId}</TableCell>
+                <TableCell
+                  dangerouslySetInnerHTML={{ __html: question.questionText }}
+                />
+
+                <TableCell align="center">
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      handleShowViewQuestion(question);
+                    }}
+                  >
+                    View
+                  </Button>
                 </TableCell>
-                <TableCell align="center" className="text-white">
-                  Approved
-                </TableCell>
-                <TableCell align="center" className="text-white">
-                  Subject
-                </TableCell>
-                <TableCell align="center" className="text-white">
-                  Topic
-                </TableCell>
-                <TableCell align="center" className="text-white">
-                  SubTopic
-                </TableCell>
-                <TableCell align="center" className="text-white">
-                  D Level
-                </TableCell>
+                <TableCell align="center">{question.isApproved}</TableCell>
+                <TableCell align="center">{question.subject}</TableCell>
+                <TableCell align="center">{question.topic}</TableCell>
+                <TableCell align="center">{question.subtopic}</TableCell>
+                <TableCell align="center">{question.difficultyLevel}</TableCell>
                 {editMode && (
-                  <TableCell className="text-white" align="center">
-                    Delete
+                  <TableCell scope="col" className="text-center">
+                    <IconButton onClick={() => handleDeleteQuestion(question)}>
+                      <DeleteIcon />
+                    </IconButton>
                   </TableCell>
                 )}
                 {selectedTemplate && (
-                  <TableCell className="text-white" align="center">
-                    Add to Group
+                  <TableCell scope="col" className="text-center">
+                    {!questionInExamTemplate.includes(question._id) ? (
+                      <button
+                        className="btn btn-outline-success"
+                        onClick={() => handleQuestionToTemplate(question._id)}
+                      >
+                        Add
+                      </button>
+                    ) : (
+                      <button className="btn btn-success" disabled>
+                        Added
+                      </button>
+                    )}
                   </TableCell>
                 )}
               </TableRow>
-            </TableHead>
-            <TableBody>
-              {filterdQuestions.map((question, index) => (
-                <TableRow
-                  key={question._id}
-                  sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
-                >
-                  <TableCell align="center">{question.questionId}</TableCell>
-                  <TableCell
-                    dangerouslySetInnerHTML={{ __html: question.questionText }}
-                  />
-
-                  <TableCell align="center">
-                    <Button
-                      size="sm"
-                      onClick={() => {
-                        handleShowViewQuestion(question);
-                      }}
-                    >
-                      View
-                    </Button>
-                  </TableCell>
-                  <TableCell align="center">{question.isApproved}</TableCell>
-                  <TableCell align="center">{question.subject}</TableCell>
-                  <TableCell align="center">{question.topic}</TableCell>
-                  <TableCell align="center">{question.subtopic}</TableCell>
-                  <TableCell align="center">
-                    {question.difficultyLevel}
-                  </TableCell>
-                  {editMode && (
-                    <TableCell scope="col" className="text-center">
-                      <i
-                        className="fa-solid fa-trash"
-                        onClick={() => handleDeleteQuestion(question)}
-                        style={{ color: "brown" }}
-                      ></i>
-                    </TableCell>
-                  )}
-                  {selectedTemplate && (
-                    <TableCell scope="col" className="text-center">
-                      {!questionInExamTemplate.includes(question._id) ? (
-                        <button
-                          className="btn btn-outline-success"
-                          onClick={() => handleQuestionToTemplate(question._id)}
-                        >
-                          Add
-                        </button>
-                      ) : (
-                        <button className="btn btn-success" disabled>
-                          Added
-                        </button>
-                      )}
-                    </TableCell>
-                  )}
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       <Modal show={showQuestionTypeModal} onHide={handleShowQuestionTypeModal}>
         <Modal.Header>

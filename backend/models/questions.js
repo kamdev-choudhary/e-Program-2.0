@@ -13,13 +13,25 @@ const questionSchema = new Schema({
   target: String,
   isApproved: {
     type: String,
-    default: "no",
+    default: "No",
   },
   questionText: String,
-  option1: String,
-  option2: String,
-  option3: String,
-  option4: String,
+  option1: {
+    text: String,
+    isCorrect: Boolean,
+  },
+  option2: {
+    text: String,
+    isCorrect: Boolean,
+  },
+  option3: {
+    text: String,
+    isCorrect: Boolean,
+  },
+  option4: {
+    text: String,
+    isCorrect: Boolean,
+  },
   correctAnswer: String,
   solution: String,
   inTemplateId: [

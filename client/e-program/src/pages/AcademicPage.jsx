@@ -33,8 +33,6 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
-import DialogContentText from "@mui/material/DialogContentText";
-import DialogTitle from "@mui/material/DialogTitle";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -175,77 +173,73 @@ export default function AcademicPage() {
             Batches
           </AccordionSummary>
           <>
-            <Paper elevation={4} sx={{ padding: "10px" }}>
-              <div className="row">
-                <div className="col-md-11">
-                  <FormControl fullWidth sx={{ m: 1 }} size="small">
-                    <OutlinedInput
-                      id="outlined-adornment-amount"
-                      startAdornment={
-                        <InputAdornment position="start">
-                          Search <SearchIcon />
-                        </InputAdornment>
-                      }
-                    />
-                  </FormControl>
-                </div>
-                <div className="col-md-1 d-flex justify-content-center align-items-center">
-                  <Fab
-                    size="small"
-                    color="primary"
-                    aria-label="add"
-                    onClick={handleShowAddBatch}
-                  >
-                    <AddIcon />
-                  </Fab>
-                </div>
+            <div className="row">
+              <div className="col-md-11">
+                <FormControl fullWidth sx={{ m: 1 }} size="small">
+                  <OutlinedInput
+                    id="outlined-adornment-amount"
+                    startAdornment={
+                      <InputAdornment position="start">
+                        Search <SearchIcon />
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
               </div>
-              <hr />
-              <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                  <TableHead className="bg bg-success ">
-                    <TableRow>
-                      <TableCell align="center" className="text-white">
-                        SN
-                      </TableCell>
-                      <TableCell align="center" className="text-white">
-                        Batch Name
-                      </TableCell>
-                      <TableCell align="center" className="text-white">
-                        Batch Class
-                      </TableCell>
-                      <TableCell align="center" className="text-white">
-                        Preparing For
-                      </TableCell>
+              <div className="col-md-1 d-flex justify-content-center align-items-center">
+                <Fab
+                  size="small"
+                  color="primary"
+                  aria-label="add"
+                  onClick={handleShowAddBatch}
+                >
+                  <AddIcon />
+                </Fab>
+              </div>
+            </div>
+            <hr />
+            <TableContainer component={Paper}>
+              <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                <TableHead className="bg bg-success ">
+                  <TableRow>
+                    <TableCell align="center" className="text-white">
+                      SN
+                    </TableCell>
+                    <TableCell align="center" className="text-white">
+                      Batch Name
+                    </TableCell>
+                    <TableCell align="center" className="text-white">
+                      Batch Class
+                    </TableCell>
+                    <TableCell align="center" className="text-white">
+                      Preparing For
+                    </TableCell>
 
-                      <TableCell align="center" className="text-white">
-                        Scholar Count
+                    <TableCell align="center" className="text-white">
+                      Scholar Count
+                    </TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {batches.map((batch, index) => (
+                    <TableRow
+                      key={batch._id}
+                      sx={{
+                        "&:last-child td, &:last-child th": { border: 0 },
+                      }}
+                    >
+                      <TableCell align="center">{index + 1}</TableCell>
+                      <TableCell align="center">{batch.batchName}</TableCell>
+                      <TableCell align="center">{batch.batchClass}</TableCell>
+                      <TableCell align="center">{batch.batchStream}</TableCell>
+                      <TableCell align="center">
+                        {batch.scholars.length}
                       </TableCell>
                     </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {batches.map((batch, index) => (
-                      <TableRow
-                        key={batch._id}
-                        sx={{
-                          "&:last-child td, &:last-child th": { border: 0 },
-                        }}
-                      >
-                        <TableCell align="center">{index + 1}</TableCell>
-                        <TableCell align="center">{batch.batchName}</TableCell>
-                        <TableCell align="center">{batch.batchClass}</TableCell>
-                        <TableCell align="center">
-                          {batch.batchStream}
-                        </TableCell>
-                        <TableCell align="center">
-                          {batch.scholars.length}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Paper>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
           </>
         </Accordion>
         <Accordion>
@@ -259,7 +253,7 @@ export default function AcademicPage() {
           <div className="row p-2">
             <div className="col-md-4 mb-3">
               <Box sx={{ minWidth: 120 }}>
-                <FormControl fullWidth size="small" variant="standard">
+                <FormControl fullWidth size="small">
                   <InputLabel id="demo-simple-select-label">Class</InputLabel>
                   <Select
                     labelId="demo-simple-select-label"
@@ -282,7 +276,7 @@ export default function AcademicPage() {
             </div>
             <div className="col-md-4 mb-2">
               <Box sx={{ minWidth: 120 }}>
-                <FormControl fullWidth size="small" variant="standard">
+                <FormControl fullWidth size="small">
                   <InputLabel id="demo-simple-select-label">Subject</InputLabel>
                   <Select
                     labelId="demo-simple-select-label"
@@ -325,7 +319,6 @@ export default function AcademicPage() {
                         <FormControl
                           fullWidth
                           size="small"
-                          variant="standard"
                           sx={{ marginBottom: 2 }}
                         >
                           <InputLabel id="demo-simple-select-label">
@@ -354,7 +347,6 @@ export default function AcademicPage() {
                           fullWidth
                           size="small"
                           sx={{ marginBottom: 2 }}
-                          variant="standard"
                         >
                           <InputLabel id="demo-simple-select-label">
                             Subject
@@ -378,14 +370,13 @@ export default function AcademicPage() {
                               ))}
                           </Select>
                         </FormControl>
-
-                        <FormControl fullWidth size="small">
+                        <FormControl fullWidth>
                           <TextField
-                            variant="standard"
                             label="New Topic Name"
                             value={newTopic}
                             onChange={(e) => setNewTopic(e.target.value)}
                             fullWidth
+                            size="small"
                           />
                         </FormControl>
                       </Box>

@@ -67,8 +67,6 @@ export default function DoubtPage() {
       });
   };
 
-  console.log(isLoggedIn);
-
   const handlePostDoubtSolution = () => {
     const data = {
       solution: newDoubt.doubtQuestion,
