@@ -558,7 +558,7 @@ export default function SingleCorrectQuestion(props) {
             }}
           >
             <TinyBox2
-              content={questionData.option2.text}
+              content={questionData.option4.text}
               onContentChange={(newContent) =>
                 handleTinyBoxChange("option4", {
                   ...questionData.option4,
