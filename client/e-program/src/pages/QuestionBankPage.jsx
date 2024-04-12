@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button } from "react-bootstrap";
-import "./QuestionBankPage.css";
 import SingleCorrectQuestion from "../components/SingleCorrectQuestion";
 import MultiCorrectQuestion from "../components/MultiCorrectQuestion";
 import IntegerType from "../components/IntegerType";
