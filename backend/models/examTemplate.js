@@ -14,6 +14,7 @@ const examTemplateSchema = new Schema({
   examId: String,
   examName: String,
   examPattern: String,
+  examInstruction: String,
   createdAt: {
     type: String,
     default: formatDate(),
