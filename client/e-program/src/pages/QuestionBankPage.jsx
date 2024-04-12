@@ -54,7 +54,7 @@ export default function QuestionBankPage() {
   const [showViewQuestion, setShowViewQuestion] = useState(false);
   const [showQuestionModal, setShowQuestionModal] = useState({
     SingleCorrect: false,
-    MultiCorrect: false,
+    multiCorrect: false,
     Integer: false,
   });
   const [searchInput, setSearchInput] = useState("");
@@ -620,7 +620,7 @@ export default function QuestionBankPage() {
             <button
               className="btn btn-success"
               type="button"
-              name="MultiCorrect"
+              name="multiCorrect"
               onClick={handleAddQuestion}
             >
               Multi Correct Question
@@ -636,7 +636,7 @@ export default function QuestionBankPage() {
             <button
               className="btn btn-success"
               type="button"
-              name="MultiCorrect"
+              name="multiCorrect"
               onClick={handleAddQuestion}
             >
               Comprehensive Question
@@ -679,21 +679,27 @@ export default function QuestionBankPage() {
         </Modal.Footer>
       </Modal>
       <Modal
-        show={showQuestionModal.MultiCorrect}
-        onHide={() => handleCloseAddQuestion("MultiCorrect")}
+        show={showQuestionModal.multiCorrect}
+        onHide={() => handleCloseAddQuestion("multiCorrect")}
         dialogClassName="modal-xl"
       >
         <Modal.Header>
           <Modal.Title>Multi Correct Question</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <MultiCorrectQuestion />
+          <MultiCorrectQuestion
+            handleCloseAddQuestion={handleCloseAddQuestion}
+            selectedClass={filterData.classes}
+            selectedSubject={filterData.subject}
+            selectedTopic={filterData.topic}
+            selectedSubtopic={filterData.subtopic}
+          />
         </Modal.Body>
         <Modal.Footer>
           <Button
             variant="danger"
-            name="MultiCorrect"
-            onClick={() => handleCloseAddQuestion("MultiCorrect")}
+            name="multiCorrect"
+            onClick={() => handleCloseAddQuestion("multiCorrect")}
           >
             Close
           </Button>
@@ -708,7 +714,13 @@ export default function QuestionBankPage() {
           <Modal.Title>Integer Type Question</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <IntegerType />
+          <IntegerType
+            handleCloseAddQuestion={handleCloseAddQuestion}
+            selectedClass={filterData.classes}
+            selectedSubject={filterData.subject}
+            selectedTopic={filterData.topic}
+            selectedSubtopic={filterData.subtopic}
+          />
         </Modal.Body>
         <Modal.Footer>
           <Button

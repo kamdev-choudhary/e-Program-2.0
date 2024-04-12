@@ -24,7 +24,7 @@ export default function MultiCorrectQuestion(props) {
     subject: "",
     topic: "",
     subtopic: "",
-    questionType: "singleCorrect",
+    questionType: "multiCorrect",
     questionText: "",
     option1: {
       text: "",
@@ -42,7 +42,6 @@ export default function MultiCorrectQuestion(props) {
       text: "",
       isCorrect: false,
     },
-    correctAnswer: "",
     solution: "",
   });
 
@@ -56,7 +55,6 @@ export default function MultiCorrectQuestion(props) {
     option2: "",
     option3: "",
     option4: "",
-    correctAnswer: "",
     solution: "",
   });
 
@@ -107,9 +105,6 @@ export default function MultiCorrectQuestion(props) {
       case "questionText":
         errorMessage = value ? "" : "Question is required";
         break;
-      case "correctAnswer":
-        errorMessage = value ? "" : "Correct answer is required";
-        break;
       case "solution":
         errorMessage = value ? "" : "Solution is required";
         break;
@@ -141,7 +136,7 @@ export default function MultiCorrectQuestion(props) {
         .then((response) => response.json())
         .then((data) => {
           console.log("Success:", data);
-          props.handleCloseAddQuestion("SingleCorrect");
+          props.handleCloseAddQuestion("multiCorrect");
         })
         .catch((error) => {
           console.error("Error:", error);
@@ -545,10 +540,10 @@ export default function MultiCorrectQuestion(props) {
             }}
           >
             <TinyBox2
-              content={questionData.option2.text}
+              content={questionData.option4.text}
               onContentChange={(newContent) =>
-                handleTinyBoxChange("option2", {
-                  ...questionData.option2,
+                handleTinyBoxChange("option4", {
+                  ...questionData.option4,
                   text: newContent,
                 })
               }

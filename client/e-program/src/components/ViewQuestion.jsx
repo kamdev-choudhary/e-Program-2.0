@@ -77,7 +77,6 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion, setRefresh }) => {
       [name]: newContent,
     }));
   };
-
   const updateQuestion = (approve) => {
     const updatedQuestion = { ...question, isApproved: approve ? "Yes" : "No" };
     fetch(`${API_URL}/questionbank/update`, {
@@ -98,17 +97,45 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion, setRefresh }) => {
       });
   };
 
+  const handleCheckboxChange = (event) => {
+    const { name, checked } = event.target;
+    if (question.questionType === "singleCorrect") {
+      setQuestion({
+        ...question,
+        [name]: {
+          ...question[name],
+          isCorrect: checked,
+        },
+        option1:
+          name === "option1"
+            ? { ...question.option1, isCorrect: checked }
+            : { ...question.option1, isCorrect: false },
+        option2:
+          name === "option2"
+            ? { ...question.option2, isCorrect: checked }
+            : { ...question.option2, isCorrect: false },
+        option3:
+          name === "option3"
+            ? { ...question.option3, isCorrect: checked }
+            : { ...question.option3, isCorrect: false },
+        option4:
+          name === "option4"
+            ? { ...question.option4, isCorrect: checked }
+            : { ...question.option4, isCorrect: false },
+      });
+    } else {
+      setQuestion({
+        ...question,
+        [name]: {
+          ...question[name],
+          isCorrect: checked,
+        },
+      });
+    }
+  };
+
   return (
     <>
-      {readOnly && (
-        <div className="row  mb-3">
-          <div className="col-md-1 ms-auto">
-            <Button variant="contained" onClick={() => setReadOnly(false)}>
-              Edit
-            </Button>
-          </div>
-        </div>
-      )}
       <Box sx={{ flexGrow: 1 }} padding={1}>
         <Grid container spacing={1}>
           <Grid item xs={12} md={4} lg={3}>
@@ -336,6 +363,7 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion, setRefresh }) => {
               color="success"
               name="option1"
               checked={question.option1.isCorrect}
+              onChange={(event) => handleCheckboxChange(event)}
             />
           </Grid>
           <Grid
@@ -356,7 +384,10 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion, setRefresh }) => {
               <TinyBox2
                 content={question.option1.text}
                 onContentChange={(newContent) =>
-                  handleTinyBoxChange("option1", newContent)
+                  handleTinyBoxChange("option1", {
+                    ...question.option1,
+                    text: newContent,
+                  })
                 }
               />
             )}
@@ -389,8 +420,9 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion, setRefresh }) => {
           >
             <Checkbox
               color="success"
-              name="option1"
+              name="option2"
               checked={question.option2.isCorrect}
+              onChange={(event) => handleCheckboxChange(event)}
             />
           </Grid>
           <Grid
@@ -411,7 +443,10 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion, setRefresh }) => {
               <TinyBox2
                 content={question.option2.text}
                 onContentChange={(newContent) =>
-                  handleTinyBoxChange("option2", newContent)
+                  handleTinyBoxChange("option2", {
+                    ...question.option2,
+                    text: newContent,
+                  })
                 }
               />
             )}
@@ -446,6 +481,7 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion, setRefresh }) => {
               color="success"
               name="option3"
               checked={question.option3.isCorrect}
+              onChange={(event) => handleCheckboxChange(event)}
             />
           </Grid>
           <Grid
@@ -466,7 +502,10 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion, setRefresh }) => {
               <TinyBox2
                 content={question.option3.text}
                 onContentChange={(newContent) =>
-                  handleTinyBoxChange("option3", newContent)
+                  handleTinyBoxChange("option3", {
+                    ...question.option3,
+                    text: newContent,
+                  })
                 }
               />
             )}
@@ -497,7 +536,12 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion, setRefresh }) => {
               justifyContent: "center",
             }}
           >
-            <Checkbox color="success" name="option1" />
+            <Checkbox
+              color="success"
+              name="option4"
+              checked={question.option4.isCorrect}
+              onChange={(event) => handleCheckboxChange(event)}
+            />
           </Grid>
           <Grid
             item
@@ -517,7 +561,10 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion, setRefresh }) => {
               <TinyBox2
                 content={question.option4.text}
                 onContentChange={(newContent) =>
-                  handleTinyBoxChange("option4", newContent)
+                  handleTinyBoxChange("option4", {
+                    ...question.option4,
+                    text: newContent,
+                  })
                 }
               />
             )}
@@ -544,13 +591,36 @@ const ViewQuestion = ({ currQuestion, handleShowViewQuestion, setRefresh }) => {
               <TinyBox2
                 content={question.solution}
                 onContentChange={(newContent) =>
-                  handleTinyBoxChange("option1", newContent)
+                  handleTinyBoxChange("solution", newContent)
                 }
               />
             )}
           </Grid>
         </Grid>
       </Box>
+      {readOnly ? (
+        <Stack direction="row" justifyContent="flex-end">
+          <Button
+            variant="contained"
+            color="secondary"
+            sx={{ marginTop: 2 }}
+            onClick={() => setReadOnly(false)}
+          >
+            Edit
+          </Button>
+        </Stack>
+      ) : (
+        <Stack direction="row" justifyContent="flex-end">
+          <Button
+            variant="contained"
+            color="success"
+            sx={{ marginTop: 2 }}
+            onClick={updateQuestion}
+          >
+            Save and Approve
+          </Button>
+        </Stack>
+      )}
     </>
   );
 };
