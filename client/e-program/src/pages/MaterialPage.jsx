@@ -147,7 +147,7 @@ export default function MaterialPage() {
       {error && <div>Error: {error}</div>}
       <Box sx={{ padding: 1 }}>
         <Grid container spacing={1}>
-          <Grid item xs={10} md={8} lg={8}>
+          <Grid item xs={12} md={8} lg={8}>
             <FormControl fullWidth size="small">
               <OutlinedInput
                 sx={{ borderRadius: 10 }}
@@ -161,7 +161,7 @@ export default function MaterialPage() {
               />
             </FormControl>
           </Grid>
-          <Grid item xs={2} md={2} lg={2}>
+          <Grid item xs={6} md={2} lg={2}>
             <Button
               variant="contained"
               sx={{ borderRadius: 10 }}
