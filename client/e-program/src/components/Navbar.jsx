@@ -217,7 +217,7 @@ function Navbar() {
   };
   return (
     <>
-      <Box sx={{ flexGrow: 2 }}>
+      <Box sx={{ flexGrow: 2, position: "sticky", top: 0, zIndex: 3 }}>
         <AppBar position="static">
           <Toolbar>
             <IconButton

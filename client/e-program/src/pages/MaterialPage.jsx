@@ -223,7 +223,8 @@ export default function MaterialPage() {
                   </TableCell>
                   <TableCell align="center">
                     <Button
-                      size="sm"
+                      size="small"
+                      sx={{ borderRadius: 10 }}
                       variant="outlined"
                       onClick={() => handleViewBook(book)}
                     >
@@ -233,8 +234,9 @@ export default function MaterialPage() {
                   {isAdmin && (
                     <TableCell align="center" className="text-white">
                       <Button
-                        variant="contained"
+                        variant="outlined"
                         size="small"
+                        sx={{ borderRadius: 10 }}
                         color="error"
                         onClick={() => handleDeleteBook(book._id)}
                       >

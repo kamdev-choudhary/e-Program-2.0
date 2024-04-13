@@ -220,6 +220,7 @@ export default function DoubtPage() {
                         <Button
                           variant="outlined"
                           color="success"
+                          sx={{ borderRadius: 10 }}
                           onClick={() => {
                             setDoubtDetails(true);
                             setCurrDoubt(doubt);
@@ -230,6 +231,7 @@ export default function DoubtPage() {
                       ) : (
                         <Button
                           variant="outlined"
+                          sx={{ borderRadius: 10 }}
                           onClick={() => {
                             setDoubtDetails(true);
                             setCurrDoubt(doubt);
@@ -249,6 +251,7 @@ export default function DoubtPage() {
           <Button
             variant="outlined"
             color="error"
+            sx={{ borderRadius: 10 }}
             onClick={() => setDoubtDetails(false)}
           >
             Back
@@ -284,6 +287,7 @@ export default function DoubtPage() {
             <Button
               variant="contained"
               color="success"
+              sx={{ borderRadius: 10 }}
               onClick={() => {
                 setShowAskDoubtForm(true), setModelText("Post a Solution");
               }}
@@ -357,8 +361,8 @@ export default function DoubtPage() {
             <Button
               variant="contained"
               color="error"
+              sx={{ borderRadius: 10, mr: 1 }}
               onClick={() => setShowAskDoubtForm(false)}
-              sx={{ mr: 1 }}
             >
               Close
             </Button>
@@ -366,6 +370,7 @@ export default function DoubtPage() {
               <Button
                 variant="contained"
                 color="success"
+                sx={{ borderRadius: 10 }}
                 onClick={handlePostDoubtSolution}
               >
                 Post solution

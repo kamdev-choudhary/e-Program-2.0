@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import YouTubeVideo from "../components/YoutubeVideo";
-import "./LecturePage.css";
-
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -19,6 +17,11 @@ import Select from "@mui/material/Select";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
+import { useAuth } from "../components/Auth";
+import IconButton from "@mui/material/IconButton";
+import Stack from "@mui/material/Stack";
+import DeleteIcon from "@mui/icons-material/Delete";
+import EditIcon from "@mui/icons-material/Edit";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -61,6 +64,8 @@ function CollapsibleTable({ lectures, playLecture }) {
 }
 
 export default function LecturePage() {
+  const { isAdmin } = useAuth();
+
   const [lectures, setLectures] = useState([]);
   const [error, setError] = useState(null);
   const [collapsedChapter, setCollapsedChapter] = useState(null);
@@ -134,6 +139,131 @@ export default function LecturePage() {
     setCurrVID(videoId);
     setShowVideoPopup(true);
   };
+
+  if (isAdmin) {
+    const handleDeleteLecture = (id) => {
+      console.log(id);
+    };
+    return (
+      <>
+        <Box>
+          <Grid container spacing={2}>
+            <Grid item xs={6} lg={3}>
+              <FormControl fullWidth size="small">
+                <InputLabel id="demo-simple-select-label">Class</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="selectedClass"
+                  name="selectedClass"
+                  label="Class"
+                  value={selectedClass}
+                  onChange={(e) => setSelectedClass(e.target.value)}
+                >
+                  {academic &&
+                    academic.classes &&
+                    academic.classes.map((classes, index) => (
+                      <MenuItem key={index} value={classes}>
+                        {"Class : "}
+                        {classes}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={6} lg={3}>
+              <FormControl fullWidth size="small">
+                <InputLabel id="demo-simple-select-label">Subject</InputLabel>
+                <Select
+                  labelId="demo-simple-select-label"
+                  id="selectedSubject"
+                  name="selectedSubject"
+                  label="Subject"
+                  value={selectedSubject === "all" ? "All" : selectedSubject}
+                  onChange={(e) => setSelectedSubject(e.target.value)}
+                >
+                  <MenuItem value="">All</MenuItem>
+                  {academic &&
+                    academic.subjects &&
+                    academic.subjects.map((subject, index) => (
+                      <MenuItem key={index} value={subject.name}>
+                        {subject.name}
+                      </MenuItem>
+                    ))}
+                </Select>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} lg={4}>
+              <FormControl fullWidth size="small">
+                <OutlinedInput
+                  sx={{ borderRadius: 10 }}
+                  onChange={handleFilterTextChange}
+                  startAdornment={
+                    <InputAdornment position="start">
+                      Search <SearchIcon />
+                    </InputAdornment>
+                  }
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} lg={2}>
+              <Button variant="contained" sx={{ borderRadius: 10 }}>
+                Add Lecture
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
+        <Box sx={{ marginTop: 2 }}>
+          <TableContainer sx={{ maxHeight: 550 }}>
+            <Table stickyHeader aria-label="sticky table">
+              <TableHead>
+                <TableRow>
+                  <TableCell>SN</TableCell>
+                  <TableCell align="middle">Class</TableCell>
+                  <TableCell align="middle">Subject</TableCell>
+                  <TableCell align="middle">Chapter Name</TableCell>
+                  <TableCell align="middle">Lecture #</TableCell>
+                  <TableCell align="middle">Video ID</TableCell>
+                  <TableCell align="middle">Edit or Delete</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody
+                style={{ overflowY: "auto", maxHeight: "calc(100vh - 200px)" }}
+              >
+                {filteredLectures &&
+                  filteredLectures.map((lecture, index) => (
+                    <TableRow key={index}>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell align="middle">{lecture.class}</TableCell>
+                      <TableCell align="middle">{lecture.subject}</TableCell>
+                      <TableCell align="middle">
+                        {lecture.chapterName}
+                      </TableCell>
+                      <TableCell align="middle">
+                        {lecture.lectureNumber}
+                      </TableCell>
+                      <TableCell align="middle">{lecture.videoId}</TableCell>
+                      <TableCell align="middle">
+                        <Stack direction="row" spacing={1}>
+                          <IconButton>
+                            <DeleteIcon
+                              sx={{ color: "#d33" }}
+                              onClick={() => handleDeleteLecture(lecture._id)}
+                            />
+                          </IconButton>
+                          <IconButton>
+                            <EditIcon />
+                          </IconButton>
+                        </Stack>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Box>
+      </>
+    );
+  }
 
   return (
     <>
