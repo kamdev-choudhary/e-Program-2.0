@@ -10,6 +10,8 @@ router.route("/update").put(academicController.updateAcademicData);
 
 router.route("/update/topic").put(academicController.updateAcademicTopic);
 
+router.route("/update/subtopic").put(academicController.updateAcademicSubtopic);
+
 // router.route("/update/subtopic").put(academicController);
 
 module.exports = router;

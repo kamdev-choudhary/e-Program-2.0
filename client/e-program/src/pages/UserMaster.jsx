@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import React from "react";
-// Importing MUI Components
+import { Modal } from "react-bootstrap";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -19,6 +19,7 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Grid from "@mui/material/Grid";
 import Typography from "@mui/material/Typography";
+import StudentProfile from "../components/StudentProfile";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -27,6 +28,7 @@ export default function UserMaster() {
   const [error, setError] = useState("");
   const [searchInput, setSearchInput] = useState("");
   const [accountTypeFilter, setAccountTypeFilter] = useState("student");
+  const [showStudentDashboard, setShowStudentDashboard] = useState(false);
 
   useEffect(() => {
     fetch(`${API_URL}/admin/users`)
@@ -145,6 +147,12 @@ export default function UserMaster() {
           </TableBody>
         </Table>
       </TableContainer>
+      <Modal show={true}>
+        <Modal.Header>Student DashBoard</Modal.Header>
+        <Modal.Body>
+          <StudentProfile />
+        </Modal.Body>
+      </Modal>
     </>
   );
 }
