@@ -33,6 +33,9 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -434,6 +437,11 @@ export default function AcademicPage() {
                   </React.Fragment>
                 ))}
             </List>
+            {filteredTopics &&
+                filteredTopics.map((topic, index) => (
+                  <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }} key={index}>
+                  <ListItem>{topic.name}</ListItem></List>
+                ))}
           </div>
         </Accordion>
         <Accordion>
