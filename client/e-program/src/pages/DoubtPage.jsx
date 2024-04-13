@@ -379,6 +379,7 @@ export default function DoubtPage() {
               <Button
                 variant="contained"
                 color="success"
+                sx={{ borderRadius: 10 }}
                 onClick={handlePostDoubt}
               >
                 Post
