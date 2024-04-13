@@ -89,7 +89,7 @@ export default function ExamMaster() {
           <Grid item xs={12} lg={10}>
             <FormControl fullWidth size="small">
               <OutlinedInput
-                id="outlined-adornment-amount"
+                sx={{ borderRadius: 10 }}
                 onChange={(e) => setSearchInput(e.target.value)}
                 startAdornment={
                   <InputAdornment position="start">
@@ -100,7 +100,9 @@ export default function ExamMaster() {
             </FormControl>
           </Grid>
           <Grid item xs={12} lg={2}>
-            <Button onClick={handleShowAddTemplate}>Create New Template</Button>
+            <Button sx={{ borderRadius: 10 }} onClick={handleShowAddTemplate}>
+              Create New Template
+            </Button>
           </Grid>
         </Grid>
       </Box>
