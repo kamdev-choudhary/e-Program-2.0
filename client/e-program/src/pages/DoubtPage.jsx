@@ -140,6 +140,7 @@ export default function DoubtPage() {
           <Button
             variant="contained"
             color="success"
+            sx={{ borderRadius: 10 }}
             onClick={() => {
               setShowAskDoubtForm(true), setModelText("Ask a Doubt");
             }}

@@ -21,6 +21,8 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
 import { useAuth } from "../components/Auth";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -143,34 +145,109 @@ export default function MaterialPage() {
   return (
     <>
       {error && <div>Error: {error}</div>}
-      <div className="row">
-        <div className="col-md-8 ">
-          <FormControl fullWidth sx={{ m: 1 }} size="small">
-            <OutlinedInput
-              id="outlined-adornment-amount"
-              startAdornment={
-                <InputAdornment position="start">
-                  Search <SearchIcon />
-                </InputAdornment>
-              }
-              value={searchInput}
-              onChange={handleSearchInputChange}
-            />
-          </FormControl>
-        </div>
-        {isAdmin && (
-          <div className="col-md-4 d-flex justify-content-center align-items-center">
-            <Fab
-              color="primary"
-              aria-label="add"
+      <Box sx={{ padding: 1 }}>
+        <Grid container spacing={1}>
+          <Grid item xs={10} md={8} lg={8}>
+            <FormControl fullWidth size="small">
+              <OutlinedInput
+                sx={{ borderRadius: 10 }}
+                startAdornment={
+                  <InputAdornment position="start">
+                    Search <SearchIcon />
+                  </InputAdornment>
+                }
+                value={searchInput}
+                onChange={handleSearchInputChange}
+              />
+            </FormControl>
+          </Grid>
+          <Grid item xs={2} md={2} lg={2}>
+            <Button
+              variant="contained"
+              sx={{ borderRadius: 10 }}
               onClick={handleAddNewBook}
-              size="small"
             >
-              <AddIcon />
-            </Fab>
-          </div>
-        )}
-      </div>
+              Add Book
+            </Button>
+          </Grid>
+        </Grid>
+      </Box>
+      <Box sx={{ marginTop: 1, padding: 1 }}>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead className="bg bg-success ">
+              <TableRow>
+                <TableCell align="center" className="text-white">
+                  Book ID
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  Title
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  Author
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  Subject
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  Category
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  Publishing Year
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  View Book
+                </TableCell>
+                {isAdmin && (
+                  <TableCell align="center" className="text-white">
+                    Delete Boook
+                  </TableCell>
+                )}
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {filteredBooks.map((book, index) => (
+                <TableRow
+                  key={book._id}
+                  sx={{
+                    "&:last-child td, &:last-child th": { border: 0 },
+                  }}
+                >
+                  <TableCell className="text-center">{book.bookId}</TableCell>
+                  <TableCell className="text-center">{book.title}</TableCell>
+                  <TableCell className="text-center">{book.author}</TableCell>
+                  <TableCell className="text-center">{book.subject}</TableCell>
+                  <TableCell className="text-center">{book.category}</TableCell>
+                  <TableCell className="text-center">
+                    {book.publishingYear}
+                  </TableCell>
+                  <TableCell align="center">
+                    <Button
+                      size="sm"
+                      variant="outlined"
+                      onClick={() => handleViewBook(book)}
+                    >
+                      view
+                    </Button>
+                  </TableCell>
+                  {isAdmin && (
+                    <TableCell align="center" className="text-white">
+                      <Button
+                        variant="contained"
+                        size="small"
+                        color="error"
+                        onClick={() => handleDeleteBook(book._id)}
+                      >
+                        Delete
+                      </Button>
+                    </TableCell>
+                  )}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
 
       <Modal
         show={showAddBook}
@@ -181,188 +258,110 @@ export default function MaterialPage() {
           <Modal.Title>Add New Books</Modal.Title>
         </Modal.Header>
         <Modal.Body>
-          <div className="row">
-            <div className="col-md-12">
-              <TextField
-                fullWidth
-                label="Book ID"
-                id="bookId"
-                name="bookId"
-                value={newBook.bookId}
-                onChange={handleNewBookChange}
-                style={{ marginBottom: "20px" }}
-              />
-            </div>
-            <div className="col-md-12">
-              <TextField
-                fullWidth
-                label="Book Title"
-                id="bookId"
-                name="title"
-                value={newBook.title}
-                onChange={handleNewBookChange}
-                style={{ marginBottom: "20px" }}
-              />
-            </div>
-            <div className="col-md-12">
-              <TextField
-                fullWidth
-                label="Author"
-                id="bookId"
-                name="author"
-                value={newBook.author}
-                onChange={handleNewBookChange}
-                style={{ marginBottom: "20px" }}
-              />
-            </div>
-            <div className="col-md-12">
-              <FormControl fullWidth>
-                <InputLabel id="demo-simple-select-label">Subject</InputLabel>
-                <Select
-                  labelId="Subject-label"
-                  id="subject"
-                  name="subject"
-                  label="Subject"
-                  value={newBook.subject}
-                  onChange={handleNewBookChange}
-                  style={{ marginBottom: "20px" }}
-                >
-                  {academic &&
-                    academic.subjects &&
-                    academic.subjects.map((subject, index) => (
-                      <MenuItem key={index} value={subject.name}>
-                        {subject.name}
-                      </MenuItem>
-                    ))}
-                </Select>
-              </FormControl>
-            </div>
-            <div className="col-md-12">
-              <TextField
-                fullWidth
-                label="Category"
-                id="bookId"
-                name="category"
-                value={newBook.category}
-                onChange={handleNewBookChange}
-                style={{ marginBottom: "20px" }}
-              />
-            </div>
-            <div className="col-md-12">
-              <TextField
-                fullWidth
-                type="number"
-                label="Publishing Year"
-                id="bookId"
-                name="publishingYear"
-                value={newBook.publishingYear}
-                onChange={handleNewBookChange}
-                style={{ marginBottom: "20px" }}
-              />
-            </div>
-            <div className="col-md-12">
-              <Input
-                type="file"
-                name="file"
-                onChange={handleNewBookChange}
-                inputProps={{
-                  accept: "application/pdf",
-                }}
-                id="file-input"
-              />
-            </div>
-            <div className="col-md-12 text-center mt-3">
-              <Button
-                variant="contained"
-                color="success"
-                onClick={handleOnSubmit}
-              >
-                Submit
-              </Button>
-            </div>
-          </div>
+          <TextField
+            fullWidth
+            label="Book ID"
+            id="bookId"
+            size="small"
+            name="bookId"
+            value={newBook.bookId}
+            onChange={handleNewBookChange}
+            style={{ marginBottom: "20px" }}
+          />
+          <TextField
+            fullWidth
+            label="Book Title"
+            size="small"
+            id="bookId"
+            name="title"
+            value={newBook.title}
+            onChange={handleNewBookChange}
+            style={{ marginBottom: "20px" }}
+          />
+          <TextField
+            fullWidth
+            label="Author"
+            id="bookId"
+            name="author"
+            size="small"
+            value={newBook.author}
+            onChange={handleNewBookChange}
+            style={{ marginBottom: "20px" }}
+          />
+          <FormControl fullWidth size="small">
+            <InputLabel id="demo-simple-select-label">Subject</InputLabel>
+            <Select
+              labelId="Subject-label"
+              id="subject"
+              name="subject"
+              label="Subject"
+              value={newBook.subject}
+              onChange={handleNewBookChange}
+              style={{ marginBottom: "20px" }}
+            >
+              {academic &&
+                academic.subjects &&
+                academic.subjects.map((subject, index) => (
+                  <MenuItem key={index} value={subject.name}>
+                    {subject.name}
+                  </MenuItem>
+                ))}
+            </Select>
+          </FormControl>
+          <TextField
+            fullWidth
+            label="Category"
+            id="bookId"
+            size="small"
+            name="category"
+            value={newBook.category}
+            onChange={handleNewBookChange}
+            style={{ marginBottom: "20px" }}
+          />
+          <TextField
+            fullWidth
+            type="number"
+            label="Publishing Year"
+            id="bookId"
+            size="small"
+            name="publishingYear"
+            value={newBook.publishingYear}
+            onChange={handleNewBookChange}
+            style={{ marginBottom: "20px" }}
+          />
+          <Input
+            type="file"
+            name="file"
+            size="small"
+            onChange={handleNewBookChange}
+            inputProps={{
+              accept: "application/pdf",
+            }}
+            id="file-input"
+          />
+          <Box sx={{ display: "flex", justifyContent: "center" }}>
+            <Button
+              variant="contained"
+              color="success"
+              sx={{ marginTop: 2, borderRadius: 10 }}
+              onClick={handleOnSubmit}
+            >
+              Submit
+            </Button>
+          </Box>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="contained" color="error" onClick={handleAddNewBook}>
+          <Button
+            variant="contained"
+            color="error"
+            sx={{ borderRadius: 10 }}
+            onClick={handleAddNewBook}
+          >
             Close
           </Button>
         </Modal.Footer>
       </Modal>
       <hr />
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead className="bg bg-success ">
-            <TableRow>
-              <TableCell align="center" className="text-white">
-                Book ID
-              </TableCell>
-              <TableCell align="center" className="text-white">
-                Title
-              </TableCell>
-              <TableCell align="center" className="text-white">
-                Author
-              </TableCell>
-              <TableCell align="center" className="text-white">
-                Subject
-              </TableCell>
-              <TableCell align="center" className="text-white">
-                Category
-              </TableCell>
-              <TableCell align="center" className="text-white">
-                Publishing Year
-              </TableCell>
-              <TableCell align="center" className="text-white">
-                View Book
-              </TableCell>
-              {isAdmin && (
-                <TableCell align="center" className="text-white">
-                  Delete Boook
-                </TableCell>
-              )}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {filteredBooks.map((book, index) => (
-              <TableRow
-                key={book._id}
-                sx={{
-                  "&:last-child td, &:last-child th": { border: 0 },
-                }}
-              >
-                <TableCell className="text-center">{book.bookId}</TableCell>
-                <TableCell className="text-center">{book.title}</TableCell>
-                <TableCell className="text-center">{book.author}</TableCell>
-                <TableCell className="text-center">{book.subject}</TableCell>
-                <TableCell className="text-center">{book.category}</TableCell>
-                <TableCell className="text-center">
-                  {book.publishingYear}
-                </TableCell>
-                <TableCell align="center">
-                  <Button
-                    size="sm"
-                    variant="outlined"
-                    onClick={() => handleViewBook(book)}
-                  >
-                    view
-                  </Button>
-                </TableCell>
-                {isAdmin && (
-                  <TableCell align="center" className="text-white">
-                    <Button
-                      variant="contained"
-                      size="small"
-                      color="error"
-                      onClick={() => handleDeleteBook(book._id)}
-                    >
-                      Delete
-                    </Button>
-                  </TableCell>
-                )}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
 
       <Modal show={pdfViewer} onHide={() => setPdfViwer(false)}>
         <Modal.Header>PDF Viewer</Modal.Header>
