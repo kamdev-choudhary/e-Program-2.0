@@ -89,8 +89,6 @@ export default function (handleShowAddTemplate) {
     }));
   };
 
-  console.log(newExamTemplate);
-
   return (
     <>
       <Box sx={{ flexGrow: 1 }} padding={1}>

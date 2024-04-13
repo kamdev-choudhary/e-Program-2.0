@@ -17,6 +17,7 @@ import CardActions from "@mui/material/CardActions";
 import CardContent from "@mui/material/CardContent";
 import Typography from "@mui/material/Typography";
 import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 import DeleteIcon from "@mui/icons-material/Delete";
 import Fab from "@mui/material/Fab";
 import AddIcon from "@mui/icons-material/Add";
@@ -121,32 +122,35 @@ export default function ViewExamTemplate(props) {
 
   return (
     <>
-      <div className="row">
-        <div className="col-md-6">
-          <TextField
-            fullWidth
-            id="examName" // Unique id
-            variant="outlined"
-            label="Test Name"
-            name="examName"
-            InputLabelProps={{ shrink: true }}
-            value={examTemplate.examName || ""}
-            onChange={(e) => handleExamTemplateChange(e, 0)}
-          />
-        </div>
-        <div className="col-md-6">
-          <TextField
-            fullWidth
-            id="examPattern" // Unique id
-            variant="outlined"
-            label="Exam Pattern"
-            name="examPattern" // Unique name
-            InputLabelProps={{ shrink: true }}
-            value={examTemplate.examPattern || ""}
-            onChange={(e) => handleExamTemplateChange(e, 0)}
-          />
-        </div>
-      </div>
+      <Box sx={{ flexGrow: 1 }} padding={1}>
+        <Grid container spacing={1}>
+          <Grid item xs={12} md={4} lg={4}>
+            <TextField
+              fullWidth
+              id="examName" // Unique id
+              variant="outlined"
+              label="Test Name"
+              name="examName"
+              InputLabelProps={{ shrink: true }}
+              value={examTemplate.examName || ""}
+              onChange={(e) => handleExamTemplateChange(e, 0)}
+            />
+          </Grid>
+          <Grid item xs={12} md={4} lg={4}>
+            <TextField
+              fullWidth
+              id="examPattern" // Unique id
+              variant="outlined"
+              label="Exam Pattern"
+              name="examPattern" // Unique name
+              InputLabelProps={{ shrink: true }}
+              value={examTemplate.examPattern || ""}
+              onChange={(e) => handleExamTemplateChange(e, 0)}
+            />
+          </Grid>
+        </Grid>
+      </Box>
+
       <hr />
       <div className="row d-flex text-end mb-2 ">
         <div className="col-md-12 ">
@@ -293,80 +297,143 @@ export default function ViewExamTemplate(props) {
       <div className="div d-flex gap-3 row">
         {examTemplate.questions &&
           examTemplate.questions.map((question, index) => (
-            <div className="questions" key={index}>
-              <Card sx={{ minWidth: 275 }} elevation={5}>
-                <CardContent>
-                  <div className="row d-flex gap-2">
-                    <div className="col-md-3">
-                      <Typography
-                        sx={{ fontSize: 14 }}
-                        color="text.primary"
-                        gutterBottom
-                      >
-                        Question Number : {index + 1}
-                      </Typography>
-                    </div>
-                    <div className="col-md-3">
-                      <Typography
-                        sx={{ fontSize: 14 }}
-                        color="text.primary"
-                        gutterBottom
-                      >
-                        Question ID : {question.questionId}
-                      </Typography>
-                    </div>
-                    <div className="col-md-3">
-                      <Typography
-                        sx={{ fontSize: 14 }}
-                        color="text.primary"
-                        gutterBottom
-                      >
-                        Subject : {question.subject}
-                      </Typography>
-                    </div>
-                    <div className="col-md-3">
-                      <Typography
-                        sx={{ fontSize: 14 }}
-                        color="text.primary"
-                        gutterBottom
-                      >
-                        Topic : {question.topic}
-                      </Typography>
-                    </div>
-                    <div className="col-md-3">
-                      <Typography
-                        sx={{ fontSize: 14 }}
-                        color="text.primary"
-                        gutterBottom
-                      >
-                        Sub Topic: {question.subtopic}
-                      </Typography>
-                    </div>
-                    <div className="col-md-3">
-                      <Typography
-                        sx={{ fontSize: 14 }}
-                        color="text.primary"
-                        gutterBottom
-                      >
-                        Difficulty Level : {question.difficultyLevel}
-                      </Typography>
-                    </div>
-                    <div className="col-md-12">
-                      <TextField
-                        fullWidth
-                        id="outlined-basic-1"
-                        variant="outlined"
-                        name="examName"
-                        InputLabelProps={{ shrink: true }}
-                        value={question.questionText}
-                      />
-                    </div>
-                  </div>
-                </CardContent>
-                <CardActions></CardActions>
-              </Card>
-              <hr />
-            </div>
+            <>
+              <Box sx={{ flexGrow: 1 }} padding={2} key={index}>
+                <Grid container spacing={1}>
+                  <Grid item xs={12} md={4} lg={3}>
+                    <Typography
+                      sx={{ fontSize: 14 }}
+                      color="text.primary"
+                      gutterBottom
+                    >
+                      Question ID : {question.questionId}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} md={4} lg={3}>
+                    <Typography
+                      sx={{ fontSize: 14 }}
+                      color="text.primary"
+                      gutterBottom
+                    >
+                      Subject : {question.subject}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} md={4} lg={3}>
+                    <Typography
+                      sx={{ fontSize: 14 }}
+                      color="text.primary"
+                      gutterBottom
+                    >
+                      Topic : {question.topic}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} md={4} lg={3}>
+                    <Typography
+                      sx={{ fontSize: 14 }}
+                      color="text.primary"
+                      gutterBottom
+                    >
+                      Sub Topic: {question.subtopic}
+                    </Typography>
+                  </Grid>
+                  <Grid item xs={12} md={4} lg={3}>
+                    <Typography
+                      sx={{ fontSize: 14 }}
+                      color="text.primary"
+                      gutterBottom
+                    >
+                      Difficulty Level : {question.difficultyLevel}
+                    </Typography>
+                  </Grid>
+                </Grid>
+                <Grid
+                  container
+                  spacing={1}
+                  sx={{
+                    border: "1px solid #000",
+                    marginTop: 1,
+                    borderRadius: "5px",
+                  }}
+                >
+                  <Grid
+                    item
+                    xs={12}
+                    md={1}
+                    lg={1}
+                    style={{
+                      fontWeight: "bold",
+                      textAlign: "center",
+                    }}
+                  >
+                    {"Q.No "}
+                    {index + 1}
+                  </Grid>
+                  <Grid item xs={12} md={11} lg={11}>
+                    <Typography
+                      dangerouslySetInnerHTML={{
+                        __html: question.questionText,
+                      }}
+                    />
+                    <Grid
+                      container
+                      spacing={3}
+                      direction="row"
+                      justifyContent="space-around"
+                      alignItems="flex-start"
+                    >
+                      <Grid item container xs="auto" alignItems="baseline">
+                        <Grid item>
+                          ({question.option1.isCorrect ? "*" : ""}A){" "}
+                        </Grid>
+                        <Grid item>
+                          <Typography
+                            dangerouslySetInnerHTML={{
+                              __html: question.option1.text,
+                            }}
+                          />
+                        </Grid>
+                      </Grid>
+                      <Grid item container xs="auto" alignItems="baseline">
+                        <Grid item>
+                          ({question.option2.isCorrect ? "*" : ""}B){" "}
+                        </Grid>
+                        <Grid item>
+                          <Typography
+                            dangerouslySetInnerHTML={{
+                              __html: question.option2.text,
+                            }}
+                          />
+                        </Grid>
+                      </Grid>
+                      <Grid item container xs="auto" alignItems="baseline">
+                        <Grid item>
+                          ({question.option3.isCorrect ? "*" : ""}C)
+                        </Grid>
+                        <Grid item>
+                          <Typography
+                            dangerouslySetInnerHTML={{
+                              __html: question.option3.text,
+                            }}
+                          />
+                        </Grid>
+                      </Grid>
+                      <Grid item container xs="auto" alignItems="baseline">
+                        <Grid item>
+                          ({question.option4.isCorrect ? "*" : ""}D){" "}
+                        </Grid>
+                        <Grid item>
+                          <Typography
+                            dangerouslySetInnerHTML={{
+                              __html: question.option4.text,
+                            }}
+                          />
+                        </Grid>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
+              </Box>
+            </>
           ))}
       </div>
       <Modal
