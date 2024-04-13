@@ -262,8 +262,8 @@ export default function AcademicPage() {
           </Typography>
         </Box>
         <Box sx={{ padding: 2 }}>
-          <Grid container gap={1}>
-            <Grid item xs={6} lg={4}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} lg={4}>
               <FormControl fullWidth size="small">
                 <InputLabel id="demo-simple-select-label">Class</InputLabel>
                 <Select
@@ -284,7 +284,7 @@ export default function AcademicPage() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={6} lg={4}>
+            <Grid item xs={12} lg={4}>
               <FormControl fullWidth size="small">
                 <InputLabel id="demo-simple-select-label">Subject</InputLabel>
                 <Select
@@ -305,7 +305,7 @@ export default function AcademicPage() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={6} lg={2}>
+            <Grid item xs={12} lg={2}>
               {selectedSubject && (
                 <>
                   <Button

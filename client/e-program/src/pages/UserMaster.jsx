@@ -29,6 +29,7 @@ export default function UserMaster() {
   const [searchInput, setSearchInput] = useState("");
   const [accountTypeFilter, setAccountTypeFilter] = useState("student");
   const [showStudentDashboard, setShowStudentDashboard] = useState(false);
+  const [currUser, setCurrUser] = useState([]);
 
   useEffect(() => {
     fetch(`${API_URL}/admin/users`)
@@ -138,7 +139,14 @@ export default function UserMaster() {
                 <TableCell align="center">{user.mobile}</TableCell>
                 <TableCell align="center">{user.accountType}</TableCell>
                 <TableCell align="center">
-                  <Button variant="outlined" size="sm">
+                  <Button
+                    variant="outlined"
+                    size="sm"
+                    onClick={() => {
+                      setShowStudentDashboard(true);
+                      setCurrUser(user);
+                    }}
+                  >
                     View
                   </Button>
                 </TableCell>
@@ -147,10 +155,14 @@ export default function UserMaster() {
           </TableBody>
         </Table>
       </TableContainer>
-      <Modal show={true}>
+      <Modal
+        show={showStudentDashboard}
+        onHide={() => setShowStudentDashboard(false)}
+        dialogClassName="modal-xl"
+      >
         <Modal.Header>Student DashBoard</Modal.Header>
         <Modal.Body>
-          <StudentProfile />
+          <StudentProfile user={currUser} />
         </Modal.Body>
       </Modal>
     </>
