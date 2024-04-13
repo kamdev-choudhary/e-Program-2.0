@@ -62,11 +62,12 @@ export default function UserMaster() {
 
   return (
     <>
-      <Grid container sx={{ gap: 2 }}>
-        <Grid item md={5}>
+      <Grid container spacing={2}>
+        <Grid item xs={12} md={9} lg={9}>
           <Box>
             <FormControl fullWidth size="small">
               <OutlinedInput
+                sx={{ borderRadius: 10 }}
                 id="outlined-adornment-amount"
                 startAdornment={
                   <InputAdornment position="start">
@@ -79,7 +80,7 @@ export default function UserMaster() {
             </FormControl>
           </Box>
         </Grid>
-        <Grid item md={5}>
+        <Grid item xs={12} md={3} lg={3}>
           <Box>
             <FormControl fullWidth size="small">
               <InputLabel id="account-type-label">Account Type</InputLabel>

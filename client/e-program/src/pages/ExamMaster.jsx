@@ -86,7 +86,7 @@ export default function ExamMaster() {
     <>
       <Box sx={{ padding: 2 }}>
         <Grid container spacing={2}>
-          <Grid item xs={10}>
+          <Grid item xs={12} lg={10}>
             <FormControl fullWidth size="small">
               <OutlinedInput
                 id="outlined-adornment-amount"
@@ -99,7 +99,7 @@ export default function ExamMaster() {
               />
             </FormControl>
           </Grid>
-          <Grid item xs={2}>
+          <Grid item xs={12} lg={2}>
             <Button onClick={handleShowAddTemplate}>Create New Template</Button>
           </Grid>
         </Grid>

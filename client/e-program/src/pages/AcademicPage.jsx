@@ -195,6 +195,7 @@ export default function AcademicPage() {
               <FormControl fullWidth size="small">
                 <OutlinedInput
                   id="outlined-adornment-amount"
+                  sx={{ borderRadius: 10 }}
                   startAdornment={
                     <InputAdornment position="start">
                       Search <SearchIcon />
@@ -204,7 +205,11 @@ export default function AcademicPage() {
               </FormControl>
             </Grid>
             <Grid item xs={12} lg={3}>
-              <Button variant="contained" onClick={handleShowAddBatch}>
+              <Button
+                variant="contained"
+                onClick={handleShowAddBatch}
+                sx={{ borderRadius: 10 }}
+              >
                 Add New Topic
               </Button>
             </Grid>
@@ -311,6 +316,7 @@ export default function AcademicPage() {
                   <Button
                     variant="contained"
                     color="primary"
+                    sx={{ borderRadius: 10 }}
                     onClick={() => setShowAddTopicField(true)}
                   >
                     Add new topic

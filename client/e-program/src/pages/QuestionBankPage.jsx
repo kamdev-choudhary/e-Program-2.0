@@ -491,7 +491,7 @@ export default function QuestionBankPage() {
                 endAdornment={
                   selectedTemplate && (
                     <IconButton size="small" onClick={clearSelectedTemplate}>
-                      <ClearIcon />
+                      <ClearIcon sx={{ marginRight: 2 }} />
                     </IconButton>
                   )
                 }
