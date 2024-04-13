@@ -17,6 +17,8 @@ import Paper from "@mui/material/Paper";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import ViewExamTemplate from "../components/ViewExamTemplate";
 import CreateExamTemplate from "../components/CreateExamTemplate";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -82,14 +84,10 @@ export default function ExamMaster() {
 
   return (
     <>
-      <div>
-        <p className="text-center mt-2 h4 border p-2 bg-success text-white rounded">
-          Exam Master (Test Templates)
-        </p>
-
-        <div className="row">
-          <div className="col-md-10">
-            <FormControl fullWidth sx={{ m: 1 }} size="small">
+      <Box sx={{ padding: 2 }}>
+        <Grid container spacing={2}>
+          <Grid item xs={10}>
+            <FormControl fullWidth size="small">
               <OutlinedInput
                 id="outlined-adornment-amount"
                 onChange={(e) => setSearchInput(e.target.value)}
@@ -100,19 +98,69 @@ export default function ExamMaster() {
                 }
               />
             </FormControl>
-          </div>
-          <div className="col-2 d-flex justify-content-center align-items-center">
-            <Fab
-              size="small"
-              color="primary"
-              aria-label="add"
-              onClick={handleShowAddTemplate}
-            >
-              <AddIcon />
-            </Fab>
-          </div>
-        </div>
-      </div>
+          </Grid>
+          <Grid item xs={2}>
+            <Button onClick={handleShowAddTemplate}>Create New Template</Button>
+          </Grid>
+        </Grid>
+      </Box>
+      <Box sx={{ padding: 2 }}>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead className="bg bg-success ">
+              <TableRow>
+                <TableCell align="center" className="text-white">
+                  Exam ID
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  Template Name
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  Created At
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  Pattern
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  Details
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  Delete
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {examTemplates.map((examtemplate, index) => (
+                <TableRow
+                  key={examtemplate._id}
+                  sx={{
+                    "&:last-child td, &:last-child th": { border: 0 },
+                  }}
+                >
+                  <TableCell align="center">{examtemplate.examId}</TableCell>
+                  <TableCell align="center">{examtemplate.examName}</TableCell>
+                  <TableCell align="center">{examtemplate.createdAt}</TableCell>
+                  <TableCell align="center">
+                    {examtemplate.examPattern}
+                  </TableCell>
+                  <TableCell align="center">
+                    <Button
+                      size="sm"
+                      onClick={() => handleShowExamTemplate(examtemplate)}
+                    >
+                      View
+                    </Button>
+                  </TableCell>
+                  <TableCell align="center">
+                    <DeleteRoundedIcon />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
+
       <Modal
         show={showAddExamTemplate}
         onHide={handleShowAddTemplate}
@@ -129,58 +177,6 @@ export default function ExamMaster() {
         </Modal.Footer>
       </Modal>
       <hr />
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead className="bg bg-success ">
-            <TableRow>
-              <TableCell align="center" className="text-white">
-                Exam ID
-              </TableCell>
-              <TableCell align="center" className="text-white">
-                Template Name
-              </TableCell>
-              <TableCell align="center" className="text-white">
-                Created At
-              </TableCell>
-              <TableCell align="center" className="text-white">
-                Pattern
-              </TableCell>
-              <TableCell align="center" className="text-white">
-                Details
-              </TableCell>
-              <TableCell align="center" className="text-white">
-                Delete
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {examTemplates.map((examtemplate, index) => (
-              <TableRow
-                key={examtemplate._id}
-                sx={{
-                  "&:last-child td, &:last-child th": { border: 0 },
-                }}
-              >
-                <TableCell align="center">{examtemplate.examId}</TableCell>
-                <TableCell align="center">{examtemplate.examName}</TableCell>
-                <TableCell align="center">{examtemplate.createdAt}</TableCell>
-                <TableCell align="center">{examtemplate.examPattern}</TableCell>
-                <TableCell align="center">
-                  <Button
-                    size="sm"
-                    onClick={() => handleShowExamTemplate(examtemplate)}
-                  >
-                    View
-                  </Button>
-                </TableCell>
-                <TableCell align="center">
-                  <DeleteRoundedIcon />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
 
       {/* Modal For Show Exam Template */}
       <Modal

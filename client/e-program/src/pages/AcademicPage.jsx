@@ -191,7 +191,7 @@ export default function AcademicPage() {
         <hr />
         <Box sx={{ padding: 2 }}>
           <Grid container gap={2}>
-            <Grid item xs={6} lg={8}>
+            <Grid item xs={12} lg={8}>
               <FormControl fullWidth size="small">
                 <OutlinedInput
                   id="outlined-adornment-amount"
@@ -203,7 +203,7 @@ export default function AcademicPage() {
                 />
               </FormControl>
             </Grid>
-            <Grid item xs={6} lg={3}>
+            <Grid item xs={12} lg={3}>
               <Button variant="contained" onClick={handleShowAddBatch}>
                 Add New Topic
               </Button>
