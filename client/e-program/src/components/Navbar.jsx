@@ -277,7 +277,10 @@ function Navbar() {
             ) : (
               <Button
                 variant="contained"
-                color="success"
+                color="secondary"
+                sx={{
+                  borderRadius: 100,
+                }}
                 onClick={handleshowUserPage}
               >
                 Login or Sign Up

@@ -22,6 +22,8 @@ import IconButton from "@mui/material/IconButton";
 import Stack from "@mui/material/Stack";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -64,7 +66,7 @@ function CollapsibleTable({ lectures, playLecture }) {
 }
 
 export default function LecturePage() {
-  const { isAdmin } = useAuth();
+  const { isAdmin, isLoggedIn, userId } = useAuth();
 
   const [lectures, setLectures] = useState([]);
   const [error, setError] = useState(null);
@@ -75,52 +77,109 @@ export default function LecturePage() {
   const [selectedClass, setSelectedClass] = useState("IX");
   const [academic, setAcademic] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState("");
+  const [user, setUser] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   const handleFilterTextChange = (e) => {
     setFilterText(e.target.value);
   };
+
   useEffect(() => {
     fetch(`${API_URL}/academic`)
       .then((response) => response.json())
       .then((data) => {
         setAcademic(data.academic[0]);
+        setIsLoading(false);
       })
       .catch((error) => console.log(error));
-  }, []);
+  }, [isLoading]);
 
   useEffect(() => {
-    fetch(`${API_URL}/lectures`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        const sortedLectures = data.lectures.sort((a, b) => {
-          if (a.class !== b.class) {
-            return a.class.localeCompare(b.class);
+    if (isLoggedIn) {
+      fetch(`${API_URL}/auth/user/${userId}`)
+        .then((response) => response.json())
+        .then((data) => {
+          setUser((prevUser) => ({ ...prevUser, ...data.user }));
+          if (data.user.currentClass !== "") {
+            setSelectedClass(data.user.currentClass);
+            filteredLecture();
           }
-          if (a.subject !== b.subject) {
-            return a.subject.localeCompare(b.subject);
-          }
-          return a.lectureNumber - b.lectureNumber;
-        });
-        setLectures(sortedLectures);
-      })
-      .catch((error) => setError(error.message));
-  }, []);
+        })
+        .catch((error) => console.log(error));
+    }
+  }, [isLoggedIn]);
 
-  const filteredLectures = lectures.filter(
-    (lecture) =>
-      (lecture.class === selectedClass || lecture.class === "") &&
-      (selectedSubject === "" || lecture.subject === selectedSubject) &&
-      Object.values(lecture).some(
-        (field) =>
-          (typeof field === "string" || typeof field === "number") &&
-          field.toString().toLowerCase().includes(filterText.toLowerCase())
-      )
-  );
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetch(`${API_URL}/lectures/${selectedClass}`)
+        .then((response) => response.json())
+        .then((data) => {
+          setLectures(data.lectures);
+        })
+        .catch((error) => console.log(error));
+    } else {
+      fetch(`${API_URL}/lectures`)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          const sortedLectures = data.lectures.sort((a, b) => {
+            if (a.class !== b.class) {
+              return a.class.localeCompare(b.class);
+            }
+            if (a.subject !== b.subject) {
+              return a.subject.localeCompare(b.subject);
+            }
+            return a.lectureNumber - b.lectureNumber;
+          });
+          setLectures(sortedLectures);
+        })
+        .catch((error) => setError(error.message));
+    }
+  }, [selectedClass]);
+
+  // useEffect(() => {
+  //   if (selectedClass === "") {
+  //     fetch(`${API_URL}/lectures`)
+  //       .then((response) => {
+  //         if (!response.ok) {
+  //           throw new Error("Network response was not ok");
+  //         }
+  //         return response.json();
+  //       })
+  //       .then((data) => {
+  //         const sortedLectures = data.lectures.sort((a, b) => {
+  //           if (a.class !== b.class) {
+  //             return a.class.localeCompare(b.class);
+  //           }
+  //           if (a.subject !== b.subject) {
+  //             return a.subject.localeCompare(b.subject);
+  //           }
+  //           return a.lectureNumber - b.lectureNumber;
+  //         });
+  //         setLectures(sortedLectures);
+  //       })
+  //       .catch((error) => setError(error.message));
+  //   }
+  // }, []);
+
+  const filteredLecture = () => {
+    return lectures.filter(
+      (lecture) =>
+        (lecture.class === selectedClass || lecture.class === "") &&
+        (selectedSubject === "" || lecture.subject === selectedSubject) &&
+        Object.values(lecture).some(
+          (field) =>
+            (typeof field === "string" || typeof field === "number") &&
+            field.toString().toLowerCase().includes(filterText.toLowerCase())
+        )
+    );
+  };
+
+  const filteredLectures = filteredLecture();
 
   const toggleChapter = (chapterName) => {
     setCollapsedChapter(collapsedChapter === chapterName ? null : chapterName);
@@ -139,6 +198,19 @@ export default function LecturePage() {
     setCurrVID(videoId);
     setShowVideoPopup(true);
   };
+
+  if (isLoading) {
+    return (
+      <>
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={true}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      </>
+    );
+  }
 
   if (isAdmin) {
     const handleDeleteLecture = (id) => {

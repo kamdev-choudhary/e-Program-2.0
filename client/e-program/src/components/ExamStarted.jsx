@@ -16,6 +16,13 @@ import RadioGroup from "@mui/material/RadioGroup";
 import FormControlLabel from "@mui/material/FormControlLabel";
 import FormControl from "@mui/material/FormControl";
 import FormLabel from "@mui/material/FormLabel";
+import Checkbox from "@mui/material/Checkbox";
+import Box from "@mui/material/Box";
+import { styled } from "@mui/material/styles";
+import List from "@mui/material/List";
+import ListItem from "@mui/material/ListItem";
+import FormGroup from "@mui/material/FormGroup";
+import TextField from "@mui/material/TextField";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -36,6 +43,15 @@ export default function ExamStarted({ templateId }) {
   };
 
   console.log(examTemplate);
+
+  const Item = styled(Paper)(({ theme }) => ({
+    backgroundColor: theme.palette.mode === "dark" ? "#1A2027" : "#fff",
+    ...theme.typography.body2,
+    padding: theme.spacing(1),
+    textAlign: "center",
+    color: theme.palette.text.secondary,
+    flexGrow: 1,
+  }));
 
   useEffect(() => {
     fetch(`${API_URL}/exams/templates/${templateId}`)
@@ -70,11 +86,37 @@ export default function ExamStarted({ templateId }) {
               examTemplate.questions &&
               currentQuestionIndex < examTemplate.questions.length && (
                 <>
-                  <Typography>
-                    {"Question : "}
-                    {examTemplate.questions[currentQuestionIndex].questionText}
-                  </Typography>
+                  <Typography>Question : </Typography>
+                  <Typography
+                    dangerouslySetInnerHTML={{
+                      __html:
+                        examTemplate.questions[currentQuestionIndex]
+                          .questionText,
+                    }}
+                  />
+
                   <hr />
+                  <Box sx={{ width: "100%" }}>
+                    <Stack
+                      direction="row"
+                      justifyContent="flex-start"
+                      alignItems="flex-start"
+                      spacing={0}
+                    >
+                      <Checkbox />
+                      <Typography>(A)</Typography>
+                      <Item>(A)</Item>
+                      <Item>
+                        Long content Lorem ipsum dolor sit amet, consectetur
+                        adipisicing elit. Quis, vel assumenda maiores sed
+                        repellendus perspiciatis cumque unde dolor blanditiis
+                        minima amet dolores porro ex possimus at, veritatis
+                        incidunt qui impedit!
+                      </Item>
+                    </Stack>
+                  </Box>
+                  <hr />
+
                   <FormControl>
                     <FormLabel id="demo-controlled-radio-buttons-group">
                       Options
@@ -85,40 +127,45 @@ export default function ExamStarted({ templateId }) {
                       value={value}
                       onChange={handleChange}
                     >
-                      <FormControlLabel
-                        value={
-                          examTemplate.questions[currentQuestionIndex].option1
-                        }
-                        control={<Radio />}
-                        label={
-                          examTemplate.questions[currentQuestionIndex].option1
-                        }
+                      <FormControlLabel control={<Radio />} />
+                      <Typography
+                        dangerouslySetInnerHTML={{
+                          __html:
+                            examTemplate.questions[currentQuestionIndex].option1
+                              .text,
+                        }}
                       />
                       <FormControlLabel
                         value={
                           examTemplate.questions[currentQuestionIndex].option2
+                            .text
                         }
                         control={<Radio />}
                         label={
                           examTemplate.questions[currentQuestionIndex].option2
+                            .text
                         }
                       />
                       <FormControlLabel
                         value={
                           examTemplate.questions[currentQuestionIndex].option3
+                            .text
                         }
                         control={<Radio />}
                         label={
                           examTemplate.questions[currentQuestionIndex].option3
+                            .text
                         }
                       />
                       <FormControlLabel
                         value={
                           examTemplate.questions[currentQuestionIndex].option4
+                            .text
                         }
                         control={<Radio />}
                         label={
                           examTemplate.questions[currentQuestionIndex].option4
+                            .text
                         }
                       />
                     </RadioGroup>
@@ -139,18 +186,27 @@ export default function ExamStarted({ templateId }) {
             >
               <Button
                 variant="contained"
-                style={{ backgroundColor: "#000", color: "white" }}
+                style={{
+                  backgroundColor: "#000",
+                  color: "white",
+                  borderRadius: 100,
+                }}
               >
                 Clear
               </Button>
               <Button
                 variant="contained"
-                style={{ backgroundColor: "#800080", color: "white" }}
+                style={{
+                  backgroundColor: "#800080",
+                  color: "white",
+                  borderRadius: 100,
+                }}
               >
                 Mark for review
               </Button>
               <Button
                 variant="contained"
+                sx={{ borderRadius: 100 }}
                 onClick={handlePreviousQuestion}
                 disabled={
                   !examTemplate ||
@@ -163,6 +219,7 @@ export default function ExamStarted({ templateId }) {
               <Button
                 variant="contained"
                 color="success"
+                sx={{ borderRadius: 100 }}
                 onClick={handleNextQuestion}
                 disabled={
                   !examTemplate ||
