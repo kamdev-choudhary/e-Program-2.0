@@ -363,7 +363,6 @@ export default function MaterialPage() {
           </Button>
         </Modal.Footer>
       </Modal>
-      <hr />
 
       <Modal show={pdfViewer} onHide={() => setPdfViwer(false)}>
         <Modal.Header>PDF Viewer</Modal.Header>

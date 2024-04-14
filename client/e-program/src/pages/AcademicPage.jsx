@@ -7,11 +7,9 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import OutlinedInput from "@mui/material/OutlinedInput";
-import IconButton from "@mui/material/IconButton";
 import InputAdornment from "@mui/material/InputAdornment";
 import SearchIcon from "@mui/icons-material/Search";
 import List from "@mui/material/List";
-import AddIcon from "@mui/icons-material/Add";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -27,7 +25,6 @@ import Dialog from "@mui/material/Dialog";
 import DialogActions from "@mui/material/DialogActions";
 import DialogContent from "@mui/material/DialogContent";
 import Typography from "@mui/material/Typography";
-import ListItem from "@mui/material/ListItem";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
 
@@ -265,6 +262,7 @@ export default function AcademicPage() {
           <Typography variant="h5" sx={{ textAlign: "center" }}>
             Subject Details
           </Typography>
+          <hr />
         </Box>
         <Box sx={{ padding: 2 }}>
           <Grid container spacing={2}>
