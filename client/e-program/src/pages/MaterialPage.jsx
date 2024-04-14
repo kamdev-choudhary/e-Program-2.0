@@ -75,8 +75,6 @@ export default function MaterialPage() {
     }
   };
 
-  console.log(academic);
-
   const handleOnSubmit = async (e) => {
     fetch(`${API_URL}/materials/savenewbook`, {
       method: "POST",
@@ -132,7 +130,6 @@ export default function MaterialPage() {
   );
 
   const handleDeleteBook = (id) => {
-    console.log(id);
     fetch(`${API_URL}/materials/${id}`, {
       method: "DELETE",
     })
