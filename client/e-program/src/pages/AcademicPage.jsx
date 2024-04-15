@@ -27,6 +27,8 @@ import DialogContent from "@mui/material/DialogContent";
 import Typography from "@mui/material/Typography";
 import Chip from "@mui/material/Chip";
 import Stack from "@mui/material/Stack";
+import DeleteIcon from "@mui/icons-material/Delete";
+import IconButton from "@mui/material/IconButton";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -128,6 +130,7 @@ export default function AcademicPage() {
       .then((data) => {
         console.log("Success:", data);
         setRefresh(!refresh);
+        setShowAddTopicField(false);
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -158,6 +161,74 @@ export default function AcademicPage() {
       .then((data) => {
         console.log("Success:", data);
         setRefresh(!refresh);
+        setShowAddSubtopicField(false);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
+  const handdleDeleteSubtopic = (subtopic) => {
+    console.log(selectedTopic);
+    const data = {
+      className: selectedClass,
+      name: selectedSubject,
+      topicId: selectedTopic._id,
+      subtopicId: subtopic._id,
+    };
+
+    console.log(selectedTopic);
+
+    const subtopicToDelete = subtopic._id;
+    console.log(
+      selectedTopic.subtopics.filter(
+        (subtopic) => subtopic._id !== subtopicToDelete
+      )
+    );
+
+    fetch(`${API_URL}/academic/deletesubtopic`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Success:", data);
+        setSelectedTopic((prevTopic) => ({
+          ...prevTopic,
+          subtopics: prevTopic.subtopics.filter(
+            (subtopic) => subtopic._id !== subtopicToDelete
+          ),
+        }));
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
+
+  const handdleDeleteTopic = (topic) => {
+    const data = {
+      className: topic.className,
+      name: selectedSubject,
+      topicId: topic._id,
+    };
+    const topicToDelete = topic._id;
+    fetch(`${API_URL}/academic/deletetopic`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    })
+      .then((response) => response.json())
+      .then((data) => {
+        console.log("Success:", data);
+        setFilteredTopics((prevTopics) =>
+          prevTopics.filter((topic) => topic._id !== topicToDelete)
+        );
+        setSelectedTopic({});
       })
       .catch((error) => {
         console.error("Error:", error);
@@ -230,101 +301,6 @@ export default function AcademicPage() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} lg={2}>
-              {selectedSubject && (
-                <>
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    sx={{ borderRadius: 10 }}
-                    onClick={() => setShowAddTopicField(true)}
-                  >
-                    Add new topic
-                  </Button>
-
-                  <>
-                    <Dialog
-                      open={showAddTopicField}
-                      onClose={() => setShowAddTopicField(false)}
-                    >
-                      <DialogContent>
-                        <Box sx={{ padding: 2 }}>
-                          <FormControl
-                            fullWidth
-                            size="small"
-                            sx={{ marginBottom: 2 }}
-                          >
-                            <InputLabel id="demo-simple-select-label">
-                              Class
-                            </InputLabel>
-                            <Select
-                              labelId="demo-simple-select-label"
-                              id="demo-simple-select"
-                              name="classes"
-                              label="Class"
-                              value={selectedClass}
-                              onChange={(event) =>
-                                setSelectedClass(event.target.value)
-                              }
-                            >
-                              {academic &&
-                                academic.classes &&
-                                academic.classes.map((className, index) => (
-                                  <MenuItem key={index} value={className}>
-                                    {className}
-                                  </MenuItem>
-                                ))}
-                            </Select>
-                          </FormControl>
-                          <FormControl
-                            fullWidth
-                            size="small"
-                            sx={{ marginBottom: 2 }}
-                          >
-                            <InputLabel id="demo-simple-select-label">
-                              Subject
-                            </InputLabel>
-                            <Select
-                              labelId="demo-simple-select-label"
-                              id="demo-simple-select"
-                              name="subject"
-                              label="Subject"
-                              value={selectedSubject}
-                              onChange={(event) =>
-                                setSelectedSubject(event.target.value)
-                              }
-                            >
-                              {academic &&
-                                academic.subjects &&
-                                academic.subjects.map((subject, index) => (
-                                  <MenuItem key={index} value={subject.name}>
-                                    {subject.name}
-                                  </MenuItem>
-                                ))}
-                            </Select>
-                          </FormControl>
-                          <FormControl fullWidth>
-                            <TextField
-                              label="New Topic Name"
-                              value={newTopic}
-                              onChange={(e) => setNewTopic(e.target.value)}
-                              fullWidth
-                              size="small"
-                            />
-                          </FormControl>
-                        </Box>
-                      </DialogContent>
-                      <DialogActions>
-                        <Button onClick={() => setShowAddTopicField(false)}>
-                          Cancel
-                        </Button>
-                        <Button onClick={handleAddNewTopic}>Save</Button>
-                      </DialogActions>
-                    </Dialog>
-                  </>
-                </>
-              )}
-            </Grid>
           </Grid>
         </Box>
         <Box sx={{ padding: 2 }}>
@@ -339,7 +315,128 @@ export default function AcademicPage() {
                   borderRadius: 3,
                 }}
               >
-                <Typography>Topics</Typography>
+                <Box>
+                  <Grid
+                    container
+                    direction="row"
+                    justifyContent="space-between"
+                  >
+                    <Grid item xs={4} lg={4}>
+                      <Typography>Topics</Typography>
+                    </Grid>
+                    <Grid item xs={8} lg={8}>
+                      <Grid container justifyContent="flex-end">
+                        {selectedSubject && (
+                          <Button
+                            variant="contained"
+                            color="primary"
+                            size="small"
+                            sx={{ borderRadius: 10 }}
+                            onClick={() => setShowAddTopicField(true)}
+                          >
+                            Add new topic
+                          </Button>
+                        )}
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Box>
+
+                <>
+                  <Dialog
+                    open={showAddTopicField}
+                    onClose={() => setShowAddTopicField(false)}
+                  >
+                    <DialogContent>
+                      <Box sx={{ padding: 1, maxWidth: 400 }}>
+                        <Typography variant="h5">Add Topic</Typography>
+                        <hr />
+                        <FormControl
+                          fullWidth
+                          size="small"
+                          sx={{ marginBottom: 2 }}
+                        >
+                          <InputLabel id="demo-simple-select-label">
+                            Class
+                          </InputLabel>
+                          <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            name="classes"
+                            label="Class"
+                            value={selectedClass}
+                            onChange={(event) =>
+                              setSelectedClass(event.target.value)
+                            }
+                          >
+                            {academic &&
+                              academic.classes &&
+                              academic.classes.map((className, index) => (
+                                <MenuItem key={index} value={className}>
+                                  {className}
+                                </MenuItem>
+                              ))}
+                          </Select>
+                        </FormControl>
+                        <FormControl
+                          fullWidth
+                          size="small"
+                          sx={{ marginBottom: 2 }}
+                        >
+                          <InputLabel id="demo-simple-select-label">
+                            Subject
+                          </InputLabel>
+                          <Select
+                            labelId="demo-simple-select-label"
+                            id="demo-simple-select"
+                            name="subject"
+                            label="Subject"
+                            value={selectedSubject}
+                            onChange={(event) =>
+                              setSelectedSubject(event.target.value)
+                            }
+                          >
+                            {academic &&
+                              academic.subjects &&
+                              academic.subjects.map((subject, index) => (
+                                <MenuItem key={index} value={subject.name}>
+                                  {subject.name}
+                                </MenuItem>
+                              ))}
+                          </Select>
+                        </FormControl>
+                        <FormControl fullWidth>
+                          <TextField
+                            label="New Topic Name"
+                            value={newTopic}
+                            onChange={(e) => setNewTopic(e.target.value)}
+                            fullWidth
+                            size="small"
+                          />
+                        </FormControl>
+                      </Box>
+                    </DialogContent>
+                    <DialogActions>
+                      <Button
+                        variant="contained"
+                        color="error"
+                        sx={{ borderRadius: 10 }}
+                        onClick={() => setShowAddTopicField(false)}
+                      >
+                        Cancel
+                      </Button>
+                      <Button
+                        variant="contained"
+                        color="success"
+                        sx={{ borderRadius: 10 }}
+                        onClick={handleAddNewTopic}
+                      >
+                        Save
+                      </Button>
+                    </DialogActions>
+                  </Dialog>
+                </>
+
                 <List>
                   {filteredTopics &&
                     filteredTopics.map((topic, index) => (
@@ -352,6 +449,12 @@ export default function AcademicPage() {
                         }}
                       >
                         <ListItemText primary={`${index + 1}. ${topic.name}`} />
+                        <IconButton
+                          aria-label="delete"
+                          onClick={() => handdleDeleteTopic(topic)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
                       </ListItemButton>
                     ))}
                 </List>
@@ -376,7 +479,7 @@ export default function AcademicPage() {
                   <Grid item xs={6}>
                     <Typography>Sub Topics</Typography>
                   </Grid>
-                  <Grid item xs={4}>
+                  <Grid container justifyContent="flex-end" xs={5}>
                     <Stack direction="row" spacing={1}>
                       <Chip
                         label="Add Subtopic"
@@ -394,6 +497,12 @@ export default function AcademicPage() {
                         <ListItemText
                           primary={`${index + 1}. ${subtopic.name}`}
                         />
+                        <IconButton
+                          aria-label="delete"
+                          onClick={() => handdleDeleteSubtopic(subtopic)}
+                        >
+                          <DeleteIcon />
+                        </IconButton>
                       </ListItemButton>
                     ))}
                 </List>
@@ -487,7 +596,9 @@ export default function AcademicPage() {
           onClose={() => setShowAddSubtopicField(false)}
         >
           <DialogContent>
-            <Box sx={{ padding: 2 }}>
+            <Box sx={{ padding: 1, maxWidth: 400 }}>
+              <Typography variant="h5">Add New Subtopic</Typography>
+              <hr />
               <FormControl fullWidth size="small" sx={{ marginBottom: 2 }}>
                 <InputLabel id="demo-simple-select-label">Class</InputLabel>
                 <Select
@@ -556,10 +667,22 @@ export default function AcademicPage() {
             </Box>
           </DialogContent>
           <DialogActions>
-            <Button onClick={() => setShowAddSubtopicField(false)}>
+            <Button
+              variant="contained"
+              color="error"
+              sx={{ borderRadius: 10 }}
+              onClick={() => setShowAddSubtopicField(false)}
+            >
               Cancel
             </Button>
-            <Button onClick={handleAddNewSubtopic}>Save</Button>
+            <Button
+              variant="contained"
+              color="success"
+              sx={{ borderRadius: 10 }}
+              onClick={handleAddNewSubtopic}
+            >
+              Save
+            </Button>
           </DialogActions>
         </Dialog>
       </React.Fragment>

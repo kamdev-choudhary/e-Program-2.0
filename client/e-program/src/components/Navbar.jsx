@@ -217,7 +217,14 @@ function Navbar() {
   };
   return (
     <>
-      <Box sx={{ flexGrow: 2, position: "sticky", top: 0, zIndex: 3 }}>
+      <Box
+        sx={{
+          flexGrow: 2,
+          position: "sticky",
+          top: 0,
+          zIndex: 10,
+        }}
+      >
         <AppBar position="static">
           <Toolbar>
             <IconButton
@@ -226,7 +233,7 @@ function Navbar() {
               edge="start"
               color="inherit"
               aria-label="menu"
-              sx={{ mr: 2 }}
+              sx={{ mr: 1 }}
             >
               <MenuIcon />
             </IconButton>

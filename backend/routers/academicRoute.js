@@ -12,6 +12,9 @@ router.route("/update/topic").put(academicController.updateAcademicTopic);
 
 router.route("/update/subtopic").put(academicController.updateAcademicSubtopic);
 
+router.route("/deletesubtopic").delete(academicController.deleteSubtopic);
+router.route("/deletetopic").delete(academicController.deleteTopic);
+
 // router.route("/update/subtopic").put(academicController);
 
 module.exports = router;
