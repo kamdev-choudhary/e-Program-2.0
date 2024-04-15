@@ -9,6 +9,12 @@ import FormControl from "@mui/material/FormControl";
 import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
+import Grid from "@mui/material/Grid";
+import Typography from "@mui/material/Typography";
+import Accordion from "@mui/material/Accordion";
+import AccordionSummary from "@mui/material/AccordionSummary";
+import AccordionDetails from "@mui/material/AccordionDetails";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 import { useAuth } from "../components/Auth";
 
@@ -20,40 +26,42 @@ export default function StudentProfile({ user }) {
   const [error, setError] = useState("");
   const [batches, setBatches] = useState([]);
 
+  console.log(user);
+
+  console.log(student);
+
   useEffect(() => {
     if (user) {
       setStudent({ ...user });
     }
-  }, [user, refresh]);
+  }, []);
 
   const { userId } = useAuth();
 
-  useEffect(() => {
-    fetch(`${API_URL}/auth/user/${userId}`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setStudent(data.user);
-      })
-      .catch((error) => setError(error.message));
-    fetch(`${API_URL}/batch`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setBatches(data.batches);
-      })
-      .catch((error) => setError(error.message));
-  }, {});
-
-  console.log(student);
+  // useEffect(() => {
+  //   fetch(`${API_URL}/auth/user/${userId}`)
+  //     .then((response) => {
+  //       if (!response.ok) {
+  //         throw new Error("Network response was not ok");
+  //       }
+  //       return response.json();
+  //     })
+  //     .then((data) => {
+  //       setStudent(data.user);
+  //     })
+  //     .catch((error) => setError(error.message));
+  //   fetch(`${API_URL}/batch`)
+  //     .then((response) => {
+  //       if (!response.ok) {
+  //         throw new Error("Network response was not ok");
+  //       }
+  //       return response.json();
+  //     })
+  //     .then((data) => {
+  //       setBatches(data.batches);
+  //     })
+  //     .catch((error) => setError(error.message));
+  // }, {});
 
   const handleUserInputChange = (e) => {
     if (e.target.name === "batchName") {
@@ -92,239 +100,184 @@ export default function StudentProfile({ user }) {
       });
   };
 
-  const ExamsPaper = styled(Paper)(({ theme }) => ({
-    width: 300,
-    padding: theme.spacing(2),
-    ...theme.typography.body2,
-    textAlign: "left",
-  }));
-
-  console.log(student.batchName);
-
   return (
     <>
       {student && (
-        <Box
-          sx={{
-            display: "flex",
-            flexWrap: "wrap",
-            "& > :not(style)": {
-              m: 1,
-              width: "100%",
-            },
-          }}
-        >
-          <Paper sx={{ padding: "1rem" }} elevation={1}>
-            <div className="row">
-              <div className="col-md-12">
-                <h4>Student's Profile</h4>
-              </div>
-              <hr />
-            </div>
-            <Box
-              sx={{
-                display: "flex",
-                flexWrap: "wrap",
-                "& > :not(style)": {
-                  m: 1,
-                  width: "100%",
-                },
-              }}
+        <>
+          <Accordion elevation={6} defaultExpanded>
+            <AccordionSummary
+              expandIcon={<ArrowDropDownIcon />}
+              aria-controls="panel2-content"
+              id="panel2-header"
             >
-              <Paper sx={{ padding: "1rem" }} elevation={5}>
-                <div className="row">
-                  <div className="col-md-12 d-flex space-between">
-                    <h5>Identity</h5>
-                    <Edit className="ms-auto" />
-                  </div>
-                  <hr />
-                  <div className="row ">
-                    <div className="col-md-6 mb-3">
-                      <TextField
-                        fullWidth
-                        id="student-name"
-                        label="Name"
-                        name="name"
-                        size="small"
-                        value={student.name}
-                        onChange={handleUserInputChange}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <TextField
-                        fullWidth
-                        id="outlined-required"
-                        label="Email"
-                        size="small"
-                        name="email"
-                        value={student.email}
-                        onChange={handleUserInputChange}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <TextField
-                        fullWidth
-                        id="student-mobile"
-                        label="Mobile Number"
-                        name="mobile"
-                        size="small"
-                        value={student.mobile}
-                        onChange={handleUserInputChange}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <TextField
-                        fullWidth
-                        id="student-class"
-                        label="Class"
-                        name="classes"
-                        size="small"
-                        value={student.classes}
-                        onChange={handleUserInputChange}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <Box sx={{ minWidth: 120 }} size="small">
-                        <FormControl fullWidth>
-                          <InputLabel id="batch-label">Batch Name</InputLabel>
-                          <Select
-                            labelId="select-batch-label"
-                            id="select-batch"
-                            name="batchName"
-                            value={student.batchName}
-                            onChange={handleUserInputChange}
-                            label="Batch Name"
-                          >
-                            {batches &&
-                              batches.map((batch, index) => (
-                                <MenuItem
-                                  key={batch._id}
-                                  value={batch.batchName}
-                                >
-                                  {batch.batchName}
-                                </MenuItem>
-                              ))}
-                          </Select>
-                        </FormControl>
-                      </Box>
-                    </div>
-                  </div>
-                </div>
-              </Paper>
-            </Box>
-            <Box
-              sx={{
-                display: "flex",
-                flexWrap: "wrap",
-                "& > :not(style)": {
-                  m: 1,
-                  width: "100%",
-                },
-              }}
+              <Typography>User Identity</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Grid container spacing={2}>
+                <Grid item xs={12} lg={6}>
+                  <TextField
+                    fullWidth
+                    id="student-name"
+                    label="Name"
+                    name="name"
+                    size="small"
+                    value={student.name}
+                    onChange={handleUserInputChange}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Grid>
+                <Grid item xs={12} lg={6}>
+                  <TextField
+                    fullWidth
+                    id="outlined-required"
+                    label="Email"
+                    size="small"
+                    name="email"
+                    value={student.email}
+                    onChange={handleUserInputChange}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Grid>
+                <Grid item xs={12} lg={6}>
+                  <TextField
+                    fullWidth
+                    id="student-mobile"
+                    label="Mobile Number"
+                    name="mobile"
+                    size="small"
+                    value={student.mobile}
+                    onChange={handleUserInputChange}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Grid>
+                <Grid item xs={12} lg={6}>
+                  <TextField
+                    fullWidth
+                    id="student-class"
+                    label="Class"
+                    name="classes"
+                    size="small"
+                    value={student.classes}
+                    onChange={handleUserInputChange}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Grid>
+                <Grid item xs={12} lg={6}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel id="batch-label">Batch Name</InputLabel>
+                    <Select
+                      labelId="select-batch-label"
+                      id="select-batch"
+                      name="batchName"
+                      value={student.batchName}
+                      onChange={handleUserInputChange}
+                      label="Batch Name"
+                    >
+                      <em>
+                        <MenuItem value="">none</MenuItem>
+                      </em>
+                      {batches &&
+                        batches.map((batch, index) => (
+                          <MenuItem key={batch._id} value={batch.batchName}>
+                            {batch.batchName}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} lg={6}></Grid>
+                <Grid item xs={12} lg={6}></Grid>
+                <Grid item xs={12} lg={6}></Grid>
+                <Grid item xs={12} lg={6}></Grid>
+              </Grid>
+            </AccordionDetails>
+          </Accordion>
+          <Accordion elevation={6}>
+            <AccordionSummary
+              expandIcon={<ArrowDropDownIcon />}
+              aria-controls="panel2-content"
+              id="panel2-header"
             >
-              <Paper sx={{ padding: "1rem" }} elevation={5}>
-                <div className="row">
-                  <div className="col-md-12 d-flex space-between">
-                    <h5>Address</h5>
-                    <Edit className="ms-auto" />
-                  </div>
-                  <hr />
-                  <div className="row ">
-                    <div className="col-md-6 mb-3">
-                      <TextField
-                        fullWidth
-                        id="student-addressLineOne"
-                        label="Address Line 1"
-                        name="addressLineOne"
-                        size="small"
-                        value={student.addressLineOne}
-                        onChange={handleUserInputChange}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <TextField
-                        fullWidth
-                        id="student-addressLinetwo"
-                        label="Address Line 2"
-                        name="addressLineTwo"
-                        size="small"
-                        value={student.addressLineTwo}
-                        onChange={handleUserInputChange}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <TextField
-                        fullWidth
-                        id="student-city"
-                        label="City"
-                        name="city"
-                        size="small"
-                        value={student.city}
-                        onChange={handleUserInputChange}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <TextField
-                        fullWidth
-                        id="student-district"
-                        label="District"
-                        name="district"
-                        size="small"
-                        value={student.district}
-                        onChange={handleUserInputChange}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <TextField
-                        fullWidth
-                        id="student-state"
-                        label="State"
-                        name="state"
-                        size="small"
-                        value={student.state}
-                        onChange={handleUserInputChange}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </div>
-                    <div className="col-md-6 mb-3">
-                      <TextField
-                        fullWidth
-                        id="student-pinCode"
-                        label="Pin Code"
-                        name="pinCode"
-                        size="small"
-                        value={student.pinCode}
-                        onChange={handleUserInputChange}
-                        InputLabelProps={{ shrink: true }}
-                      />
-                    </div>
-                  </div>
-                </div>
-              </Paper>
-            </Box>
-            {!student.isProfileUpdated === false && (
-              <div className="row text-end gap-2 d-flex">
-                <div className="col m-2">
-                  <Button
-                    variant="contained"
-                    color="success"
-                    onClick={handleUpdateStudentData}
-                  >
-                    Update
-                  </Button>
-                </div>
-              </div>
-            )}
-          </Paper>
-        </Box>
+              <Typography>Address</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Grid container spacing={2}>
+                <Grid item xs={12} lg={6}>
+                  <TextField
+                    fullWidth
+                    id="student-addressLineOne"
+                    label="Address Line 1"
+                    name="addressLineOne"
+                    size="small"
+                    value={student.addressLineOne}
+                    onChange={handleUserInputChange}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Grid>
+                <Grid item xs={12} lg={6}>
+                  <TextField
+                    fullWidth
+                    id="student-addressLinetwo"
+                    label="Address Line 2"
+                    name="addressLineTwo"
+                    size="small"
+                    value={student.addressLineTwo}
+                    onChange={handleUserInputChange}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Grid>
+                <Grid item xs={12} lg={6}>
+                  <TextField
+                    fullWidth
+                    id="student-city"
+                    label="City"
+                    name="city"
+                    size="small"
+                    value={student.city}
+                    onChange={handleUserInputChange}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Grid>
+                <Grid item xs={12} lg={6}>
+                  <TextField
+                    fullWidth
+                    id="student-district"
+                    label="District"
+                    name="district"
+                    size="small"
+                    value={student.district}
+                    onChange={handleUserInputChange}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Grid>
+                <Grid item xs={12} lg={6}>
+                  <TextField
+                    fullWidth
+                    id="student-state"
+                    label="State"
+                    name="state"
+                    size="small"
+                    value={student.state}
+                    onChange={handleUserInputChange}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Grid>
+                <Grid item xs={12} lg={6}>
+                  <TextField
+                    fullWidth
+                    id="student-pinCode"
+                    label="Pin Code"
+                    name="pinCode"
+                    size="small"
+                    value={student.pinCode}
+                    onChange={handleUserInputChange}
+                    InputLabelProps={{ shrink: true }}
+                  />
+                </Grid>
+              </Grid>
+            </AccordionDetails>
+          </Accordion>
+        </>
       )}
     </>
   );

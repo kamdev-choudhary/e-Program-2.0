@@ -264,7 +264,12 @@ export default function CreateExamTemplateOffline(handleShowAddTemplate) {
         </TableContainer>
       </Box>
       <Box sx={{ padding: 2 }}>
-        <Button variant="contained" onClick={handleCreateTemplate}>
+        <Button
+          variant="contained"
+          color="success"
+          sx={{ borderRadius: 10 }}
+          onClick={handleCreateTemplate}
+        >
           Create template
         </Button>
       </Box>
