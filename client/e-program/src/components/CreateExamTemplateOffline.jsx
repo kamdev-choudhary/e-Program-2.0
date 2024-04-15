@@ -16,14 +16,19 @@ import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import Typography from "@mui/material/Typography";
 import { TinyBox } from "./TinyBox";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
-export default function CreateExamTemplate(handleShowAddTemplate) {
+export default function CreateExamTemplateOffline(handleShowAddTemplate) {
+  const [academic, setAcademic] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [newExamTemplate, setNewExamTemplate] = useState({
     examName: "",
     examPattern: "",
     examInstruction: "",
+    className: "",
     questionTypes: {
       singleCorrect: {
         totalQuestions: 0,
@@ -48,6 +53,16 @@ export default function CreateExamTemplate(handleShowAddTemplate) {
       },
     },
   });
+
+  useState(() => {
+    fetch(`${API_URL}/academic`)
+      .then((response) => response.json())
+      .then((data) => {
+        setAcademic(data.academic[0]);
+        setIsLoading(false);
+      })
+      .catch((error) => console.log(error));
+  }, []);
 
   const handleCreateTemplate = () => {
     fetch(`${API_URL}/exams/createtemplate`, {
@@ -89,9 +104,22 @@ export default function CreateExamTemplate(handleShowAddTemplate) {
     }));
   };
 
+  if (isLoading) {
+    return (
+      <>
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={true}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      </>
+    );
+  }
+
   return (
     <>
-      <Box sx={{ flexGrow: 1 }} padding={1}>
+      <Box padding={1}>
         <Grid container spacing={1}>
           <Grid item xs={12} md={4} lg={3}>
             <TextField
@@ -102,9 +130,35 @@ export default function CreateExamTemplate(handleShowAddTemplate) {
               value={newExamTemplate.examName}
               onChange={handleTemplateInputChange}
               id="examName"
-              style={{ marginBottom: "20px" }}
             />
           </Grid>
+          <Grid item xs={12} md={4} lg={3}>
+            <FormControl fullWidth size="small">
+              <InputLabel id="demo-simple-select-label">Class</InputLabel>
+              <Select
+                labelId="demo-simple-select-label"
+                id="className"
+                name="currentClass"
+                label="Class"
+                value={newExamTemplate.className}
+                onChange={(e) =>
+                  setNewExamTemplate({
+                    ...newExamTemplate,
+                    className: e.target.value,
+                  })
+                }
+              >
+                {academic &&
+                  academic.classes &&
+                  academic.classes.map((classes, index) => (
+                    <MenuItem key={index} value={classes}>
+                      {classes}
+                    </MenuItem>
+                  ))}
+              </Select>
+            </FormControl>
+          </Grid>
+
           <Grid item xs={12} md={4} lg={3}>
             <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">Target</InputLabel>

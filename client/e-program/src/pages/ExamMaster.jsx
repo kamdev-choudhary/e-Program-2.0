@@ -22,6 +22,7 @@ import CreateExamTemplate from "../components/CreateExamTemplate";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
+import CreateExamTemplateOffline from "../components/CreateExamTemplateOffline";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -204,7 +205,6 @@ export default function ExamMaster() {
                 </Button>
               </Modal.Footer>
             </Modal>
-            <hr />
 
             {/* Modal For Show Exam Template */}
             <Modal
@@ -321,7 +321,9 @@ export default function ExamMaster() {
             dialogClassName="modal-xl"
           >
             <Modal.Header>Create Offline Exam Template</Modal.Header>
-            <Modal.Body></Modal.Body>
+            <Modal.Body>
+              <CreateExamTemplateOffline />
+            </Modal.Body>
             <Modal.Footer>
               <Button
                 variant="contained"
