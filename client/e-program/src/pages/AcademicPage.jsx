@@ -179,85 +179,7 @@ export default function AcademicPage() {
 
   return (
     <>
-      <Paper elevation={6} sx={{ padding: 1 }}>
-        <Box sx={{ marginLeft: 2, marginRight: 2, marginTop: 1 }}>
-          <Typography variant="h5" sx={{ textAlign: "center" }}>
-            Batches
-          </Typography>
-        </Box>
-        <hr />
-        <Box sx={{ padding: 2 }}>
-          <Grid container gap={2}>
-            <Grid item xs={12} lg={8}>
-              <FormControl fullWidth size="small">
-                <OutlinedInput
-                  id="outlined-adornment-amount"
-                  sx={{ borderRadius: 10 }}
-                  startAdornment={
-                    <InputAdornment position="start">
-                      Search <SearchIcon />
-                    </InputAdornment>
-                  }
-                />
-              </FormControl>
-            </Grid>
-            <Grid item xs={12} lg={3}>
-              <Button
-                variant="contained"
-                onClick={handleShowAddBatch}
-                sx={{ borderRadius: 10 }}
-              >
-                Add New Topic
-              </Button>
-            </Grid>
-          </Grid>
-        </Box>
-        <Box sx={{ padding: 2 }}>
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead className="bg bg-success ">
-                <TableRow>
-                  <TableCell align="center" className="text-white">
-                    SN
-                  </TableCell>
-                  <TableCell align="center" className="text-white">
-                    Batch Name
-                  </TableCell>
-                  <TableCell align="center" className="text-white">
-                    Batch Class
-                  </TableCell>
-                  <TableCell align="center" className="text-white">
-                    Preparing For
-                  </TableCell>
-
-                  <TableCell align="center" className="text-white">
-                    Scholar Count
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {batches.map((batch, index) => (
-                  <TableRow
-                    key={batch._id}
-                    sx={{
-                      "&:last-child td, &:last-child th": { border: 0 },
-                    }}
-                  >
-                    <TableCell align="center">{index + 1}</TableCell>
-                    <TableCell align="center">{batch.batchName}</TableCell>
-                    <TableCell align="center">{batch.batchClass}</TableCell>
-                    <TableCell align="center">{batch.batchStream}</TableCell>
-                    <TableCell align="center">
-                      {batch.scholars.length}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
-      </Paper>
-      <Paper elevation={6} sx={{ padding: 1, marginTop: 2, marginBottom: 2 }}>
+      <Paper elevation={6} sx={{ padding: 1, marginTop: 1, marginBottom: 1 }}>
         <Box sx={{ marginLeft: 2, marginRight: 2, marginTop: 1 }}>
           <Typography variant="h5" sx={{ textAlign: "center" }}>
             Subject Details
@@ -478,6 +400,84 @@ export default function AcademicPage() {
               </Box>
             </Grid>
           </Grid>
+        </Box>
+      </Paper>
+      <br />
+      <Paper elevation={6} sx={{ padding: 1 }}>
+        <Box sx={{ marginLeft: 2, marginRight: 1, marginTop: 1 }}>
+          <Typography variant="h5" sx={{ textAlign: "center" }}>
+            Batches
+          </Typography>
+        </Box>
+        <Box sx={{ padding: 2 }}>
+          <Grid container gap={2}>
+            <Grid item xs={12} lg={8}>
+              <FormControl fullWidth size="small">
+                <OutlinedInput
+                  id="outlined-adornment-amount"
+                  sx={{ borderRadius: 10 }}
+                  startAdornment={
+                    <InputAdornment position="start">
+                      Search <SearchIcon />
+                    </InputAdornment>
+                  }
+                />
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} lg={3}>
+              <Button
+                variant="contained"
+                onClick={handleShowAddBatch}
+                sx={{ borderRadius: 10 }}
+              >
+                Add New Topic
+              </Button>
+            </Grid>
+          </Grid>
+        </Box>
+        <Box sx={{ padding: 2 }}>
+          <TableContainer component={Paper}>
+            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+              <TableHead className="bg bg-success ">
+                <TableRow>
+                  <TableCell align="center" className="text-white">
+                    SN
+                  </TableCell>
+                  <TableCell align="center" className="text-white">
+                    Batch Name
+                  </TableCell>
+                  <TableCell align="center" className="text-white">
+                    Batch Class
+                  </TableCell>
+                  <TableCell align="center" className="text-white">
+                    Preparing For
+                  </TableCell>
+
+                  <TableCell align="center" className="text-white">
+                    Scholar Count
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {batches.map((batch, index) => (
+                  <TableRow
+                    key={batch._id}
+                    sx={{
+                      "&:last-child td, &:last-child th": { border: 0 },
+                    }}
+                  >
+                    <TableCell align="center">{index + 1}</TableCell>
+                    <TableCell align="center">{batch.batchName}</TableCell>
+                    <TableCell align="center">{batch.batchClass}</TableCell>
+                    <TableCell align="center">{batch.batchStream}</TableCell>
+                    <TableCell align="center">
+                      {batch.scholars.length}
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </Box>
       </Paper>
 
