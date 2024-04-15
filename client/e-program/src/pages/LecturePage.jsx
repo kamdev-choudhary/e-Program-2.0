@@ -24,6 +24,12 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import Dialog from "@mui/material/Dialog";
+import DialogTitle from "@mui/material/DialogTitle";
+import DialogContent from "@mui/material/DialogContent";
+import DialogActions from "@mui/material/DialogActions";
+import CloseIcon from "@mui/icons-material/Close";
+import Typography from "@mui/material/Typography";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -79,6 +85,7 @@ export default function LecturePage() {
   const [selectedSubject, setSelectedSubject] = useState("");
   const [user, setUser] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
+  const [showAddLecturePopup, setShowAddLecturePopup] = useState(false);
 
   const handleFilterTextChange = (e) => {
     setFilterText(e.target.value);
@@ -278,7 +285,11 @@ export default function LecturePage() {
               </FormControl>
             </Grid>
             <Grid item xs={12} lg={2}>
-              <Button variant="contained" sx={{ borderRadius: 10 }}>
+              <Button
+                variant="contained"
+                sx={{ borderRadius: 10 }}
+                onClick={() => setShowAddLecturePopup(true)}
+              >
                 Add Lecture
               </Button>
             </Grid>

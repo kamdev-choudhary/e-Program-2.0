@@ -23,6 +23,8 @@ import TextField from "@mui/material/TextField";
 import { useAuth } from "../components/Auth";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -45,6 +47,7 @@ export default function MaterialPage() {
   const [refresh, setRefresh] = useState(false);
   const [searchInput, setSearchInput] = useState("");
   const [academic, setAcademic] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetch(`${API_URL}/academic`)
@@ -113,7 +116,10 @@ export default function MaterialPage() {
         }
         return response.json();
       })
-      .then((data) => setBooks(data.books))
+      .then((data) => {
+        setBooks(data.books);
+        setIsLoading(false);
+      })
       .catch((error) => setError(error.message));
   }, [refresh]);
 
@@ -138,6 +144,19 @@ export default function MaterialPage() {
       .catch((error) => console.log("Error", error));
     setRefresh(!refresh);
   };
+
+  if (isLoading) {
+    return (
+      <>
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={true}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      </>
+    );
+  }
 
   return (
     <>

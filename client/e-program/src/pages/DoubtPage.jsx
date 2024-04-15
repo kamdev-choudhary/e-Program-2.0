@@ -174,7 +174,19 @@ export default function DoubtPage() {
               )
               .map((doubt, index) => (
                 <Box sx={{ marginBottom: 1 }} key={index}>
-                  <Paper sx={{ padding: 3 }} elevation={6}>
+                  <Paper
+                    onClick={() => {
+                      setDoubtDetails(true);
+                      setCurrDoubt(doubt);
+                    }}
+                    sx={{
+                      padding: 3,
+                      backgroundColor: "#ffe",
+                      backdropFilter: "blur(5px)",
+                      borderRadius: 5,
+                    }}
+                    elevation={6}
+                  >
                     <Box sx={{ flexGrow: 1 }}>
                       <Grid
                         container
@@ -186,13 +198,9 @@ export default function DoubtPage() {
                         </Grid>
                         <Grid item xs={4} textAlign="right">
                           <Typography>
-                            Post Time:{" "}
                             {new Date(
                               doubt.doubtPostedDate
                             ).toLocaleDateString()}{" "}
-                            {new Date(
-                              doubt.doubtPostedDate
-                            ).toLocaleTimeString()}
                           </Typography>
                         </Grid>
                       </Grid>
@@ -259,8 +267,16 @@ export default function DoubtPage() {
           <hr />
           <Typography variant="h5">Question</Typography>
           <hr />
-          <Paper elevation={6} sx={{ padding: 2, marginTop: 2 }}>
-            <Box border={1} sx={{ padding: 1, borderRadius: 2, marginTop: 2 }}>
+          <Paper
+            elevation={6}
+            sx={{
+              padding: 2,
+              backgroundColor: "#ffe",
+              backdropFilter: "blur(5px)",
+              borderRadius: 5,
+            }}
+          >
+            <Box border={1} sx={{ padding: 1, borderRadius: 2, marginTop: 1 }}>
               <Typography
                 sx={{
                   overflow: "hidden",
@@ -274,30 +290,47 @@ export default function DoubtPage() {
           </Paper>
 
           <hr />
-          <Typography variant="h5">Solutions</Typography>
-          <hr />
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "flex-end",
-              marginBottom: 2,
-              marginTop: 2,
-            }}
-          >
-            <Button
-              variant="contained"
-              color="success"
-              sx={{ borderRadius: 10 }}
-              onClick={() => {
-                setShowAskDoubtForm(true), setModelText("Post a Solution");
-              }}
-            >
-              Post a solution
-            </Button>
+          <Box>
+            <Grid container>
+              <Grid item xs={12} lg={6} md={6}>
+                <Typography variant="h5">Solutions</Typography>
+              </Grid>
+              <Grid item xs={12} lg={6} md={6}>
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                  }}
+                >
+                  <Button
+                    variant="contained"
+                    color="success"
+                    sx={{ borderRadius: 10 }}
+                    onClick={() => {
+                      setShowAskDoubtForm(true),
+                        setModelText("Post a Solution");
+                    }}
+                  >
+                    Post a solution
+                  </Button>
+                </Box>
+              </Grid>
+            </Grid>
           </Box>
+
+          <hr />
+
           {currDoubt.doubtSolutions &&
             currDoubt.doubtSolutions.map((solution, index) => (
-              <Paper elevation={6} sx={{ padding: 2, marginBottom: 2 }}>
+              <Paper
+                elevation={6}
+                sx={{
+                  padding: 3,
+                  backgroundColor: "#ffe",
+                  backdropFilter: "blur(5px)",
+                  borderRadius: 5,
+                }}
+              >
                 <>
                   <Box sx={{ flexGrow: 1 }}>
                     <Grid container spacing={2} justifyContent="space-between">
@@ -306,13 +339,9 @@ export default function DoubtPage() {
                       </Grid>
                       <Grid item xs={4} textAlign="right">
                         <Typography>
-                          Post Time:{" "}
                           {new Date(
                             solution.solutionPostedDate
-                          ).toLocaleDateString()}{" "}
-                          {new Date(
-                            solution.solutionPostedDate
-                          ).toLocaleTimeString()}
+                          ).toLocaleDateString()}
                         </Typography>
                       </Grid>
                     </Grid>
