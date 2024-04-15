@@ -11,12 +11,15 @@ import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import { useAuth } from "../components/Auth";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 export default function DoubtPage() {
   const { isLoggedIn, isAdmin, name, userId } = useAuth();
 
+  const [isLoading, setIsLoading] = useState(true);
   const [value, setValue] = useState("All");
   const [showAskDoubtForm, setShowAskDoubtForm] = useState(false);
   const [doubts, setDoubts] = useState([]);
@@ -31,7 +34,10 @@ export default function DoubtPage() {
   useEffect(() => {
     fetch(`${API_URL}/doubts`)
       .then((response) => response.json())
-      .then((data) => setDoubts(data.doubts))
+      .then((data) => {
+        setDoubts(data.doubts);
+        setIsLoading(false);
+      })
       .catch((error) => console.log("Error", error));
   }, [refresh]);
 
@@ -114,6 +120,19 @@ export default function DoubtPage() {
     p: 4,
   };
 
+  if (isLoading) {
+    return (
+      <>
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={true}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      </>
+    );
+  }
+
   return (
     <>
       {!doubtDetails && (
@@ -181,7 +200,7 @@ export default function DoubtPage() {
                     }}
                     sx={{
                       padding: 3,
-                      backgroundColor: "#ffe",
+                      backgroundColor: "EEEEEE",
                       backdropFilter: "blur(5px)",
                       borderRadius: 5,
                     }}
@@ -271,7 +290,7 @@ export default function DoubtPage() {
             elevation={6}
             sx={{
               padding: 2,
-              backgroundColor: "#ffe",
+              backgroundColor: "EEEEEE",
               backdropFilter: "blur(5px)",
               borderRadius: 5,
             }}
@@ -326,9 +345,10 @@ export default function DoubtPage() {
                 elevation={6}
                 sx={{
                   padding: 3,
-                  backgroundColor: "#ffe",
+                  backgroundColor: "EEEEEE",
                   backdropFilter: "blur(5px)",
                   borderRadius: 5,
+                  marginBottom: 2,
                 }}
               >
                 <>
