@@ -91,8 +91,6 @@ export default function StudentProfile({ user }) {
     } else {
       setStudent((prevStudent) => ({ ...prevStudent, [name]: value }));
     }
-
-    console.log(student);
   };
 
   const handleUpdateStudentData = () => {

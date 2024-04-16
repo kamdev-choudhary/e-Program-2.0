@@ -1,39 +1,44 @@
 import React, { useState, useEffect } from "react";
 import { Modal } from "react-bootstrap";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputAdornment from "@mui/material/InputAdornment";
-import SearchIcon from "@mui/icons-material/Search";
-import List from "@mui/material/List";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import TextField from "@mui/material/TextField";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemText from "@mui/material/ListItemText";
-import Grid from "@mui/material/Grid";
-import Dialog from "@mui/material/Dialog";
-import DialogActions from "@mui/material/DialogActions";
-import DialogContent from "@mui/material/DialogContent";
-import Typography from "@mui/material/Typography";
-import Chip from "@mui/material/Chip";
-import Stack from "@mui/material/Stack";
+import {
+  Backdrop,
+  CircularProgress,
+  Box,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  OutlinedInput,
+  InputAdornment,
+  List,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  TextField,
+  ListItemText,
+  ListItemButton,
+  Grid,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  Typography,
+  Chip,
+  Stack,
+  IconButton,
+} from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import IconButton from "@mui/material/IconButton";
+import SearchIcon from "@mui/icons-material/Search";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 export default function AcademicPage() {
   const [academic, setAcademic] = useState({});
+  const [isLoading, setIsLoading] = useState(true);
   const [newAcademics, setNewAcademic] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState("");
   const [selectedClass, setSelectedClass] = useState("");
@@ -55,6 +60,7 @@ export default function AcademicPage() {
       .then((response) => response.json())
       .then((data) => {
         setAcademic(data.academic[0]);
+        setIsLoading(false);
       });
   }, [refresh]);
 
@@ -247,6 +253,17 @@ export default function AcademicPage() {
   const handleShowAddBatch = () => {
     setShowAddBatchModal(!showAddBatchModal);
   };
+
+  if (isLoading) {
+    return (
+      <Backdrop
+        open={true}
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+    );
+  }
 
   return (
     <>
@@ -479,14 +496,12 @@ export default function AcademicPage() {
                   <Grid item xs={6}>
                     <Typography>Sub Topics</Typography>
                   </Grid>
-                  <Grid container justifyContent="flex-end" xs={5}>
-                    <Stack direction="row" spacing={1}>
-                      <Chip
-                        label="Add Subtopic"
-                        color="success"
-                        onClick={() => setShowAddSubtopicField(true)}
-                      />
-                    </Stack>
+                  <Grid item justifyContent="flex-end">
+                    <Chip
+                      label="Add Subtopic"
+                      color="success"
+                      onClick={() => setShowAddSubtopicField(true)}
+                    />
                   </Grid>
                 </Grid>
                 <List>
