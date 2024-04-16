@@ -23,6 +23,8 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
 import CreateExamTemplateOffline from "../components/CreateExamTemplateOffline";
+import Backdrop from "@mui/material/Backdrop";
+import CircularProgress from "@mui/material/CircularProgress";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -31,6 +33,7 @@ export default function ExamMaster() {
   const [examTemplates, setExamTemplates] = useState([]);
   const [error, setError] = useState("");
   const [tabValue, setTabValue] = useState("online");
+  const [isLoading, setIsLoading] = useState(true);
   const [refresh, setRefresh] = useState(false);
   const [currTemplate, setCurrTemplate] = useState([]);
   const [showExamTemplateModal, setShowExamTemplateModal] = useState(false);
@@ -84,9 +87,25 @@ export default function ExamMaster() {
         }
         return response.json();
       })
-      .then((data) => setExamTemplates(data.examTemplates))
+      .then((data) => {
+        setExamTemplates(data.examTemplates);
+        setIsLoading(false);
+      })
       .catch((error) => setError(error.message));
   }, []);
+
+  if (isLoading) {
+    return (
+      <>
+        <Backdrop
+          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+          open={true}
+        >
+          <CircularProgress color="inherit" />
+        </Backdrop>
+      </>
+    );
+  }
 
   return (
     <Box sx={{ width: "100%", typography: "body1" }}>

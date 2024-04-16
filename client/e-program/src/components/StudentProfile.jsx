@@ -1,85 +1,98 @@
-import Box from "@mui/material/Box";
-import Paper from "@mui/material/Paper";
-import { TextField } from "@mui/material";
-import { styled } from "@mui/material/styles";
-import { useEffect, useState } from "react";
-import Edit from "@mui/icons-material/Edit";
-import Button from "@mui/material/Button";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import Accordion from "@mui/material/Accordion";
-import AccordionSummary from "@mui/material/AccordionSummary";
-import AccordionDetails from "@mui/material/AccordionDetails";
-import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
-
+import { useState, useEffect } from "react";
 import { useAuth } from "../components/Auth";
+import {
+  Box,
+  Paper,
+  TextField,
+  styled,
+  Button,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  Grid,
+  Typography,
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
+  Backdrop,
+  CircularProgress,
+} from "@mui/material";
+import Edit from "@mui/icons-material/Edit";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
+const AccordionContainer = styled(Accordion)({
+  elevation: 6,
+});
+
+const AccordionDetailsContainer = styled(AccordionDetails)({
+  display: "flex",
+  flexDirection: "column",
+});
+
+const fetchData = async (url) => {
+  try {
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error("Network response was not ok");
+    }
+    return response.json();
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    throw error;
+  }
+};
+
 export default function StudentProfile({ user }) {
   const [student, setStudent] = useState({});
-  const [refresh, setRefresh] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState("");
   const [batches, setBatches] = useState([]);
-
-  console.log(user);
-
-  console.log(student);
-
-  useEffect(() => {
-    if (user) {
-      setStudent({ ...user });
-    }
-  }, []);
+  const [academic, setAcademic] = useState([]);
 
   const { userId } = useAuth();
 
-  // useEffect(() => {
-  //   fetch(`${API_URL}/auth/user/${userId}`)
-  //     .then((response) => {
-  //       if (!response.ok) {
-  //         throw new Error("Network response was not ok");
-  //       }
-  //       return response.json();
-  //     })
-  //     .then((data) => {
-  //       setStudent(data.user);
-  //     })
-  //     .catch((error) => setError(error.message));
-  //   fetch(`${API_URL}/batch`)
-  //     .then((response) => {
-  //       if (!response.ok) {
-  //         throw new Error("Network response was not ok");
-  //       }
-  //       return response.json();
-  //     })
-  //     .then((data) => {
-  //       setBatches(data.batches);
-  //     })
-  //     .catch((error) => setError(error.message));
-  // }, {});
+  useEffect(() => {
+    const fetchDataAsync = async () => {
+      try {
+        const [userData, batchData, academicData] = await Promise.all([
+          fetchData(`${API_URL}/auth/user/${userId}`),
+          fetchData(`${API_URL}/batch`),
+          fetchData(`${API_URL}/academic`),
+        ]);
+        setStudent(user || userData.user);
+        setBatches(batchData.batches);
+        setAcademic(academicData.academic[0]);
+        setIsLoading(false);
+      } catch (error) {
+        setError(error.message);
+        setIsLoading(false);
+      }
+    };
+
+    fetchDataAsync();
+  }, [userId, user]);
+
+  console.log(batches);
 
   const handleUserInputChange = (e) => {
-    if (e.target.name === "batchName") {
-      const selectedBatchName = e.target.value;
-      const selectedBatch = batches.find(
-        (batch) => batch.batchName === selectedBatchName
-      );
-
+    const { name, value } = e.target;
+    if (name === "batchName") {
+      const selectedBatch = batches.find((batch) => batch.batchName === value);
       if (selectedBatch) {
-        setStudent({
-          ...student,
+        setStudent((prevStudent) => ({
+          ...prevStudent,
           batchId: selectedBatch._id,
-          [e.target.name]: selectedBatchName,
-        });
+          [name]: value,
+        }));
       }
     } else {
-      setStudent({ ...student, [e.target.name]: e.target.value });
+      setStudent((prevStudent) => ({ ...prevStudent, [name]: value }));
     }
+
+    console.log(student);
   };
 
   const handleUpdateStudentData = () => {
@@ -93,12 +106,22 @@ export default function StudentProfile({ user }) {
       .then((response) => response.json())
       .then((data) => {
         console.log("Success:", data);
-        setRefresh(!refresh);
       })
       .catch((error) => {
         console.error("Error:", error);
       });
   };
+
+  if (isLoading) {
+    return (
+      <Backdrop
+        open={true}
+        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
+      >
+        <CircularProgress color="inherit" />
+      </Backdrop>
+    );
+  }
 
   return (
     <>
@@ -151,16 +174,27 @@ export default function StudentProfile({ user }) {
                   />
                 </Grid>
                 <Grid item xs={12} lg={6}>
-                  <TextField
-                    fullWidth
-                    id="student-class"
-                    label="Class"
-                    name="classes"
-                    size="small"
-                    value={student.classes}
-                    onChange={handleUserInputChange}
-                    InputLabelProps={{ shrink: true }}
-                  />
+                  <FormControl fullWidth size="small">
+                    <InputLabel id="batch-label">Class</InputLabel>
+                    <Select
+                      labelId="select-class-level"
+                      id="currentClass"
+                      name="currentClass"
+                      value={student.currentClass}
+                      onChange={handleUserInputChange}
+                      label="Class"
+                    >
+                      <em>
+                        <MenuItem value="">none</MenuItem>
+                      </em>
+                      {academic &&
+                        academic.classes.map((classes, index) => (
+                          <MenuItem key={index} value={classes}>
+                            {classes}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                  </FormControl>
                 </Grid>
                 <Grid item xs={12} lg={6}>
                   <FormControl fullWidth size="small">

@@ -46,13 +46,13 @@ module.exports.register = async (req, res) => {
       currentClass,
     });
 
-    const batch = await Batch.findOne({ batchClass: newUser.currentClass });
-    newUser.batchId = batch._id;
-    newUser.batchName = batch.batchName;
-    newUser.save();
+    // const batch = await Batch.findOne({ batchClass: newUser.currentClass });
+    // newUser.batchId = batch._id;
+    // newUser.batchName = batch.batchName;
+    // newUser.save();
 
-    batch.scholars.push(newUser);
-    batch.save();
+    // batch.scholars.push(newUser);
+    // batch.save();
 
     return res.status(200).json({
       msg: "Registration Successful",

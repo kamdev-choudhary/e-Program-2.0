@@ -172,6 +172,7 @@ function RegisterPage({ handleTogglePage, handleshowUserPage }) {
               value={user.name}
               fullWidth
               id="name"
+              size="small"
               name="name"
               onChange={handleChange}
               error={Boolean(errors.name)}
@@ -183,6 +184,7 @@ function RegisterPage({ handleTogglePage, handleshowUserPage }) {
               value={user.email}
               fullWidth
               id="email"
+              size="small"
               name="email"
               onChange={handleChange}
               error={Boolean(errors.email)}
@@ -195,6 +197,7 @@ function RegisterPage({ handleTogglePage, handleshowUserPage }) {
               value={user.mobile}
               fullWidth
               id="mobile"
+              size="small"
               name="mobile"
               onChange={handleChange}
               error={Boolean(errors.mobile)}
@@ -209,13 +212,14 @@ function RegisterPage({ handleTogglePage, handleshowUserPage }) {
               fullWidth
               value={user.password}
               id="password"
+              size="small"
               name="password"
               onChange={handleChange}
               error={Boolean(errors.password)}
               helperText={errors.password}
               style={{ marginBottom: "20px" }}
             />
-            <FormControl fullWidth>
+            <FormControl fullWidth size="small">
               <InputLabel id="demo-simple-select-label">Class</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
@@ -399,6 +403,7 @@ function LoginPage({ handleTogglePage, handleshowUserPage }) {
                 onChange={handleInput}
                 id="email"
                 name="email"
+                size="small"
                 label="Email Address"
                 error={Boolean(errors.email)}
                 helperText={errors.email}
@@ -411,6 +416,7 @@ function LoginPage({ handleTogglePage, handleshowUserPage }) {
                 fullWidth
                 label="Password"
                 type="password"
+                size="small"
                 value={user.password}
                 onChange={handleInput}
                 error={Boolean(errors.password)}
