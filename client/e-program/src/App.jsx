@@ -14,6 +14,9 @@ import AcademicPage from "./pages/AcademicPage";
 import StudentProfile from "./components/StudentProfile";
 import ExamMaster from "./pages/ExamMaster";
 import DoubtPage from "./pages/DoubtPage";
+import Box from "@mui/material/Box";
+import Grid from "@mui/material/Grid";
+import Sidebar from "./components/Sidebar";
 
 function App() {
   const { accountType } = useAuth();
@@ -21,51 +24,82 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Navbar />
-        <div className="container mt-3">
-          <Routes>
-            <Route
-              path="/"
-              element={accountType === "admin" ? <AdminPage /> : <HomePage />}
-            />
-            <Route path="/dashboard" element={<DashboardPage />} />
-            <Route path="/exams" element={<ExamPage />} />
-            <Route path="/lectures" element={<LecturePage />} />
-            <Route path="/materials" element={<MaterialPage />} />
-            <Route
-              path="/profile"
-              element={<ProtectedRoute Component={StudentProfile} />}
-            />
-            <Route
-              path="/question-bank"
-              element={<ProtectedRoute Component={QuestionBankPage} />}
-            />
-            <Route
-              path="/admin/*"
-              element={<ProtectedRoute Component={AdminPage} isAdminRequired />}
-            />
-            <Route
-              path="/users"
-              element={
-                <ProtectedRoute Component={UserMaster} isAdminRequired />
-              }
-            />
-            <Route
-              path="/academic"
-              element={
-                <ProtectedRoute Component={AcademicPage} isAdminRequired />
-              }
-            />
-            <Route
-              path="/examtemplate"
-              element={
-                <ProtectedRoute Component={ExamMaster} isAdminRequired />
-              }
-            />
-            <Route path="/doubts" element={<DoubtPage />} />
-            <Route path="*" element={<ErrorPage />} />
-          </Routes>
-        </div>
+        <Grid container>
+          <Grid item xs={12} sm={2}>
+            <Box
+              sx={{
+                backgroundColor: "red",
+                height: "100vh",
+                overflowY: "auto",
+                display: { xs: "none", sm: "block" },
+              }}
+            >
+              <Sidebar />
+            </Box>
+          </Grid>
+          <Grid item xs={12} sm={10}>
+            <Box
+              sx={{
+                backgroundColor: "#f0f0f0",
+                height: "100vh",
+                overflowY: "auto",
+              }}
+            >
+              <Navbar />
+              <Box sx={{ padding: 2, overflowY: "auto" }}>
+                <Routes>
+                  <Route
+                    path="/"
+                    element={
+                      accountType === "admin" ? <AdminPage /> : <HomePage />
+                    }
+                  />
+                  <Route path="/dashboard" element={<DashboardPage />} />
+                  <Route path="/exams" element={<ExamPage />} />
+                  <Route path="/lectures" element={<LecturePage />} />
+                  <Route path="/materials" element={<MaterialPage />} />
+                  <Route
+                    path="/profile"
+                    element={<ProtectedRoute Component={StudentProfile} />}
+                  />
+                  <Route
+                    path="/question-bank"
+                    element={<ProtectedRoute Component={QuestionBankPage} />}
+                  />
+                  <Route
+                    path="/admin/*"
+                    element={
+                      <ProtectedRoute Component={AdminPage} isAdminRequired />
+                    }
+                  />
+                  <Route
+                    path="/users"
+                    element={
+                      <ProtectedRoute Component={UserMaster} isAdminRequired />
+                    }
+                  />
+                  <Route
+                    path="/academic"
+                    element={
+                      <ProtectedRoute
+                        Component={AcademicPage}
+                        isAdminRequired
+                      />
+                    }
+                  />
+                  <Route
+                    path="/examtemplate"
+                    element={
+                      <ProtectedRoute Component={ExamMaster} isAdminRequired />
+                    }
+                  />
+                  <Route path="/doubts" element={<DoubtPage />} />
+                  <Route path="*" element={<ErrorPage />} />
+                </Routes>
+              </Box>
+            </Box>
+          </Grid>
+        </Grid>
       </BrowserRouter>
     </AuthProvider>
   );

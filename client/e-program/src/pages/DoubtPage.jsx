@@ -202,7 +202,7 @@ export default function DoubtPage() {
                       padding: 3,
                       backgroundColor: "EEEEEE",
                       backdropFilter: "blur(5px)",
-                      borderRadius: 5,
+                      borderRadius: 1,
                     }}
                     elevation={6}
                   >
@@ -292,7 +292,7 @@ export default function DoubtPage() {
               padding: 2,
               backgroundColor: "EEEEEE",
               backdropFilter: "blur(5px)",
-              borderRadius: 5,
+              borderRadius: 1,
             }}
           >
             <Box border={1} sx={{ padding: 1, borderRadius: 2, marginTop: 1 }}>
@@ -347,7 +347,7 @@ export default function DoubtPage() {
                   padding: 3,
                   backgroundColor: "EEEEEE",
                   backdropFilter: "blur(5px)",
-                  borderRadius: 5,
+                  borderRadius: 1,
                   marginBottom: 2,
                 }}
               >

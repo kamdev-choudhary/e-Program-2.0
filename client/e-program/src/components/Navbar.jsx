@@ -26,11 +26,11 @@ import QuizIcon from "@mui/icons-material/Quiz";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
 import OndemandVideoRoundedIcon from "@mui/icons-material/OndemandVideoRounded";
 import DescriptionIcon from "@mui/icons-material/Description";
+import SchoolIcon from "@mui/icons-material/School";
 import List from "@mui/material/List";
 import Divider from "@mui/material/Divider";
 import React, { useEffect } from "react";
 import AuthPage from "./AuthPage";
-import SchoolIcon from "@mui/icons-material/School";
 
 function Navbar() {
   const { isLoggedIn, logoutUser, isAdmin, name } = useAuth();
@@ -81,7 +81,6 @@ function Navbar() {
       sx={{
         width: 250,
         backdropFilter: "blur(5px)",
-        backgroundColor: "rgba(255, 255, 255, 0.5)",
         borderRadius: "10px",
       }}
     >
@@ -222,16 +221,17 @@ function Navbar() {
           flexGrow: 2,
           position: "sticky",
           top: 0,
+          backgroundColor: "#987458",
           zIndex: 10,
         }}
       >
-        <AppBar position="static">
+        <AppBar position="static" sx={{ backgroundColor: "#fafafa" }}>
           <Toolbar>
             <IconButton
               onClick={toggleDrawer(true)}
               size="large"
               edge="start"
-              color="inherit"
+              color="black"
               aria-label="menu"
               sx={{ mr: 1 }}
             >
@@ -239,8 +239,8 @@ function Navbar() {
             </IconButton>
 
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              <NavLink to="/" className="text-white text-decoration-none">
-                Dakshana
+              <NavLink to="/" className=" text-decoration-none">
+                E-ClassRoom
               </NavLink>
             </Typography>
             {isLoggedIn ? (
@@ -251,7 +251,7 @@ function Navbar() {
                   aria-controls="menu-appbar"
                   aria-haspopup="true"
                   onClick={handleMenu}
-                  color="inherit"
+                  color="black"
                 >
                   Welcome, {name}
                   <AccountCircle />
@@ -277,7 +277,6 @@ function Navbar() {
                   >
                     <MenuItem onClick={handleClose}>Profile</MenuItem>
                   </NavLink>
-                  <MenuItem onClick={handleClose}>My account</MenuItem>
                   <MenuItem onClick={handleLogoutUser}>Logout</MenuItem>
                 </Menu>
               </div>
