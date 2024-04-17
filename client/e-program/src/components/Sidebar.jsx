@@ -20,11 +20,18 @@ import { useAuth } from "./Auth";
 import Typography from "@mui/material/Typography";
 
 export default function Sidebar() {
-  const { isLoggedIn, isAdmin, accountType, name } = useAuth();
+  const { isLoggedIn, isAdmin, accountType, name, logoutUser } = useAuth();
 
   return (
     <>
-      <Box sx={{ backgroundColor: "#f5f5f5", padding: 2, height: "100%" }}>
+      <Box
+        sx={{
+          backgroundColor: "#f5f5f5",
+          padding: 2,
+          height: "100%",
+          minWidth: 250,
+        }}
+      >
         <Box
           sx={{
             margin: 3,
@@ -48,17 +55,24 @@ export default function Sidebar() {
           <>
             <Box
               sx={{
-                margin: 3,
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
               }}
             >
-              <Typography>{`Welcome, ${name}`}</Typography>
+              <Typography>{`Welcome,`}</Typography>
+            </Box>
+            <Box
+              sx={{
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+              }}
+            >
+              <Typography>{`${name}`}</Typography>
             </Box>
           </>
         )}
-
         <Box>
           <List
             sx={{ width: "100%", maxWidth: 360 }}
@@ -136,17 +150,6 @@ export default function Sidebar() {
                 <ListItemText primary="Materials" />
               </ListItemButton>
             </NavLink>
-            <NavLink
-              to="/doubts"
-              style={{ textDecoration: "none", color: "#000" }}
-            >
-              <ListItemButton>
-                <ListItemIcon>
-                  <ForumIcon />
-                </ListItemIcon>
-                <ListItemText primary="Doubts" />
-              </ListItemButton>
-            </NavLink>
             {isLoggedIn && accountType === "student" && (
               <>
                 <NavLink
@@ -162,6 +165,17 @@ export default function Sidebar() {
                 </NavLink>
               </>
             )}
+            <NavLink
+              to="/doubts"
+              style={{ textDecoration: "none", color: "#000" }}
+            >
+              <ListItemButton>
+                <ListItemIcon>
+                  <ForumIcon />
+                </ListItemIcon>
+                <ListItemText primary="Doubts" />
+              </ListItemButton>
+            </NavLink>
           </List>
         </Box>
       </Box>

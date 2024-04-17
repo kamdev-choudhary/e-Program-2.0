@@ -24,12 +24,6 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
-import Dialog from "@mui/material/Dialog";
-import DialogTitle from "@mui/material/DialogTitle";
-import DialogContent from "@mui/material/DialogContent";
-import DialogActions from "@mui/material/DialogActions";
-import CloseIcon from "@mui/icons-material/Close";
-import Typography from "@mui/material/Typography";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -99,22 +93,7 @@ export default function LecturePage() {
         setIsLoading(false);
       })
       .catch((error) => console.log(error));
-  }, [isLoading]);
-
-  useEffect(() => {
-    if (isLoggedIn) {
-      fetch(`${API_URL}/auth/user/${userId}`)
-        .then((response) => response.json())
-        .then((data) => {
-          setUser((prevUser) => ({ ...prevUser, ...data.user }));
-          if (data.user.currentClass !== "") {
-            setSelectedClass(data.user.currentClass);
-            filteredLecture();
-          }
-        })
-        .catch((error) => console.log(error));
-    }
-  }, [isLoggedIn]);
+  }, []);
 
   useEffect(() => {
     if (isLoggedIn) {
@@ -148,30 +127,19 @@ export default function LecturePage() {
     }
   }, [selectedClass]);
 
-  // useEffect(() => {
-  //   if (selectedClass === "") {
-  //     fetch(`${API_URL}/lectures`)
-  //       .then((response) => {
-  //         if (!response.ok) {
-  //           throw new Error("Network response was not ok");
-  //         }
-  //         return response.json();
-  //       })
-  //       .then((data) => {
-  //         const sortedLectures = data.lectures.sort((a, b) => {
-  //           if (a.class !== b.class) {
-  //             return a.class.localeCompare(b.class);
-  //           }
-  //           if (a.subject !== b.subject) {
-  //             return a.subject.localeCompare(b.subject);
-  //           }
-  //           return a.lectureNumber - b.lectureNumber;
-  //         });
-  //         setLectures(sortedLectures);
-  //       })
-  //       .catch((error) => setError(error.message));
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (isLoggedIn) {
+      fetch(`${API_URL}/auth/user/${userId}`)
+        .then((response) => response.json())
+        .then((data) => {
+          setUser((prevUser) => ({ ...prevUser, ...data.user }));
+          if (data.user.currentClass !== "") {
+            setSelectedClass(data.user.currentClass);
+          }
+        })
+        .catch((error) => console.log(error));
+    }
+  }, [isLoggedIn]);
 
   const filteredLecture = () => {
     return lectures.filter(

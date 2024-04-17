@@ -39,8 +39,6 @@ export default function OnlineExams({ handleExamStart }) {
     textAlign: "left",
   }));
 
-  console.log("studentBatch:", studentBatch);
-
   return (
     <Stack spacing={1} direction="row">
       {studentBatch &&

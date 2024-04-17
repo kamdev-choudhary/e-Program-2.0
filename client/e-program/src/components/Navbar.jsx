@@ -245,40 +245,9 @@ function Navbar() {
             </Typography>
             {isLoggedIn ? (
               <div>
-                <IconButton
-                  size="small"
-                  aria-label="account of current user"
-                  aria-controls="menu-appbar"
-                  aria-haspopup="true"
-                  onClick={handleMenu}
-                  color="black"
-                >
-                  Welcome, {name}
-                  <AccountCircle />
-                </IconButton>
-                <Menu
-                  id="menu-appbar"
-                  anchorEl={anchorEl}
-                  anchorOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  keepMounted
-                  transformOrigin={{
-                    vertical: "top",
-                    horizontal: "right",
-                  }}
-                  open={Boolean(anchorEl)}
-                  onClose={handleClose}
-                >
-                  <NavLink
-                    to="/profile"
-                    style={{ textDecoration: "none", color: "#000" }}
-                  >
-                    <MenuItem onClick={handleClose}>Profile</MenuItem>
-                  </NavLink>
-                  <MenuItem onClick={handleLogoutUser}>Logout</MenuItem>
-                </Menu>
+                <MenuItem sx={{ color: "#000" }} onClick={handleLogoutUser}>
+                  Logout
+                </MenuItem>
               </div>
             ) : (
               <Button
@@ -295,14 +264,9 @@ function Navbar() {
           </Toolbar>
         </AppBar>
       </Box>
-      <Drawer
-        open={open}
-        onClose={toggleDrawer(false)}
-        sx={{ backdropFilter: "blur(10px)" }}
-      >
+      <Drawer open={open} onClose={toggleDrawer(false)}>
         {DrawerList}
       </Drawer>
-
       <Modal open={showUserPage} onClose={handleshowUserPage}>
         <Box sx={style}>
           <AuthPage handleshowUserPage={handleshowUserPage} />

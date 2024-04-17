@@ -194,13 +194,9 @@ export default function DoubtPage() {
               .map((doubt, index) => (
                 <Box sx={{ marginBottom: 1 }} key={index}>
                   <Paper
-                    onClick={() => {
-                      setDoubtDetails(true);
-                      setCurrDoubt(doubt);
-                    }}
                     sx={{
                       padding: 3,
-                      backgroundColor: "EEEEEE",
+                      backgroundColor: "#f5f5f5",
                       backdropFilter: "blur(5px)",
                       borderRadius: 1,
                     }}
@@ -290,7 +286,7 @@ export default function DoubtPage() {
             elevation={6}
             sx={{
               padding: 2,
-              backgroundColor: "EEEEEE",
+              backgroundColor: "#f1f1f1",
               backdropFilter: "blur(5px)",
               borderRadius: 1,
             }}
@@ -345,7 +341,7 @@ export default function DoubtPage() {
                 elevation={6}
                 sx={{
                   padding: 3,
-                  backgroundColor: "EEEEEE",
+                  backgroundColor: "#f1f1f1",
                   backdropFilter: "blur(5px)",
                   borderRadius: 1,
                   marginBottom: 2,
