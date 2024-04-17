@@ -24,6 +24,9 @@ import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
+import Modal from "@mui/material/Modal";
+import { Typography } from "@mui/material";
+import TextField from "@mui/material/TextField";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -66,7 +69,7 @@ function CollapsibleTable({ lectures, playLecture }) {
 }
 
 export default function LecturePage() {
-  const { isAdmin, isLoggedIn, userId } = useAuth();
+  const { isAdmin, isLoggedIn, userId, accountType } = useAuth();
 
   const [lectures, setLectures] = useState([]);
   const [error, setError] = useState(null);
@@ -80,6 +83,14 @@ export default function LecturePage() {
   const [user, setUser] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddLecturePopup, setShowAddLecturePopup] = useState(false);
+  const [newLecture, setNewLecture] = useState({
+    class: "",
+    subject: "",
+    chapterName: "",
+    lectureNumber: 3,
+    videoId: "",
+  });
+  const [filteredTopics, setFilteredTopics] = useState([]);
 
   const handleFilterTextChange = (e) => {
     setFilterText(e.target.value);
@@ -96,7 +107,7 @@ export default function LecturePage() {
   }, []);
 
   useEffect(() => {
-    if (isLoggedIn) {
+    if (isLoggedIn && accountType === "student") {
       fetch(`${API_URL}/lectures/${selectedClass}`)
         .then((response) => response.json())
         .then((data) => {
@@ -128,7 +139,7 @@ export default function LecturePage() {
   }, [selectedClass]);
 
   useEffect(() => {
-    if (isLoggedIn) {
+    if (isLoggedIn && accountType === "student") {
       fetch(`${API_URL}/auth/user/${userId}`)
         .then((response) => response.json())
         .then((data) => {
@@ -174,6 +185,37 @@ export default function LecturePage() {
     setShowVideoPopup(true);
   };
 
+  const handleAddNewLecture = () => {
+    console.log("haha");
+  };
+
+  useEffect(() => {
+    if (newLecture.class && newLecture.subject && academic.subjects) {
+      const selectedSubjectData = academic.subjects.find(
+        (subject) => subject.name === newLecture.subject
+      );
+
+      if (selectedSubjectData) {
+        const filteredTopicss = selectedSubjectData.topics.filter(
+          (topic) => topic.className === newLecture.class
+        );
+        setFilteredTopics(filteredTopicss);
+      }
+    }
+  }, [newLecture.classes, newLecture.subject, academic.subjects]);
+
+  const addLectureStyle = {
+    position: "absolute",
+    top: "50%",
+    left: "50%",
+    transform: "translate(-50%, -50%)",
+    width: 400,
+    bgcolor: "background.paper",
+    boxShadow: 24,
+    borderRadius: 2,
+    p: 4,
+  };
+
   if (isLoading) {
     return (
       <>
@@ -187,7 +229,7 @@ export default function LecturePage() {
     );
   }
 
-  if (isAdmin) {
+  if (academic && isAdmin) {
     const handleDeleteLecture = (id) => {
       console.log(id);
     };
@@ -263,6 +305,142 @@ export default function LecturePage() {
             </Grid>
           </Grid>
         </Box>
+        <div>
+          <Modal
+            open={showAddLecturePopup}
+            onClose={() => setShowAddLecturePopup(false)}
+            aria-labelledby="modal-modal-title"
+            aria-describedby="modal-modal-description"
+          >
+            <Box sx={addLectureStyle}>
+              <Grid container spacing={2}>
+                <Grid item xs={12} md={12} lg={12}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel id="demo-simple-select-label">Class</InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="class"
+                      name="class"
+                      label="Class"
+                      value={selectedClass}
+                      onChange={(e) =>
+                        setNewLecture({ ...newLecture, class: e.target.value })
+                      }
+                    >
+                      {academic &&
+                        academic.classes &&
+                        academic.classes.map((classes, index) => (
+                          <MenuItem key={index} value={classes}>
+                            {"Class : "}
+                            {classes}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} md={12} lg={12}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel id="demo-simple-select-label">
+                      Subject
+                    </InputLabel>
+                    <Select
+                      labelId="demo-simple-select-label"
+                      id="demo-simple-select"
+                      name="subject"
+                      label="Subject"
+                      value={newLecture.subject}
+                      onChange={(e) =>
+                        setNewLecture({
+                          ...newLecture,
+                          subject: e.target.value,
+                        })
+                      }
+                    >
+                      {academic &&
+                        academic.subjects &&
+                        academic.subjects.map((subject, index) => (
+                          <MenuItem key={index} value={subject.name}>
+                            {subject.name}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} md={12} lg={12}>
+                  <FormControl fullWidth size="small">
+                    <InputLabel id="demo-simple-select-label">Topic</InputLabel>
+                    <Select
+                      labelId="Topic Selection"
+                      id="selectTopic"
+                      name="chapterName"
+                      label="Chapter Name"
+                      value={newLecture.chapterName}
+                      onChange={(e) =>
+                        setNewLecture({
+                          ...newLecture,
+                          chapterName: e.target.value,
+                        })
+                      }
+                    >
+                      {filteredTopics &&
+                        filteredTopics.map((topics, index) => (
+                          <MenuItem key={index} value={topics.name}>
+                            {topics.name}
+                          </MenuItem>
+                        ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+                <Grid item xs={12} md={12} lg={12}>
+                  <TextField
+                    id="outlined-basic"
+                    label="Lecture Number"
+                    fullWidth
+                    size="small"
+                    variant="outlined"
+                    value={newLecture.lectureNumber}
+                    onChange={(e) =>
+                      setNewLecture({
+                        ...newLecture,
+                        lectureNumber: e.target.value,
+                      })
+                    }
+                  />
+                </Grid>
+                <Grid item xs={12} md={12} lg={12}>
+                  <TextField
+                    id="outlined-basic"
+                    label="Video ID"
+                    fullWidth
+                    size="small"
+                    variant="outlined"
+                    value={newLecture.videoId}
+                    onChange={(e) =>
+                      setNewLecture({
+                        ...newLecture,
+                        videoId: e.target.value,
+                      })
+                    }
+                  />
+                </Grid>
+                <Grid
+                  item
+                  container
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Button
+                    onClick={handleAddNewLecture}
+                    variant="contained"
+                    color="success"
+                  >
+                    Save Lecture
+                  </Button>
+                </Grid>
+              </Grid>
+            </Box>
+          </Modal>
+        </div>
         <Box sx={{ marginTop: 2 }}>
           <TableContainer sx={{ maxHeight: 550 }}>
             <Table stickyHeader aria-label="sticky table">
@@ -297,7 +475,6 @@ export default function LecturePage() {
                         <Stack direction="row" spacing={1}>
                           <IconButton>
                             <DeleteIcon
-                              sx={{ color: "#d33" }}
                               onClick={() => handleDeleteLecture(lecture._id)}
                             />
                           </IconButton>

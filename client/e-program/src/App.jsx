@@ -28,9 +28,9 @@ function App() {
           <Grid item xs={12} sm={2}>
             <Box
               sx={{
-                backgroundColor: "red",
                 height: "100vh",
                 overflowY: "auto",
+                overflowX: "hidden",
                 display: { xs: "none", sm: "block" },
               }}
             >
