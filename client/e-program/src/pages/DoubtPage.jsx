@@ -12,6 +12,7 @@ import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
 import { useAuth } from "../components/Auth";
 import Backdrop from "@mui/material/Backdrop";
+import Divider from "@mui/material/Divider";
 import CircularProgress from "@mui/material/CircularProgress";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
@@ -280,8 +281,6 @@ export default function DoubtPage() {
             Back
           </Button>
           <hr />
-          <Typography variant="h5">Question</Typography>
-          <hr />
           <Paper
             elevation={6}
             sx={{
@@ -291,26 +290,25 @@ export default function DoubtPage() {
               borderRadius: 1,
             }}
           >
-            <Box border={1} sx={{ padding: 1, borderRadius: 2, marginTop: 1 }}>
-              <Typography
-                sx={{
-                  overflow: "hidden",
-                  maxWidth: "100%",
-                }}
-                dangerouslySetInnerHTML={{
-                  __html: currDoubt.doubtQuestion,
-                }}
-              />
-            </Box>
-          </Paper>
-
-          <hr />
-          <Box>
-            <Grid container>
-              <Grid item xs={12} lg={6} md={6}>
+            <Grid container spacing={1}>
+              <Grid item sx={12} md={12} lg={12}>
+                <Typography variant="h5">Question</Typography>
+              </Grid>
+              <Grid item sx={12} md={12} lg={12}>
+                <Typography
+                  sx={{
+                    overflow: "hidden",
+                    maxWidth: "100%",
+                  }}
+                  dangerouslySetInnerHTML={{
+                    __html: currDoubt.doubtQuestion,
+                  }}
+                />
+              </Grid>
+              <Grid item xs={6} lg={6} md={6}>
                 <Typography variant="h5">Solutions</Typography>
               </Grid>
-              <Grid item xs={12} lg={6} md={6}>
+              <Grid item xs={6} lg={6} md={6}>
                 <Box
                   sx={{
                     display: "flex",
@@ -330,56 +328,64 @@ export default function DoubtPage() {
                   </Button>
                 </Box>
               </Grid>
-            </Grid>
-          </Box>
-
-          <hr />
-
-          {currDoubt.doubtSolutions &&
-            currDoubt.doubtSolutions.map((solution, index) => (
-              <Paper
-                elevation={6}
-                sx={{
-                  padding: 3,
-                  backgroundColor: "#f1f1f1",
-                  backdropFilter: "blur(5px)",
-                  borderRadius: 1,
-                  marginBottom: 2,
-                }}
-              >
-                <>
-                  <Box sx={{ flexGrow: 1 }}>
-                    <Grid container spacing={2} justifyContent="space-between">
-                      <Grid item xs={8}>
-                        <Typography>Posted By: {solution.postedBy}</Typography>
-                      </Grid>
-                      <Grid item xs={4} textAlign="right">
-                        <Typography>
-                          {new Date(
-                            solution.solutionPostedDate
-                          ).toLocaleDateString()}
-                        </Typography>
-                      </Grid>
-                    </Grid>
-                  </Box>
-                  <Box
-                    border={1}
-                    sx={{ padding: 1, borderRadius: 2, marginTop: 2 }}
-                    key={index}
-                  >
-                    <Typography
+              <Grid item xs={12} md={12} lg={12}>
+                {currDoubt.doubtSolutions &&
+                  currDoubt.doubtSolutions.map((solution, index) => (
+                    <Paper
+                      elevation={6}
                       sx={{
-                        overflow: "hidden",
-                        maxWidth: "100%",
+                        padding: 3,
+                        borderRadius: 1,
+                        marginBottom: 2,
+                        backgroundColor: "#f0f0f0",
                       }}
-                      dangerouslySetInnerHTML={{
-                        __html: solution.solution,
-                      }}
-                    />
-                  </Box>
-                </>
-              </Paper>
-            ))}
+                    >
+                      <>
+                        <Box sx={{ flexGrow: 1 }}>
+                          <Grid
+                            container
+                            spacing={2}
+                            justifyContent="space-between"
+                          >
+                            <Grid item xs={8}>
+                              <Typography>
+                                Posted By: {solution.postedBy}
+                              </Typography>
+                            </Grid>
+                            <Divider />
+                            <Grid item xs={4} textAlign="right">
+                              <Typography>
+                                {new Date(
+                                  solution.solutionPostedDate
+                                ).toLocaleDateString()}
+                              </Typography>
+                            </Grid>
+                          </Grid>
+                        </Box>
+                        <Box
+                          sx={{
+                            padding: 1,
+                            borderRadius: 2,
+                            backgroundColor: "#f0f0f0",
+                          }}
+                          key={index}
+                        >
+                          <Typography
+                            sx={{
+                              overflow: "hidden",
+                              maxWidth: "100%",
+                            }}
+                            dangerouslySetInnerHTML={{
+                              __html: solution.solution,
+                            }}
+                          />
+                        </Box>
+                      </>
+                    </Paper>
+                  ))}
+              </Grid>
+            </Grid>
+          </Paper>
         </>
       )}
       <Modal

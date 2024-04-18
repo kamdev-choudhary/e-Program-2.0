@@ -87,7 +87,7 @@ export default function LecturePage() {
     class: "",
     subject: "",
     chapterName: "",
-    lectureNumber: 3,
+    lectureNumber: "",
     videoId: "",
   });
   const [filteredTopics, setFilteredTopics] = useState([]);
@@ -442,17 +442,17 @@ export default function LecturePage() {
           </Modal>
         </div>
         <Box sx={{ marginTop: 2 }}>
-          <TableContainer sx={{ maxHeight: 550 }}>
+          <TableContainer sx={{ maxHeight: "80vh" }}>
             <Table stickyHeader aria-label="sticky table">
               <TableHead>
                 <TableRow>
                   <TableCell>SN</TableCell>
-                  <TableCell align="middle">Class</TableCell>
-                  <TableCell align="middle">Subject</TableCell>
-                  <TableCell align="middle">Chapter Name</TableCell>
-                  <TableCell align="middle">Lecture #</TableCell>
-                  <TableCell align="middle">Video ID</TableCell>
-                  <TableCell align="middle">Edit or Delete</TableCell>
+                  <TableCell align="center">Class</TableCell>
+                  <TableCell align="center">Subject</TableCell>
+                  <TableCell align="center">Chapter Name</TableCell>
+                  <TableCell align="center">Lecture #</TableCell>
+                  <TableCell align="center">Video ID</TableCell>
+                  <TableCell align="center">Edit or Delete</TableCell>
                 </TableRow>
               </TableHead>
               <TableBody
@@ -462,21 +462,21 @@ export default function LecturePage() {
                   filteredLectures.map((lecture, index) => (
                     <TableRow key={index}>
                       <TableCell>{index + 1}</TableCell>
-                      <TableCell align="middle">{lecture.class}</TableCell>
-                      <TableCell align="middle">{lecture.subject}</TableCell>
-                      <TableCell align="middle">
+                      <TableCell align="center">{lecture.class}</TableCell>
+                      <TableCell align="center">{lecture.subject}</TableCell>
+                      <TableCell align="center">
                         {lecture.chapterName}
                       </TableCell>
-                      <TableCell align="middle">
+                      <TableCell align="center">
                         {lecture.lectureNumber}
                       </TableCell>
-                      <TableCell align="middle">{lecture.videoId}</TableCell>
-                      <TableCell align="middle">
+                      <TableCell align="center">{lecture.videoId}</TableCell>
+                      <TableCell align="center">
                         <Stack direction="row" spacing={1}>
-                          <IconButton>
-                            <DeleteIcon
-                              onClick={() => handleDeleteLecture(lecture._id)}
-                            />
+                          <IconButton
+                            onClick={() => handleDeleteLecture(lecture._id)}
+                          >
+                            <DeleteIcon />
                           </IconButton>
                           <IconButton>
                             <EditIcon />

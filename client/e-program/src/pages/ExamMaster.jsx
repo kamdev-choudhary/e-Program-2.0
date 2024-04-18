@@ -118,95 +118,95 @@ export default function ExamMaster() {
         </Box>
         <TabPanel value="online">
           <>
-            <Box sx={{ padding: 2 }}>
-              <Grid container spacing={2}>
-                <Grid item xs={12} lg={9}>
-                  <FormControl fullWidth size="small">
-                    <OutlinedInput
-                      sx={{ borderRadius: 10 }}
-                      onChange={(e) => setSearchInput(e.target.value)}
-                      startAdornment={
-                        <InputAdornment position="start">
-                          Search <SearchIcon />
-                        </InputAdornment>
-                      }
-                    />
-                  </FormControl>
-                </Grid>
-                <Grid item xs={12} lg={3}>
-                  <Button
-                    variant="contained"
+            <Grid container spacing={2}>
+              <Grid item sx={6} md={6} lg={8}>
+                <FormControl fullWidth size="small">
+                  <OutlinedInput
                     sx={{ borderRadius: 10 }}
-                    onClick={handleShowAddTemplate}
-                  >
-                    Create New Template
-                  </Button>
-                </Grid>
+                    onChange={(e) => setSearchInput(e.target.value)}
+                    startAdornment={
+                      <InputAdornment position="start">
+                        Search <SearchIcon />
+                      </InputAdornment>
+                    }
+                  />
+                </FormControl>
               </Grid>
-            </Box>
-            <Box sx={{ padding: 2 }}>
-              <TableContainer component={Paper}>
-                <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                  <TableHead className="bg bg-success ">
-                    <TableRow>
-                      <TableCell align="center" className="text-white">
-                        Exam ID
-                      </TableCell>
-                      <TableCell align="center" className="text-white">
-                        Template Name
-                      </TableCell>
-                      <TableCell align="center" className="text-white">
-                        Created At
-                      </TableCell>
-                      <TableCell align="center" className="text-white">
-                        Pattern
-                      </TableCell>
-                      <TableCell align="center" className="text-white">
-                        Details
-                      </TableCell>
-                      <TableCell align="center" className="text-white">
-                        Delete
-                      </TableCell>
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {examTemplates.map((examtemplate, index) => (
-                      <TableRow
-                        key={examtemplate._id}
-                        sx={{
-                          "&:last-child td, &:last-child th": { border: 0 },
-                        }}
-                      >
-                        <TableCell align="center">
-                          {examtemplate.examId}
+              <Grid item sx={6} md={6} lg={4}>
+                <Button
+                  variant="contained"
+                  sx={{ borderRadius: 10 }}
+                  onClick={handleShowAddTemplate}
+                >
+                  Create New Template
+                </Button>
+              </Grid>
+              <Grid item></Grid>
+              <Grid item sx={12} lg={12} md={12}>
+                <TableContainer component={Paper}>
+                  <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead className="bg bg-success ">
+                      <TableRow>
+                        <TableCell align="center" className="text-white">
+                          Exam ID
                         </TableCell>
-                        <TableCell align="center">
-                          {examtemplate.examName}
+                        <TableCell align="center" className="text-white">
+                          Template Name
                         </TableCell>
-                        <TableCell align="center">
-                          {examtemplate.createdAt}
+                        <TableCell align="center" className="text-white">
+                          Created At
                         </TableCell>
-                        <TableCell align="center">
-                          {examtemplate.examPattern}
+                        <TableCell align="center" className="text-white">
+                          Pattern
                         </TableCell>
-                        <TableCell align="center">
-                          <Button
-                            size="sm"
-                            onClick={() => handleShowExamTemplate(examtemplate)}
-                          >
-                            View
-                          </Button>
+                        <TableCell align="center" className="text-white">
+                          Details
                         </TableCell>
-                        <TableCell align="center">
-                          <DeleteRoundedIcon />
+                        <TableCell align="center" className="text-white">
+                          Delete
                         </TableCell>
                       </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            </Box>
-
+                    </TableHead>
+                    <TableBody>
+                      {examTemplates.map((examtemplate, index) => (
+                        <TableRow
+                          key={examtemplate._id}
+                          sx={{
+                            "&:last-child td, &:last-child th": { border: 0 },
+                          }}
+                        >
+                          <TableCell align="center">
+                            {examtemplate.examId}
+                          </TableCell>
+                          <TableCell align="center">
+                            {examtemplate.examName}
+                          </TableCell>
+                          <TableCell align="center">
+                            {examtemplate.createdAt}
+                          </TableCell>
+                          <TableCell align="center">
+                            {examtemplate.examPattern}
+                          </TableCell>
+                          <TableCell align="center">
+                            <Button
+                              size="sm"
+                              onClick={() =>
+                                handleShowExamTemplate(examtemplate)
+                              }
+                            >
+                              View
+                            </Button>
+                          </TableCell>
+                          <TableCell align="center">
+                            <DeleteRoundedIcon />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Grid>
+            </Grid>
             <Modal
               show={showAddExamTemplate}
               onHide={handleShowAddTemplate}
@@ -244,9 +244,9 @@ export default function ExamMaster() {
           </>
         </TabPanel>
         <TabPanel value="offline">
-          <Box sx={{ padding: 2 }}>
+          <>
             <Grid container spacing={2}>
-              <Grid item xs={12} lg={9}>
+              <Grid item sx={6} md={6} lg={8}>
                 <FormControl fullWidth size="small">
                   <OutlinedInput
                     sx={{ borderRadius: 10 }}
@@ -259,80 +259,116 @@ export default function ExamMaster() {
                   />
                 </FormControl>
               </Grid>
-              <Grid item xs={12} lg={3}>
+              <Grid item sx={6} md={6} lg={4}>
                 <Button
                   variant="contained"
-                  color="secondary"
                   sx={{ borderRadius: 10 }}
-                  onClick={() => setShowAddOfflineExamTemplate(true)}
+                  onClick={handleShowAddTemplate}
                 >
                   Create New Template
                 </Button>
               </Grid>
-            </Grid>
-          </Box>
-          <Box sx={{ padding: 2 }}>
-            <TableContainer component={Paper}>
-              <Table sx={{ minWidth: 650 }} aria-label="simple table">
-                <TableHead className="bg bg-success ">
-                  <TableRow>
-                    <TableCell align="center" className="text-white">
-                      Exam ID
-                    </TableCell>
-                    <TableCell align="center" className="text-white">
-                      Template Name
-                    </TableCell>
-                    <TableCell align="center" className="text-white">
-                      Created At
-                    </TableCell>
-                    <TableCell align="center" className="text-white">
-                      Pattern
-                    </TableCell>
-                    <TableCell align="center" className="text-white">
-                      Details
-                    </TableCell>
-                    <TableCell align="center" className="text-white">
-                      Delete
-                    </TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {examTemplates.map((examtemplate, index) => (
-                    <TableRow
-                      key={examtemplate._id}
-                      sx={{
-                        "&:last-child td, &:last-child th": { border: 0 },
-                      }}
-                    >
-                      <TableCell align="center">
-                        {examtemplate.examId}
-                      </TableCell>
-                      <TableCell align="center">
-                        {examtemplate.examName}
-                      </TableCell>
-                      <TableCell align="center">
-                        {examtemplate.createdAt}
-                      </TableCell>
-                      <TableCell align="center">
-                        {examtemplate.examPattern}
-                      </TableCell>
-                      <TableCell align="center">
-                        <Button
-                          size="sm"
-                          onClick={() => handleShowExamTemplate(examtemplate)}
+              <Grid item></Grid>
+              <Grid item sx={12} lg={12} md={12}>
+                <TableContainer component={Paper}>
+                  <Table sx={{ minWidth: 650 }} aria-label="simple table">
+                    <TableHead className="bg bg-success ">
+                      <TableRow>
+                        <TableCell align="center" className="text-white">
+                          Exam ID
+                        </TableCell>
+                        <TableCell align="center" className="text-white">
+                          Template Name
+                        </TableCell>
+                        <TableCell align="center" className="text-white">
+                          Created At
+                        </TableCell>
+                        <TableCell align="center" className="text-white">
+                          Pattern
+                        </TableCell>
+                        <TableCell align="center" className="text-white">
+                          Details
+                        </TableCell>
+                        <TableCell align="center" className="text-white">
+                          Delete
+                        </TableCell>
+                      </TableRow>
+                    </TableHead>
+                    <TableBody>
+                      {examTemplates.map((examtemplate, index) => (
+                        <TableRow
+                          key={examtemplate._id}
+                          sx={{
+                            "&:last-child td, &:last-child th": { border: 0 },
+                          }}
                         >
-                          View
-                        </Button>
-                      </TableCell>
-                      <TableCell align="center">
-                        <DeleteRoundedIcon />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Box>
+                          <TableCell align="center">
+                            {examtemplate.examId}
+                          </TableCell>
+                          <TableCell align="center">
+                            {examtemplate.examName}
+                          </TableCell>
+                          <TableCell align="center">
+                            {examtemplate.createdAt}
+                          </TableCell>
+                          <TableCell align="center">
+                            {examtemplate.examPattern}
+                          </TableCell>
+                          <TableCell align="center">
+                            <Button
+                              size="sm"
+                              onClick={() =>
+                                handleShowExamTemplate(examtemplate)
+                              }
+                            >
+                              View
+                            </Button>
+                          </TableCell>
+                          <TableCell align="center">
+                            <DeleteRoundedIcon />
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
+              </Grid>
+            </Grid>
+            <Modal
+              show={showAddExamTemplate}
+              onHide={handleShowAddTemplate}
+              dialogClassName="modal-xl"
+            >
+              <Modal.Header>Create Exam Template</Modal.Header>
+              <Modal.Body>
+                <CreateExamTemplate
+                  handleShowAddTemplate={handleShowAddTemplate}
+                />
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="danger" onClick={handleShowAddTemplate}>
+                  Close
+                </Button>
+              </Modal.Footer>
+            </Modal>
+
+            {/* Modal For Show Exam Template */}
+            <Modal
+              show={showExamTemplateModal}
+              onHide={handleShowExamTemplateModal}
+              dialogClassName="modal-xl"
+            >
+              <Modal.Header>View Exam Template</Modal.Header>
+              <Modal.Body>
+                <ViewExamTemplate currTemplate={currTemplate} />
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="danger" onClick={handleShowExamTemplateModal}>
+                  Close
+                </Button>
+              </Modal.Footer>
+            </Modal>
+          </>
           {/* Create Exam Templates Modal */}
           <Modal
             show={showAddOfflineExamTemplate}

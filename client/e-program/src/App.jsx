@@ -51,7 +51,11 @@ function App() {
                   <Route
                     path="/"
                     element={
-                      accountType === "admin" ? <AdminPage /> : <HomePage />
+                      accountType && accountType === "admin" ? (
+                        <AdminPage />
+                      ) : (
+                        <HomePage />
+                      )
                     }
                   />
                   <Route path="/dashboard" element={<DashboardPage />} />

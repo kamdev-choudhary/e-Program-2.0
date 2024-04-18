@@ -240,7 +240,7 @@ function Navbar() {
 
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               <NavLink to="/" className=" text-decoration-none">
-                E-ClassRoom
+                e-Program
               </NavLink>
             </Typography>
             {isLoggedIn ? (

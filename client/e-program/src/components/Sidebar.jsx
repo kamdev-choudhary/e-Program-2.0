@@ -126,6 +126,17 @@ export default function Sidebar() {
                     <ListItemText primary="Question Bank" />
                   </ListItemButton>
                 </NavLink>
+                <NavLink
+                  to="/examtemplate"
+                  style={{ textDecoration: "none", color: "#000" }}
+                >
+                  <ListItemButton>
+                    <ListItemIcon>
+                      <DescriptionIcon />
+                    </ListItemIcon>
+                    <ListItemText primary="Exam Master" />
+                  </ListItemButton>
+                </NavLink>
               </>
             )}
 
