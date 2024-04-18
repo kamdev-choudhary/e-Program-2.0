@@ -497,11 +497,15 @@ export default function AcademicPage() {
                     <Typography>Sub Topics</Typography>
                   </Grid>
                   <Grid item justifyContent="flex-end">
-                    <Chip
-                      label="Add Subtopic"
+                    <Button
+                      variant="contained"
                       color="success"
+                      size="small"
+                      sx={{ borderRadius: 10 }}
                       onClick={() => setShowAddSubtopicField(true)}
-                    />
+                    >
+                      Add Subtopics
+                    </Button>
                   </Grid>
                 </Grid>
                 <List>

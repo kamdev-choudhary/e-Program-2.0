@@ -73,6 +73,7 @@ export default function Sidebar() {
             </Box>
           </>
         )}
+        <hr />
         <Box>
           <List
             sx={{ width: "100%", maxWidth: 360 }}
@@ -89,7 +90,7 @@ export default function Sidebar() {
                     <ListItemIcon>
                       <AdminPanelSettingsIcon />
                     </ListItemIcon>
-                    <ListItemText primary="Admin" />
+                    <ListItemText primary="Dashboard" />
                   </ListItemButton>
                 </NavLink>
                 <NavLink
