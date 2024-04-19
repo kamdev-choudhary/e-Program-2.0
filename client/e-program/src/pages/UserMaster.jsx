@@ -27,7 +27,7 @@ export default function UserMaster() {
   const [users, setUsers] = useState([]);
   const [error, setError] = useState("");
   const [searchInput, setSearchInput] = useState("");
-  const [accountTypeFilter, setAccountTypeFilter] = useState("student");
+  const [accountTypeFilter, setAccountTypeFilter] = useState("admin");
   const [showStudentDashboard, setShowStudentDashboard] = useState(false);
   const [currUser, setCurrUser] = useState([]);
 
@@ -63,7 +63,7 @@ export default function UserMaster() {
   return (
     <>
       <Grid container spacing={2}>
-        <Grid item xs={12} md={9} lg={9}>
+        <Grid item xs={12} md={7} lg={7}>
           <Box>
             <FormControl fullWidth size="small">
               <OutlinedInput
@@ -80,7 +80,7 @@ export default function UserMaster() {
             </FormControl>
           </Box>
         </Grid>
-        <Grid item xs={12} md={3} lg={3}>
+        <Grid item xs={6} md={3} lg={3}>
           <Box>
             <FormControl fullWidth size="small">
               <InputLabel id="account-type-label">Account Type</InputLabel>
@@ -98,6 +98,16 @@ export default function UserMaster() {
               </Select>
             </FormControl>
           </Box>
+        </Grid>
+        <Grid item xs={6} md={2} lg={2}>
+          <Button
+            fullWidth
+            variant="contained"
+            color="info"
+            sx={{ borderRadius: 10 }}
+          >
+            Add User
+          </Button>
         </Grid>
       </Grid>
 

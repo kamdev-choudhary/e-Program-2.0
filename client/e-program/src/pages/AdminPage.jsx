@@ -107,6 +107,7 @@ export default function AdminPage() {
             margin={{ top: 10, bottom: 30, left: 40, right: 10 }}
           />
         </Grid>
+        <Grid item sx={12} md={12} lg={6}></Grid>
       </Grid>
     </>
   );
