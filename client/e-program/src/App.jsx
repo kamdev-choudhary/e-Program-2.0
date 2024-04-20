@@ -1,5 +1,6 @@
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./components/Auth";
+import { useState } from "react";
 import Navbar from "./components/Navbar";
 import ErrorPage from "./components/ErrorPage";
 import AdminPage from "./pages/AdminPage";
@@ -17,90 +18,82 @@ import DoubtPage from "./pages/DoubtPage";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Sidebar from "./components/Sidebar";
+import CssBaseline from "@mui/material/CssBaseline";
 
 function App() {
   const { accountType } = useAuth();
 
+  const [sidebarOpen, setSidebarOpen] = useState(true);
+
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
   return (
     <AuthProvider>
       <BrowserRouter>
+        <CssBaseline />
+        <Navbar />
         <Grid container>
-          <Grid item xs={12} sm={2}>
-            <Box
-              sx={{
-                height: "100vh",
-                overflowY: "auto",
-                overflowX: "hidden",
-                display: { xs: "none", sm: "block" },
-              }}
-            >
-              <Sidebar />
-            </Box>
+          <Grid
+            item
+            md={sidebarOpen ? 2 : 0}
+            style={{ display: sidebarOpen ? "block" : "none" }}
+          >
+            <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
           </Grid>
-          <Grid item xs={12} sm={10}>
-            <Box
-              sx={{
-                backgroundColor: "#f0f0f0",
-                height: "100vh",
-                overflowY: "auto",
-              }}
-            >
-              <Navbar />
-              <Box sx={{ padding: 2, overflowY: "auto" }}>
-                <Routes>
-                  <Route
-                    path="/"
-                    element={
-                      accountType && accountType === "admin" ? (
-                        <AdminPage />
-                      ) : (
-                        <HomePage />
-                      )
-                    }
-                  />
-                  <Route path="/dashboard" element={<DashboardPage />} />
-                  <Route path="/exams" element={<ExamPage />} />
-                  <Route path="/lectures" element={<LecturePage />} />
-                  <Route path="/materials" element={<MaterialPage />} />
-                  <Route
-                    path="/profile"
-                    element={<ProtectedRoute Component={StudentProfile} />}
-                  />
-                  <Route
-                    path="/question-bank"
-                    element={<ProtectedRoute Component={QuestionBankPage} />}
-                  />
-                  <Route
-                    path="/admin/*"
-                    element={
-                      <ProtectedRoute Component={AdminPage} isAdminRequired />
-                    }
-                  />
-                  <Route
-                    path="/users"
-                    element={
-                      <ProtectedRoute Component={UserMaster} isAdminRequired />
-                    }
-                  />
-                  <Route
-                    path="/academic"
-                    element={
-                      <ProtectedRoute
-                        Component={AcademicPage}
-                        isAdminRequired
-                      />
-                    }
-                  />
-                  <Route
-                    path="/examtemplate"
-                    element={
-                      <ProtectedRoute Component={ExamMaster} isAdminRequired />
-                    }
-                  />
-                  <Route path="/doubts" element={<DoubtPage />} />
-                  <Route path="*" element={<ErrorPage />} />
-                </Routes>
-              </Box>
+          <Grid item md={sidebarOpen ? 10 : 12}>
+            <Box sx={{ padding: 2, overflowY: "auto" }}>
+              <Routes>
+                <Route
+                  path="/"
+                  element={
+                    accountType && accountType === "admin" ? (
+                      <AdminPage />
+                    ) : (
+                      <HomePage />
+                    )
+                  }
+                />
+                <Route path="/dashboard" element={<DashboardPage />} />
+                <Route path="/exams" element={<ExamPage />} />
+                <Route path="/lectures" element={<LecturePage />} />
+                <Route path="/materials" element={<MaterialPage />} />
+                <Route
+                  path="/profile"
+                  element={<ProtectedRoute Component={StudentProfile} />}
+                />
+                <Route
+                  path="/question-bank"
+                  element={<ProtectedRoute Component={QuestionBankPage} />}
+                />
+                <Route
+                  path="/admin/*"
+                  element={
+                    <ProtectedRoute Component={AdminPage} isAdminRequired />
+                  }
+                />
+                <Route
+                  path="/users"
+                  element={
+                    <ProtectedRoute Component={UserMaster} isAdminRequired />
+                  }
+                />
+                <Route
+                  path="/academic"
+                  element={
+                    <ProtectedRoute Component={AcademicPage} isAdminRequired />
+                  }
+                />
+                <Route
+                  path="/examtemplate"
+                  element={
+                    <ProtectedRoute Component={ExamMaster} isAdminRequired />
+                  }
+                />
+                <Route path="/doubts" element={<DoubtPage />} />
+                <Route path="*" element={<ErrorPage />} />
+              </Routes>
             </Box>
           </Grid>
         </Grid>
