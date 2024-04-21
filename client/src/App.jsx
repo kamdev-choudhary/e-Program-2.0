@@ -24,7 +24,6 @@ function App() {
   const { accountType } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
-  // Detect screen size
   const isMdScreen = useMediaQuery("(min-width:960px)");
 
   const toggleSidebar = () => {
@@ -40,24 +39,15 @@ function App() {
               <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
             </Grid>
           )}
-          <Grid
-            item
-            md={isMdScreen ? (sidebarOpen ? 10 : 12) : 12}
-            flexGrow={1}
-          >
+          <Grid item md={isMdScreen ? 10 : 12} flexGrow={1}>
             <Navbar />
             <Box sx={{ padding: 2, overflowY: "auto" }}>
               <Routes>
-                <Route
-                  path="/"
-                  element={
-                    accountType && accountType === "admin" ? (
-                      <AdminPage />
-                    ) : (
-                      <HomePage />
-                    )
-                  }
-                />
+                {accountType && accountType === "admin" ? (
+                  <Route path="/" element={<AdminPage />} />
+                ) : (
+                  <Navigate to="/dashboard" replace />
+                )}
                 <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/exams" element={<ExamPage />} />
                 <Route path="/lectures" element={<LecturePage />} />
