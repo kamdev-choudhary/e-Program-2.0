@@ -3,52 +3,62 @@ import { AuthProvider, useAuth } from "./components/Auth";
 import { useState } from "react";
 import Navbar from "./components/Navbar";
 import ErrorPage from "./components/ErrorPage";
-import AdminPage from "./pages/AdminPage";
-import HomePage from "./pages/HomePage";
-import DashboardPage from "./pages/StudentDashboardPage";
-import ExamPage from "./pages/ExamPage";
-import LecturePage from "./pages/LecturePage";
-import MaterialPage from "./pages/MaterialPage";
-import QuestionBankPage from "./pages/QuestionBankPage";
-import UserMaster from "./pages/UserMaster";
-import AcademicPage from "./pages/AcademicPage";
+import AdminPage from "./pages/admin/AdminPage";
+import StudentDashboardPage from "./pages/student/StudentDashboardPage";
+import ExamPage from "./pages/exams/ExamPage";
+import LecturePage from "./pages/student/LecturePage";
+import MaterialPage from "./pages/student/MaterialPage";
+import QuestionBankPage from "./pages/questions/QuestionBankPage";
+import UserMaster from "./pages/admin/UserMaster";
+import AcademicPage from "./pages/admin/AcademicPage";
 import StudentProfile from "./components/StudentProfile";
-import ExamMaster from "./pages/ExamMaster";
-import DoubtPage from "./pages/DoubtPage";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
+import ExamMaster from "./pages/exams/ExamMaster";
+import DoubtPage from "./pages/doubts/DoubtPage";
 import Sidebar from "./components/Sidebar";
-import useMediaQuery from "@mui/material/useMediaQuery";
+import { Box, useMediaQuery, Grid } from "@mui/material";
 
 function App() {
-  const { accountType } = useAuth();
+  const { accountType, isLoggedIn } = useAuth();
+  console.log(accountType);
+  console.log(isLoggedIn);
+  console.log(isLoggedIn);
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const isMdScreen = useMediaQuery("(min-width:960px)");
 
   const toggleSidebar = () => {
-    setSidebarOpen(!sidebarOpen);
+    setSidebarOpen((prev) => !prev);
   };
 
   return (
     <AuthProvider>
       <BrowserRouter>
         <Grid container>
-          {isMdScreen && (
-            <Grid item md={sidebarOpen ? 2 : 0}>
+          {isMdScreen && sidebarOpen && (
+            <Grid item md={2} sx={{ height: "100vh" }}>
               <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
             </Grid>
           )}
           <Grid item md={isMdScreen ? 10 : 12} flexGrow={1}>
             <Navbar />
-            <Box sx={{ padding: 2, overflowY: "auto" }}>
+            <Box sx={{ padding: 2 }}>
               <Routes>
-                {accountType && accountType === "admin" ? (
-                  <Route path="/" element={<AdminPage />} />
-                ) : (
-                  <Navigate to="/dashboard" replace />
+                <Route
+                  path="/"
+                  element={<Navigate to="/dashboard" replace />}
+                />
+                {isLoggedIn && (
+                  <Route
+                    path="/dashboard"
+                    element={
+                      accountType === "admin" ? (
+                        <AdminPage />
+                      ) : (
+                        <StudentDashboardPage />
+                      )
+                    }
+                  />
                 )}
-                <Route path="/dashboard" element={<DashboardPage />} />
                 <Route path="/exams" element={<ExamPage />} />
                 <Route path="/lectures" element={<LecturePage />} />
                 <Route path="/materials" element={<MaterialPage />} />
@@ -66,20 +76,6 @@ function App() {
       </BrowserRouter>
     </AuthProvider>
   );
-}
-
-function ProtectedRoute({ Component, isAdminRequired }) {
-  const { isLoggedIn, isAdmin } = useAuth();
-
-  if (isAdminRequired && !isAdmin) {
-    return <Navigate to="/" replace />;
-  }
-
-  if (!isLoggedIn) {
-    return <Navigate to="/" replace />;
-  }
-
-  return <Component />;
 }
 
 export default App;

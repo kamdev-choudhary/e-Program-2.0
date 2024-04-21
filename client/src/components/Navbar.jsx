@@ -111,7 +111,7 @@ function Navbar() {
         </div>
         {isAdmin && (
           <>
-            <NavLink to="/admin" style={{ textDecoration: "none" }}>
+            <NavLink to="/dashboard" style={{ textDecoration: "none" }}>
               <ListItem onClick={toggleDrawer(false)}>
                 <ListItemButton>
                   <ListItemIcon>

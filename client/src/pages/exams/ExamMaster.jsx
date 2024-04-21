@@ -17,12 +17,12 @@ import TableHead from "@mui/material/TableHead";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
-import ViewExamTemplate from "../components/ViewExamTemplate";
-import CreateExamTemplate from "../components/CreateExamTemplate";
+import ViewExamTemplate from "../../components/ViewExamTemplate";
+import CreateExamTemplate from "../../components/CreateExamTemplate";
 import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
-import CreateExamTemplateOffline from "../components/CreateExamTemplateOffline";
+import CreateExamTemplateOffline from "../../components/CreateExamTemplateOffline";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 

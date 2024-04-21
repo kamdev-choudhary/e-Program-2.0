@@ -20,7 +20,7 @@ import Select from "@mui/material/Select";
 import TableRow from "@mui/material/TableRow";
 import Paper from "@mui/material/Paper";
 import TextField from "@mui/material/TextField";
-import { useAuth } from "../components/Auth";
+import { useAuth } from "../../components/Auth";
 import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import Backdrop from "@mui/material/Backdrop";

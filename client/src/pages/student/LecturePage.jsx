@@ -1,32 +1,37 @@
 import React, { useEffect, useState } from "react";
-import YouTubeVideo from "../components/YoutubeVideo";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import FormControl from "@mui/material/FormControl";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import MenuItem from "@mui/material/MenuItem";
-import InputAdornment from "@mui/material/InputAdornment";
-import SearchIcon from "@mui/icons-material/Search";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
-import Box from "@mui/material/Box";
-import { useAuth } from "../components/Auth";
-import IconButton from "@mui/material/IconButton";
-import Stack from "@mui/material/Stack";
-import DeleteIcon from "@mui/icons-material/Delete";
-import EditIcon from "@mui/icons-material/Edit";
-import Backdrop from "@mui/material/Backdrop";
-import CircularProgress from "@mui/material/CircularProgress";
-import Modal from "@mui/material/Modal";
-import { Typography } from "@mui/material";
-import TextField from "@mui/material/TextField";
+import YouTubeVideo from "../../components/YoutubeVideo";
+import { useAuth } from "../../components/Auth";
+
+import {
+  Search as SearchIcon,
+  Delete as DeleteIcon,
+  Edit as EditIcon,
+} from "@mui/icons-material";
+
+import {
+  TextField,
+  Modal,
+  CircularProgress,
+  Backdrop,
+  Stack,
+  IconButton,
+  Box,
+  Grid,
+  Select,
+  Button,
+  InputLabel,
+  InputAdornment,
+  MenuItem,
+  OutlinedInput,
+  FormControl,
+  Paper,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+} from "@mui/material";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 

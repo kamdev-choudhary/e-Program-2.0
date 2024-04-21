@@ -4,10 +4,10 @@ import Tab from "@mui/material/Tab";
 import TabContext from "@mui/lab/TabContext";
 import TabList from "@mui/lab/TabList";
 import TabPanel from "@mui/lab/TabPanel";
-import OnlineExams from "../components/OnlineExams";
-import OfflineExams from "../components/OfflineExams";
+import OnlineExams from "../../components/OnlineExams";
+import OfflineExams from "../../components/OfflineExams";
 import { useState } from "react";
-import ExamStarted from "../components/ExamStarted";
+import ExamStarted from "../../components/ExamStarted";
 
 export default function ExamPage() {
   const [value, setValue] = useState("1");

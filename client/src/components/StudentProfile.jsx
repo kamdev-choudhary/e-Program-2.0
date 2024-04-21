@@ -123,6 +123,12 @@ export default function StudentProfile({ user }) {
 
   return (
     <>
+      <p>Student Dashboard Page</p>
+    </>
+  );
+
+  return (
+    <>
       {student && (
         <>
           <Accordion elevation={6} defaultExpanded>

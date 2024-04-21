@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { Modal, Button } from "react-bootstrap";
-import SingleCorrectQuestion from "../components/SingleCorrectQuestion";
-import MultiCorrectQuestion from "../components/MultiCorrectQuestion";
-import IntegerType from "../components/IntegerType";
-import ViewQuestion from "../components/ViewQuestion";
+import SingleCorrectQuestion from "../../components/SingleCorrectQuestion";
+import MultiCorrectQuestion from "../../components/MultiCorrectQuestion";
+import IntegerType from "../../components/IntegerType";
+import ViewQuestion from "../../components/ViewQuestion";
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";

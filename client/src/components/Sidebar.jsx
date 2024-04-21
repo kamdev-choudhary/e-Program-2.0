@@ -101,7 +101,7 @@ export default function Sidebar({ isOpen, onClose }) {
             {isAdmin && (
               <>
                 <NavLink
-                  to="/admin"
+                  to="/dashboard"
                   style={{ textDecoration: "none", color: "#000" }}
                 >
                   <ListItemButton>

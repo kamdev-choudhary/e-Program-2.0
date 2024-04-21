@@ -4,13 +4,13 @@ import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
 import Modal from "@mui/material/Modal";
-import { TinyBox } from "../components/TinyBox";
+import { TinyBox } from "../../components/TinyBox";
 import Paper from "@mui/material/Paper";
 import Grid from "@mui/material/Grid";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
-import { useAuth } from "../components/Auth";
+import { useAuth } from "../../components/Auth";
 import Backdrop from "@mui/material/Backdrop";
 import Divider from "@mui/material/Divider";
 import CircularProgress from "@mui/material/CircularProgress";
@@ -346,6 +346,7 @@ export default function DoubtPage() {
                         marginBottom: 2,
                         backgroundColor: "#f3f3f3",
                       }}
+                      key={index}
                     >
                       <>
                         <Box sx={{ flexGrow: 1 }}>
