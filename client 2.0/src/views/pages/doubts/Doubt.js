@@ -1,137 +1,133 @@
-import * as React from "react";
-import { useState, useEffect } from "react";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
-import { TinyBox } from "../components/TinyBox";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import { useAuth } from "../components/Auth";
-import Backdrop from "@mui/material/Backdrop";
-import Divider from "@mui/material/Divider";
-import CircularProgress from "@mui/material/CircularProgress";
+import * as React from 'react'
+import { useState, useEffect } from 'react'
+import Box from '@mui/material/Box'
+import Button from '@mui/material/Button'
+import Typography from '@mui/material/Typography'
+import Modal from '@mui/material/Modal'
+import Paper from '@mui/material/Paper'
+import Grid from '@mui/material/Grid'
+import Select from '@mui/material/Select'
+import MenuItem from '@mui/material/MenuItem'
+import FormControl from '@mui/material/FormControl'
+import Backdrop from '@mui/material/Backdrop'
+import Divider from '@mui/material/Divider'
+import CircularProgress from '@mui/material/CircularProgress'
+import { useAuth } from '../../../components/Auth'
+import { TinyBox } from '../../../components/TinyBox'
 
-const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
+const API_URL = process.env.API_URL
 
 export default function DoubtPage() {
-  const { isLoggedIn, isAdmin, name, userId } = useAuth();
-
-  const [isLoading, setIsLoading] = useState(true);
-  const [value, setValue] = useState("All");
-  const [showAskDoubtForm, setShowAskDoubtForm] = useState(false);
-  const [doubts, setDoubts] = useState([]);
-  const [currDoubt, setCurrDoubt] = useState([]);
-  const [refresh, setRefresh] = useState(false);
-  const [doubtDetails, setDoubtDetails] = useState(false);
-  const [modalText, setModelText] = useState("");
+  const { isLoggedIn, isAdmin, name, userId } = useAuth()
+  const [isLoading, setIsLoading] = useState(false)
+  const [value, setValue] = useState('All')
+  const [showAskDoubtForm, setShowAskDoubtForm] = useState(false)
+  const [doubts, setDoubts] = useState([])
+  const [currDoubt, setCurrDoubt] = useState([])
+  const [refresh, setRefresh] = useState(false)
+  const [doubtDetails, setDoubtDetails] = useState(false)
+  const [modalText, setModelText] = useState('')
   const [newDoubt, setNewDoubt] = useState({
-    doubtQuestion: "",
-  });
+    doubtQuestion: '',
+  })
 
   useEffect(() => {
     fetch(`${API_URL}/doubts`)
       .then((response) => response.json())
       .then((data) => {
-        setDoubts(data.doubts);
-        setIsLoading(false);
+        setDoubts(data.doubts)
+        setIsLoading(false)
       })
-      .catch((error) => console.log("Error", error));
-  }, [refresh]);
+      .catch((error) => console.log('Error', error))
+  }, [refresh])
 
   const handlePostDoubt = () => {
     const data = {
       doubtQuestion: newDoubt.doubtQuestion,
-      postedBy: isLoggedIn ? name : "Annonymous ",
-      postedById: isLoggedIn ? userId : "Annonymous ",
-    };
+      postedBy: isLoggedIn ? name : 'Annonymous ',
+      postedById: isLoggedIn ? userId : 'Annonymous ',
+    }
     fetch(`${API_URL}/doubts/new`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
     })
       .then((response) => {
         if (response.ok) {
-          return response.json();
+          return response.json()
         }
-        throw new Error("Network response was not ok.");
+        throw new Error('Network response was not ok.')
       })
       .then((data) => {
-        console.log("Success:", data);
-        setRefresh(!refresh);
-        setShowAskDoubtForm(false);
+        console.log('Success:', data)
+        setRefresh(!refresh)
+        setShowAskDoubtForm(false)
         setNewDoubt(() => ({
-          doubtQuestion: "",
-        }));
+          doubtQuestion: '',
+        }))
       })
       .catch((error) => {
-        console.error("Error:", error);
-      });
-  };
+        console.error('Error:', error)
+      })
+  }
 
   const handlePostDoubtSolution = () => {
     const data = {
       solution: newDoubt.doubtQuestion,
-      postedBy: isLoggedIn ? name : "Annonymous ",
-      postedById: isLoggedIn ? userId : "Annonymous ",
-    };
+      postedBy: isLoggedIn ? name : 'Annonymous ',
+      postedById: isLoggedIn ? userId : 'Annonymous ',
+    }
     fetch(`${API_URL}/doubts/${currDoubt._id}`, {
-      method: "POST",
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(data),
     })
       .then((response) => {
         if (response.ok) {
-          return response.json();
+          return response.json()
         }
-        throw new Error("Network response was not ok.");
+        throw new Error('Network response was not ok.')
       })
       .then((data) => {
-        console.log("Success:", data);
-        const updatedDoubt = { ...currDoubt };
-        updatedDoubt.doubtSolutions.push(data.solution); // Assuming the new solution is returned from the server
-        setCurrDoubt(updatedDoubt);
-        setRefresh(!refresh); // Optionally trigger a refresh
-        setShowAskDoubtForm(false);
+        console.log('Success:', data)
+        const updatedDoubt = { ...currDoubt }
+        updatedDoubt.doubtSolutions.push(data.solution) // Assuming the new solution is returned from the server
+        setCurrDoubt(updatedDoubt)
+        setRefresh(!refresh) // Optionally trigger a refresh
+        setShowAskDoubtForm(false)
         setNewDoubt(() => ({
-          doubtQuestion: "",
-        }));
+          doubtQuestion: '',
+        }))
       })
       .catch((error) => {
-        console.error("Error:", error);
-      });
-  };
+        console.error('Error:', error)
+      })
+  }
 
   const style = {
-    position: "absolute",
-    width: "90%",
-    top: "50%",
-    left: "50%",
-    transform: "translate(-50%, -50%)",
-    bgcolor: "background.paper",
+    position: 'absolute',
+    width: '90%',
+    top: '50%',
+    left: '50%',
+    transform: 'translate(-50%, -50%)',
+    bgcolor: 'background.paper',
     borderRadius: 2,
     boxShadow: 24,
     p: 4,
-  };
+  }
 
   if (isLoading) {
     return (
       <>
-        <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={true}
-        >
+        <Backdrop sx={{ color: '#fff', zIndex: (theme) => theme.zIndex.drawer + 1 }} open={true}>
           <CircularProgress color="inherit" />
         </Backdrop>
       </>
-    );
+    )
   }
 
   return (
@@ -139,8 +135,8 @@ export default function DoubtPage() {
       {!doubtDetails && (
         <Box
           sx={{
-            display: "flex",
-            justifyContent: "space-between",
+            display: 'flex',
+            justifyContent: 'space-between',
             marginBottom: 2,
           }}
         >
@@ -162,7 +158,7 @@ export default function DoubtPage() {
             color="success"
             sx={{ borderRadius: 10 }}
             onClick={() => {
-              setShowAskDoubtForm(true), setModelText("Ask a Doubt");
+              setShowAskDoubtForm(true), setModelText('Ask a Doubt')
             }}
           >
             Add New
@@ -174,51 +170,38 @@ export default function DoubtPage() {
           {doubts &&
             doubts
               .filter((doubt) => {
-                if (value === "All") {
-                  return true;
-                } else if (value === "solved") {
-                  return (
-                    doubt.doubtSolutions && doubt.doubtSolutions.length > 0
-                  );
-                } else if (value === "unsolved") {
-                  return !(
-                    doubt.doubtSolutions && doubt.doubtSolutions.length > 0
-                  );
-                } else if (value === "your") {
-                  return doubt.postedById && doubt.postedById === userId;
+                if (value === 'All') {
+                  return true
+                } else if (value === 'solved') {
+                  return doubt.doubtSolutions && doubt.doubtSolutions.length > 0
+                } else if (value === 'unsolved') {
+                  return !(doubt.doubtSolutions && doubt.doubtSolutions.length > 0)
+                } else if (value === 'your') {
+                  return doubt.postedById && doubt.postedById === userId
                 }
               })
-              .sort(
-                (a, b) =>
-                  new Date(b.doubtPostedDate) - new Date(a.doubtPostedDate)
-              )
+              .sort((a, b) => new Date(b.doubtPostedDate) - new Date(a.doubtPostedDate))
               .map((doubt, index) => (
                 <Box sx={{ marginBottom: 1 }} key={index}>
                   <Paper
                     sx={{
                       padding: 3,
-                      backgroundColor: "#f5f5f5",
-                      backdropFilter: "blur(5px)",
+                      backgroundColor: '#f5f5f5',
+                      backdropFilter: 'blur(5px)',
                       borderRadius: 1,
                     }}
                     elevation={6}
                   >
                     <Box sx={{ flexGrow: 1 }}>
-                      <Grid
-                        container
-                        spacing={2}
-                        justifyContent="space-between"
-                      >
-                        <Grid item xs={8} sx={{ opacity: "0.7" }}>
+                      <Grid container spacing={2} justifyContent="space-between">
+                        <Grid item xs={8} sx={{ opacity: '0.7' }}>
                           <Typography sx={{ marginBottom: 1 }}>
                             Posted By: {doubt.postedBy}
                           </Typography>
                         </Grid>
                         <Grid item xs={4} textAlign="right">
-                          <Typography sx={{ opacity: "0.7" }}>
-                            {new Date(
-                              doubt.doubtPostedDate
-                            ).toLocaleDateString()}{" "}
+                          <Typography sx={{ opacity: '0.7' }}>
+                            {new Date(doubt.doubtPostedDate).toLocaleDateString()}{' '}
                           </Typography>
                         </Grid>
                       </Grid>
@@ -229,8 +212,8 @@ export default function DoubtPage() {
                     >
                       <Typography
                         sx={{
-                          overflow: "hidden",
-                          maxWidth: "100%",
+                          overflow: 'hidden',
+                          maxWidth: '100%',
                         }}
                         dangerouslySetInnerHTML={{
                           __html: doubt.doubtQuestion,
@@ -240,19 +223,18 @@ export default function DoubtPage() {
 
                     <Box
                       sx={{
-                        display: "flex",
-                        justifyContent: "flex-end",
+                        display: 'flex',
+                        justifyContent: 'flex-end',
                         mt: 2,
                       }}
                     >
-                      {doubt.doubtSolutions &&
-                      doubt.doubtSolutions.length > 0 ? (
+                      {doubt.doubtSolutions && doubt.doubtSolutions.length > 0 ? (
                         <Button
                           color="success"
                           sx={{ borderRadius: 10 }}
                           onClick={() => {
-                            setDoubtDetails(true);
-                            setCurrDoubt(doubt);
+                            setDoubtDetails(true)
+                            setCurrDoubt(doubt)
                           }}
                         >
                           View Solutions
@@ -261,8 +243,8 @@ export default function DoubtPage() {
                         <Button
                           sx={{ borderRadius: 10 }}
                           onClick={() => {
-                            setDoubtDetails(true);
-                            setCurrDoubt(doubt);
+                            setDoubtDetails(true)
+                            setCurrDoubt(doubt)
                           }}
                         >
                           Post a Solution
@@ -289,8 +271,8 @@ export default function DoubtPage() {
             elevation={6}
             sx={{
               padding: 2,
-              backgroundColor: "#f1f1f1",
-              backdropFilter: "blur(5px)",
+              backgroundColor: '#f1f1f1',
+              backdropFilter: 'blur(5px)',
               borderRadius: 1,
             }}
           >
@@ -303,8 +285,8 @@ export default function DoubtPage() {
               <Grid item xs={12} md={12} lg={12}>
                 <Typography
                   sx={{
-                    overflow: "hidden",
-                    maxWidth: "100%",
+                    overflow: 'hidden',
+                    maxWidth: '100%',
                     padding: 1,
                     borderBottom: 1,
                   }}
@@ -319,8 +301,8 @@ export default function DoubtPage() {
               <Grid item xs={6} lg={6} md={6}>
                 <Box
                   sx={{
-                    display: "flex",
-                    justifyContent: "flex-end",
+                    display: 'flex',
+                    justifyContent: 'flex-end',
                   }}
                 >
                   <Button
@@ -328,8 +310,7 @@ export default function DoubtPage() {
                     color="success"
                     sx={{ borderRadius: 10 }}
                     onClick={() => {
-                      setShowAskDoubtForm(true),
-                        setModelText("Post a Solution");
+                      setShowAskDoubtForm(true), setModelText('Post a Solution')
                     }}
                   >
                     Post a solution
@@ -345,27 +326,21 @@ export default function DoubtPage() {
                         padding: 3,
                         borderRadius: 1,
                         marginBottom: 2,
-                        backgroundColor: "#f3f3f3",
+                        backgroundColor: '#f3f3f3',
                       }}
                     >
                       <>
                         <Box sx={{ flexGrow: 1 }}>
-                          <Grid
-                            container
-                            spacing={2}
-                            justifyContent="space-between"
-                          >
+                          <Grid container spacing={2} justifyContent="space-between">
                             <Grid item xs={8}>
-                              <Typography sx={{ opacity: "0.7" }}>
+                              <Typography sx={{ opacity: '0.7' }}>
                                 Posted By: {solution.postedBy}
                               </Typography>
                             </Grid>
                             <Divider />
                             <Grid item xs={4} textAlign="right">
-                              <Typography sx={{ opacity: "0.7" }}>
-                                {new Date(
-                                  solution.solutionPostedDate
-                                ).toLocaleDateString()}
+                              <Typography sx={{ opacity: '0.7' }}>
+                                {new Date(solution.solutionPostedDate).toLocaleDateString()}
                               </Typography>
                             </Grid>
                           </Grid>
@@ -374,14 +349,14 @@ export default function DoubtPage() {
                           sx={{
                             padding: 1,
                             borderRadius: 2,
-                            backgroundColor: "#f0f0f0",
+                            backgroundColor: '#f0f0f0',
                           }}
                           key={index}
                         >
                           <Typography
                             sx={{
-                              overflow: "hidden",
-                              maxWidth: "100%",
+                              overflow: 'hidden',
+                              maxWidth: '100%',
                               borderTop: 1,
                               padding: 1,
                             }}
@@ -418,7 +393,7 @@ export default function DoubtPage() {
             }
           />
           <hr />
-          <Box sx={{ mt: 2, alignSelf: "flex-end" }}>
+          <Box sx={{ mt: 2, alignSelf: 'flex-end' }}>
             <Button
               variant="contained"
               color="error"
@@ -450,5 +425,5 @@ export default function DoubtPage() {
         </Box>
       </Modal>
     </>
-  );
+  )
 }

@@ -1,271 +1,271 @@
-import React, { useEffect, useState } from "react";
-import { Modal, Button } from "react-bootstrap";
-import SingleCorrectQuestion from "../components/SingleCorrectQuestion";
-import MultiCorrectQuestion from "../components/MultiCorrectQuestion";
-import IntegerType from "../components/IntegerType";
-import ViewQuestion from "../components/ViewQuestion";
-import Box from "@mui/material/Box";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import InputLabel from "@mui/material/InputLabel";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import Switch from "@mui/material/Switch";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputAdornment from "@mui/material/InputAdornment";
-import SearchIcon from "@mui/icons-material/Search";
-import Fab from "@mui/material/Fab";
-import IconButton from "@mui/material/IconButton";
-import AddIcon from "@mui/icons-material/Add";
-import ClearIcon from "@mui/icons-material/Clear";
-import Snackbar from "@mui/material/Snackbar";
-import Alert from "@mui/material/Alert";
-import Grid from "@mui/material/Grid";
-import DeleteIcon from "@mui/icons-material/Delete";
+import React, { useEffect, useState } from 'react'
+import { Modal } from 'react-bootstrap'
+import SingleCorrectQuestion from '../../../components/SingleCorrectQuestion'
+import MultiCorrectQuestion from '../../../components/MultiCorrectQuestion'
+import IntegerType from '../../../components/IntegerType'
+import ViewQuestion from '../../../components/ViewQuestion'
+import {
+  Box,
+  MenuItem,
+  FormControl,
+  Select,
+  InputLabel,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Switch,
+  FormControlLabel,
+  OutlinedInput,
+  InputAdornment,
+  Fab,
+  IconButton,
+  Snackbar,
+  Alert,
+  Grid,
+  Button,
+} from '@mui/material'
 
-const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
+import AddIcon from '@mui/icons-material/Add'
+import ClearIcon from '@mui/icons-material/Clear'
+import SearchIcon from '@mui/icons-material/Search'
+import DeleteIcon from '@mui/icons-material/Delete'
+
+const API_URL = process.env.API_URL
 
 export default function QuestionBankPage() {
-  const [error, setError] = useState("");
-  const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false);
-  const [snackbarMessage, setSnackbarMessage] = useState("");
-  const [questions, setQuestions] = useState([]);
-  const [currQuestion, setCurrentQuestion] = useState([]);
-  const [examTemplates, setExamTemplates] = useState([]);
-  const [questionInExamTemplate, setQuestionInExamTemplate] = useState([]);
-  const [selectedTemplate, setSelectedTemplate] = useState("");
+  const [error, setError] = useState('')
+  const [openSuccessSnackbar, setOpenSuccessSnackbar] = useState(false)
+  const [snackbarMessage, setSnackbarMessage] = useState('')
+  const [questions, setQuestions] = useState([])
+  const [currQuestion, setCurrentQuestion] = useState([])
+  const [examTemplates, setExamTemplates] = useState([])
+  const [questionInExamTemplate, setQuestionInExamTemplate] = useState([])
+  const [selectedTemplate, setSelectedTemplate] = useState('')
   const [questionAddToTemplate, setQuestionAddToTemplate] = useState({
-    questionId: "",
-    examTemplateId: "",
-  });
+    questionId: '',
+    examTemplateId: '',
+  })
 
-  const [academic, setAcademic] = useState([]);
-  const [editMode, setEditMode] = useState(false);
-  const [showQuestionTypeModal, setShowQuestionTypeModal] = useState(false);
-  const [refresh, setRefresh] = useState(false);
-  const [showViewQuestion, setShowViewQuestion] = useState(false);
+  const [academic, setAcademic] = useState([])
+  const [editMode, setEditMode] = useState(false)
+  const [showQuestionTypeModal, setShowQuestionTypeModal] = useState(false)
+  const [refresh, setRefresh] = useState(false)
+  const [showViewQuestion, setShowViewQuestion] = useState(false)
   const [showQuestionModal, setShowQuestionModal] = useState({
     SingleCorrect: false,
     multiCorrect: false,
     Integer: false,
-  });
-  const [searchInput, setSearchInput] = useState("");
-  const [filteredTopics, setFilteredTopics] = useState([]);
-  const [filteredSubtopics, setFilteredSubtopics] = useState([]);
+  })
+  const [searchInput, setSearchInput] = useState('')
+  const [filteredTopics, setFilteredTopics] = useState([])
+  const [filteredSubtopics, setFilteredSubtopics] = useState([])
 
   // Snackbar
   const handleOpenSnackbar = () => {
-    setOpenSuccessSnackbar(true);
-  };
+    setOpenSuccessSnackbar(true)
+  }
 
   const handleCloseSnackbar = (event, reason) => {
-    if (reason === "clickaway") {
-      return;
+    if (reason === 'clickaway') {
+      return
     }
-    setOpenSuccessSnackbar(false);
-  };
+    setOpenSuccessSnackbar(false)
+  }
 
   const [filterData, setFilterData] = useState({
-    classes: "",
-    subject: "",
-    topic: "",
-    subtopic: "",
-    difficultyLevel: "",
-    timeRequired: "",
-    target: "",
-    examTemplates: "",
-  });
+    classes: '',
+    subject: '',
+    topic: '',
+    subtopic: '',
+    difficultyLevel: '',
+    timeRequired: '',
+    target: '',
+    examTemplates: '',
+  })
 
   const handleFilterDataChange = (e) => {
-    setFilterData({ ...filterData, [e.target.name]: e.target.value });
-  };
+    setFilterData({ ...filterData, [e.target.name]: e.target.value })
+  }
 
   // Fetch Question Bank
   useEffect(() => {
     fetch(`${API_URL}/questionbank`)
       .then((response) => {
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          throw new Error('Network response was not ok')
         }
-        return response.json();
+        return response.json()
       })
       .then((data) => setQuestions(data.questions))
-      .catch((error) => setError(error.message));
+      .catch((error) => setError(error.message))
 
     fetch(`${API_URL}/exams`)
       .then((response) => {
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          throw new Error('Network response was not ok')
         }
-        return response.json();
+        return response.json()
       })
       .then((data) => setExamTemplates(data.examTemplates))
-      .catch((error) => setError(error.message));
+      .catch((error) => setError(error.message))
 
     fetch(`${API_URL}/academic`)
       .then((response) => {
         if (!response.ok) {
-          throw new Error("Network response was not ok");
+          throw new Error('Network response was not ok')
         }
-        return response.json();
+        return response.json()
       })
       .then((data) => setAcademic(data.academic[0]))
-      .catch((error) => setError(error.message));
-  }, [showQuestionModal, showQuestionTypeModal, refresh]);
+      .catch((error) => setError(error.message))
+  }, [showQuestionModal, showQuestionTypeModal, refresh])
 
   // Delete Question
   const handleDeleteQuestion = (question) => {
     fetch(`${API_URL}/questionbank`, {
-      method: "DELETE",
+      method: 'DELETE',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify(question),
     })
       .then((response) => response.json())
       .then((data) => {
-        console.log("Success:", data);
+        console.log('Success:', data)
       })
       .catch((error) => {
-        console.error("Error:", error);
-      });
-    setRefresh(!refresh);
-  };
+        console.error('Error:', error)
+      })
+    setRefresh(!refresh)
+  }
 
   const handleQuestionToTemplate = (Id) => {
     const updatedQuestionAddToTemplate = {
       ...questionAddToTemplate,
       questionId: Id,
       examTemplateId: selectedTemplate,
-    };
+    }
 
-    setQuestionAddToTemplate(updatedQuestionAddToTemplate);
+    setQuestionAddToTemplate(updatedQuestionAddToTemplate)
 
     if (updatedQuestionAddToTemplate) {
       fetch(`${API_URL}/exams/addtotemplate`, {
-        method: "PUT",
+        method: 'PUT',
         headers: {
-          "Content-Type": "application/json",
+          'Content-Type': 'application/json',
         },
         body: JSON.stringify(updatedQuestionAddToTemplate),
       })
         .then((response) => {
           if (!response.ok) {
-            throw new Error("Network response was not ok");
+            throw new Error('Network response was not ok')
           }
-          return response.json();
+          return response.json()
         })
         .then((data) => {
-          setSnackbarMessage(data);
-          handleOpenSnackbar();
+          setSnackbarMessage(data)
+          handleOpenSnackbar()
         })
         .catch((error) => {
-          console.error("Error:", error);
-        });
+          console.error('Error:', error)
+        })
     }
-    setRefresh(!refresh);
-  };
+    setRefresh(!refresh)
+  }
 
   const handleShowQuestionTypeModal = () => {
-    setShowQuestionTypeModal(!showQuestionTypeModal);
-  };
+    setShowQuestionTypeModal(!showQuestionTypeModal)
+  }
 
   const handleChangeEditMode = () => {
-    setEditMode(!editMode);
-  };
+    setEditMode(!editMode)
+  }
 
   const handleShowViewQuestion = (question) => {
-    setShowViewQuestion(!showViewQuestion);
+    setShowViewQuestion(!showViewQuestion)
     if (question) {
-      setCurrentQuestion(question);
+      setCurrentQuestion(question)
     }
-  };
+  }
   const handleAddQuestion = (e) => {
-    const { name } = e.target;
+    const { name } = e.target
     setShowQuestionModal({
       ...showQuestionModal,
       [name]: true,
-    });
-  };
+    })
+  }
 
   const handleCloseAddQuestion = (modalName) => {
     setShowQuestionModal({
       ...showQuestionModal,
       [modalName]: false,
-    });
-  };
+    })
+  }
 
   const addquestionInExamTemplate = (id) => {
-    const qInTemp = examTemplates.filter((template) => template._id === id);
-    setQuestionInExamTemplate(qInTemp[0].questions);
-    setRefresh(!refresh);
-  };
+    const qInTemp = examTemplates.filter((template) => template._id === id)
+    setQuestionInExamTemplate(qInTemp[0].questions)
+    setRefresh(!refresh)
+  }
 
   const handleSelectedTemplate = (e) => {
-    if (e.target.value !== "") {
-      setSelectedTemplate(e.target.value);
-      addquestionInExamTemplate(e.target.value);
+    if (e.target.value !== '') {
+      setSelectedTemplate(e.target.value)
+      addquestionInExamTemplate(e.target.value)
     }
-  };
+  }
 
   const clearSelectedTemplate = () => {
-    setSelectedTemplate("");
-  };
+    setSelectedTemplate('')
+  }
 
   const handleSearchInputChange = (event) => {
-    setSearchInput(event.target.value);
-  };
+    setSearchInput(event.target.value)
+  }
 
   const filterdQuestions = questions.filter((question) =>
     Object.values(question).some(
       (field) =>
-        (typeof field === "string" || typeof field === "number") &&
-        field.toString().toLowerCase().includes(searchInput.toLowerCase())
-    )
-  );
+        (typeof field === 'string' || typeof field === 'number') &&
+        field.toString().toLowerCase().includes(searchInput.toLowerCase()),
+    ),
+  )
 
   useEffect(() => {
     if (filterData.classes && filterData.subject) {
       const selectedSubjectData = academic.subjects.find(
-        (subject) => subject.name === filterData.subject
-      );
+        (subject) => subject.name === filterData.subject,
+      )
       if (selectedSubjectData) {
         const filteredTopics = selectedSubjectData.topics.filter(
-          (topic) => topic.className === filterData.classes
-        );
-        setFilteredTopics(filteredTopics);
+          (topic) => topic.className === filterData.classes,
+        )
+        setFilteredTopics(filteredTopics)
       }
     }
-  }, [filterData.classes, filterData.subject, academic.subjects]);
+  }, [filterData.classes, filterData.subject, academic.subjects])
 
   useEffect(() => {
     if (filteredTopics.length > 0) {
       const filteredSubtopics = filteredTopics
         .filter((topic) => !filterData.topic || topic.name === filterData.topic)
-        .flatMap((topic) => topic.subtopics);
-      setFilteredSubtopics(filteredSubtopics);
+        .flatMap((topic) => topic.subtopics)
+      setFilteredSubtopics(filteredSubtopics)
     }
-  }, [filteredTopics, filterData.topic]);
+  }, [filteredTopics, filterData.topic])
 
   return (
     <>
-      <Snackbar
-        open={openSuccessSnackbar}
-        autoHideDuration={2000}
-        onClose={handleCloseSnackbar}
-      >
+      <Snackbar open={openSuccessSnackbar} autoHideDuration={2000} onClose={handleCloseSnackbar}>
         <Alert
           onClose={handleCloseSnackbar}
           severity="success"
           variant="filled"
-          sx={{ width: "100%" }}
+          sx={{ width: '100%' }}
         >
           {snackbarMessage}
         </Alert>
@@ -355,9 +355,7 @@ export default function QuestionBankPage() {
           </Grid>
           <Grid item xs={12} md={4} lg={3}>
             <FormControl fullWidth size="small">
-              <InputLabel id="demo-simple-select-label">
-                Difficulty Level
-              </InputLabel>
+              <InputLabel id="demo-simple-select-label">Difficulty Level</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
@@ -378,9 +376,7 @@ export default function QuestionBankPage() {
           </Grid>
           <Grid item xs={12} md={4} lg={3}>
             <FormControl fullWidth size="small">
-              <InputLabel id="demo-simple-select-label">
-                Time Required
-              </InputLabel>
+              <InputLabel id="demo-simple-select-label">Time Required</InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="demo-simple-select"
@@ -445,9 +441,9 @@ export default function QuestionBankPage() {
             md={2}
             lg={1}
             style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
             <Fab
@@ -465,15 +461,13 @@ export default function QuestionBankPage() {
             md={1}
             lg={2}
             style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}
           >
             <FormControlLabel
-              control={
-                <Switch checked={editMode} onChange={handleChangeEditMode} />
-              }
+              control={<Switch checked={editMode} onChange={handleChangeEditMode} />}
               label="Delete"
             />
           </Grid>
@@ -507,7 +501,7 @@ export default function QuestionBankPage() {
         </Grid>
       </Box>
       <hr />
-      <TableContainer component={Paper} style={{ maxHeight: "80vh" }}>
+      <TableContainer component={Paper} style={{ maxHeight: '80vh' }}>
         <Table sx={{ minWidth: 650 }} aria-label="simple table">
           <TableHead className="bg bg-success sticky-top">
             <TableRow>
@@ -551,18 +545,16 @@ export default function QuestionBankPage() {
             {filterdQuestions.map((question, index) => (
               <TableRow
                 key={question._id}
-                sx={{ "&:last-child td, &:last-child th": { border: 0 } }}
+                sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
               >
                 <TableCell align="center">{question.questionId}</TableCell>
-                <TableCell
-                  dangerouslySetInnerHTML={{ __html: question.questionText }}
-                />
+                <TableCell dangerouslySetInnerHTML={{ __html: question.questionText }} />
 
                 <TableCell align="center">
                   <Button
                     size="sm"
                     onClick={() => {
-                      handleShowViewQuestion(question);
+                      handleShowViewQuestion(question)
                     }}
                   >
                     View
@@ -651,7 +643,7 @@ export default function QuestionBankPage() {
 
       <Modal
         show={showQuestionModal.SingleCorrect}
-        onHide={() => handleCloseAddQuestion("SingleCorrect")}
+        onHide={() => handleCloseAddQuestion('SingleCorrect')}
         dialogClassName="modal-xl"
       >
         <Modal.Header>
@@ -671,7 +663,7 @@ export default function QuestionBankPage() {
           <Button
             variant="danger"
             name="SingleCorrect"
-            onClick={() => handleCloseAddQuestion("SingleCorrect")}
+            onClick={() => handleCloseAddQuestion('SingleCorrect')}
           >
             Close
           </Button>
@@ -679,7 +671,7 @@ export default function QuestionBankPage() {
       </Modal>
       <Modal
         show={showQuestionModal.multiCorrect}
-        onHide={() => handleCloseAddQuestion("multiCorrect")}
+        onHide={() => handleCloseAddQuestion('multiCorrect')}
         dialogClassName="modal-xl"
       >
         <Modal.Header>
@@ -698,7 +690,7 @@ export default function QuestionBankPage() {
           <Button
             variant="danger"
             name="multiCorrect"
-            onClick={() => handleCloseAddQuestion("multiCorrect")}
+            onClick={() => handleCloseAddQuestion('multiCorrect')}
           >
             Close
           </Button>
@@ -706,7 +698,7 @@ export default function QuestionBankPage() {
       </Modal>
       <Modal
         show={showQuestionModal.Integer}
-        onHide={() => handleCloseAddQuestion("Integer")}
+        onHide={() => handleCloseAddQuestion('Integer')}
         dialogClassName="modal-xl"
       >
         <Modal.Header>
@@ -722,21 +714,13 @@ export default function QuestionBankPage() {
           />
         </Modal.Body>
         <Modal.Footer>
-          <Button
-            variant="danger"
-            name="Integer"
-            onClick={() => handleCloseAddQuestion("Integer")}
-          >
+          <Button variant="danger" name="Integer" onClick={() => handleCloseAddQuestion('Integer')}>
             Close
           </Button>
         </Modal.Footer>
       </Modal>
 
-      <Modal
-        show={showViewQuestion}
-        onHide={handleShowViewQuestion}
-        dialogClassName="modal-xl"
-      >
+      <Modal show={showViewQuestion} onHide={handleShowViewQuestion} dialogClassName="modal-xl">
         <Modal.Header> View Question</Modal.Header>
         <Modal.Body>
           <ViewQuestion
@@ -752,5 +736,5 @@ export default function QuestionBankPage() {
         </Modal.Footer>
       </Modal>
     </>
-  );
+  )
 }

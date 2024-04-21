@@ -19,7 +19,6 @@ const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
 export default function DoubtPage() {
   const { isLoggedIn, isAdmin, name, userId } = useAuth();
-
   const [isLoading, setIsLoading] = useState(true);
   const [value, setValue] = useState("All");
   const [showAskDoubtForm, setShowAskDoubtForm] = useState(false);
