@@ -17,7 +17,7 @@ import ForumIcon from "@mui/icons-material/Forum";
 import OndemandVideoRoundedIcon from "@mui/icons-material/OndemandVideoRounded";
 import DescriptionIcon from "@mui/icons-material/Description";
 import SchoolIcon from "@mui/icons-material/School";
-import { useAuth } from "./Auth";
+import { useAuth } from "../store/Auth";
 import Drawer from "@mui/material/Drawer";
 import Typography from "@mui/material/Typography";
 
@@ -98,19 +98,21 @@ export default function Sidebar({ isOpen, onClose }) {
             component="nav"
             aria-labelledby="nested-list-subheader"
           >
+            {isLoggedIn && (
+              <NavLink
+                to="/dashboard"
+                style={{ textDecoration: "none", color: "#000" }}
+              >
+                <ListItemButton>
+                  <ListItemIcon>
+                    <AdminPanelSettingsIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Dashboard" />
+                </ListItemButton>
+              </NavLink>
+            )}
             {isAdmin && (
               <>
-                <NavLink
-                  to="/dashboard"
-                  style={{ textDecoration: "none", color: "#000" }}
-                >
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <AdminPanelSettingsIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Dashboard" />
-                  </ListItemButton>
-                </NavLink>
                 <NavLink
                   to="/academic"
                   style={{ textDecoration: "none", color: "#000" }}

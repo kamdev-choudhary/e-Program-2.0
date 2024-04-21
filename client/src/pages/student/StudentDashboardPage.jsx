@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useAuth } from "../../components/Auth";
+import { useAuth } from "../../store/Auth";
 import StudentProfile from "../../components/StudentProfile";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import YouTubeVideo from "../../components/YoutubeVideo";
-import { useAuth } from "../../components/Auth";
+import { useAuth } from "../../store/Auth";
 
 import {
   Search as SearchIcon,
@@ -58,12 +58,14 @@ function CollapsibleTable({ lectures, playLecture }) {
               <TableCell align="center">{lecture.chapterName}</TableCell>
               <TableCell align="center">{lecture.lectureNumber}</TableCell>
               <TableCell align="center">
-                <span
-                  className="btn btn-sm btn-outline-danger"
+                <Button
+                  variant="outlined"
+                  sx={{ borderRadius: 10 }}
+                  color="error"
                   onClick={() => playLecture(lecture.videoId)}
                 >
                   <i className="fa-brands fa-youtube"></i> &nbsp;Play
-                </span>
+                </Button>
               </TableCell>
             </TableRow>
           ))}
@@ -438,6 +440,7 @@ export default function LecturePage() {
                     onClick={handleAddNewLecture}
                     variant="contained"
                     color="success"
+                    sx={{ borderRadius: 10 }}
                   >
                     Save Lecture
                   </Button>

@@ -1,30 +1,30 @@
 import React, { useState, useEffect } from "react";
 import { Modal } from "react-bootstrap";
+import { useAuth } from "../../store/Auth";
+import {
+  Grid,
+  Input,
+  FormControl,
+  OutlinedInput,
+  Button,
+  InputAdornment,
+  InputLabel,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  MenuItem,
+  Select,
+  TableRow,
+  Paper,
+  TextField,
+  Box,
+  Backdrop,
+  CircularProgress,
+} from "@mui/material";
 
-import Input from "@mui/material/Input";
-import Fab from "@mui/material/Fab";
-import AddIcon from "@mui/icons-material/Add";
-import FormControl from "@mui/material/FormControl";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputAdornment from "@mui/material/InputAdornment";
-import SearchIcon from "@mui/icons-material/Search";
-import Button from "@mui/material/Button";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import MenuItem from "@mui/material/MenuItem";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import TextField from "@mui/material/TextField";
-import { useAuth } from "../../components/Auth";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import Backdrop from "@mui/material/Backdrop";
-import CircularProgress from "@mui/material/CircularProgress";
+import { Search as SearchIcon } from "@mui/icons-material";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 

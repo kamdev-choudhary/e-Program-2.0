@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem("token"));
   const [userConrol, setUserControl] = useState([]);
   let isAdmin = false;
-  let accountType = "student";
+  let accountType = "";
   let userId = "";
   let batchId = "";
 

@@ -1,16 +1,19 @@
 import React, { useState, useEffect } from "react";
 import { TinyBox, TinyBox2 } from "./TinyBox";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import Select from "@mui/material/Select";
-import InputLabel from "@mui/material/InputLabel";
-import Box from "@mui/material/Box";
-import Checkbox from "@mui/material/Checkbox";
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
-import Stack from "@mui/material/Stack";
-import FormHelperText from "@mui/material/FormHelperText";
+
+import {
+  MenuItem,
+  FormControl,
+  Select,
+  InputLabel,
+  Box,
+  Checkbox,
+  Button,
+  Grid,
+  Typography,
+  Stack,
+  FormHelperText,
+} from "@mui/material";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -18,7 +21,7 @@ export default function SingleCorrectQuestion(props) {
   const [academic, setAcademic] = useState([]);
   const [error, setError] = useState("");
   const [filteredTopics, setFilteredTopics] = useState([]);
-  const [filteredSubtopics, setFilteredSubtopics] = useState([]); // Added filteredSubtopics state
+  const [filteredSubtopics, setFilteredSubtopics] = useState([]);
   const [questionData, setQuestionData] = useState({
     classes: "",
     subject: "",

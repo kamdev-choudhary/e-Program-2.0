@@ -2,7 +2,7 @@ import "bootstrap/dist/css/bootstrap.min.css";
 import { NavLink } from "react-router-dom";
 import Modal from "@mui/material/Modal";
 import { useState } from "react";
-import { useAuth } from "../components/Auth";
+import { useAuth } from "../store/Auth";
 import Button from "@mui/material/Button";
 import Menu from "@mui/material/Menu";
 import MenuItem from "@mui/material/MenuItem";

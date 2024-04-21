@@ -1,19 +1,22 @@
 import * as React from "react";
 import { useState, useEffect } from "react";
-import Box from "@mui/material/Box";
-import Button from "@mui/material/Button";
-import Typography from "@mui/material/Typography";
-import Modal from "@mui/material/Modal";
+import { useAuth } from "../../store/Auth";
 import { TinyBox } from "../../components/TinyBox";
-import Paper from "@mui/material/Paper";
-import Grid from "@mui/material/Grid";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import FormControl from "@mui/material/FormControl";
-import { useAuth } from "../../components/Auth";
-import Backdrop from "@mui/material/Backdrop";
-import Divider from "@mui/material/Divider";
-import CircularProgress from "@mui/material/CircularProgress";
+
+import {
+  Box,
+  Button,
+  Typography,
+  Modal,
+  Paper,
+  Grid,
+  Select,
+  MenuItem,
+  FormControl,
+  Backdrop,
+  Divider,
+  CircularProgress,
+} from "@mui/material";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { Paper, Button, Stack } from "@mui/material";
 import { styled } from "@mui/material/styles";
-import { useAuth } from "../components/Auth";
+import { useAuth } from "../store/Auth";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 

@@ -1,5 +1,5 @@
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
-import { AuthProvider, useAuth } from "./components/Auth";
+import { AuthProvider, useAuth } from "./store/Auth";
 import { useState } from "react";
 import Navbar from "./components/Navbar";
 import ErrorPage from "./components/ErrorPage";
@@ -17,11 +17,45 @@ import DoubtPage from "./pages/doubts/DoubtPage";
 import Sidebar from "./components/Sidebar";
 import { Box, useMediaQuery, Grid } from "@mui/material";
 
-function App() {
+const AppRouter = () => {
   const { accountType, isLoggedIn } = useAuth();
-  console.log(accountType);
-  console.log(isLoggedIn);
-  console.log(isLoggedIn);
+
+  return (
+    <>
+      <Navbar />
+      <Box sx={{ padding: 2 }}>
+        <Routes>
+          <Route path="/" element={<Navigate to="/dashboard" replace />} />
+          {isLoggedIn && (
+            <Route
+              path="/dashboard"
+              element={
+                accountType === "admin" ? (
+                  <AdminPage />
+                ) : (
+                  <StudentDashboardPage />
+                )
+              }
+            />
+          )}
+          <Route path="/exams" element={<ExamPage />} />
+          <Route path="/lectures" element={<LecturePage />} />
+          <Route path="/materials" element={<MaterialPage />} />
+          <Route path="/profile" element={<StudentProfile />} />
+          <Route path="/question-bank" element={<QuestionBankPage />} />
+          <Route path="/users" element={<UserMaster />} />
+          <Route path="/academic" element={<AcademicPage />} />
+          <Route path="/examtemplate" element={<ExamMaster />} />
+          <Route path="/doubts" element={<DoubtPage />} />
+          <Route path="*" element={<ErrorPage />} />
+        </Routes>
+      </Box>
+    </>
+  );
+};
+
+function App() {
+  const { isLoggedIn } = useAuth();
   const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const isMdScreen = useMediaQuery("(min-width:960px)");
@@ -33,46 +67,22 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        <Grid container>
-          {isMdScreen && sidebarOpen && (
-            <Grid item md={2} sx={{ height: "100vh" }}>
-              <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
+        {!isMdScreen ? (
+          <Box>
+            <AppRouter />
+          </Box>
+        ) : (
+          <>
+            <Grid container>
+              <Grid item md={2} sx={{ height: "100vh" }}>
+                <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
+              </Grid>
+              <Grid item flexGrow={1}>
+                <AppRouter />
+              </Grid>
             </Grid>
-          )}
-          <Grid item md={isMdScreen ? 10 : 12} flexGrow={1}>
-            <Navbar />
-            <Box sx={{ padding: 2 }}>
-              <Routes>
-                <Route
-                  path="/"
-                  element={<Navigate to="/dashboard" replace />}
-                />
-                {isLoggedIn && (
-                  <Route
-                    path="/dashboard"
-                    element={
-                      accountType === "admin" ? (
-                        <AdminPage />
-                      ) : (
-                        <StudentDashboardPage />
-                      )
-                    }
-                  />
-                )}
-                <Route path="/exams" element={<ExamPage />} />
-                <Route path="/lectures" element={<LecturePage />} />
-                <Route path="/materials" element={<MaterialPage />} />
-                <Route path="/profile" element={<StudentProfile />} />
-                <Route path="/question-bank" element={<QuestionBankPage />} />
-                <Route path="/users" element={<UserMaster />} />
-                <Route path="/academic" element={<AcademicPage />} />
-                <Route path="/examtemplate" element={<ExamMaster />} />
-                <Route path="/doubts" element={<DoubtPage />} />
-                <Route path="*" element={<ErrorPage />} />
-              </Routes>
-            </Box>
-          </Grid>
-        </Grid>
+          </>
+        )}
       </BrowserRouter>
     </AuthProvider>
   );
