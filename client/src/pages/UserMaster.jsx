@@ -18,7 +18,6 @@ import InputLabel from "@mui/material/InputLabel";
 import Select from "@mui/material/Select";
 import MenuItem from "@mui/material/MenuItem";
 import Grid from "@mui/material/Grid";
-import Typography from "@mui/material/Typography";
 import StudentProfile from "../components/StudentProfile";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;

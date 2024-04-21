@@ -62,38 +62,11 @@ function App() {
                 <Route path="/exams" element={<ExamPage />} />
                 <Route path="/lectures" element={<LecturePage />} />
                 <Route path="/materials" element={<MaterialPage />} />
-                <Route
-                  path="/profile"
-                  element={<ProtectedRoute Component={StudentProfile} />}
-                />
-                <Route
-                  path="/question-bank"
-                  element={<ProtectedRoute Component={QuestionBankPage} />}
-                />
-                <Route
-                  path="/admin/*"
-                  element={
-                    <ProtectedRoute Component={AdminPage} isAdminRequired />
-                  }
-                />
-                <Route
-                  path="/users"
-                  element={
-                    <ProtectedRoute Component={UserMaster} isAdminRequired />
-                  }
-                />
-                <Route
-                  path="/academic"
-                  element={
-                    <ProtectedRoute Component={AcademicPage} isAdminRequired />
-                  }
-                />
-                <Route
-                  path="/examtemplate"
-                  element={
-                    <ProtectedRoute Component={ExamMaster} isAdminRequired />
-                  }
-                />
+                <Route path="/profile" element={<StudentProfile />} />
+                <Route path="/question-bank" element={<QuestionBankPage />} />
+                <Route path="/users" element={<UserMaster />} />
+                <Route path="/academic" element={<AcademicPage />} />
+                <Route path="/examtemplate" element={<ExamMaster />} />
                 <Route path="/doubts" element={<DoubtPage />} />
                 <Route path="*" element={<ErrorPage />} />
               </Routes>
