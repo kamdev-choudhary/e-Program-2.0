@@ -89,11 +89,14 @@ export default function UserMaster() {
                 label="Account Type"
                 value={accountTypeFilter}
                 onChange={handleAccounTypeChange}
+                sx={{ borderRadius: 2 }}
               >
+                <MenuItem value="admin">Admin</MenuItem>
                 <MenuItem value="student" selected>
                   Student
                 </MenuItem>
-                <MenuItem value="admin">Admin</MenuItem>
+                <MenuItem value="faculty">Faculty</MenuItem>
+                <MenuItem value="operator">Data Operator</MenuItem>
               </Select>
             </FormControl>
           </Box>

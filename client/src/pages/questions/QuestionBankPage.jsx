@@ -270,7 +270,7 @@ export default function QuestionBankPage() {
           {snackbarMessage}
         </Alert>
       </Snackbar>
-      <Box sx={{ flexGrow: 1 }} padding={1}>
+      <Box>
         <Grid container spacing={1}>
           <Grid item xs={12} md={4} lg={3}>
             <FormControl fullWidth size="small">
@@ -428,6 +428,7 @@ export default function QuestionBankPage() {
           <Grid item xs={12} md={6} lg={6}>
             <FormControl fullWidth size="small">
               <OutlinedInput
+                sx={{ borderRadius: 10 }}
                 id="outlined-adornment-amount"
                 startAdornment={
                   <InputAdornment position="start">

@@ -3,6 +3,8 @@ import { AuthProvider, useAuth } from "./store/Auth";
 import { useState } from "react";
 import Navbar from "./components/Navbar";
 import ErrorPage from "./components/ErrorPage";
+import StudentProfile from "./components/StudentProfile";
+import Sidebar from "./components/Sidebar";
 import AdminPage from "./pages/admin/AdminPage";
 import StudentDashboardPage from "./pages/student/StudentDashboardPage";
 import ExamPage from "./pages/exams/ExamPage";
@@ -11,10 +13,8 @@ import MaterialPage from "./pages/student/MaterialPage";
 import QuestionBankPage from "./pages/questions/QuestionBankPage";
 import UserMaster from "./pages/admin/UserMaster";
 import AcademicPage from "./pages/admin/AcademicPage";
-import StudentProfile from "./components/StudentProfile";
 import ExamMaster from "./pages/exams/ExamMaster";
 import DoubtPage from "./pages/doubts/DoubtPage";
-import Sidebar from "./components/Sidebar";
 import { Box, useMediaQuery, Grid } from "@mui/material";
 
 const AppRouter = () => {
@@ -22,7 +22,6 @@ const AppRouter = () => {
 
   return (
     <>
-      <Navbar />
       <Box sx={{ padding: 2 }}>
         <Routes>
           <Route path="/" element={<Navigate to="/dashboard" replace />} />
@@ -67,22 +66,27 @@ function App() {
   return (
     <AuthProvider>
       <BrowserRouter>
-        {!isMdScreen ? (
-          <Box>
-            <AppRouter />
-          </Box>
-        ) : (
-          <>
-            <Grid container>
-              <Grid item md={2} sx={{ height: "100vh" }}>
+        <>
+          <Navbar sx={{ zIndex: 1000 }} />
+          {isMdScreen ? (
+            <Grid container sx={{ marginTop: 1 }}>
+              <Grid item md={2} sx={{ position: "fixed", top: 0, bottom: 0 }}>
                 <Sidebar isOpen={sidebarOpen} onClose={toggleSidebar} />
               </Grid>
-              <Grid item flexGrow={1}>
+              <Grid
+                item
+                md={10}
+                sx={{ marginLeft: "14.2%", overflowY: "auto" }}
+              >
                 <AppRouter />
               </Grid>
             </Grid>
-          </>
-        )}
+          ) : (
+            <Box>
+              <AppRouter />
+            </Box>
+          )}
+        </>
       </BrowserRouter>
     </AuthProvider>
   );
