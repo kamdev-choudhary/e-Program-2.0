@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../store/Auth";
-import StudentProfile from "../../components/StudentProfile";
+import UpdateStudentProfile from "../../components/UpdateStudentProfile";
+
+import { Grid } from "@mui/material";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -24,10 +26,14 @@ export default function DashboardPage() {
   return (
     <>
       {user && !user.isProfileUpdated && (
-        <div>
-          <h5>Update Your Profile</h5>
-          <StudentProfile user={user} />
-        </div>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={12} lg={12}>
+            Update Your Profile
+          </Grid>
+          <Grid item xs={12} md={12} lg={12}>
+            <UpdateStudentProfile />
+          </Grid>
+        </Grid>
       )}
     </>
   );

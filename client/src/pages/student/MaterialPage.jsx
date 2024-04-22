@@ -31,8 +31,12 @@ export default function MaterialPage() {
   const { isAdmin } = useAuth();
   const [books, setBooks] = useState([]);
   const [error, setError] = useState(null);
-  const [currBook, setCurrBook] = useState([]);
-  const [base64String, setBase64String] = useState("");
+  const [showAddBook, setShowAddBook] = useState(false);
+  const [pdfViewer, setPdfViwer] = useState(false);
+  const [refresh, setRefresh] = useState(false);
+  const [searchInput, setSearchInput] = useState("");
+  const [academic, setAcademic] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const [newBook, setNewBook] = useState({
     title: "",
     bookId: "",
@@ -41,18 +45,12 @@ export default function MaterialPage() {
     author: "",
     publishingYear: "",
   });
-  const [showAddBook, setShowAddBook] = useState(false);
-  const [pdfViewer, setPdfViwer] = useState(false);
-  const [refresh, setRefresh] = useState(false);
-  const [searchInput, setSearchInput] = useState("");
-  const [academic, setAcademic] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetch(`${API_URL}/academic`)
       .then((response) => response.json())
       .then((data) => setAcademic(data.academic[0]))
-      .then((error) => console.log("Error", error));
+      .catch((error) => console.log("Error", error));
   }, []);
 
   const handleAddNewBook = () => {

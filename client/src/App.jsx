@@ -3,7 +3,6 @@ import { AuthProvider, useAuth } from "./store/Auth";
 import Navbar from "./components/Navbar";
 import Sidebar from "./components/Sidebar";
 import AdminPage from "./pages/admin/AdminPage";
-import StudentProfile from "./components/StudentProfile";
 import StudentDashboardPage from "./pages/student/StudentDashboardPage";
 import ErrorPage from "./pages/error/ErrorPage";
 import HomePage from "./pages/home/HomePage";
@@ -16,6 +15,7 @@ import UserMaster from "./pages/admin/UserMaster";
 import ExamMaster from "./pages/exams/ExamMaster";
 import ExamMasterOffline from "./pages/exams/ExamMasterOffline";
 import DoubtPage from "./pages/doubts/DoubtPage";
+import StudentProfile from "./pages/student/StudentProfile";
 import { Box, useMediaQuery, Grid } from "@mui/material";
 
 const AppRouter = () => {

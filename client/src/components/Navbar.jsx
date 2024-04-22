@@ -142,7 +142,9 @@ export default function Navbar() {
                 open={Boolean(anchorEl)}
                 onClose={() => setAnchorEl(null)}
               >
-                <MenuItem onClick={() => setAnchorEl(null)}>Profile</MenuItem>
+                <MenuItem onClick={() => setAnchorEl(null)}>
+                  <NavLink to="/profile">Profile</NavLink>
+                </MenuItem>
                 <MenuItem onClick={() => setAnchorEl(null)}>
                   My account
                 </MenuItem>
