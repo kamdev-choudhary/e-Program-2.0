@@ -1,26 +1,26 @@
 import { useEffect, useState } from "react";
-import { Modal, Button } from "react-bootstrap";
-import TextField from "@mui/material/TextField";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import FormControl from "@mui/material/FormControl";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import Paper from "@mui/material/Paper";
-import Card from "@mui/material/Card";
-import CardActions from "@mui/material/CardActions";
-import CardContent from "@mui/material/CardContent";
-import Typography from "@mui/material/Typography";
-import Box from "@mui/material/Box";
-import Grid from "@mui/material/Grid";
-import DeleteIcon from "@mui/icons-material/Delete";
-import Fab from "@mui/material/Fab";
-import AddIcon from "@mui/icons-material/Add";
+import { Modal } from "react-bootstrap";
+import {
+  TextField,
+  Button,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  FormControl,
+  InputLabel,
+  Select,
+  Paper,
+  MenuItem,
+  Typography,
+  Box,
+  Grid,
+  Fab,
+  Skeleton,
+} from "@mui/material";
+import { Delete as DeleteIcon, Add as AddIcon } from "@mui/icons-material";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -127,7 +127,7 @@ export default function ViewExamTemplate(props) {
           <Grid item xs={12} md={4} lg={4}>
             <TextField
               fullWidth
-              id="examName" // Unique id
+              id="examName"
               variant="outlined"
               label="Test Name"
               name="examName"

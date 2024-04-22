@@ -178,13 +178,6 @@ export default function MaterialPage() {
               height={40}
             />
           </Box>
-          <Skeleton variant="rectangular" height={40} />
-          <Skeleton variant="rectangular" height={40} />
-          <Skeleton variant="rectangular" height={40} />
-          <Skeleton variant="rectangular" height={40} />
-          <Skeleton variant="rectangular" height={40} />
-          <Skeleton variant="rectangular" height={40} />
-          <Skeleton variant="rectangular" height={40} />
         </Box>
       </>
     );

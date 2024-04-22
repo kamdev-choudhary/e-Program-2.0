@@ -1,24 +1,31 @@
 import { useState, useEffect } from "react";
 import React from "react";
-import { Modal } from "react-bootstrap";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import InputAdornment from "@mui/material/InputAdornment";
-import FormControl from "@mui/material/FormControl";
-import SearchIcon from "@mui/icons-material/Search";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+
 import ViewExamTemplate from "../../components/ViewExamTemplate";
 import CreateExamTemplate from "../../components/CreateExamTemplate";
-import Button from "@mui/material/Button";
-import Grid from "@mui/material/Grid";
-import Backdrop from "@mui/material/Backdrop";
-import CircularProgress from "@mui/material/CircularProgress";
+
+import SearchIcon from "@mui/icons-material/Search";
+import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
+
+import { Modal } from "react-bootstrap";
+
+import {
+  Box,
+  Skeleton,
+  OutlinedInput,
+  InputAdornment,
+  FormControl,
+  Grid,
+  Button,
+  Table,
+  TableBody,
+  TableHead,
+  TableCell,
+  TableRow,
+  TableContainer,
+  Paper,
+  IconButton,
+} from "@mui/material";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -89,45 +96,32 @@ export default function ExamMaster() {
   if (isLoading) {
     return (
       <>
-        <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={true}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
-      </>
-    );
-  }
-
-  return (
-    <>
-      <Grid container spacing={2}>
-        <Grid item sx={6} md={6} lg={8}>
-          <FormControl fullWidth size="small">
-            <OutlinedInput
+        <Grid container spacing={2}>
+          <Grid item xs={12} lg={9}>
+            <Skeleton
               sx={{ borderRadius: 10 }}
-              onChange={(e) => setSearchInput(e.target.value)}
-              startAdornment={
-                <InputAdornment position="start">
-                  Search <SearchIcon />
-                </InputAdornment>
-              }
+              variant="rectangular"
+              height={40}
             />
-          </FormControl>
+          </Grid>
+          <Grid item xs={12} lg={3}>
+            <Skeleton
+              sx={{ borderRadius: 10 }}
+              variant="rectangular"
+              height={40}
+            />
+          </Grid>
         </Grid>
-        <Grid item sx={6} md={6} lg={4}>
-          <Button
-            variant="contained"
-            sx={{ borderRadius: 10 }}
-            onClick={handleShowAddTemplate}
-          >
-            Create New Template
-          </Button>
-        </Grid>
-        <Grid item></Grid>
-        <Grid item sx={12} lg={12} md={12}>
+        <Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              mt: 2,
+            }}
+          ></Box>
           <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <Table>
               <TableHead className="bg bg-success ">
                 <TableRow>
                   <TableCell align="center" className="text-white">
@@ -151,41 +145,121 @@ export default function ExamMaster() {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {examTemplates.map((examtemplate, index) => (
-                  <TableRow
-                    key={examtemplate._id}
-                    sx={{
-                      "&:last-child td, &:last-child th": { border: 0 },
-                    }}
-                  >
-                    <TableCell align="center">{examtemplate.examId}</TableCell>
-                    <TableCell align="center">
-                      {examtemplate.examName}
+                {[...Array(10)].map((_, index) => (
+                  <TableRow key={index}>
+                    <TableCell>
+                      <Skeleton />
                     </TableCell>
-                    <TableCell align="center">
-                      {examtemplate.createdAt}
+                    <TableCell>
+                      <Skeleton />
                     </TableCell>
-                    <TableCell align="center">
-                      {examtemplate.examPattern}
+                    <TableCell>
+                      <Skeleton />
                     </TableCell>
-                    <TableCell align="center">
-                      <Button
-                        size="sm"
-                        onClick={() => handleShowExamTemplate(examtemplate)}
-                      >
-                        View
-                      </Button>
+                    <TableCell>
+                      <Skeleton />
                     </TableCell>
-                    <TableCell align="center">
-                      <DeleteRoundedIcon />
+                    <TableCell>
+                      <Skeleton />
                     </TableCell>
+                    <TableCell>
+                      <Skeleton />
+                    </TableCell>
+                    {/* Add more skeleton cells as needed */}
                   </TableRow>
                 ))}
               </TableBody>
             </Table>
           </TableContainer>
+        </Box>
+      </>
+    );
+  }
+
+  return (
+    <>
+      <Grid container spacing={1}>
+        <Grid item sx={6} md={6} lg={8}>
+          <FormControl fullWidth size="small">
+            <OutlinedInput
+              sx={{ borderRadius: 10 }}
+              onChange={(e) => setSearchInput(e.target.value)}
+              startAdornment={
+                <InputAdornment position="start">
+                  Search <SearchIcon />
+                </InputAdornment>
+              }
+            />
+          </FormControl>
+        </Grid>
+        <Grid item sx={6} md={6} lg={4}>
+          <Button
+            variant="contained"
+            sx={{ borderRadius: 10 }}
+            onClick={handleShowAddTemplate}
+          >
+            Create New Template
+          </Button>
         </Grid>
       </Grid>
+      <Box sx={{ marginTop: 1 }}>
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead className="bg bg-success ">
+              <TableRow>
+                <TableCell align="center" className="text-white">
+                  Exam ID
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  Template Name
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  Created At
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  Pattern
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  Details
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  Delete
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {examTemplates.map((examtemplate, index) => (
+                <TableRow
+                  key={examtemplate._id}
+                  sx={{
+                    "&:last-child td, &:last-child th": { border: 0 },
+                  }}
+                >
+                  <TableCell align="center">{examtemplate.examId}</TableCell>
+                  <TableCell align="center">{examtemplate.examName}</TableCell>
+                  <TableCell align="center">{examtemplate.createdAt}</TableCell>
+                  <TableCell align="center">
+                    {examtemplate.examPattern}
+                  </TableCell>
+                  <TableCell align="center">
+                    <Button
+                      size="sm"
+                      onClick={() => handleShowExamTemplate(examtemplate)}
+                    >
+                      View
+                    </Button>
+                  </TableCell>
+                  <TableCell align="center">
+                    <IconButton>
+                      <DeleteRoundedIcon />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </Box>
       <Modal
         show={showAddExamTemplate}
         onHide={handleShowAddTemplate}
@@ -196,7 +270,12 @@ export default function ExamMaster() {
           <CreateExamTemplate handleShowAddTemplate={handleShowAddTemplate} />
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="danger" onClick={handleShowAddTemplate}>
+          <Button
+            variant="contained"
+            color="error"
+            sx={{ borderRadius: 10 }}
+            onClick={handleShowAddTemplate}
+          >
             Close
           </Button>
         </Modal.Footer>

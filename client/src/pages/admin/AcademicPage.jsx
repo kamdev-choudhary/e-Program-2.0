@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Modal } from "react-bootstrap";
+
+import ConfirmationDialog from "../../components/ConfirmationDialog";
+
 import {
-  Backdrop,
-  CircularProgress,
   Box,
   Button,
   FormControl,
@@ -55,6 +56,9 @@ export default function AcademicPage() {
   const [refresh, setRefresh] = useState(false);
   const [showAddSubtopicField, setShowAddSubtopicField] = useState(false);
   const [selectedTopicName, setSelectedTopicName] = useState("");
+
+  const [showDeleteTopicDialog, setShowDeleteTopicDialog] = useState(false);
+  const [topicToDelete, setTopicToDelete] = useState(null);
 
   useEffect(() => {
     fetch(`${API_URL}/academic`)
@@ -184,8 +188,6 @@ export default function AcademicPage() {
       subtopicId: subtopic._id,
     };
 
-    console.log(selectedTopic);
-
     const subtopicToDelete = subtopic._id;
     console.log(
       selectedTopic.subtopics.filter(
@@ -215,13 +217,19 @@ export default function AcademicPage() {
       });
   };
 
-  const handdleDeleteTopic = (topic) => {
+  const handleDeleteTopic = (topic) => {
+    setTopicToDelete(topic);
+    setShowDeleteTopicDialog(true);
+  };
+
+  const handleConfirmDeleteTopic = () => {
+    console.log(topicToDelete);
     const data = {
-      className: topic.className,
+      className: topicToDelete.className,
       name: selectedSubject,
-      topicId: topic._id,
+      topicId: topicToDelete._id,
     };
-    const topicToDelete = topic._id;
+    const deletedTopic = topicToDelete._id;
     fetch(`${API_URL}/academic/deletetopic`, {
       method: "DELETE",
       headers: {
@@ -233,13 +241,14 @@ export default function AcademicPage() {
       .then((data) => {
         console.log("Success:", data);
         setFilteredTopics((prevTopics) =>
-          prevTopics.filter((topic) => topic._id !== topicToDelete)
+          prevTopics.filter((topic) => topic._id !== deletedTopic)
         );
         setSelectedTopic({});
       })
       .catch((error) => {
         console.error("Error:", error);
       });
+    setShowDeleteTopicDialog(false);
   };
 
   useEffect(() => {
@@ -485,7 +494,7 @@ export default function AcademicPage() {
                         <ListItemText primary={`${index + 1}. ${topic.name}`} />
                         <IconButton
                           aria-label="delete"
-                          onClick={() => handdleDeleteTopic(topic)}
+                          onClick={() => handleDeleteTopic(topic)}
                         >
                           <DeleteIcon />
                         </IconButton>
@@ -784,6 +793,12 @@ export default function AcademicPage() {
           </Button>
         </Modal.Footer>
       </Modal>
+      <ConfirmationDialog
+        open={showDeleteTopicDialog}
+        handleClose={() => setShowDeleteTopicDialog(false)}
+        handleConfirm={handleConfirmDeleteTopic}
+        message={`Are you sure you want to delete the topic ?`}
+      />
     </>
   );
 }
