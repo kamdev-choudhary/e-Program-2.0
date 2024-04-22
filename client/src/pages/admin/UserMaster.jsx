@@ -43,7 +43,10 @@ export default function UserMaster() {
         }
         return response.json();
       })
-      .then((data) => setUsers(data.users))
+      .then((data) => {
+        setUsers(data.users);
+        setIsLoading(false);
+      })
       .catch((error) => setError(error.message));
   }, []);
 
