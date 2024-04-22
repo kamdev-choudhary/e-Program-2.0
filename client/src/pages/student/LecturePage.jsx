@@ -244,7 +244,7 @@ export default function LecturePage() {
       <>
         <Box>
           <Grid container spacing={2}>
-            <Grid item xs={6} lg={3}>
+            <Grid item xs={6} lg={3} md={6}>
               <FormControl fullWidth size="small">
                 <InputLabel id="demo-simple-select-label">Class</InputLabel>
                 <Select
@@ -266,7 +266,7 @@ export default function LecturePage() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={6} lg={3}>
+            <Grid item xs={6} lg={3} md={6}>
               <FormControl fullWidth size="small">
                 <InputLabel id="demo-simple-select-label">Subject</InputLabel>
                 <Select
@@ -288,7 +288,7 @@ export default function LecturePage() {
                 </Select>
               </FormControl>
             </Grid>
-            <Grid item xs={12} lg={4}>
+            <Grid item xs={12} lg={4} md={6}>
               <FormControl fullWidth size="small">
                 <OutlinedInput
                   sx={{ borderRadius: 10 }}
@@ -301,7 +301,7 @@ export default function LecturePage() {
                 />
               </FormControl>
             </Grid>
-            <Grid item xs={12} lg={2}>
+            <Grid item xs={12} lg={2} md={2}>
               <Button
                 variant="contained"
                 sx={{ borderRadius: 10 }}

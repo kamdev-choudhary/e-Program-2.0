@@ -8,15 +8,17 @@ import {
   Button,
   Typography,
   Modal,
-  Paper,
   Grid,
   Select,
   MenuItem,
   FormControl,
   Backdrop,
   Divider,
+  IconButton,
   CircularProgress,
 } from "@mui/material";
+
+import { Delete as DeleteIcon } from "@mui/icons-material";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
@@ -98,9 +100,9 @@ export default function DoubtPage() {
       .then((data) => {
         console.log("Success:", data);
         const updatedDoubt = { ...currDoubt };
-        updatedDoubt.doubtSolutions.push(data.solution); // Assuming the new solution is returned from the server
+        updatedDoubt.doubtSolutions.push(data.solution);
         setCurrDoubt(updatedDoubt);
-        setRefresh(!refresh); // Optionally trigger a refresh
+        setRefresh(!refresh);
         setShowAskDoubtForm(false);
         setNewDoubt(() => ({
           doubtQuestion: "",
@@ -109,6 +111,10 @@ export default function DoubtPage() {
       .catch((error) => {
         console.error("Error:", error);
       });
+  };
+
+  const handleDeleteDoubtPost = (id) => {
+    console.log(id);
   };
 
   const style = {
@@ -160,14 +166,14 @@ export default function DoubtPage() {
             </Select>
           </FormControl>
           <Button
-            variant="contained"
-            color="success"
+            variant="outlined"
+            color="secondary"
             sx={{ borderRadius: 10 }}
             onClick={() => {
               setShowAskDoubtForm(true), setModelText("Ask a Doubt");
             }}
           >
-            Add New
+            Ask a Doubt
           </Button>
         </Box>
       )}
@@ -272,12 +278,11 @@ export default function DoubtPage() {
           <Button
             variant="outlined"
             color="error"
-            sx={{ borderRadius: 10 }}
+            sx={{ borderRadius: 10, marginBottom: 1 }}
             onClick={() => setDoubtDetails(false)}
           >
             Back
           </Button>
-          <hr />
 
           <Box
             sx={{
@@ -288,9 +293,20 @@ export default function DoubtPage() {
             }}
           >
             <Grid container spacing={1}>
-              <Grid item xs={12} lg={12} md={12}>
+              <Grid item xs={11} lg={11} md={11}>
                 <Typography variant="h5">Question</Typography>
               </Grid>
+              {isAdmin ||
+              (currDoubt.postedById && currDoubt.postedById === userId) ? (
+                <Grid item xs={1} lg={1} md={1}>
+                  <IconButton
+                    aria-label="delete"
+                    onClick={() => handleDeleteDoubtPost(currDoubt._id)}
+                  >
+                    <DeleteIcon />
+                  </IconButton>
+                </Grid>
+              ) : null}
               <Grid item xs={12} lg={12} md={12}>
                 <Typography
                   sx={{
@@ -362,7 +378,6 @@ export default function DoubtPage() {
                           sx={{
                             overflow: "hidden",
                             maxWidth: "100%",
-
                             padding: 1,
                           }}
                           dangerouslySetInnerHTML={{

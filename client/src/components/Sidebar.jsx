@@ -8,7 +8,6 @@ import List from "@mui/material/List";
 import ListItemButton from "@mui/material/ListItemButton";
 import ListItemIcon from "@mui/material/ListItemIcon";
 import ListItemText from "@mui/material/ListItemText";
-import ListItem from "@mui/material/ListItem";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
 import QuizIcon from "@mui/icons-material/Quiz";
@@ -24,7 +23,7 @@ import ExpandMore from "@mui/icons-material/ExpandMore";
 import { useAuth } from "../store/Auth";
 import Typography from "@mui/material/Typography";
 
-export default function Sidebar({ isOpen, onClose }) {
+export default function Sidebar({ toggleDrawer }) {
   const { isLoggedIn, isAdmin, accountType, name, logoutUser } = useAuth();
   const [examMasterOpen, setExamMasterOpen] = useState(false);
 
@@ -84,17 +83,13 @@ export default function Sidebar({ isOpen, onClose }) {
         )}
         <hr />
         <Box>
-          <List
-            // sx={{ width: "100%", maxWidth: 360 }}
-            component="nav"
-            aria-labelledby="nested-list-subheader"
-          >
+          <List component="nav" aria-labelledby="nested-list-subheader">
             {isLoggedIn && (
               <NavLink
                 to="/dashboard"
                 style={{ textDecoration: "none", color: "#000" }}
               >
-                <ListItemButton>
+                <ListItemButton onClick={() => toggleDrawer(false)}>
                   <ListItemIcon>
                     <AdminPanelSettingsIcon />
                   </ListItemIcon>

@@ -1,43 +1,32 @@
-import "bootstrap/dist/css/bootstrap.min.css";
+import React, { useEffect, useState } from "react";
 import { NavLink } from "react-router-dom";
 import Modal from "@mui/material/Modal";
-import { useState } from "react";
 import { useAuth } from "../store/Auth";
-import Button from "@mui/material/Button";
-import Menu from "@mui/material/Menu";
-import MenuItem from "@mui/material/MenuItem";
-import ForumIcon from "@mui/icons-material/Forum";
-import AppBar from "@mui/material/AppBar";
-import Box from "@mui/material/Box";
-import Toolbar from "@mui/material/Toolbar";
-import Typography from "@mui/material/Typography";
-import IconButton from "@mui/material/IconButton";
-import Avatar from "@mui/material/Avatar";
-import MenuIcon from "@mui/icons-material/Menu";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import NotificationsRoundedIcon from "@mui/icons-material/NotificationsRounded";
-import ListItem from "@mui/material/ListItem";
-import ListItemButton from "@mui/material/ListItemButton";
-import ListItemIcon from "@mui/material/ListItemIcon";
-import ListItemText from "@mui/material/ListItemText";
-import Drawer from "@mui/material/Drawer";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
-import LibraryBooksIcon from "@mui/icons-material/LibraryBooks";
-import QuizIcon from "@mui/icons-material/Quiz";
-import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
-import OndemandVideoRoundedIcon from "@mui/icons-material/OndemandVideoRounded";
-import DescriptionIcon from "@mui/icons-material/Description";
-import SchoolIcon from "@mui/icons-material/School";
-import List from "@mui/material/List";
-import Divider from "@mui/material/Divider";
-import Popover from "@mui/material/Popover";
-import React, { useEffect } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
 import AuthPage from "./AuthPage";
+import Sidebar from "./Sidebar";
+import {
+  Button,
+  MenuItem,
+  AppBar,
+  Toolbar,
+  Box,
+  Typography,
+  IconButton,
+  Drawer,
+  Popover,
+  Menu,
+} from "@mui/material";
 
-function Navbar() {
+import {
+  Menu as MenuIcon,
+  AccountCircle,
+  NotificationsRounded as NotificationsRoundedIcon,
+} from "@mui/icons-material";
+
+export default function Navbar() {
   const { isLoggedIn, logoutUser, isAdmin, name } = useAuth();
 
-  const [anchorEl, setAnchorEl] = useState(null);
   const [open, setOpen] = useState(false);
   const [showUserPage, setShowUserPage] = useState(false);
   const [showNotification, setShowNofication] = useState(false);
@@ -63,19 +52,6 @@ function Navbar() {
     setShowNofication(!showNotification);
   };
 
-  const handleMenu = (event) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleLogoutUser = () => {
-    logoutUser();
-    handleClose(); // Close the menu after logout
-  };
-
   const handleshowUserPage = () => {
     setShowUserPage(!showUserPage);
   };
@@ -84,250 +60,136 @@ function Navbar() {
     setOpen(newOpen);
   };
 
-  const DrawerList = (
-    <Box
-      role="presentation"
-      onClick={() => toggleDrawer(false)}
-      sx={{
-        width: 250,
-        backdropFilter: "blur(5px)",
-        borderRadius: "10px",
-      }}
-    >
-      <List>
-        <div
-          style={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            marginTop: "2rem",
-          }}
-        >
-          <Avatar
-            alt="Remy Sharp"
-            src="./main_logo.png"
-            sx={{ width: 50, height: 50 }}
-          />
-        </div>
-        {isAdmin && (
-          <>
-            <NavLink to="/dashboard" style={{ textDecoration: "none" }}>
-              <ListItem onClick={toggleDrawer(false)}>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <AdminPanelSettingsIcon />
-                  </ListItemIcon>
-                  <ListItemText
-                    primary={"DashBoard"}
-                    onClick={() => toggleDrawer(false)}
-                  />
-                </ListItemButton>
-              </ListItem>
-            </NavLink>
-            <NavLink to="/academic" style={{ textDecoration: "none" }}>
-              <ListItem onClick={toggleDrawer(false)}>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <SchoolIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={"Academic"} />
-                </ListItemButton>
-              </ListItem>
-            </NavLink>
-            <NavLink to="/users" style={{ textDecoration: "none" }}>
-              <ListItem onClick={toggleDrawer(false)}>
-                <ListItemButton>
-                  <ListItemIcon>
-                    <PeopleAltIcon />
-                  </ListItemIcon>
-                  <ListItemText primary={"User Master"} />
-                </ListItemButton>
-              </ListItem>
-            </NavLink>
-          </>
-        )}
+  const [anchorEl, setAnchorEl] = React.useState(null);
 
-        {isAdmin && (
-          <NavLink to="/question-bank" style={{ textDecoration: "none" }}>
-            <ListItem onClick={toggleDrawer(false)}>
-              <ListItemButton>
-                <ListItemIcon>
-                  <QuizIcon />
-                </ListItemIcon>
-                <ListItemText primary={"Question Bank"} />
-              </ListItemButton>
-            </ListItem>
-          </NavLink>
-        )}
-        {isAdmin && (
-          <NavLink to="/examtemplate" style={{ textDecoration: "none" }}>
-            <ListItem onClick={toggleDrawer(false)}>
-              <ListItemButton>
-                <ListItemIcon>
-                  <DescriptionIcon />
-                </ListItemIcon>
-                <ListItemText primary={"Exam Master"} />
-              </ListItemButton>
-            </ListItem>
-          </NavLink>
-        )}
-
-        <NavLink to="/lectures" style={{ textDecoration: "none" }}>
-          <ListItem>
-            <ListItemButton onClick={toggleDrawer(false)}>
-              <ListItemIcon>
-                <OndemandVideoRoundedIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Lectures"} />
-            </ListItemButton>
-          </ListItem>
-        </NavLink>
-        <NavLink to="/materials" style={{ textDecoration: "none" }}>
-          <ListItem onClick={toggleDrawer(false)}>
-            <ListItemButton>
-              <ListItemIcon>
-                <LibraryBooksIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Study Materials"} />
-            </ListItemButton>
-          </ListItem>
-        </NavLink>
-        {isLoggedIn && !isAdmin && (
-          <NavLink to="/exams" style={{ textDecoration: "none" }}>
-            <ListItem onClick={toggleDrawer(false)}>
-              <ListItemButton>
-                <ListItemIcon>
-                  <DescriptionIcon />
-                </ListItemIcon>
-                <ListItemText primary={"Exams"} />
-              </ListItemButton>
-            </ListItem>
-          </NavLink>
-        )}
-        <NavLink to="/doubts" style={{ textDecoration: "none" }}>
-          <ListItem onClick={toggleDrawer(false)}>
-            <ListItemButton>
-              <ListItemIcon>
-                <ForumIcon />
-              </ListItemIcon>
-              <ListItemText primary={"Doubts"} />
-            </ListItemButton>
-          </ListItem>
-        </NavLink>
-      </List>
-      <Divider />
-    </Box>
-  );
-
-  const modalStyle = {
-    backgroundColor: "rgba(255, 255, 255, 0.5)",
-    border: "none",
+  const handleMenu = (event) => {
+    setAnchorEl(event.currentTarget);
   };
-  return (
-    <>
-      <Box
-        sx={{
-          flexGrow: 2,
-          position: "sticky",
-          top: 0,
-          backgroundColor: "#987458",
-          zIndex: 10,
-        }}
-      >
-        <AppBar position="static" sx={{ backgroundColor: "#fafafa" }}>
-          <Toolbar>
-            <IconButton
-              onClick={toggleDrawer(true)}
-              size="large"
-              edge="start"
-              color="black"
-              aria-label="menu"
-              sx={{ mr: 1 }}
-            >
-              <MenuIcon />
-            </IconButton>
 
-            <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-              <NavLink to="/" className=" text-decoration-none">
-                e-Program
-              </NavLink>
-            </Typography>
-            <Button
-              aria-describedby={idForNotification}
-              variant="outlined"
-              sx={{ borderRadius: 10 }}
-              onClick={handleNotificationPopover}
-            >
-              <NotificationsRoundedIcon />
-            </Button>
-            <Typography>
-              <Popover
-                id={idForNotification}
-                open={showNotification}
+  return (
+    <Box sx={{ flexGrow: 1 }}>
+      <AppBar position="static" sx={{ backgroundColor: "#fff" }}>
+        <Toolbar>
+          <IconButton
+            size="large"
+            edge="start"
+            color="#000"
+            aria-label="menu"
+            sx={{ mr: 2 }}
+            onClick={toggleDrawer(true)}
+          >
+            <MenuIcon />
+          </IconButton>
+          <Typography
+            variant="h6"
+            component="div"
+            sx={{ flexGrow: 1, color: "#fff" }}
+          >
+            <NavLink to="/" className=" text-decoration-none">
+              e-Program
+            </NavLink>
+          </Typography>
+          <IconButton onClick={handleNotificationPopover}>
+            <NotificationsRoundedIcon />
+          </IconButton>
+          <Popover
+            id={idForNotification}
+            open={showNotification}
+            anchorEl={anchorEl}
+            onClose={handleNotificationPopover}
+            anchorOrigin={{
+              vertical: "top",
+              horizontal: "right",
+            }}
+            transformOrigin={{
+              vertical: "bottom",
+              horizontal: "right",
+            }}
+            PaperProps={{
+              sx: {
+                mt: 4,
+                ml: -20,
+                minWidth: 500,
+              },
+            }}
+          >
+            <Typography sx={{ p: 2 }}>Notification</Typography>
+          </Popover>
+          {isLoggedIn ? (
+            <div>
+              <IconButton
+                size="large"
+                aria-label="account of current user"
+                aria-controls="menu-appbar"
+                aria-haspopup="true"
+                onClick={handleMenu}
+                color="#000"
+              >
+                <AccountCircle />
+              </IconButton>
+              <Menu
+                id="menu-appbar"
                 anchorEl={anchorEl}
-                onClose={handleNotificationPopover}
                 anchorOrigin={{
                   vertical: "top",
                   horizontal: "right",
                 }}
+                keepMounted
                 transformOrigin={{
-                  vertical: "bottom",
+                  vertical: "top",
                   horizontal: "right",
                 }}
-                PaperProps={{
-                  sx: {
-                    mt: 4,
-                    ml: -20,
-                    minWidth: 500,
-                  },
-                }}
+                open={Boolean(anchorEl)}
+                onClose={() => setAnchorEl(null)}
               >
-                <Typography sx={{ p: 2 }}>Notification</Typography>
-              </Popover>
-            </Typography>
-            {isLoggedIn ? (
-              <div>
-                <MenuItem sx={{ color: "#000" }} onClick={handleLogoutUser}>
-                  <Button variant="outlined" sx={{ borderRadius: 10 }}>
-                    Logout
-                  </Button>
+                <MenuItem onClick={() => setAnchorEl(null)}>Profile</MenuItem>
+                <MenuItem onClick={() => setAnchorEl(null)}>
+                  My account
                 </MenuItem>
-              </div>
-            ) : (
-              <Button
-                variant="contained"
-                color="success"
-                sx={{
-                  borderRadius: 100,
-                }}
-                onClick={handleshowUserPage}
-              >
-                Login | Sign Up
-              </Button>
-            )}
-          </Toolbar>
-        </AppBar>
-      </Box>
+                <MenuItem
+                  sx={{ color: "#444" }}
+                  onClick={() => {
+                    logoutUser();
+                    setAnchorEl(null);
+                  }}
+                >
+                  Logout
+                </MenuItem>
+              </Menu>
+            </div>
+          ) : (
+            <Button
+              variant="outlined"
+              color="error"
+              sx={{
+                borderRadius: 100,
+              }}
+              onClick={() => setShowUserPage(true)}
+            >
+              Login
+            </Button>
+          )}
+        </Toolbar>
+      </AppBar>
       <Drawer open={open} onClose={toggleDrawer(false)}>
-        {DrawerList}
+        <Sidebar toggleDrawer={toggleDrawer} />
       </Drawer>
-      <Modal open={showUserPage} onClose={handleshowUserPage}>
+
+      <Modal open={showUserPage} onClose={() => setShowUserPage(false)}>
         <Box sx={style}>
           <AuthPage handleshowUserPage={handleshowUserPage} />
           <hr />
           <Button
-            variant="contained"
+            variant="outlined"
             color="error"
             size="small"
-            onClick={handleshowUserPage}
-            sx={{ position: "fixed", right: 10, bottom: 10 }}
+            onClick={() => setShowUserPage(false)}
+            sx={{ borderRadius: 10, position: "fixed", right: 10, bottom: 10 }}
           >
             Close
           </Button>
         </Box>
       </Modal>
-    </>
+    </Box>
   );
 }
-
-export default Navbar;
