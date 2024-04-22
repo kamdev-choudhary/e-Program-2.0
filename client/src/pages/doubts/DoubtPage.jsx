@@ -195,83 +195,74 @@ export default function DoubtPage() {
                   new Date(b.doubtPostedDate) - new Date(a.doubtPostedDate)
               )
               .map((doubt, index) => (
-                <Box sx={{ marginBottom: 1 }} key={index}>
-                  <Paper
-                    sx={{
-                      padding: 3,
-                      backgroundColor: "#f5f5f5",
-                      backdropFilter: "blur(5px)",
-                      borderRadius: 1,
-                    }}
-                    elevation={6}
-                  >
-                    <Box sx={{ flexGrow: 1 }}>
-                      <Grid
-                        container
-                        spacing={2}
-                        justifyContent="space-between"
-                      >
-                        <Grid item xs={8} sx={{ opacity: "0.7" }}>
-                          <Typography sx={{ marginBottom: 1 }}>
-                            Posted By: {doubt.postedBy}
-                          </Typography>
-                        </Grid>
-                        <Grid item xs={4} textAlign="right">
-                          <Typography sx={{ opacity: "0.7" }}>
-                            {new Date(
-                              doubt.doubtPostedDate
-                            ).toLocaleDateString()}{" "}
-                          </Typography>
-                        </Grid>
+                <Box
+                  sx={{
+                    marginBottom: 1,
+                    padding: 2,
+                    borderRadius: 3,
+                    border: "2px solid rgba(0,0,0,0.3)",
+                  }}
+                  key={index}
+                >
+                  <Box sx={{ flexGrow: 1 }}>
+                    <Grid container spacing={2} justifyContent="space-between">
+                      <Grid item xs={8} sx={{ opacity: "0.7" }}>
+                        <Typography sx={{ marginBottom: 1 }}>
+                          Posted By: {doubt.postedBy}
+                        </Typography>
                       </Grid>
-                    </Box>
-                    <Box
-                      border="1.5px solid rgba(128, 128, 128, 0.5)"
-                      sx={{ padding: 1, borderRadius: 1 }}
-                    >
-                      <Typography
-                        sx={{
-                          overflow: "hidden",
-                          maxWidth: "100%",
-                        }}
-                        dangerouslySetInnerHTML={{
-                          __html: doubt.doubtQuestion,
-                        }}
-                      />
-                    </Box>
-
-                    <Box
+                      <Grid item xs={4} textAlign="right">
+                        <Typography sx={{ opacity: "0.7" }}>
+                          {new Date(doubt.doubtPostedDate).toLocaleDateString()}{" "}
+                        </Typography>
+                      </Grid>
+                    </Grid>
+                  </Box>
+                  <Box
+                    border="1.5px solid rgba(128, 128, 128, 0.5)"
+                    sx={{ padding: 1, borderRadius: 1 }}
+                  >
+                    <Typography
                       sx={{
-                        display: "flex",
-                        justifyContent: "flex-end",
-                        mt: 2,
+                        overflow: "hidden",
+                        maxWidth: "100%",
                       }}
-                    >
-                      {doubt.doubtSolutions &&
-                      doubt.doubtSolutions.length > 0 ? (
-                        <Button
-                          color="success"
-                          sx={{ borderRadius: 10 }}
-                          onClick={() => {
-                            setDoubtDetails(true);
-                            setCurrDoubt(doubt);
-                          }}
-                        >
-                          View Solutions
-                        </Button>
-                      ) : (
-                        <Button
-                          sx={{ borderRadius: 10 }}
-                          onClick={() => {
-                            setDoubtDetails(true);
-                            setCurrDoubt(doubt);
-                          }}
-                        >
-                          Post a Solution
-                        </Button>
-                      )}
-                    </Box>
-                  </Paper>
+                      dangerouslySetInnerHTML={{
+                        __html: doubt.doubtQuestion,
+                      }}
+                    />
+                  </Box>
+
+                  <Box
+                    sx={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      mt: 2,
+                    }}
+                  >
+                    {doubt.doubtSolutions && doubt.doubtSolutions.length > 0 ? (
+                      <Button
+                        color="success"
+                        sx={{ borderRadius: 10 }}
+                        onClick={() => {
+                          setDoubtDetails(true);
+                          setCurrDoubt(doubt);
+                        }}
+                      >
+                        View Solutions
+                      </Button>
+                    ) : (
+                      <Button
+                        sx={{ borderRadius: 10 }}
+                        onClick={() => {
+                          setDoubtDetails(true);
+                          setCurrDoubt(doubt);
+                        }}
+                      >
+                        Post a Solution
+                      </Button>
+                    )}
+                  </Box>
                 </Box>
               ))}
         </>
@@ -287,28 +278,25 @@ export default function DoubtPage() {
             Back
           </Button>
           <hr />
-          <Paper
-            elevation={6}
+
+          <Box
             sx={{
+              marginBottom: 1,
               padding: 2,
-              backgroundColor: "#f1f1f1",
-              backdropFilter: "blur(5px)",
-              borderRadius: 1,
+              borderRadius: 3,
+              border: "2px solid rgba(0,0,0,0.3)",
             }}
           >
             <Grid container spacing={1}>
-              <Grid item xs={12} md={12} lg={12}>
-                <Typography variant="h5" sx={{ borderBottom: 1, padding: 1 }}>
-                  Question
-                </Typography>
+              <Grid item xs={12} lg={12} md={12}>
+                <Typography variant="h5">Question</Typography>
               </Grid>
-              <Grid item xs={12} md={12} lg={12}>
+              <Grid item xs={12} lg={12} md={12}>
                 <Typography
                   sx={{
                     overflow: "hidden",
                     maxWidth: "100%",
                     padding: 1,
-                    borderBottom: 1,
                   }}
                   dangerouslySetInnerHTML={{
                     __html: currDoubt.doubtQuestion,
@@ -341,64 +329,52 @@ export default function DoubtPage() {
               <Grid item xs={12} md={12} lg={12}>
                 {currDoubt.doubtSolutions &&
                   currDoubt.doubtSolutions.map((solution, index) => (
-                    <Paper
-                      elevation={6}
-                      sx={{
-                        padding: 3,
-                        borderRadius: 1,
-                        marginBottom: 2,
-                        backgroundColor: "#f3f3f3",
-                      }}
-                      key={index}
-                    >
-                      <>
-                        <Box sx={{ flexGrow: 1 }}>
-                          <Grid
-                            container
-                            spacing={2}
-                            justifyContent="space-between"
-                          >
-                            <Grid item xs={8}>
-                              <Typography sx={{ opacity: "0.7" }}>
-                                Posted By: {solution.postedBy}
-                              </Typography>
-                            </Grid>
-                            <Divider />
-                            <Grid item xs={4} textAlign="right">
-                              <Typography sx={{ opacity: "0.7" }}>
-                                {new Date(
-                                  solution.solutionPostedDate
-                                ).toLocaleDateString()}
-                              </Typography>
-                            </Grid>
-                          </Grid>
-                        </Box>
-                        <Box
-                          sx={{
-                            padding: 1,
-                            borderRadius: 2,
-                            backgroundColor: "#f0f0f0",
-                          }}
-                          key={index}
+                    <>
+                      <Box
+                        sx={{
+                          marginBottom: 1,
+                          padding: 2,
+                          borderRadius: 3,
+                          border: "2px solid rgba(0,0,0,0.3)",
+                        }}
+                        key={index}
+                      >
+                        <Grid
+                          container
+                          spacing={2}
+                          justifyContent="space-between"
                         >
-                          <Typography
-                            sx={{
-                              overflow: "hidden",
-                              maxWidth: "100%",
-                              borderTop: 1,
-                              padding: 1,
-                            }}
-                            dangerouslySetInnerHTML={{
-                              __html: solution.solution,
-                            }}
-                          />
-                        </Box>
-                      </>
-                    </Paper>
+                          <Grid item xs={8}>
+                            <Typography sx={{ opacity: "0.7" }}>
+                              Posted By: {solution.postedBy}
+                            </Typography>
+                          </Grid>
+                          <Divider />
+                          <Grid item xs={4} textAlign="right">
+                            <Typography sx={{ opacity: "0.7" }}>
+                              {new Date(
+                                solution.solutionPostedDate
+                              ).toLocaleDateString()}
+                            </Typography>
+                          </Grid>
+                        </Grid>
+                        <Typography
+                          sx={{
+                            overflow: "hidden",
+                            maxWidth: "100%",
+
+                            padding: 1,
+                          }}
+                          dangerouslySetInnerHTML={{
+                            __html: solution.solution,
+                          }}
+                        />
+                      </Box>
+                    </>
                   ))}
               </Grid>
             </Grid>
-          </Paper>
+          </Box>
         </>
       )}
       <Modal

@@ -221,7 +221,6 @@ function Navbar() {
 
   const modalStyle = {
     backgroundColor: "rgba(255, 255, 255, 0.5)",
-    backdropFilter: "blur(10px)",
     border: "none",
   };
   return (
@@ -255,7 +254,7 @@ function Navbar() {
             </Typography>
             <Button
               aria-describedby={idForNotification}
-              // variant="contained"
+              variant="outlined"
               sx={{ borderRadius: 10 }}
               onClick={handleNotificationPopover}
             >
@@ -268,8 +267,8 @@ function Navbar() {
                 anchorEl={anchorEl}
                 onClose={handleNotificationPopover}
                 anchorOrigin={{
-                  vertical: "top", // Change to top
-                  horizontal: "right", // Change to right
+                  vertical: "top",
+                  horizontal: "right",
                 }}
                 transformOrigin={{
                   vertical: "bottom",
@@ -289,7 +288,9 @@ function Navbar() {
             {isLoggedIn ? (
               <div>
                 <MenuItem sx={{ color: "#000" }} onClick={handleLogoutUser}>
-                  Logout
+                  <Button variant="outlined" sx={{ borderRadius: 10 }}>
+                    Logout
+                  </Button>
                 </MenuItem>
               </div>
             ) : (

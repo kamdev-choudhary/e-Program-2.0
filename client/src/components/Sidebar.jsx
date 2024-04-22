@@ -17,32 +17,23 @@ import ForumIcon from "@mui/icons-material/Forum";
 import OndemandVideoRoundedIcon from "@mui/icons-material/OndemandVideoRounded";
 import DescriptionIcon from "@mui/icons-material/Description";
 import SchoolIcon from "@mui/icons-material/School";
+import Collapse from "@mui/material/Collapse";
+import ExpandLess from "@mui/icons-material/ExpandLess";
+import ExpandMore from "@mui/icons-material/ExpandMore";
+
 import { useAuth } from "../store/Auth";
-import Drawer from "@mui/material/Drawer";
 import Typography from "@mui/material/Typography";
 
 export default function Sidebar({ isOpen, onClose }) {
   const { isLoggedIn, isAdmin, accountType, name, logoutUser } = useAuth();
+  const [examMasterOpen, setExamMasterOpen] = useState(false);
+
+  const handleExamMasterClick = () => {
+    setExamMasterOpen(!examMasterOpen);
+  };
 
   return (
     <>
-      {/* <Drawer
-        open={isOpen}
-        onClose={onClose}
-        variant="temporary" // Setting the variant to "temporary" for responsive behavior
-      >
-        <List>
-          <ListItem button>
-            <ListItemText primary="Home" />
-          </ListItem>
-          <ListItem button>
-            <ListItemText primary="About" />
-          </ListItem>
-          <ListItem button>
-            <ListItemText primary="Contact" />
-          </ListItem>
-        </List>
-      </Drawer> */}
       <Box
         sx={{
           backgroundColor: "#f5f5f5",
@@ -113,6 +104,39 @@ export default function Sidebar({ isOpen, onClose }) {
             )}
             {isAdmin && (
               <>
+                <ListItemButton onClick={handleExamMasterClick}>
+                  <ListItemIcon>
+                    <DescriptionIcon />
+                  </ListItemIcon>
+                  <ListItemText primary="Exam Master" />
+                  {examMasterOpen ? <ExpandLess /> : <ExpandMore />}
+                </ListItemButton>
+                <Collapse in={examMasterOpen} timeout="auto" unmountOnExit>
+                  <List component="div" disablePadding>
+                    <NavLink
+                      to="/exammaster/offline"
+                      style={{ textDecoration: "none", color: "#000" }}
+                    >
+                      <ListItemButton sx={{ pl: 4 }}>
+                        <ListItemIcon>
+                          <DescriptionIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Offline Exams" />
+                      </ListItemButton>
+                    </NavLink>
+                    <NavLink
+                      to="/exammaster/online"
+                      style={{ textDecoration: "none", color: "#000" }}
+                    >
+                      <ListItemButton sx={{ pl: 4 }}>
+                        <ListItemIcon>
+                          <DescriptionIcon />
+                        </ListItemIcon>
+                        <ListItemText primary="Online Exams" />
+                      </ListItemButton>
+                    </NavLink>
+                  </List>
+                </Collapse>
                 <NavLink
                   to="/academic"
                   style={{ textDecoration: "none", color: "#000" }}
@@ -144,17 +168,6 @@ export default function Sidebar({ isOpen, onClose }) {
                       <QuizIcon />
                     </ListItemIcon>
                     <ListItemText primary="Question Bank" />
-                  </ListItemButton>
-                </NavLink>
-                <NavLink
-                  to="/examtemplate"
-                  style={{ textDecoration: "none", color: "#000" }}
-                >
-                  <ListItemButton>
-                    <ListItemIcon>
-                      <DescriptionIcon />
-                    </ListItemIcon>
-                    <ListItemText primary="Exam Master" />
                   </ListItemButton>
                 </NavLink>
               </>

@@ -5,6 +5,10 @@ import OutlinedInput from "@mui/material/OutlinedInput";
 import InputAdornment from "@mui/material/InputAdornment";
 import FormControl from "@mui/material/FormControl";
 import SearchIcon from "@mui/icons-material/Search";
+import Tab from "@mui/material/Tab";
+import TabContext from "@mui/lab/TabContext";
+import TabList from "@mui/lab/TabList";
+import TabPanel from "@mui/lab/TabPanel";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
 import TableCell from "@mui/material/TableCell";
@@ -15,14 +19,16 @@ import Paper from "@mui/material/Paper";
 import DeleteRoundedIcon from "@mui/icons-material/DeleteRounded";
 import ViewExamTemplate from "../../components/ViewExamTemplate";
 import CreateExamTemplate from "../../components/CreateExamTemplate";
+import Box from "@mui/material/Box";
 import Button from "@mui/material/Button";
 import Grid from "@mui/material/Grid";
+import CreateExamTemplateOffline from "../../components/CreateExamTemplateOffline";
 import Backdrop from "@mui/material/Backdrop";
 import CircularProgress from "@mui/material/CircularProgress";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
 
-export default function ExamMaster() {
+export default function ExamMasterOffline() {
   const [showAddExamTemplate, setShowAddExamTemplate] = useState(false);
   const [examTemplates, setExamTemplates] = useState([]);
   const [error, setError] = useState("");
@@ -35,6 +41,8 @@ export default function ExamMaster() {
   const [batches, setBatches] = useState([]);
   const [academic, setAcademic] = useState([]);
   const [searchInput, setSearchInput] = useState("");
+  const [showAddOfflineExamTemplate, setShowAddOfflineExamTemplate] =
+    useState(false);
 
   useEffect(() => {
     fetch(`${API_URL}/batch`)
@@ -98,7 +106,6 @@ export default function ExamMaster() {
       </>
     );
   }
-
   return (
     <>
       <Grid container spacing={2}>
