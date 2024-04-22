@@ -1,23 +1,27 @@
 import { useEffect, useState } from "react";
 import React from "react";
 import { Modal } from "react-bootstrap";
-import Table from "@mui/material/Table";
-import TableBody from "@mui/material/TableBody";
-import TableCell from "@mui/material/TableCell";
-import TableContainer from "@mui/material/TableContainer";
-import TableHead from "@mui/material/TableHead";
-import TableRow from "@mui/material/TableRow";
-import Paper from "@mui/material/Paper";
-import Button from "@mui/material/Button";
-import InputAdornment from "@mui/material/InputAdornment";
-import FormControl from "@mui/material/FormControl";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  InputAdornment,
+  FormControl,
+  Grid,
+  MenuItem,
+  Select,
+  InputLabel,
+  OutlinedInput,
+  Box,
+  Skeleton,
+} from "@mui/material";
+
 import SearchIcon from "@mui/icons-material/Search";
-import OutlinedInput from "@mui/material/OutlinedInput";
-import Box from "@mui/material/Box";
-import InputLabel from "@mui/material/InputLabel";
-import Select from "@mui/material/Select";
-import MenuItem from "@mui/material/MenuItem";
-import Grid from "@mui/material/Grid";
 import StudentProfile from "../../components/StudentProfile";
 
 const API_URL = import.meta.env.VITE_REACT_APP_API_URL;
@@ -29,6 +33,7 @@ export default function UserMaster() {
   const [accountTypeFilter, setAccountTypeFilter] = useState("admin");
   const [showStudentDashboard, setShowStudentDashboard] = useState(false);
   const [currUser, setCurrUser] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     fetch(`${API_URL}/admin/users`)
@@ -58,6 +63,84 @@ export default function UserMaster() {
           field.toString().toLowerCase().includes(searchInput.toLowerCase())
       ) && user.accountType.toLowerCase() === accountTypeFilter.toLowerCase()
   );
+
+  if (isLoading) {
+    return (
+      <>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={6} lg={6}>
+            <Skeleton
+              sx={{ borderRadius: 10 }}
+              variant="rectangular"
+              height={40}
+            />
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <Skeleton
+              sx={{ borderRadius: 10 }}
+              variant="rectangular"
+              height={40}
+            />
+          </Grid>
+          <Grid item xs={12} md={6} lg={3}>
+            <Skeleton
+              sx={{ borderRadius: 10 }}
+              variant="rectangular"
+              height={40}
+            />
+          </Grid>
+          <Grid item xs={12} lg={12}>
+            <Skeleton
+              sx={{ borderRadius: 2 }}
+              variant="rectangular"
+              height={1}
+            />
+          </Grid>
+          <Grid item xs={12} lg={12} md={12}>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead sx={{ backgroundColor: "#28844f" }}>
+                  <TableRow>
+                    <TableCell sx={{ color: "#fff" }}>SN</TableCell>
+                    <TableCell sx={{ color: "#fff" }}>Name</TableCell>
+                    <TableCell sx={{ color: "#fff" }}>Email</TableCell>
+                    <TableCell sx={{ color: "#fff" }}>Mobile</TableCell>
+                    <TableCell sx={{ color: "#fff" }}>Account Type</TableCell>
+                    <TableCell sx={{ color: "#fff" }}>Details</TableCell>
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {[...Array(10)].map((_, index) => (
+                    <TableRow key={index}>
+                      <TableCell>
+                        <Skeleton />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton />
+                      </TableCell>
+                      {/* Add more skeleton cells as needed */}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+        </Grid>
+      </>
+    );
+  }
 
   return (
     <>

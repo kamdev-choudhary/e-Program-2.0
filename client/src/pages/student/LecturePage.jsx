@@ -11,8 +11,7 @@ import {
 import {
   TextField,
   Modal,
-  CircularProgress,
-  Backdrop,
+  Skeleton,
   Stack,
   IconButton,
   Box,
@@ -226,12 +225,60 @@ export default function LecturePage() {
   if (isLoading) {
     return (
       <>
-        <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={true}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
+        <Grid container spacing={2}>
+          <Grid item xs={6} md={6} lg={3}>
+            <Skeleton
+              sx={{ borderRadius: 10 }}
+              variant="rectangular"
+              height={40}
+            />
+          </Grid>
+          <Grid item xs={6} md={6} lg={3}>
+            <Skeleton
+              sx={{ borderRadius: 10 }}
+              variant="rectangular"
+              height={40}
+            />
+          </Grid>
+          <Grid item xs={12} md={6} lg={6}>
+            <Skeleton
+              sx={{ borderRadius: 10 }}
+              variant="rectangular"
+              height={40}
+            />
+          </Grid>
+          <Grid item xs={12} lg={6}>
+            <TableContainer component={Paper}>
+              <Table>
+                <TableHead sx={{ backgroundColor: "#28844f" }}>
+                  <TableRow>
+                    <TableCell sx={{ color: "#fff" }}>subject</TableCell>
+                    <TableCell sx={{ color: "#fff" }}>Chapter Name</TableCell>
+                    <TableCell sx={{ color: "#fff" }}># of Lectures</TableCell>
+                    {/* Add more table headers as needed */}
+                  </TableRow>
+                </TableHead>
+                <TableBody>
+                  {/* Example skeleton rows */}
+                  {[...Array(10)].map((_, index) => (
+                    <TableRow key={index}>
+                      <TableCell>
+                        <Skeleton />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton />
+                      </TableCell>
+                      <TableCell>
+                        <Skeleton />
+                      </TableCell>
+                      {/* Add more skeleton cells as needed */}
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </TableContainer>
+          </Grid>
+        </Grid>
       </>
     );
   }

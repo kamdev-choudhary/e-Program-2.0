@@ -20,8 +20,7 @@ import {
   Paper,
   TextField,
   Box,
-  Backdrop,
-  CircularProgress,
+  Skeleton,
 } from "@mui/material";
 
 import { Search as SearchIcon } from "@mui/icons-material";
@@ -148,12 +147,45 @@ export default function MaterialPage() {
   if (isLoading) {
     return (
       <>
-        <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={true}
-        >
-          <CircularProgress color="inherit" />
-        </Backdrop>
+        <Grid container spacing={2}>
+          <Grid item xs={12} lg={9}>
+            <Skeleton
+              sx={{ borderRadius: 10 }}
+              variant="rectangular"
+              height={40}
+            />
+          </Grid>
+          <Grid item xs={12} lg={3}>
+            <Skeleton
+              sx={{ borderRadius: 10 }}
+              variant="rectangular"
+              height={40}
+            />
+          </Grid>
+        </Grid>
+        <Box>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              mt: 2,
+            }}
+          >
+            <Skeleton
+              sx={{ borderRadius: 1 }}
+              variant="rectangular"
+              width={20000}
+              height={40}
+            />
+          </Box>
+          <Skeleton variant="rectangular" height={40} />
+          <Skeleton variant="rectangular" height={40} />
+          <Skeleton variant="rectangular" height={40} />
+          <Skeleton variant="rectangular" height={40} />
+          <Skeleton variant="rectangular" height={40} />
+          <Skeleton variant="rectangular" height={40} />
+          <Skeleton variant="rectangular" height={40} />
+        </Box>
       </>
     );
   }

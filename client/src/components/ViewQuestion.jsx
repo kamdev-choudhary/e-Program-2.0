@@ -9,7 +9,6 @@ import {
   Button,
   Grid,
   Typography,
-  FormLabel,
   Stack,
 } from "@mui/material";
 import { TinyBox, TinyBox2, TinyBoxReadOnly } from "./TinyBox";

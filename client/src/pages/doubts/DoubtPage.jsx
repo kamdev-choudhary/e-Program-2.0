@@ -11,10 +11,11 @@ import {
   Grid,
   Select,
   MenuItem,
+  Skeleton,
   FormControl,
-  Backdrop,
   Divider,
   IconButton,
+  Stack,
   CircularProgress,
 } from "@mui/material";
 
@@ -132,12 +133,52 @@ export default function DoubtPage() {
   if (isLoading) {
     return (
       <>
-        <Backdrop
-          sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-          open={true}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "flex-end",
+            mt: 2,
+          }}
         >
-          <CircularProgress color="inherit" />
-        </Backdrop>
+          <Skeleton
+            sx={{ borderRadius: 10 }}
+            variant="rectangular"
+            width={200}
+            height={20}
+          />
+        </Box>
+        <br />
+        <Stack spacing={2}>
+          {[...Array(5)].map((_, index) => (
+            <>
+              <Box
+                key={index}
+                sx={{
+                  marginBottom: 1,
+                  padding: 2,
+                  borderRadius: 3,
+                  border: "2px solid rgba(0,0,0,0.1)",
+                }}
+              >
+                <Skeleton variant="rounded" height={100} />
+                <Box
+                  sx={{
+                    display: "flex",
+                    justifyContent: "flex-end",
+                    mt: 2,
+                  }}
+                >
+                  <Skeleton
+                    sx={{ borderRadius: 10 }}
+                    variant="rectangular"
+                    width={200}
+                    height={5}
+                  />
+                </Box>
+              </Box>
+            </>
+          ))}
+        </Stack>
       </>
     );
   }
@@ -332,6 +373,7 @@ export default function DoubtPage() {
                   <Button
                     variant="contained"
                     color="success"
+                    size="small"
                     sx={{ borderRadius: 10 }}
                     onClick={() => {
                       setShowAskDoubtForm(true),

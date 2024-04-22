@@ -30,6 +30,7 @@ import {
   Chip,
   Stack,
   IconButton,
+  Skeleton,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
@@ -256,12 +257,28 @@ export default function AcademicPage() {
 
   if (isLoading) {
     return (
-      <Backdrop
-        open={true}
-        sx={{ color: "#fff", zIndex: (theme) => theme.zIndex.drawer + 1 }}
-      >
-        <CircularProgress color="inherit" />
-      </Backdrop>
+      <>
+        <Grid container spacing={2}>
+          <Grid item sx={12} lg={12}>
+            <Box fullWidth>
+              <Skeleton
+                sx={{ borderRadius: 2 }}
+                variant="rectangular"
+                height={400}
+              />
+            </Box>
+          </Grid>
+          <Grid item sx={12} lg={12}>
+            <Box fullWidth>
+              <Skeleton
+                sx={{ borderRadius: 2 }}
+                variant="rectangular"
+                height={400}
+              />
+            </Box>
+          </Grid>
+        </Grid>
+      </>
     );
   }
 

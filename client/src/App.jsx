@@ -1,37 +1,29 @@
 import { Routes, Route, BrowserRouter, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./store/Auth";
-import { useState } from "react";
 import Navbar from "./components/Navbar";
-import ErrorPage from "./components/ErrorPage";
-import StudentProfile from "./components/StudentProfile";
 import Sidebar from "./components/Sidebar";
 import AdminPage from "./pages/admin/AdminPage";
-import AppBar from "@mui/material/AppBar";
-import Toolbar from "@mui/material/Toolbar";
+import StudentProfile from "./components/StudentProfile";
 import StudentDashboardPage from "./pages/student/StudentDashboardPage";
+import ErrorPage from "./pages/error/ErrorPage";
+import HomePage from "./pages/home/HomePage";
 import ExamPage from "./pages/exams/ExamPage";
 import LecturePage from "./pages/student/LecturePage";
 import MaterialPage from "./pages/student/MaterialPage";
-import QuestionBankPage from "./pages/questions/QuestionBankPage";
-import Drawer from "@mui/material/Drawer";
-import { List } from "@mui/icons-material";
-import { ListItem, Typography } from "@mui/material";
-import UserMaster from "./pages/admin/UserMaster";
 import AcademicPage from "./pages/admin/AcademicPage";
+import QuestionBankPage from "./pages/questions/QuestionBankPage";
+import UserMaster from "./pages/admin/UserMaster";
 import ExamMaster from "./pages/exams/ExamMaster";
-import DoubtPage from "./pages/doubts/DoubtPage";
-import { Box, useMediaQuery, Grid, Stack } from "@mui/material";
 import ExamMasterOffline from "./pages/exams/ExamMasterOffline";
-import Layout from "./components/Layout";
-
-const drawerWidth = 240;
+import DoubtPage from "./pages/doubts/DoubtPage";
+import { Box, useMediaQuery, Grid } from "@mui/material";
 
 const AppRouter = () => {
   const { accountType, isLoggedIn } = useAuth();
   return (
     <>
       <Routes>
-        <Route path="/" element={<Navigate to="/dashboard" replace />} />
+        <Route path="/" element={<HomePage />} />
         {isLoggedIn && (
           <Route
             path="/dashboard"
@@ -58,7 +50,6 @@ const AppRouter = () => {
 
 function App() {
   const { isLoggedIn } = useAuth();
-
   const isMdScreen = useMediaQuery("(min-width:700px)");
 
   return (

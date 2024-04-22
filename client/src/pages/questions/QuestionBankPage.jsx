@@ -4,6 +4,7 @@ import SingleCorrectQuestion from "../../components/SingleCorrectQuestion";
 import MultiCorrectQuestion from "../../components/MultiCorrectQuestion";
 import IntegerType from "../../components/IntegerType";
 import ViewQuestion from "../../components/ViewQuestion";
+import { Skeleton } from "@mui/material";
 import Box from "@mui/material/Box";
 import MenuItem from "@mui/material/MenuItem";
 import FormControl from "@mui/material/FormControl";
@@ -59,6 +60,7 @@ export default function QuestionBankPage() {
   const [searchInput, setSearchInput] = useState("");
   const [filteredTopics, setFilteredTopics] = useState([]);
   const [filteredSubtopics, setFilteredSubtopics] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
 
   // Snackbar
   const handleOpenSnackbar = () => {
@@ -96,7 +98,10 @@ export default function QuestionBankPage() {
         }
         return response.json();
       })
-      .then((data) => setQuestions(data.questions))
+      .then((data) => {
+        setQuestions(data.questions);
+        setIsLoading(false);
+      })
       .catch((error) => setError(error.message));
 
     fetch(`${API_URL}/exams`)
@@ -253,6 +258,164 @@ export default function QuestionBankPage() {
       setFilteredSubtopics(filteredSubtopics);
     }
   }, [filteredTopics, filterData.topic]);
+
+  if (isLoading) {
+    return (
+      <>
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={4} lg={3}>
+            <Skeleton
+              sx={{ borderRadius: 10 }}
+              variant="rectangular"
+              height={40}
+            />
+          </Grid>
+          <Grid item xs={12} md={4} lg={3}>
+            <Skeleton
+              sx={{ borderRadius: 10 }}
+              variant="rectangular"
+              height={40}
+            />
+          </Grid>
+          <Grid item xs={12} md={4} lg={3}>
+            <Skeleton
+              sx={{ borderRadius: 10 }}
+              variant="rectangular"
+              height={40}
+            />
+          </Grid>
+          <Grid item xs={12} md={4} lg={3}>
+            <Skeleton
+              sx={{ borderRadius: 10 }}
+              variant="rectangular"
+              height={40}
+            />
+          </Grid>
+          <Grid item xs={12} md={4} lg={3}>
+            <Skeleton
+              sx={{ borderRadius: 10 }}
+              variant="rectangular"
+              height={40}
+            />
+          </Grid>
+          <Grid item xs={12} md={4} lg={3}>
+            <Skeleton
+              sx={{ borderRadius: 10 }}
+              variant="rectangular"
+              height={40}
+            />
+          </Grid>
+          <Grid item xs={12} md={4} lg={3}>
+            <Skeleton
+              sx={{ borderRadius: 10 }}
+              variant="rectangular"
+              height={40}
+            />
+          </Grid>
+        </Grid>
+        <br />
+        <Skeleton sx={{ borderRadius: 10 }} variant="rectangular" height={5} />
+        <br />
+        <Grid container spacing={2}>
+          <Grid item xs={12} md={12} lg={5}>
+            <Skeleton
+              sx={{ borderRadius: 10 }}
+              variant="rectangular"
+              height={40}
+            />
+          </Grid>
+          <Grid item xs={12} md={12} lg={2}>
+            <Skeleton
+              sx={{ borderRadius: 10 }}
+              variant="rectangular"
+              height={40}
+            />
+          </Grid>
+          <Grid item xs={12} md={12} lg={2}>
+            <Skeleton
+              sx={{ borderRadius: 10 }}
+              variant="rectangular"
+              height={40}
+            />
+          </Grid>
+          <Grid item xs={12} md={12} lg={3}>
+            <Skeleton
+              sx={{ borderRadius: 10 }}
+              variant="rectangular"
+              height={40}
+            />
+          </Grid>
+        </Grid>
+        <br />
+        <Skeleton sx={{ borderRadius: 10 }} variant="rectangular" height={5} />
+        <br />
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead sx={{ backgroundColor: "#28844f" }}>
+              <TableRow>
+                <TableCell align="center" className="text-white">
+                  Question ID
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  Queston
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  View
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  Approved
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  Subject
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  Topic
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  SubTopic
+                </TableCell>
+                <TableCell align="center" className="text-white">
+                  D Level
+                </TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {/* Example skeleton rows */}
+              {[...Array(10)].map((_, index) => (
+                <TableRow key={index}>
+                  <TableCell>
+                    <Skeleton />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton />
+                  </TableCell>
+                  <TableCell>
+                    <Skeleton />
+                  </TableCell>
+                  {/* Add more skeleton cells as needed */}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </>
+    );
+  }
 
   return (
     <>
