@@ -105,10 +105,6 @@ export default function StudentProfile({ user }) {
     return <p>Loading....</p>;
   }
 
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
-
   return (
     <>
       {student && (
@@ -189,14 +185,17 @@ export default function StudentProfile({ user }) {
             <Grid container spacing={2}>
               <Grid item xs={12} md={12} lg={6}>
                 <FormControl fullWidth>
-                  <InputLabel id="demo-simple-select-label">Batch</InputLabel>
+                  <InputLabel id="demo-simple-select-label">
+                    Current Class
+                  </InputLabel>
                   <Select
                     labelId="demo-simple-select-label"
                     id="currentClass"
                     name="currentClass"
-                    label="Batch"
+                    label="Current Class"
                     value={student.currentClass || ""}
                     onChange={handleUserInputChange}
+                    inputProps={{ readOnly: !editMode }}
                   >
                     <MenuItem value="">Select Batch</MenuItem>
                     {academic &&
@@ -210,7 +209,7 @@ export default function StudentProfile({ user }) {
                 </FormControl>
               </Grid>
               <Grid item xs={12} md={12} lg={6}>
-                <FormControl fullWidth>
+                <FormControl fullWidth readOnly>
                   <InputLabel id="demo-simple-select-label">Batch</InputLabel>
                   <Select
                     labelId="demo-simple-select-label"
@@ -219,6 +218,7 @@ export default function StudentProfile({ user }) {
                     label="Batch"
                     value={student.batchName || ""}
                     onChange={handleUserInputChange}
+                    inputProps={{ readOnly: !editMode }}
                   >
                     <MenuItem value="">Select Batch</MenuItem>
                     {batches &&
