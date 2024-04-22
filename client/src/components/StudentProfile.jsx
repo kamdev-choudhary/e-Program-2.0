@@ -72,8 +72,6 @@ export default function StudentProfile({ user }) {
     fetchDataAsync();
   }, [userId, user]);
 
-  console.log(batches);
-
   const handleUserInputChange = (e) => {
     const { name, value } = e.target;
     if (name === "batchName") {
@@ -117,12 +115,6 @@ export default function StudentProfile({ user }) {
       </Backdrop>
     );
   }
-
-  return (
-    <>
-      <p>Student Dashboard Page</p>
-    </>
-  );
 
   return (
     <>

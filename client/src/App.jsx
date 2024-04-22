@@ -28,8 +28,6 @@ const drawerWidth = 240;
 
 const AppRouter = () => {
   const { accountType, isLoggedIn } = useAuth();
-  console.log(accountType, isLoggedIn);
-
   return (
     <>
       <Routes>
@@ -60,13 +58,8 @@ const AppRouter = () => {
 
 function App() {
   const { isLoggedIn } = useAuth();
-  const [sidebarOpen, setSidebarOpen] = useState(true);
 
   const isMdScreen = useMediaQuery("(min-width:700px)");
-
-  const toggleSidebar = () => {
-    setSidebarOpen((prev) => !prev);
-  };
 
   return (
     <AuthProvider>
@@ -82,7 +75,7 @@ function App() {
                 sx={{
                   height: "90vh",
                   overflow: "auto",
-                  padding: 1,
+                  padding: 2,
                   marginTop: 1,
                 }}
               >
@@ -93,7 +86,14 @@ function App() {
         ) : (
           <>
             <Navbar />
-            <Box sx={{ padding: 2 }}>
+            <Box
+              sx={{
+                height: "90vh",
+                overflow: "auto",
+                padding: 1,
+                marginTop: 1,
+              }}
+            >
               <AppRouter />
             </Box>
           </>
