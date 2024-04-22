@@ -50,14 +50,6 @@ export default function UserMaster() {
       .catch((error) => setError(error.message));
   }, []);
 
-  const handleAccounTypeChange = (event) => {
-    setAccountTypeFilter(event.target.value);
-  };
-
-  const handleSearchInputChange = (event) => {
-    setSearchInput(event.target.value);
-  };
-
   const filteredUsers = users.filter(
     (user) =>
       Object.values(user).some(
@@ -160,7 +152,7 @@ export default function UserMaster() {
                   </InputAdornment>
                 }
                 value={searchInput}
-                onChange={handleSearchInputChange}
+                onChange={(e) => setSearchInput(e.target.value)}
               />
             </FormControl>
           </Box>
@@ -174,7 +166,7 @@ export default function UserMaster() {
                 id="account-type"
                 label="Account Type"
                 value={accountTypeFilter}
-                onChange={handleAccounTypeChange}
+                onChange={(e) => setAccountTypeFilter(e.target.value)}
                 sx={{ borderRadius: 2 }}
               >
                 <MenuItem value="admin">Admin</MenuItem>

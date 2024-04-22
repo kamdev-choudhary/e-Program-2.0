@@ -32,6 +32,7 @@ import {
   Stack,
   IconButton,
   Skeleton,
+  Divider,
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import SearchIcon from "@mui/icons-material/Search";
@@ -155,7 +156,6 @@ export default function AcademicPage() {
       selectedTopic: selectedTopicName,
       subtopic: newsubtopic,
     };
-    console.log(data);
     fetch(`${API_URL}/academic/update/subtopic`, {
       method: "PUT",
       headers: {
@@ -293,7 +293,14 @@ export default function AcademicPage() {
 
   return (
     <>
-      <Paper elevation={6} sx={{ padding: 1, marginTop: 1, marginBottom: 1 }}>
+      <Box
+        sx={{
+          marginBottom: 1,
+          padding: 2,
+          borderRadius: 3,
+          border: "2px solid rgba(0,0,0,0.3)",
+        }}
+      >
         <Box sx={{ marginLeft: 2, marginRight: 2, marginTop: 1 }}>
           <Typography variant="h5" sx={{ textAlign: "center" }}>
             Subject Details
@@ -351,11 +358,11 @@ export default function AcademicPage() {
             <Grid item xs={12} sm={6} lg={6}>
               <Box
                 sx={{
-                  width: "100%",
-                  // maxWidth: 360,
-                  bgcolor: "#EEE",
+                  marginBottom: 1,
                   padding: 2,
                   borderRadius: 3,
+                  border: "2px solid rgba(0,0,0,0.3)",
+                  minHeight: 20,
                 }}
               >
                 <Box>
@@ -371,8 +378,7 @@ export default function AcademicPage() {
                       <Grid container justifyContent="flex-end">
                         {selectedSubject && (
                           <Button
-                            variant="contained"
-                            color="primary"
+                            variant="outlined"
                             size="small"
                             sx={{ borderRadius: 10 }}
                             onClick={() => setShowAddTopicField(true)}
@@ -384,7 +390,7 @@ export default function AcademicPage() {
                     </Grid>
                   </Grid>
                 </Box>
-
+                <hr />
                 <>
                   <Dialog
                     open={showAddTopicField}
@@ -483,22 +489,27 @@ export default function AcademicPage() {
                 <List>
                   {filteredTopics &&
                     filteredTopics.map((topic, index) => (
-                      <ListItemButton
-                        key={index}
-                        selected={selectedTopic.name === topic.name}
-                        onClick={() => {
-                          setSelectedTopic(topic);
-                          setSelectedTopicName(topic.name);
-                        }}
-                      >
-                        <ListItemText primary={`${index + 1}. ${topic.name}`} />
-                        <IconButton
-                          aria-label="delete"
-                          onClick={() => handleDeleteTopic(topic)}
+                      <>
+                        <ListItemButton
+                          key={index}
+                          selected={selectedTopic.name === topic.name}
+                          onClick={() => {
+                            setSelectedTopic(topic);
+                            setSelectedTopicName(topic.name);
+                          }}
                         >
-                          <DeleteIcon />
-                        </IconButton>
-                      </ListItemButton>
+                          <ListItemText
+                            primary={`${index + 1}. ${topic.name}`}
+                          />
+                          <IconButton
+                            aria-label="delete"
+                            onClick={() => handleDeleteTopic(topic)}
+                          >
+                            <DeleteIcon />
+                          </IconButton>
+                        </ListItemButton>
+                        <Divider variant="middle" component="li" />
+                      </>
                     ))}
                 </List>
               </Box>
@@ -506,11 +517,11 @@ export default function AcademicPage() {
             <Grid item xs={12} sm={6} lg={6}>
               <Box
                 sx={{
-                  width: "100%",
-                  // maxWidth: 360,
-                  bgcolor: "#EEE",
+                  marginBottom: 1,
                   padding: 2,
                   borderRadius: 3,
+                  border: "2px solid rgba(0,0,0,0.3)",
+                  minHeight: 20,
                 }}
               >
                 <Grid
@@ -524,7 +535,7 @@ export default function AcademicPage() {
                   </Grid>
                   <Grid item justifyContent="flex-end">
                     <Button
-                      variant="contained"
+                      variant="outlined"
                       color="success"
                       size="small"
                       sx={{ borderRadius: 10 }}
@@ -534,6 +545,7 @@ export default function AcademicPage() {
                     </Button>
                   </Grid>
                 </Grid>
+                <hr />
                 <List>
                   {selectedTopic &&
                     selectedTopic.subtopics &&
@@ -555,14 +567,22 @@ export default function AcademicPage() {
             </Grid>
           </Grid>
         </Box>
-      </Paper>
+      </Box>
       <br />
-      <Paper elevation={6} sx={{ padding: 1 }}>
+      <Box
+        sx={{
+          marginBottom: 1,
+          padding: 2,
+          borderRadius: 3,
+          border: "2px solid rgba(0,0,0,0.3)",
+        }}
+      >
         <Box sx={{ marginLeft: 2, marginRight: 1, marginTop: 1 }}>
           <Typography variant="h5" sx={{ textAlign: "center" }}>
             Batches
           </Typography>
         </Box>
+        <hr />
         <Box sx={{ padding: 2 }}>
           <Grid container gap={2}>
             <Grid item xs={12} lg={8}>
@@ -633,9 +653,9 @@ export default function AcademicPage() {
             </Table>
           </TableContainer>
         </Box>
-      </Paper>
+      </Box>
 
-      <React.Fragment>
+      <>
         <Dialog
           open={showAddSubtopicField}
           onClose={() => setShowAddSubtopicField(false)}
@@ -705,7 +725,6 @@ export default function AcademicPage() {
                   label="New Subtopic Name"
                   value={newsubtopic}
                   onChange={(e) => setNewsubtopic(e.target.value)}
-                  fullWidth
                   size="small"
                 />
               </FormControl>
@@ -730,7 +749,7 @@ export default function AcademicPage() {
             </Button>
           </DialogActions>
         </Dialog>
-      </React.Fragment>
+      </>
       <Modal show={showAddBatchModal} onHide={handleShowAddBatch}>
         <Modal.Header>Add Batch</Modal.Header>
         <Modal.Body>

@@ -215,7 +215,12 @@ function RegisterPage({ handleTogglePage, handleshowUserPage }) {
               style={{ marginBottom: "20px" }}
             />
             <FormControl fullWidth>
-              <InputLabel id="demo-simple-select-label">Class</InputLabel>
+              <InputLabel
+                id="demo-simple-select-label"
+                helperText={errors.currentClass}
+              >
+                Class
+              </InputLabel>
               <Select
                 labelId="demo-simple-select-label"
                 id="currentClass"
@@ -224,7 +229,6 @@ function RegisterPage({ handleTogglePage, handleshowUserPage }) {
                 value={user.currentClass}
                 onChange={handleChange}
                 error={Boolean(errors.currentClass)}
-                helperText={errors.currentClass}
               >
                 {academic &&
                   academic.classes &&
