@@ -91,10 +91,12 @@ function App() {
             </Grid>
           </Grid>
         ) : (
-          <Box>
+          <>
             <Navbar />
-            <AppRouter />
-          </Box>
+            <Box sx={{ padding: 2 }}>
+              <AppRouter />
+            </Box>
+          </>
         )}
       </BrowserRouter>
     </AuthProvider>
