@@ -33,3 +33,9 @@ module.exports.saveSolution = async (req, res, next) => {
     next(error);
   }
 };
+
+// Delete Doubt
+module.exports.deleteDoubt = async (req, res) => {
+  console.log(req.body);
+  res.status(200).json("ha bhai");
+};

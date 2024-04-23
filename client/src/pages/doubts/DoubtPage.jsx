@@ -114,9 +114,15 @@ export default function DoubtPage() {
       });
   };
 
-  const handleDeleteDoubtPost = (id) => {
-    console.log(id);
-  };
+  // const handleDeleteDoubtPost = (id) => {
+  //   fetch(`${API_URL}/questionbank`, {
+  //     method: "DELETE",
+  //     headers: {
+  //       "Content-Type": "application/json",
+  //     },
+  //     body: JSON.stringify("hhh"),
+  //   });
+  // };
 
   const style = {
     position: "absolute",

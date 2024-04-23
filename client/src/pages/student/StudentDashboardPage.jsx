@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useAuth } from "../../store/Auth";
-import UpdateStudentProfile from "../../components/UpdateStudentProfile";
 
 import { Grid, Box, Typography } from "@mui/material";
 
@@ -45,6 +44,22 @@ export default function DashboardPage() {
           </Grid>
         </Grid>
       )}
+      <Box
+        sx={{
+          marginBottom: 1,
+          padding: 2,
+          borderRadius: 3,
+          border: "2px solid rgba(0,0,0,0.3)",
+        }}
+      >
+        <Grid container spacing={2}>
+          <Grid item xs={12} lg={12} md={12}>
+            <Typography variant="h5">Syllabus Status</Typography>
+          </Grid>
+          <hr />
+          <Grid item xs={12} lg={6} md={6}></Grid>
+        </Grid>
+      </Box>
     </>
   );
 }
