@@ -114,15 +114,31 @@ export default function DoubtPage() {
       });
   };
 
-  // const handleDeleteDoubtPost = (id) => {
-  //   fetch(`${API_URL}/questionbank`, {
-  //     method: "DELETE",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify("hhh"),
-  //   });
-  // };
+  const handleDeleteDoubtPost = (id) => {
+    fetch(`${API_URL}/doubts/${id}`, {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    })
+      .then((response) => {
+        if (response.ok) {
+          console.log("Doubt deleted successfully");
+          return response.json();
+        } else {
+          console.error("Failed to delete doubt");
+          throw new Error("Failed to delete doubt");
+        }
+      })
+      .then((data) => {
+        const newData = doubts.filter((item) => item._id !== id);
+        setDoubts(newData);
+        setDoubtDetails(false);
+      })
+      .catch((error) => {
+        console.error("Error:", error);
+      });
+  };
 
   const style = {
     position: "absolute",
@@ -249,13 +265,13 @@ export default function DoubtPage() {
               )
               .map((doubt, index) => (
                 <Box
+                  key={index}
                   sx={{
                     marginBottom: 1,
                     padding: 2,
                     borderRadius: 3,
                     border: "2px solid rgba(0,0,0,0.3)",
                   }}
-                  key={index}
                 >
                   <Box sx={{ flexGrow: 1 }}>
                     <Grid container spacing={2} justifyContent="space-between">

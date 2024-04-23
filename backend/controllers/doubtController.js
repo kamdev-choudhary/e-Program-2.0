@@ -36,6 +36,11 @@ module.exports.saveSolution = async (req, res, next) => {
 
 // Delete Doubt
 module.exports.deleteDoubt = async (req, res) => {
-  console.log(req.body);
-  res.status(200).json("ha bhai");
+  try {
+    const { id } = req.params;
+    const deletedDoubt = await Doubt.findOneAndDelete({ _id: id });
+    res.status(200).json("Succefully Deleted Doubt");
+  } catch (error) {
+    next(error);
+  }
 };
