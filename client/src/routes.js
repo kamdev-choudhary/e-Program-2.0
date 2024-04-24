@@ -1,7 +1,6 @@
 import React from 'react'
 
 // Home Page
-
 const Home = React.lazy(() => import('./views/home/Home'))
 
 // Admin Pages
@@ -14,23 +13,23 @@ const Login = React.lazy(() => import('./views/pages/login/Login'))
 const Register = React.lazy(() => import('./views/pages/register/Register'))
 
 // Students Pages
+const StudentDashboard = React.lazy(() => import('./views/dashboard/StudentDashboard'))
+const StudentExams = React.lazy(() => import('./views/exams/StudentExams'))
 const Lecture = React.lazy(() => import('./views/lectures/LecturePage'))
 const Doubt = React.lazy(() => import('./views/doubts/DoubtPage'))
 const MaterialPage = React.lazy(() => import('./views/library/MaterialPage'))
 
 // Exam Pages
-
 const ExamMasterOnline = React.lazy(() => import('./views/exams/ExamMasterOnline'))
 const ExamMasterOffline = React.lazy(() => import('./views/exams/ExamMasterOffline'))
 
 // Question Bank
-
 const QuestionBankPage = React.lazy(() => import('./views/questions/QuestionBankPage'))
 
 const routes = [
   { path: '/', exact: true, name: 'Home', available: ['all', 'admin'], element: Home },
   { path: '/dashboard', name: 'Dashboard', available: ['admin'], element: Dashboard },
-  { path: '/dashboard', name: 'Dashboard', available: ['student'], element: Dashboard },
+  { path: '/dashboard', name: 'Dashboard', available: ['student'], element: StudentDashboard },
   { path: '/auth/login', name: 'Login Page', available: ['not Logged In'], element: Login },
   {
     path: '/auth/register',
@@ -65,6 +64,7 @@ const routes = [
     available: ['admin'],
     element: ExamMasterOffline,
   },
+  { path: '/exams', name: 'Exams', available: ['student'], element: StudentExams },
   {
     path: '/question-bank',
     name: 'Question Bank',

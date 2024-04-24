@@ -76,6 +76,13 @@ const _nav = [
   },
   {
     component: CNavItem,
+    name: 'Exams',
+    available: ['student'],
+    to: '/exams',
+    icon: <CIcon icon={cilChartPie} customClassName="nav-icon" />,
+  },
+  {
+    component: CNavItem,
     name: 'Lectures',
     available: ['admin', 'all', 'student'],
     to: '/lectures',
@@ -99,7 +106,7 @@ const _nav = [
 
   {
     component: CNavGroup,
-    available: ['admin', 'student'],
+    available: ['admin'],
     name: 'Notifications',
     icon: <CIcon icon={cilBell} customClassName="nav-icon" />,
     items: [
