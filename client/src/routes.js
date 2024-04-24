@@ -30,6 +30,7 @@ const QuestionBankPage = React.lazy(() => import('./views/questions/QuestionBank
 const routes = [
   { path: '/', exact: true, name: 'Home', available: ['all', 'admin'], element: Home },
   { path: '/dashboard', name: 'Dashboard', available: ['admin'], element: Dashboard },
+  { path: '/dashboard', name: 'Dashboard', available: ['student'], element: Dashboard },
   { path: '/auth/login', name: 'Login Page', available: ['not Logged In'], element: Login },
   {
     path: '/auth/register',
@@ -37,11 +38,21 @@ const routes = [
     available: ['not Logged In'],
     element: Register,
   },
-  { path: '/lectures', name: 'Lecture Page', available: ['admin', 'all'], element: Lecture },
-  { path: '/doubts', name: 'Doubt Page', available: ['admin', 'all'], element: Doubt },
+  {
+    path: '/lectures',
+    name: 'Lecture Page',
+    available: ['admin', 'all', 'student'],
+    element: Lecture,
+  },
+  { path: '/doubts', name: 'Doubt Page', available: ['admin', 'all', 'student'], element: Doubt },
   { path: '/admin/users', name: 'User Page', available: ['admin'], element: UserMaster },
   { path: '/admin/batch', name: 'Batches', available: ['admin'], element: Batch },
-  { path: '/library', name: 'Library', available: ['admin', 'all'], element: MaterialPage },
+  {
+    path: '/library',
+    name: 'Library',
+    available: ['admin', 'all', 'student'],
+    element: MaterialPage,
+  },
   {
     path: '/exam-master/online',
     name: 'Exam Master Online',
