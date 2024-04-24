@@ -36,7 +36,7 @@ app.use("/api/academic", academicRoute);
 app.use("/api/doubts", doubtRoute);
 
 app.use("/*", (req, res) => {
-  res.send("Backend ");
+  res.status(400).json("error from backend");
 });
 
 app.use(errorMiddleware);
