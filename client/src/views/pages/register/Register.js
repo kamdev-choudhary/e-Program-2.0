@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useAuth } from '../../../Auth'
-import { NavLink } from 'react-router-dom'
+import { NavLink, useNavigate } from 'react-router-dom'
 
 import {
   TextField,
@@ -23,6 +23,7 @@ import { createTheme, ThemeProvider } from '@mui/material/styles'
 const API_URL = process.env.API_URL
 
 export default function RegisterPage({ handleTogglePage, handleshowUserPage }) {
+  const navigate = useNavigate()
   const { storeTokenInLS } = useAuth()
   const [academic, setAcademic] = useState({})
   const [user, setUser] = useState({
@@ -98,6 +99,7 @@ export default function RegisterPage({ handleTogglePage, handleshowUserPage }) {
         .then((data) => {
           console.log('Success:', data)
           storeTokenInLS(data.token)
+          navigate('/', { replace: true })
         })
         .catch((error) => {
           console.error('Error:', error)

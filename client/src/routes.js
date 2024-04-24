@@ -1,5 +1,9 @@
 import React from 'react'
 
+// Home Page
+
+const Home = React.lazy(() => import('./views/home/Home'))
+
 // Admin Pages
 const Dashboard = React.lazy(() => import('./views/dashboard/Dashboard'))
 const UserMaster = React.lazy(() => import('./views/admin/UserMaster'))
@@ -24,7 +28,7 @@ const ExamMasterOffline = React.lazy(() => import('./views/exams/ExamMasterOffli
 const QuestionBankPage = React.lazy(() => import('./views/questions/QuestionBankPage'))
 
 const routes = [
-  { path: '/', exact: true, name: 'Home' },
+  { path: '/', exact: true, name: 'Home', available: ['all', 'admin'], element: Home },
   { path: '/dashboard', name: 'Dashboard', available: ['admin'], element: Dashboard },
   { path: '/auth/login', name: 'Login Page', available: ['not Logged In'], element: Login },
   {

@@ -1,5 +1,6 @@
 import React from 'react'
 import { useAuth } from '../../Auth'
+import { useNavigate } from 'react-router-dom'
 import {
   CAvatar,
   CBadge,
@@ -17,6 +18,7 @@ import avatar8 from './../../assets/images/avatars/8.jpg'
 
 const AppHeaderDropdown = () => {
   const { isLoggedIn, logoutUser, name } = useAuth()
+  const navigate = useNavigate()
   return (
     <CDropdown variant="nav-item">
       <CDropdownToggle placement="bottom-end" className="py-0 pe-0" caret={false}>
@@ -34,7 +36,12 @@ const AppHeaderDropdown = () => {
         </CDropdownItem>
 
         <CDropdownDivider />
-        <CDropdownItem onClick={() => logoutUser()}>
+        <CDropdownItem
+          onClick={() => {
+            logoutUser()
+            navigate('/', { replace: true })
+          }}
+        >
           <CIcon icon={cilLockLocked} className="me-2" />
           Logout
         </CDropdownItem>

@@ -106,7 +106,7 @@ export default function LoginPage({ handleTogglePage, handleshowUserPage }) {
             email: '',
             password: '',
           })
-          navigate('/', { replace: true })
+          navigate('/dashboard', { replace: true })
         } else {
           const errorMessage = await response.text()
           setLoginError(errorMessage)

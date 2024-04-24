@@ -85,13 +85,13 @@ export default function Batch() {
     return (
       <>
         <Grid container spacing={2}>
-          <Grid item sx={12} lg={12}>
-            <Box fullWidth>
+          <Grid item xs={12} lg={12}>
+            <Box>
               <Skeleton sx={{ borderRadius: 2 }} variant="rectangular" height={400} />
             </Box>
           </Grid>
-          <Grid item sx={12} lg={12}>
-            <Box fullWidth>
+          <Grid item xs={12} lg={12}>
+            <Box>
               <Skeleton sx={{ borderRadius: 2 }} variant="rectangular" height={400} />
             </Box>
           </Grid>
