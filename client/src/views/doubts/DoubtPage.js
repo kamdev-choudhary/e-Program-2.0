@@ -220,7 +220,7 @@ export default function DoubtPage() {
             variant="outlined"
             color="secondary"
             size="small"
-            sx={{ borderRadius: 10, minWidth: 150 }}
+            sx={{ borderRadius: 10, minWidth: 120 }}
             onClick={() => {
               setShowAskDoubtForm(true), setModelText('Ask a Doubt')
             }}

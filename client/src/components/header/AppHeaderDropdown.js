@@ -3,7 +3,6 @@ import { useAuth } from '../../Auth'
 import { useNavigate } from 'react-router-dom'
 import {
   CAvatar,
-  CBadge,
   CDropdown,
   CDropdownDivider,
   CDropdownHeader,
