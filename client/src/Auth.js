@@ -31,6 +31,8 @@ export const AuthProvider = ({ children }) => {
     isAdmin = false
     accountType = ''
     batchId = ''
+    name = ''
+    userId = ''
   }
 
   return (

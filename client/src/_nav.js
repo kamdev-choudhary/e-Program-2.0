@@ -22,25 +22,25 @@ const _nav = [
     name: 'Dashboard',
     to: '/dashboard',
     icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
-    admin: true,
+    available: ['admin', 'student'],
   },
   {
     component: CNavGroup,
     name: 'Admin',
-    admin: true,
+    available: ['admin'],
     to: '/admin',
     icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
         name: 'users',
-        admin: true,
+        available: ['admin'],
         to: '/admin/users',
       },
 
       {
         component: CNavItem,
-        admin: true,
+        available: ['admin'],
         name: 'batch',
         to: '/admin/batch',
       },
@@ -49,19 +49,19 @@ const _nav = [
   {
     component: CNavGroup,
     name: 'Exam Master',
-    admin: true,
+    available: ['admin'],
     to: '/exam',
     icon: <CIcon icon={cilCursor} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
-        admin: true,
+        available: ['admin'],
         name: 'Online',
         to: '/exam-master/online',
       },
       {
         component: CNavItem,
-        admin: true,
+        available: ['admin'],
         name: 'Offline',
         to: '/exam-master/offline',
       },
@@ -70,17 +70,20 @@ const _nav = [
   {
     component: CNavItem,
     name: 'Question Bank',
+    available: ['admin'],
     to: '/question-bank',
     icon: <CIcon icon={cilChartPie} customClassName="nav-icon" />,
   },
   {
     component: CNavItem,
     name: 'Lectures',
+    available: ['admin', 'all'],
     to: '/lectures',
     icon: <CIcon icon={cilNotes} customClassName="nav-icon" />,
   },
   {
     component: CNavItem,
+    available: ['admin', 'all'],
     name: 'Library',
     to: '/library',
     icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
@@ -88,6 +91,7 @@ const _nav = [
 
   {
     component: CNavItem,
+    available: ['admin', 'all'],
     name: 'Doubt',
     to: '/doubts',
     icon: <CIcon icon={cilCalculator} customClassName="nav-icon" />,
@@ -95,13 +99,13 @@ const _nav = [
 
   {
     component: CNavGroup,
-    admin: true,
+    available: ['admin', 'student'],
     name: 'Notifications',
     icon: <CIcon icon={cilBell} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
-        admin: true,
+        available: ['admin'],
         name: 'Alerts',
         to: '/notifications/alerts',
       },
@@ -111,16 +115,19 @@ const _nav = [
   {
     component: CNavTitle,
     name: 'Authentication',
+    available: ['not Logged In'],
   },
   {
     component: CNavItem,
     name: 'Login',
+    available: ['not Logged In'],
     to: '/auth/login',
     icon: <CIcon icon={cilChartPie} customClassName="nav-icon" />,
   },
   {
     component: CNavItem,
     name: 'Register',
+    available: ['not Logged In'],
     to: '/auth/register',
     icon: <CIcon icon={cilDescription} customClassName="nav-icon" />,
   },

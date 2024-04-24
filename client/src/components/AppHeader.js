@@ -59,7 +59,6 @@ const AppHeader = () => {
               Dashboard
             </CNavLink>
           </CNavItem>
-          <CNavItem>{isLoggedIn && <CNavLink href="#">LoggedIn</CNavLink>}</CNavItem>
         </CHeaderNav>
         <CHeaderNav className="ms-auto">
           <CNavItem>
@@ -122,10 +121,15 @@ const AppHeader = () => {
               </CDropdownItem>
             </CDropdownMenu>
           </CDropdown>
-          <li className="nav-item py-1">
-            <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
-          </li>
-          <AppHeaderDropdown />
+
+          {isLoggedIn && (
+            <>
+              <li className="nav-item py-1">
+                <div className="vr h-100 mx-2 text-body text-opacity-75"></div>
+              </li>
+              <AppHeaderDropdown />
+            </>
+          )}
         </CHeaderNav>
       </CContainer>
       <CContainer className="px-4" fluid>

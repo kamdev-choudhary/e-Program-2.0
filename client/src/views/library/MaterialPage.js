@@ -171,9 +171,9 @@ export default function MaterialPage() {
   return (
     <>
       {error && <div>Error: {error}</div>}
-      <Box sx={{ padding: 1 }}>
+      <Box spacing={2}>
         <Grid container spacing={1}>
-          <Grid item xs={12} md={8} lg={8}>
+          <Grid item xs={12} md={9} lg={9}>
             <FormControl fullWidth size="small">
               <OutlinedInput
                 sx={{ borderRadius: 10 }}
@@ -187,11 +187,18 @@ export default function MaterialPage() {
               />
             </FormControl>
           </Grid>
-          <Grid item xs={6} md={2} lg={2}>
-            <Button variant="contained" sx={{ borderRadius: 10 }} onClick={handleAddNewBook}>
-              Add Book
-            </Button>
-          </Grid>
+          {isAdmin && (
+            <Grid item xs={12} md={3} lg={3}>
+              <Button
+                fullWidth
+                variant="contained"
+                sx={{ borderRadius: 10 }}
+                onClick={handleAddNewBook}
+              >
+                Add Book
+              </Button>
+            </Grid>
+          )}
         </Grid>
       </Box>
       <Box sx={{ marginTop: 1, padding: 1 }}>

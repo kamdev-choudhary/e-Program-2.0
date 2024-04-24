@@ -9,7 +9,7 @@ import 'simplebar-react/dist/simplebar.min.css'
 import { CBadge, CNavLink, CSidebarNav } from '@coreui/react'
 
 export const AppSidebarNav = ({ items }) => {
-  const { isLoggedIn, isAdmin } = useAuth()
+  const { isLoggedIn, isAdmin, accountType } = useAuth()
   const navLink = (name, icon, badge, indent = false) => {
     return (
       <>
@@ -60,10 +60,22 @@ export const AppSidebarNav = ({ items }) => {
 
   return (
     <CSidebarNav as={SimpleBar}>
-      {items &&
-        items
-          .filter((item) => item.admin !== true)
-          .map((item, index) => (item.items ? navGroup(item, index) : navItem(item, index)))}
+      <CSidebarNav as={SimpleBar}>
+        {isLoggedIn &&
+          items &&
+          items
+            .filter((item) => Array.isArray(item.available) && item.available.includes(accountType))
+            .map((item, index) => (item.items ? navGroup(item, index) : navItem(item, index)))}
+        {!isLoggedIn &&
+          items &&
+          items
+            .filter(
+              (item) =>
+                (Array.isArray(item.available) && item.available.includes('not Logged In')) ||
+                (Array.isArray(item.available) && item.available.includes('all')),
+            )
+            .map((item, index) => (item.items ? navGroup(item, index) : navItem(item, index)))}
+      </CSidebarNav>
     </CSidebarNav>
   )
 }
