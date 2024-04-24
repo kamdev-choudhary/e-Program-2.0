@@ -1,6 +1,7 @@
 import React from 'react'
 import { NavLink } from 'react-router-dom'
 import PropTypes from 'prop-types'
+import { useAuth } from '../Auth'
 
 import SimpleBar from 'simplebar-react'
 import 'simplebar-react/dist/simplebar.min.css'
@@ -8,6 +9,7 @@ import 'simplebar-react/dist/simplebar.min.css'
 import { CBadge, CNavLink, CSidebarNav } from '@coreui/react'
 
 export const AppSidebarNav = ({ items }) => {
+  const { isLoggedIn, isAdmin } = useAuth()
   const navLink = (name, icon, badge, indent = false) => {
     return (
       <>
@@ -59,7 +61,9 @@ export const AppSidebarNav = ({ items }) => {
   return (
     <CSidebarNav as={SimpleBar}>
       {items &&
-        items.map((item, index) => (item.items ? navGroup(item, index) : navItem(item, index)))}
+        items
+          .filter((item) => item.admin !== true)
+          .map((item, index) => (item.items ? navGroup(item, index) : navItem(item, index)))}
     </CSidebarNav>
   )
 }

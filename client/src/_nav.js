@@ -7,7 +7,6 @@ import {
   cilCursor,
   cilDescription,
   cilNotes,
-  cilPencil,
   cilPuzzle,
   cilSpeedometer,
 } from '@coreui/icons'
@@ -23,21 +22,25 @@ const _nav = [
     name: 'Dashboard',
     to: '/dashboard',
     icon: <CIcon icon={cilSpeedometer} customClassName="nav-icon" />,
+    admin: true,
   },
   {
     component: CNavGroup,
     name: 'Admin',
+    admin: true,
     to: '/admin',
     icon: <CIcon icon={cilPuzzle} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
         name: 'users',
+        admin: true,
         to: '/admin/users',
       },
 
       {
         component: CNavItem,
+        admin: true,
         name: 'batch',
         to: '/admin/batch',
       },
@@ -46,16 +49,19 @@ const _nav = [
   {
     component: CNavGroup,
     name: 'Exam Master',
+    admin: true,
     to: '/exam',
     icon: <CIcon icon={cilCursor} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
+        admin: true,
         name: 'Online',
         to: '/exam-master/online',
       },
       {
         component: CNavItem,
+        admin: true,
         name: 'Offline',
         to: '/exam-master/offline',
       },
@@ -89,11 +95,13 @@ const _nav = [
 
   {
     component: CNavGroup,
+    admin: true,
     name: 'Notifications',
     icon: <CIcon icon={cilBell} customClassName="nav-icon" />,
     items: [
       {
         component: CNavItem,
+        admin: true,
         name: 'Alerts',
         to: '/notifications/alerts',
       },
