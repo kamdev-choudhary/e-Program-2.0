@@ -1,12 +1,15 @@
 import React from 'react'
 import { useAuth } from '../../Auth'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, NavLink } from 'react-router-dom'
 import {
   CAvatar,
   CDropdown,
   CDropdownDivider,
   CDropdownHeader,
   CDropdownItem,
+  CHeaderNav,
+  CNavLink,
+  CNavItem,
   CDropdownMenu,
   CDropdownToggle,
 } from '@coreui/react'
@@ -25,15 +28,14 @@ const AppHeaderDropdown = () => {
       </CDropdownToggle>
       <CDropdownMenu className="pt-0" placement="bottom-end">
         <CDropdownHeader className="bg-body-secondary fw-semibold mb-2">{name}</CDropdownHeader>
-        <CDropdownItem href="#">
+        <CDropdownItem to="/profile" as={NavLink}>
           <CIcon icon={cilUser} className="me-2" />
           Profile
         </CDropdownItem>
-        <CDropdownItem href="#">
+        <CDropdownItem to="/settings" as={NavLink}>
           <CIcon icon={cilSettings} className="me-2" />
           Settings
         </CDropdownItem>
-
         <CDropdownDivider />
         <CDropdownItem
           onClick={() => {

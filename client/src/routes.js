@@ -12,9 +12,13 @@ const Batch = React.lazy(() => import('./views/admin/Batch'))
 const Login = React.lazy(() => import('./views/pages/login/Login'))
 const Register = React.lazy(() => import('./views/pages/register/Register'))
 
+// Common Pages
+const Settings = React.lazy(() => import('./views/settings/UserSetting'))
+
 // Students Pages
 const StudentDashboard = React.lazy(() => import('./views/dashboard/StudentDashboard'))
 const StudentExams = React.lazy(() => import('./views/exams/StudentExams'))
+const Profile = React.lazy(() => import('./views/profile/Profile'))
 const Lecture = React.lazy(() => import('./views/lectures/LecturePage'))
 const Doubt = React.lazy(() => import('./views/doubts/DoubtPage'))
 const MaterialPage = React.lazy(() => import('./views/library/MaterialPage'))
@@ -65,6 +69,18 @@ const routes = [
     element: ExamMasterOffline,
   },
   { path: '/exams', name: 'Exams', available: ['student'], element: StudentExams },
+  {
+    path: '/profile',
+    name: 'Profile',
+    available: ['student', 'admin', 'faculty'],
+    element: Profile,
+  },
+  {
+    path: '/settings',
+    name: 'Settings',
+    available: ['student', 'admin', 'faculty'],
+    element: Settings,
+  },
   {
     path: '/question-bank',
     name: 'Question Bank',
