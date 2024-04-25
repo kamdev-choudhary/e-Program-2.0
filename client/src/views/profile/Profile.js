@@ -112,19 +112,21 @@ export default function Profile({ user }) {
     <>
       {student && (
         <>
-          <Grid container justifyContent="right">
-            <Grid item xs={1} md={1} lg={1}>
-              {editMode ? (
-                <Button color="error" onClick={() => setEditMode(false)}>
-                  Cancel
-                </Button>
-              ) : (
-                <Button onClick={() => setEditMode(true)}>
-                  <EditIcon />
-                </Button>
-              )}
+          <Box>
+            <Grid justifyContent="flex-end" container>
+              <Grid item xs={2} md={2} lg={2} padding={2} style={{ textAlign: 'right' }}>
+                {editMode ? (
+                  <Button color="error" onClick={() => setEditMode(false)}>
+                    Cancel
+                  </Button>
+                ) : (
+                  <Button onClick={() => setEditMode(true)}>
+                    <EditIcon />
+                  </Button>
+                )}
+              </Grid>
             </Grid>
-          </Grid>
+          </Box>
           <Box
             sx={{
               marginBottom: 1,
