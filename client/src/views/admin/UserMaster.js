@@ -225,7 +225,7 @@ export default function UserMaster() {
           </TableBody>
         </Table>
       </TableContainer>
-      <Modal
+      {/* <Modal
         show={showStudentDashboard}
         onHide={() => setShowStudentDashboard(false)}
         dialogClassName="modal-xl"
@@ -234,7 +234,7 @@ export default function UserMaster() {
         <Modal.Body>
           <StudentProfile user={currUser} />
         </Modal.Body>
-      </Modal>
+      </Modal> */}
     </>
   )
 }

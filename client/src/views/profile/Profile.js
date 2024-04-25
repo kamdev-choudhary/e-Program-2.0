@@ -98,6 +98,7 @@ export default function Profile({ user }) {
       .then((response) => response.json())
       .then((data) => {
         console.log('Success:', data)
+        setEditMode(false)
       })
       .catch((error) => {
         console.error('Error:', error)
@@ -114,7 +115,14 @@ export default function Profile({ user }) {
         <>
           <Box>
             <Grid justifyContent="flex-end" container>
-              <Grid item xs={2} md={2} lg={2} padding={2} style={{ textAlign: 'right' }}>
+              <Grid
+                item
+                xs={12}
+                md={12}
+                lg={12}
+                padding={2}
+                style={{ textAlign: 'right', paddingRight: 2 }}
+              >
                 {editMode ? (
                   <Button color="error" onClick={() => setEditMode(false)}>
                     Cancel
@@ -132,7 +140,7 @@ export default function Profile({ user }) {
               marginBottom: 1,
               marginTop: 1,
               padding: 2,
-              borderRadius: 3,
+              borderRadius: 2,
               border: '1px solid rgba(0,0,0,0.3)',
             }}
           >
