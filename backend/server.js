@@ -22,7 +22,7 @@ const academicRoute = require("./routers/academicRoute");
 const doubtRoute = require("./routers/doubtRoute");
 
 app.get("/", (req, res) => {
-  res.status(200).send("This is Home Page");
+  res.status(200).send("Backend is Running");
 });
 
 app.use("/api/auth", authRouter);

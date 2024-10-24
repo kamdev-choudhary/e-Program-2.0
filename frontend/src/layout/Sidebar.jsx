@@ -24,46 +24,44 @@ function SubMenu({
 }) {
   return (
     <Collapse in={isOpen} timeout="auto" unmountOnExit>
-      {menu.subMenuItem
-        ?.filter((page) => page.available.includes(user?.id_role))
-        .map((submenu, index) => (
-          <List component="div" disablePadding key={index}>
-            <ListItemButton
-              sx={{
-                pl: expanded ? 5 : 1.6,
-                borderRadius: 1,
+      {menu?.subMenuItem?.map((submenu, index) => (
+        <List component="div" disablePadding key={index}>
+          <ListItemButton
+            sx={{
+              pl: expanded ? 5 : 1.6,
+              borderRadius: 1,
+              backgroundColor:
+                location.pathname === submenu.path
+                  ? expanded
+                    ? "rgba(40,132,79,1)"
+                    : "background.primary"
+                  : "transparent",
+              "&:hover": {
                 backgroundColor:
                   location.pathname === submenu.path
-                    ? expanded
-                      ? "rgba(40,132,79,1)"
-                      : "background.primary"
-                    : "transparent",
-                "&:hover": {
-                  backgroundColor:
-                    location.pathname === submenu.path
-                      ? "rgba(40,132,79,0.6)"
-                      : isDarkMode
-                      ? "rgba(0,0,0,0.6)"
-                      : "#f1f1f1",
-                },
-              }}
-              onClick={() => {
-                navigate(submenu.path);
-              }}
-            >
-              <>{submenu.icon}</>
-              {expanded && (
-                <ListItemText
-                  sx={{
-                    color: location.pathname === submenu.path ? "white" : "",
-                    ml: 1,
-                  }}
-                  primary={submenu.name}
-                />
-              )}
-            </ListItemButton>
-          </List>
-        ))}
+                    ? "rgba(40,132,79,0.6)"
+                    : isDarkMode
+                    ? "rgba(0,0,0,0.6)"
+                    : "#f1f1f1",
+              },
+            }}
+            onClick={() => {
+              navigate(submenu.path);
+            }}
+          >
+            <>{submenu.icon}</>
+            {expanded && (
+              <ListItemText
+                sx={{
+                  color: location.pathname === submenu.path ? "white" : "",
+                  ml: 1,
+                }}
+                primary={submenu.name}
+              />
+            )}
+          </ListItemButton>
+        </List>
+      ))}
     </Collapse>
   );
 }
@@ -93,54 +91,56 @@ function Sidebar({ isSmallScreen, expanded = true }) {
           m: 1,
         }}
       >
-        <Box
-          sx={{
-            height: expanded ? 95 : 38,
-            width: expanded ? 95 : 38,
-            // border: `1px solid ${
-            //   isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"
-            // }`,
-            borderRadius: "50%",
-            mb: 1,
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            // backgroundColor: isDarkMode ? "#424242" : "#f0f0f0",
-            position: "relative",
-            overflow: "hidden",
-            textAlign: "center",
-            fontSize: 40,
-            fontWeight: "bold",
-            color: "#28844f",
-            backgroundImage: images[user?.email]
-              ? `url(${images[user.email]})`
-              : "none",
-            backgroundSize: "cover",
-            backgroundPosition: "top",
-          }}
-        >
-          {!images[user?.email] && (
-            <span
-              style={{
-                position: "absolute",
-                top: "50%",
-                left: "50%",
-                transform: "translate(-50%, -50%)",
-              }}
-            >
-              {user?.name?.[0] || ""}
-              {user?.name?.split(" ")?.[1]?.[0] || ""}
-            </span>
-          )}
-        </Box>
+        {user && (
+          <Box
+            sx={{
+              height: expanded ? 95 : 38,
+              width: expanded ? 95 : 38,
+              border: `1px solid ${
+                isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"
+              }`,
+              borderRadius: "50%",
+              mb: 1,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              backgroundColor: isDarkMode ? "#424242" : "#f0f0f0",
+              position: "relative",
+              overflow: "hidden",
+              textAlign: "center",
+              fontSize: 40,
+              fontWeight: "bold",
+              color: "#28844f",
+              backgroundImage: images[user?.email]
+                ? `url(${images[user.email]})`
+                : "none",
+              backgroundSize: "cover",
+              backgroundPosition: "top",
+            }}
+          >
+            {!images[user?.email] && (
+              <span
+                style={{
+                  position: "absolute",
+                  top: "50%",
+                  left: "50%",
+                  transform: "translate(-50%, -50%)",
+                }}
+              >
+                {user?.name?.[0] || ""}
+                {user?.name?.split(" ")?.[1]?.[0] || ""}
+              </span>
+            )}
+          </Box>
+        )}
 
-        {expanded && (
+        {user && expanded && (
           <>
             <Typography sx={{ color: isDarkMode ? "#fff" : "#000" }}>
               {user?.name}
             </Typography>
             <Typography sx={{ color: isDarkMode ? "#fff" : "#000" }}>
-              ({user?.role})
+              ({user?.accountType})
             </Typography>
           </>
         )}

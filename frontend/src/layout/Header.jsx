@@ -21,6 +21,7 @@ import { BrandName } from "../constants/helper";
 // import UpdatePassword from "../pages/auth/UpdatePassword";
 import { CustomModal } from "../components/CustomModal";
 import { useMediaQuery } from "@mui/material";
+import LoginPage from "../pages/auth/LoginPage";
 
 const Header = ({ handleButtonClick, expanded }) => {
   const {
@@ -38,6 +39,7 @@ const Header = ({ handleButtonClick, expanded }) => {
   const [showUpdatePassword, setShowUpdatePassword] = useState(false);
   const [themeMenuEl, setThemeMenuEl] = useState(null);
   const openThemeMenu = Boolean(themeMenuEl);
+  const [showAuthPage, setShowAuthPage] = useState(false);
 
   const toggleFullscreen = () => {
     if (!isFullscreen) {
@@ -185,7 +187,11 @@ const Header = ({ handleButtonClick, expanded }) => {
         </IconButton>
       ) : (
         <Box>
-          <Button sx={{ mr: 1 }} variant="contained">
+          <Button
+            onClick={() => setShowAuthPage(true)}
+            sx={{ mr: 1 }}
+            variant="contained"
+          >
             Login
           </Button>
           <Button color="secondary" variant="contained">
@@ -259,6 +265,17 @@ const Header = ({ handleButtonClick, expanded }) => {
         height="auto"
       >
         {/* <UpdatePassword onSuccess={() => setShowUpdatePassword(false)} /> */}
+      </CustomModal>
+
+      <CustomModal
+        open={showAuthPage}
+        showFullScreenButton={false}
+        height="auto"
+        width="auto"
+        header=""
+        onClose={() => setShowAuthPage(false)}
+      >
+        <LoginPage />
       </CustomModal>
     </Toolbar>
   );

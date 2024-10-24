@@ -7,6 +7,7 @@ const Library = React.lazy(() => import("./pages/library/Library"));
 const LoginPage = React.lazy(() => import("./pages/auth/LoginPage"));
 const SignUpPage = React.lazy(() => import("./pages/auth/SignUpPage"));
 const Lectures = React.lazy(() => import("./pages/lectures/Lectures"));
+const Users = React.lazy(() => import("./pages/admin/Users"));
 
 const createRoute = (path, name, available, Component) => ({
   path,
@@ -26,4 +27,5 @@ export const routes = [
   createRoute("/lectures", "Lectures", ["0"], Lectures),
   createRoute("/login", "Login", ["0"], LoginPage),
   createRoute("/signup", "Sign Up", ["0"], SignUpPage),
+  createRoute("/admin/users", "Users", ["0"], Users),
 ];

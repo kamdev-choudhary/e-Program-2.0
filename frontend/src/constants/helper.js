@@ -10,6 +10,7 @@ export const icons = {
   library: "https://img.icons8.com/3d-fluency/94/book-shelf.png",
   login: "https://img.icons8.com/isometric/50/import.png",
   admin: "https://img.icons8.com/3d-fluency/94/user-shield.png",
+  users: "https://img.icons8.com/3d-fluency/94/group--v1.png",
 };
 
 export const images = {};

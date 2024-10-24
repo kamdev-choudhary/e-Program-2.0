@@ -18,7 +18,14 @@ const pages = [
     available: ["1"],
     icon: createIcon(icons.admin),
     subMenu: true,
-    subMenuItem: [],
+    subMenuItem: [
+      {
+        name: "Users",
+        path: "/admin/users",
+        available: ["0"],
+        icon: createIcon(icons.users, 30),
+      },
+    ],
   },
   {
     name: "Articles",
@@ -39,10 +46,25 @@ const pages = [
     icon: createIcon(icons.library),
   },
   {
-    name: "Login",
-    path: "/login",
+    name: "Authentication",
+    path: "",
     available: ["0"],
-    icon: createIcon(icons.login),
+    icon: createIcon(icons.admin),
+    subMenu: true,
+    subMenuItem: [
+      {
+        name: "Login",
+        path: "/login",
+        available: ["0"],
+        icon: createIcon(icons.login),
+      },
+      {
+        name: "Sign Up",
+        path: "/signup",
+        available: ["0"],
+        icon: createIcon(icons.login),
+      },
+    ],
   },
 ];
 

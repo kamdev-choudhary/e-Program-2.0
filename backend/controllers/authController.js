@@ -4,23 +4,29 @@ const Batch = require("../models/batch");
 
 module.exports.login = async (req, res) => {
   try {
-    const { email, password } = req.body;
-    const userExist = await User.findOne({ email: email });
+    const { id, password } = req.body;
+    console.log(id, password);
+    const userExist = await User.findOne({ email: id });
 
     if (!userExist) {
-      return res.status(400).json("Email or Password is incorrect");
+      return res
+        .status(200)
+        .json({ message: "Email or Password is incorrect", status_code: 0 });
     }
 
     const isPasswordValid = await bcrypt.compare(password, userExist.password);
 
     if (isPasswordValid) {
       return res.status(200).json({
-        msg: "Login Successful",
+        message: "Login Successful",
         token: await userExist.generateToken(),
         userId: userExist._id.toString(),
+        status_code: 1,
       });
     } else {
-      return res.status(401).json({ msg: "Invalid email or password" });
+      return res
+        .status(401)
+        .json({ message: "Invalid email or password", status_code: 1 });
     }
   } catch (error) {
     console.error(error);
@@ -35,7 +41,16 @@ module.exports.register = async (req, res) => {
     let userExist = await User.findOne({ email: email });
 
     if (userExist) {
-      return res.status(400).json("Email already Registered");
+      return res
+        .status(400)
+        .json({ message: "Email already Registered", status_code: 1 });
+    }
+
+    let mobileExist = await User.findOne({ mobile: mobile });
+    if (mobileExist) {
+      return res
+        .status(400)
+        .json({ message: "Mobile number already Registered", status_code: 1 });
     }
 
     const newUser = await User.create({
@@ -43,21 +58,13 @@ module.exports.register = async (req, res) => {
       email,
       password,
       mobile,
-      currentClass,
     });
 
-    // const batch = await Batch.findOne({ batchClass: newUser.currentClass });
-    // newUser.batchId = batch._id;
-    // newUser.batchName = batch.batchName;
-    // newUser.save();
-
-    // batch.scholars.push(newUser);
-    // batch.save();
-
     return res.status(200).json({
-      msg: "Registration Successful",
+      message: "Registration Successful",
       token: await newUser.generateToken(),
       userId: newUser._id.toString(),
+      status_code: 1,
     });
   } catch (err) {
     console.error(err);
@@ -74,7 +81,7 @@ module.exports.getUserData = async (req, res, next) => {
     if (user) {
       res.status(200).json({ user });
     } else {
-      res.status(400).json("User Not available");
+      res.status(400).json({ message: "User Not available", status_code: 0 });
     }
   } catch (error) {
     next(error);

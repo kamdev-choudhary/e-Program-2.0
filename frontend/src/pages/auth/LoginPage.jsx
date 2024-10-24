@@ -1,14 +1,33 @@
-import { Box, Button, Paper, TextField, Typography } from "@mui/material";
+import {
+  Box,
+  Button,
+  Checkbox,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
 import React, { useState } from "react";
+import axios from "axios";
+import { API_URL } from "../../constants/helper";
+import { useGlobalProvider } from "../../GlobalProvider";
 
 function LoginPage() {
+  const { isValidResponse, showNotification, handleLogin } =
+    useGlobalProvider();
   const [user, setUser] = useState({
     id: "",
     password: "",
   });
 
-  const handleLogin = async () => {
-    console.log("login");
+  const handleLoginButton = async () => {
+    try {
+      const response = await axios.post(`${API_URL}/auth/login`, {
+        ...user,
+      });
+      handleLogin(response);
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (
@@ -39,9 +58,28 @@ function LoginPage() {
         >
           <Typography variant="h6">Login</Typography>
         </Box>
-        <TextField label="Username/Email/Mobile" sx={{ minWidth: 350 }} />
-        <TextField label="Password" sx={{ minWidth: 350 }} />
-        <Button variant="contained" onClick={handleLogin}>
+        <TextField
+          value={user?.id}
+          onChange={
+            (e) => setUser((prev) => ({ ...prev, id: e.target.value })) // Ensure correct spreading
+          }
+          label="Email/Mobile"
+          sx={{ minWidth: 350 }}
+        />
+        <TextField
+          value={user?.password}
+          onChange={(e) =>
+            setUser((prev) => ({ ...prev, password: e.target.value }))
+          }
+          label="Password"
+          sx={{ minWidth: 350 }}
+          type="password"
+        />
+        <Box>
+          <Checkbox />
+          Remember me
+        </Box>
+        <Button variant="contained" onClick={handleLoginButton}>
           Login
         </Button>
         <Typography

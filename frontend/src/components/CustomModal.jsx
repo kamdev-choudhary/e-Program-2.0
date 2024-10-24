@@ -33,6 +33,7 @@ export const CustomModal = ({
   height = "90vh",
   width = "80vw",
   showHeader = true,
+  showFullScreenButton = true,
 }) => {
   const [fullScreen, setFullScreen] = useState(false);
   const { deviceTheme } = useGlobalProvider();
@@ -67,20 +68,22 @@ export const CustomModal = ({
             >
               <Typography variant="h6">{header}</Typography>
               <Box>
-                <IconButton
-                  onClick={() => setFullScreen((prev) => !prev)}
-                  sx={{ mr: 1 }}
-                >
-                  {!isSmallScreen && (
-                    <Box>
-                      {fullScreen ? (
-                        <FullscreenExitRounded />
-                      ) : (
-                        <FullscreenRounded />
-                      )}
-                    </Box>
-                  )}
-                </IconButton>
+                {showFullScreenButton && (
+                  <IconButton
+                    onClick={() => setFullScreen((prev) => !prev)}
+                    sx={{ mr: 1 }}
+                  >
+                    {!isSmallScreen && (
+                      <Box>
+                        {fullScreen ? (
+                          <FullscreenExitRounded />
+                        ) : (
+                          <FullscreenRounded />
+                        )}
+                      </Box>
+                    )}
+                  </IconButton>
+                )}
                 <Button onClick={onClose} variant="contained" color="error">
                   Close
                 </Button>
