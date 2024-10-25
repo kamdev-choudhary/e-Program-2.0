@@ -12,6 +12,13 @@ export const icons = {
   admin: "https://img.icons8.com/3d-fluency/94/user-shield.png",
   users: "https://img.icons8.com/3d-fluency/94/group--v1.png",
   register: "https://img.icons8.com/3d-fluency/94/writer-male.png",
+  exam: "https://img.icons8.com/3d-fluency/94/test-passed.png",
+  examMaster: "https://img.icons8.com/isometric/50/test-partial-passed.png",
+  onlineExam: "https://img.icons8.com/3d-fluency/94/web.png",
+  offlineExam: "https://img.icons8.com/3d-fluency/94/document.png",
+  info: "https://img.icons8.com/3d-fluency/94/info-1.png",
+  batches: "https://img.icons8.com/3d-fluency/94/layers.png",
+  questionBank: "https://img.icons8.com/3d-fluency/94/help.png",
 };
 
 export const images = {};

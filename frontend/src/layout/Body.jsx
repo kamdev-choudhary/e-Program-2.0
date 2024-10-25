@@ -4,9 +4,10 @@ import { routes } from "../routes";
 import { useGlobalProvider } from "../GlobalProvider";
 import { Divider, Typography } from "@mui/material";
 import { ChevronRightRounded, Home } from "@mui/icons-material";
+import ErrorPage from "../pages/error/ErrorPage";
 
 function Body() {
-  const { user, isLoggedIn } = useGlobalProvider();
+  const { user } = useGlobalProvider();
   const location = useLocation();
 
   // Find the current route based on the path
@@ -60,7 +61,7 @@ function Body() {
           .map((route) => (
             <Route key={route.path} path={route.path} element={route.element} />
           ))}
-        <Route path="*" element={<Navigate to="/" />} />
+        <Route path="*" element={<ErrorPage />} />
       </Routes>
     </>
   );

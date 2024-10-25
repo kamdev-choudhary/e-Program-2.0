@@ -4,11 +4,14 @@ import Loader from "./components/Loader";
 const Article = React.lazy(() => import("./pages/article/Article"));
 const Home = React.lazy(() => import("./pages/home/Home"));
 const Library = React.lazy(() => import("./pages/library/Library"));
-const LoginPage = React.lazy(() => import("./pages/auth/LoginPage"));
-const SignUpPage = React.lazy(() => import("./pages/auth/SignUpPage"));
 const Lectures = React.lazy(() => import("./pages/lectures/Lectures"));
 const Users = React.lazy(() => import("./pages/admin/Users"));
 const LectureAdmin = React.lazy(() => import("./pages/lectures/LectureAdmin"));
+const OnlineExam = React.lazy(() => import("./pages/exam/OnlineExam"));
+const OfflineExam = React.lazy(() => import("./pages/exam/OfflineExam"));
+const ExamMaster = React.lazy(() => import("./pages/exam/ExamMaster"));
+const QuestionBank = React.lazy(() => import("./pages/question/QuestionBank"));
+const AcademicInfo = React.lazy(() => import("./pages/admin/AcademicInfo"));
 
 const createRoute = (path, name, isLoginRequired, available, Component) => ({
   path,
@@ -29,4 +32,39 @@ export const routes = [
   createRoute("/lectures", "Lectures", false, ["0"], Lectures),
   createRoute("/admin/lectures", "Lectures", true, ["admin"], LectureAdmin),
   createRoute("/admin/users", "Users", true, ["admin"], Users),
+  createRoute(
+    "/admin/exam/online",
+    "Exam Master Online",
+    true,
+    ["admin"],
+    OnlineExam
+  ),
+  createRoute(
+    "/admin/exam/offline",
+    "Exam Master Online",
+    true,
+    ["admin"],
+    OfflineExam
+  ),
+  createRoute(
+    "/admin/exam/master",
+    "Exam Master Online",
+    true,
+    ["admin"],
+    ExamMaster
+  ),
+  createRoute(
+    "/admin/question-bank",
+    "Question Bank",
+    true,
+    ["admin"],
+    QuestionBank
+  ),
+  createRoute(
+    "/admin/academic/info",
+    "Academic Info",
+    true,
+    ["admin"],
+    AcademicInfo
+  ),
 ];
