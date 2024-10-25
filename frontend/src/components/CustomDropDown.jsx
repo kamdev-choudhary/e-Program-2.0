@@ -5,13 +5,14 @@ import {
   InputLabel,
   MenuItem,
   Select,
+  FormHelperText,
 } from "@mui/material";
 import React from "react";
 import { useGlobalProvider } from "../GlobalProvider";
 
 function CustomDropDown({
   data = [],
-  value = [],
+  value = "",
   keyField = "id",
   onChange,
   disabled = false,
@@ -20,15 +21,18 @@ function CustomDropDown({
   dropdownValue = "",
   readonly = false,
   required = false,
+  error = false,
+  helperText = "",
 }) {
   const { deviceTheme } = useGlobalProvider();
+
   // Function to clear the value
   const handleClear = () => {
     onChange({ target: { value: "" } });
   };
 
   return (
-    <FormControl required={required} size="small" fullWidth>
+    <FormControl required={required} size="small" fullWidth error={error}>
       <InputLabel>{label}</InputLabel>
       <Select
         sx={{
@@ -59,6 +63,7 @@ function CustomDropDown({
           );
         })}
       </Select>
+      {helperText && <FormHelperText>{helperText}</FormHelperText>}
     </FormControl>
   );
 }

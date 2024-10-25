@@ -6,7 +6,7 @@ import { Divider, Typography } from "@mui/material";
 import { ChevronRightRounded, Home } from "@mui/icons-material";
 
 function Body() {
-  const { user } = useGlobalProvider();
+  const { user, isLoggedIn } = useGlobalProvider();
   const location = useLocation();
 
   // Find the current route based on the path
@@ -47,9 +47,19 @@ function Body() {
       )}
 
       <Routes>
-        {routes.map((route) => (
-          <Route key={route.path} path={route.path} element={route.element} />
-        ))}
+        {routes
+          .filter((route) => {
+            if (!route.isLoginRequired) {
+              return true;
+            } else if (route.available.includes(user?.role)) {
+              return true;
+            } else {
+              return false;
+            }
+          })
+          .map((route) => (
+            <Route key={route.path} path={route.path} element={route.element} />
+          ))}
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     </>

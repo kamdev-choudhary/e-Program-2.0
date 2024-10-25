@@ -4,15 +4,11 @@ import { useGlobalProvider } from "../../GlobalProvider";
 import { API_URL } from "../../constants/helper";
 import CustomDropDown from "../../components/CustomDropDown";
 import { Search as SearchIcon } from "@mui/icons-material";
-import axios from "axios";
 
 import {
   Skeleton,
   Box,
-  Select,
-  InputLabel,
   InputAdornment,
-  MenuItem,
   OutlinedInput,
   FormControl,
   Paper,
@@ -46,10 +42,11 @@ function CollapsibleTable({ lectures, playLecture }) {
         <TableBody>
           {lectures.map((lecture, lectureIndex) => (
             <TableRow
+              onClick={() => playLecture(lecture.videoId)}
               sx={{
                 cursor: "pointer",
                 ":hover": {
-                  bgcolor: "#f2f3f4",
+                  bgcolor: "#f2f2f2",
                 },
               }}
               key={lectureIndex}
@@ -57,17 +54,7 @@ function CollapsibleTable({ lectures, playLecture }) {
               <TableCell align="center">{lecture.chapterName}</TableCell>
               <TableCell align="center">{lecture.lectureNumber}</TableCell>
               <TableCell align="center">
-                <Typography
-                  sx={{
-                    cursor: "pointer",
-                    ":hover": {
-                      color: "#000",
-                    },
-                  }}
-                  variant="body"
-                  color="error"
-                  onClick={() => playLecture(lecture.videoId)}
-                >
+                <Typography variant="body" color="error">
                   &nbsp;Play
                 </Typography>
               </TableCell>
@@ -80,7 +67,7 @@ function CollapsibleTable({ lectures, playLecture }) {
 }
 
 export default function LecturePage() {
-  const { isAdmin, isLoggedIn, userId, accountType } = useGlobalProvider();
+  const { isAdmin, isLoggedIn, userId, role } = useGlobalProvider();
 
   const [lectures, setLectures] = useState([]);
   const [error, setError] = useState(null);
@@ -118,7 +105,7 @@ export default function LecturePage() {
   }, []);
 
   useEffect(() => {
-    if (isLoggedIn && accountType === "student") {
+    if (isLoggedIn && role === "student") {
       fetch(`${API_URL}/lectures/${selectedClass}`)
         .then((response) => response.json())
         .then((data) => {
@@ -150,7 +137,7 @@ export default function LecturePage() {
   }, [selectedClass]);
 
   useEffect(() => {
-    if (isLoggedIn && accountType === "student") {
+    if (isLoggedIn && role === "student") {
       fetch(`${API_URL}/auth/user/${userId}`)
         .then((response) => response.json())
         .then((data) => {

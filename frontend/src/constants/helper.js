@@ -1,6 +1,6 @@
 export const API_URL = "http://localhost:5000/api";
 
-export const BrandName = "";
+export const BrandName = "https://img.icons8.com/3d-fluency/94/physics.png";
 
 export const icons = {
   dashboard: "https://img.icons8.com/color/48/dashboard-layout.png",
@@ -11,6 +11,7 @@ export const icons = {
   login: "https://img.icons8.com/isometric/50/import.png",
   admin: "https://img.icons8.com/3d-fluency/94/user-shield.png",
   users: "https://img.icons8.com/3d-fluency/94/group--v1.png",
+  register: "https://img.icons8.com/3d-fluency/94/writer-male.png",
 };
 
 export const images = {};

@@ -8,10 +8,12 @@ const LoginPage = React.lazy(() => import("./pages/auth/LoginPage"));
 const SignUpPage = React.lazy(() => import("./pages/auth/SignUpPage"));
 const Lectures = React.lazy(() => import("./pages/lectures/Lectures"));
 const Users = React.lazy(() => import("./pages/admin/Users"));
+const LectureAdmin = React.lazy(() => import("./pages/lectures/LectureAdmin"));
 
-const createRoute = (path, name, available, Component) => ({
+const createRoute = (path, name, isLoginRequired, available, Component) => ({
   path,
   name,
+  isLoginRequired,
   available,
   element: (
     <Suspense fallback={<Loader open={true} />}>
@@ -21,11 +23,10 @@ const createRoute = (path, name, available, Component) => ({
 });
 
 export const routes = [
-  createRoute("/", "Home", ["0"], Home),
-  createRoute("/article", "Article", ["0"], Article),
-  createRoute("/library", "Library", ["0"], Library),
-  createRoute("/lectures", "Lectures", ["0"], Lectures),
-  createRoute("/login", "Login", ["0"], LoginPage),
-  createRoute("/signup", "Sign Up", ["0"], SignUpPage),
-  createRoute("/admin/users", "Users", ["0"], Users),
+  createRoute("/", "Home", false, ["0"], Home),
+  createRoute("/article", "Article", false, ["0"], Article),
+  createRoute("/library", "Library", false, ["0"], Library),
+  createRoute("/lectures", "Lectures", false, ["0"], Lectures),
+  createRoute("/admin/lectures", "Lectures", true, ["admin"], LectureAdmin),
+  createRoute("/admin/users", "Users", true, ["admin"], Users),
 ];

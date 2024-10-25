@@ -11,9 +11,8 @@ import axios from "axios";
 import { API_URL } from "../../constants/helper";
 import { useGlobalProvider } from "../../GlobalProvider";
 
-function LoginPage() {
-  const { isValidResponse, showNotification, handleLogin } =
-    useGlobalProvider();
+function LoginPage({ setShowAuthPage, setSelectedAuthPage }) {
+  const { handleLogin } = useGlobalProvider();
   const [user, setUser] = useState({
     id: "",
     password: "",
@@ -25,6 +24,9 @@ function LoginPage() {
         ...user,
       });
       handleLogin(response);
+      if (response.data.status_code === 1) {
+        setShowAuthPage(false);
+      }
     } catch (error) {
       console.error(error);
     }
@@ -82,15 +84,13 @@ function LoginPage() {
         <Button variant="contained" onClick={handleLoginButton}>
           Login
         </Button>
-        <Typography
-          component="a"
-          href="/signup"
-          variant="body1"
-          color="primary"
+        <Button
+          onClick={() => setSelectedAuthPage("register")}
+          color="secondary"
           style={{ textDecoration: "none" }}
         >
           Don't have an Account? Sign Up.
-        </Typography>
+        </Button>
       </Box>
     </Box>
   );

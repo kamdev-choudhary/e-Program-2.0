@@ -24,7 +24,7 @@ const userSchema = new Schema({
     default: false,
   },
 
-  accountType: {
+  role: {
     type: String,
     default: "student",
   },
@@ -89,10 +89,11 @@ userSchema.methods.generateToken = async function () {
       {
         userId: this._id.toString(),
         email: this.email,
-        accountType: this.accountType,
+        role: this.role,
         isAdmin: this.isAdmin,
         name: this.name,
         batchId: this.batchId,
+        mobile: this.mobile,
       },
       process.env.JWT_KEY,
       {

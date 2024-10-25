@@ -35,17 +35,22 @@ export const GlobalProvider = ({ children }) => {
 
   const isValidResponse = (response) => {
     if (
-      response?.data?.status_code === 0 ||
-      response?.data?.status_code === "0"
+      response?.data?.status_code === 1 ||
+      response?.data?.status_code === "1"
     ) {
-      showNotification(response?.data?.status_message, "success");
+      showNotification(response?.data?.message, "success");
       return true;
     } else if (
       response?.data?.status_code === 401 ||
       response?.data?.status_code === "401"
     ) {
       logoutUser();
-      showNotification(response?.data?.status_message, "error");
+      showNotification(response?.data?.message, "error");
+      return false;
+    } else if (
+      response?.data?.status_code === 2 ||
+      response?.data?.status_code === "2"
+    ) {
       return false;
     } else {
       return false;

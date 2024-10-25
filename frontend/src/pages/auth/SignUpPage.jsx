@@ -2,8 +2,10 @@ import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 import axios from "axios";
 import React, { useState } from "react";
 import { API_URL } from "../../constants/helper";
+import { useGlobalProvider } from "../../GlobalProvider";
 
-function LoginPage() {
+function SignUpPage({ setSelectedAuthPage, setShowAuthPage }) {
+  const { handleLogin } = useGlobalProvider();
   const [user, setUser] = useState({
     email: "",
     mobile: "",
@@ -52,9 +54,16 @@ function LoginPage() {
   };
 
   const handleRegisterNewUser = async () => {
-    if (validateFields()) {
-      const response = await axios.post(`${API_URL}/register`, { ...user });
-      // Registration logic here
+    try {
+      if (validateFields()) {
+        const response = await axios.post(`${API_URL}/auth/register`, {
+          ...user,
+        });
+        handleLogin(response);
+        setShowAuthPage(false);
+      }
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -139,18 +148,16 @@ function LoginPage() {
         <Button onClick={handleRegisterNewUser} variant="contained">
           Register
         </Button>
-        <Typography
-          component="a"
-          href="/login"
-          variant="body1"
-          color="primary"
+        <Button
+          onClick={() => setSelectedAuthPage("login")}
+          color="secondary"
           style={{ textDecoration: "none" }}
         >
           Already have an Account? Login.
-        </Typography>
+        </Button>
       </Box>
     </Box>
   );
 }
 
-export default LoginPage;
+export default SignUpPage;

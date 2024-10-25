@@ -61,7 +61,7 @@ const ScrollableTabs = ({ tabs, selectedTab, setSelectedTab }) => {
               style={{
                 display: "flex",
                 justifyContent: "center",
-                paddingBottom: 15,
+                paddingBottom: 5,
                 borderBottom:
                   selectedTab === tab.value ? "4px solid #3f51b5" : "",
                 color:

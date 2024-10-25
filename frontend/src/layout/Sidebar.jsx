@@ -82,16 +82,16 @@ function Sidebar({ isSmallScreen, expanded = true }) {
 
   return (
     <Box>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          justifyContent: "center",
-          m: 1,
-        }}
-      >
-        {user && (
+      {user && (
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: "column",
+            alignItems: "center",
+            justifyContent: "center",
+            m: 1,
+          }}
+        >
           <Box
             sx={{
               height: expanded ? 95 : 38,
@@ -132,92 +132,102 @@ function Sidebar({ isSmallScreen, expanded = true }) {
               </span>
             )}
           </Box>
-        )}
 
-        {user && expanded && (
-          <>
-            <Typography sx={{ color: isDarkMode ? "#fff" : "#000" }}>
-              {user?.name}
-            </Typography>
-            <Typography sx={{ color: isDarkMode ? "#fff" : "#000" }}>
-              ({user?.accountType})
-            </Typography>
-          </>
-        )}
-      </Box>
+          {expanded && (
+            <>
+              <Typography sx={{ color: isDarkMode ? "#fff" : "#000" }}>
+                {user?.name}
+              </Typography>
+              <Typography sx={{ color: isDarkMode ? "#fff" : "#000" }}>
+                ({user?.role})
+              </Typography>
+            </>
+          )}
+        </Box>
+      )}
       <List>
         <Divider />
-        {pages.map((page, index) => (
-          <React.Fragment key={index}>
-            <ListItemButton
-              onClick={() => {
-                if (page.subMenu) {
-                  handleMenuClick(page.name);
-                } else {
-                  navigate(page.path);
-                }
-              }}
-              sx={{
-                backgroundColor:
-                  location.pathname === page.path
-                    ? expanded
-                      ? "rgba(40,132,79,0.9)"
-                      : isDarkMode
-                      ? "#000"
-                      : "rgba(40,132,79,0.3)"
-                    : "transparent",
-                "&:hover": {
+        {pages
+          .filter((page) => {
+            if (!page.isLoginRequired) {
+              return true;
+            } else if (page.available.includes(user?.role)) {
+              return true;
+            } else {
+              return false;
+            }
+          })
+          .map((page, index) => (
+            <React.Fragment key={index}>
+              <ListItemButton
+                onClick={() => {
+                  if (page.subMenu) {
+                    handleMenuClick(page.name);
+                  } else {
+                    navigate(page.path);
+                  }
+                }}
+                sx={{
                   backgroundColor:
                     location.pathname === page.path
                       ? expanded
-                        ? "rgba(40,132,79,0.8)" // Lighter on hover when active
+                        ? "rgba(40,132,79,0.9)"
                         : isDarkMode
-                        ? "rgba(0, 0, 0, 0.8)" // Darker for dark mode
-                        : "rgba(40,132,79,0.5)" // Lighter for light mode
-                      : isDarkMode
-                      ? "rgba(255, 255, 255, 0.1)" // Slightly lighter for dark mode
-                      : "#f1f1f1", // Default light hover
-                },
-                p: 1,
-                pr: expanded ? 2 : 1,
-                borderRadius: 1,
-              }}
-            >
-              {page.icon && <>{page.icon}</>}
-              {expanded && (
-                <>
-                  <ListItemText
-                    sx={{
-                      color:
-                        location.pathname === page.path
-                          ? "#fff"
+                        ? "#000"
+                        : "rgba(40,132,79,0.3)"
+                      : "transparent",
+                  "&:hover": {
+                    backgroundColor:
+                      location.pathname === page.path
+                        ? expanded
+                          ? "rgba(40,132,79,0.8)" // Lighter on hover when active
                           : isDarkMode
-                          ? "#fff"
-                          : "#000",
-                      ml: 1,
-                    }}
-                    primary={page.name}
-                  />
-                  {page.subMenu &&
-                    (openMenus[page.name] ? <ExpandLess /> : <ExpandMore />)}
-                </>
-              )}
-            </ListItemButton>
+                          ? "rgba(0, 0, 0, 0.8)" // Darker for dark mode
+                          : "rgba(40,132,79,0.5)" // Lighter for light mode
+                        : isDarkMode
+                        ? "rgba(255, 255, 255, 0.1)" // Slightly lighter for dark mode
+                        : "#f1f1f1", // Default light hover
+                  },
+                  p: 1,
+                  pr: expanded ? 2 : 1,
+                  borderRadius: 1,
+                }}
+              >
+                {page.icon && <>{page.icon}</>}
+                {expanded && (
+                  <>
+                    <ListItemText
+                      sx={{
+                        color:
+                          location.pathname === page.path
+                            ? "#fff"
+                            : isDarkMode
+                            ? "#fff"
+                            : "#000",
+                        ml: 1,
+                      }}
+                      primary={page.name}
+                    />
+                    {page.subMenu &&
+                      (openMenus[page.name] ? <ExpandLess /> : <ExpandMore />)}
+                  </>
+                )}
+              </ListItemButton>
 
-            {page.subMenu && (
-              <SubMenu
-                menu={page}
-                isOpen={openMenus[page.name]}
-                navigate={navigate}
-                isSmallScreen={isSmallScreen}
-                user={user}
-                isDarkMode={isDarkMode}
-                expanded={expanded}
-              />
-            )}
-            <Divider />
-          </React.Fragment>
-        ))}
+              {page.subMenu && (
+                <SubMenu
+                  menu={page}
+                  isOpen={openMenus[page.name]}
+                  navigate={navigate}
+                  isSmallScreen={isSmallScreen}
+                  user={user}
+                  isDarkMode={isDarkMode}
+                  expanded={expanded}
+                />
+              )}
+              <Divider />
+            </React.Fragment>
+          ))}
       </List>
     </Box>
   );

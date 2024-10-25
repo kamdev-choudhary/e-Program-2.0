@@ -33,7 +33,7 @@ export const CustomModal = ({
   height = "90vh",
   width = "80vw",
   showHeader = true,
-  showFullScreenButton = true,
+  showFullScreenButton = false,
 }) => {
   const [fullScreen, setFullScreen] = useState(false);
   const { deviceTheme } = useGlobalProvider();
@@ -52,7 +52,7 @@ export const CustomModal = ({
           width: fullScreen || isSmallScreen ? "99vw" : width,
           height: fullScreen ? "100vh" : height,
           bgcolor: deviceTheme === "light" ? "#f0f3fb" : "#222",
-          padding: isSmallScreen ? 1 : 2,
+          p: 1,
         }}
       >
         {/* Header section */}
@@ -66,13 +66,12 @@ export const CustomModal = ({
                 mb: 1,
               }}
             >
-              <Typography variant="h6">{header}</Typography>
-              <Box>
+              <Typography variant="h6" sx={{ ml: 1 }}>
+                {header}
+              </Typography>
+              <Box sx={{ display: "flex", alignItems: "center" }}>
                 {showFullScreenButton && (
-                  <IconButton
-                    onClick={() => setFullScreen((prev) => !prev)}
-                    sx={{ mr: 1 }}
-                  >
+                  <IconButton onClick={() => setFullScreen((prev) => !prev)}>
                     {!isSmallScreen && (
                       <Box>
                         {fullScreen ? (
@@ -84,12 +83,17 @@ export const CustomModal = ({
                     )}
                   </IconButton>
                 )}
-                <Button onClick={onClose} variant="contained" color="error">
+                <Button
+                  sx={{ ml: 1 }}
+                  onClick={onClose}
+                  variant="contained"
+                  color="error"
+                >
                   Close
                 </Button>
               </Box>
             </Box>
-            <Divider sx={{ my: 1, mb: 2 }} />
+            <Divider sx={{ mt: 1 }} />
           </>
         )}
 

@@ -23,55 +23,55 @@ export const lightTheme = createTheme({
   //       "linear-gradient(to bottom right, rgba(145, 77, 126, 0.2), rgba(40, 132, 79, 0.2))",
   //   },
   // },
-  // typography: {
-  //   fontFamily: "sans-serif,Roboto, Arial",
-  // },
+  typography: {
+    fontFamily: "sans-serif,Roboto, Arial",
+  },
   // shape: {
   //   borderRadius: 4,
   // },
-  // components: {
-  //   MuiButton: {
-  //     styleOverrides: {
-  //       root: {
-  //         borderRadius: 6,
-  //         minWidth: 100,
-  //         textTransform: "none",
-  //         boxShadow: "none", // No shadow
-  //         textTransform: "none", // No uppercase text
-  //         padding: "8px 16px", // Custom padding
-  //         "&:hover": {
-  //           boxShadow: "none", // No shadow on hover
-  //           // backgroundColor: "rgba(0, 0, 0, 0.04)", // Slight hover background color
-  //         },
-  //       },
-  //     },
-  //   },
-  //   MuiOutlinedInput: {
-  //     styleOverrides: {
-  //       root: {
-  //         backgroundColor: "#fff",
-  //       },
-  //     },
-  //   },
-  //   MuiButtonGroup: {
-  //     styleOverrides: {
-  //       root: {
-  //         borderRadius: 2,
-  //       },
-  //     },
-  //   },
-  //   MuiDataGrid: {
-  //     styleOverrides: {
-  //       columnHeader: {
-  //         backgroundColor: "#7D8ABC",
-  //         color: "#fff",
-  //       },
-  //       columnHeaderTitle: {
-  //         fontWeight: "bold",
-  //       },
-  //     },
-  //   },
-  // },
+  components: {
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          borderRadius: 6,
+          minWidth: 100,
+          textTransform: "none",
+          //boxShadow: "none",
+          textTransform: "none", // No uppercase text
+          padding: "8px 16px", // Custom padding
+          "&:hover": {
+            boxShadow: "none", // No shadow on hover
+            // backgroundColor: "rgba(0, 0, 0, 0.04)", // Slight hover background color
+          },
+        },
+      },
+    },
+    MuiOutlinedInput: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#fff",
+        },
+      },
+    },
+    MuiButtonGroup: {
+      styleOverrides: {
+        root: {
+          borderRadius: 2,
+        },
+      },
+    },
+    MuiDataGrid: {
+      styleOverrides: {
+        columnHeader: {
+          backgroundColor: "#7D8ABC",
+          color: "#fff",
+        },
+        columnHeaderTitle: {
+          fontWeight: "bold",
+        },
+      },
+    },
+  },
 });
 
 // Dark Theme

@@ -35,37 +35,44 @@ module.exports.login = async (req, res) => {
 };
 
 module.exports.register = async (req, res) => {
-  const { name, email, password, mobile, currentClass } = req.body;
+  let { name, email, password, mobile, role, method } = req.body;
+
+  if (!password) password = "Password";
 
   try {
     let userExist = await User.findOne({ email: email });
-
     if (userExist) {
       return res
-        .status(400)
-        .json({ message: "Email already Registered", status_code: 1 });
+        .status(200)
+        .json({ message: "Email already Registered", status_code: 2 });
     }
-
     let mobileExist = await User.findOne({ mobile: mobile });
     if (mobileExist) {
       return res
-        .status(400)
-        .json({ message: "Mobile number already Registered", status_code: 1 });
+        .status(200)
+        .json({ message: "Mobile number already Registered.", status_code: 2 });
     }
-
     const newUser = await User.create({
       name,
       email,
       password,
       mobile,
+      role,
     });
 
-    return res.status(200).json({
-      message: "Registration Successful",
-      token: await newUser.generateToken(),
-      userId: newUser._id.toString(),
-      status_code: 1,
-    });
+    if (method === "admin") {
+      return res.status(200).json({
+        message: "Registration Successful.",
+        status_code: 1,
+      });
+    } else {
+      return res.status(200).json({
+        message: "Registration Successful",
+        token: await newUser.generateToken(),
+        userId: newUser._id.toString(),
+        status_code: 1,
+      });
+    }
   } catch (err) {
     console.error(err);
     return res.status(500).json("Internal Server Error");
@@ -105,6 +112,39 @@ module.exports.updateUserData = async (req, res, next) => {
     res
       .status(200)
       .json({ message: "User updated successfully", user: updatedUser });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Get user by roles
+
+module.exports.getUserbyRole = async (req, res, next) => {
+  try {
+    const { role } = req.params;
+    const users = await User.find({ role: role });
+    res.status(200).json({ status_code: 1, users });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Delete User
+module.exports.deleteUser = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+
+    const deletedUser = await User.findOneAndDelete({ _id: id });
+
+    if (!deletedUser) {
+      return res
+        .status(200)
+        .json({ message: "User not found", status_code: 0 });
+    }
+
+    const users = await User.find({ role: deletedUser.role });
+
+    res.status(200).json({ users, message: "User deleted", status_code: 1 });
   } catch (error) {
     next(error);
   }

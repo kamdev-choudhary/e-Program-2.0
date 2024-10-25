@@ -22,6 +22,9 @@ import { BrandName } from "../constants/helper";
 import { CustomModal } from "../components/CustomModal";
 import { useMediaQuery } from "@mui/material";
 import LoginPage from "../pages/auth/LoginPage";
+import SignUpPage from "../pages/auth/SignUpPage";
+import ScrollableTabs from "../components/ScrollableTabs";
+import { icons } from "../constants/helper";
 
 const Header = ({ handleButtonClick, expanded }) => {
   const {
@@ -40,6 +43,7 @@ const Header = ({ handleButtonClick, expanded }) => {
   const [themeMenuEl, setThemeMenuEl] = useState(null);
   const openThemeMenu = Boolean(themeMenuEl);
   const [showAuthPage, setShowAuthPage] = useState(false);
+  const [selectedAuthPage, setSelectedAuthPage] = useState("login");
 
   const toggleFullscreen = () => {
     if (!isFullscreen) {
@@ -192,10 +196,7 @@ const Header = ({ handleButtonClick, expanded }) => {
             sx={{ mr: 1 }}
             variant="contained"
           >
-            Login
-          </Button>
-          <Button color="secondary" variant="contained">
-            Sign Up
+            Login / Sign Up
           </Button>
         </Box>
       )}
@@ -275,7 +276,31 @@ const Header = ({ handleButtonClick, expanded }) => {
         header=""
         onClose={() => setShowAuthPage(false)}
       >
-        <LoginPage />
+        <Box sx={{ mb: 2 }}>
+          <ScrollableTabs
+            tabs={[
+              { name: "Login", value: "login", icon: icons.login },
+              {
+                name: "Register",
+                value: "register",
+                icon: icons.register,
+              },
+            ]}
+            selectedTab={selectedAuthPage}
+            setSelectedTab={setSelectedAuthPage}
+          />
+        </Box>
+        {selectedAuthPage === "login" ? (
+          <LoginPage
+            setShowAuthPage={setShowAuthPage}
+            setSelectedAuthPage={setSelectedAuthPage}
+          />
+        ) : (
+          <SignUpPage
+            setShowAuthPage={setShowAuthPage}
+            setSelectedAuthPage={setSelectedAuthPage}
+          />
+        )}
       </CustomModal>
     </Toolbar>
   );
