@@ -7,23 +7,22 @@ const cors = require("cors");
 const bodyParser = require("body-parser");
 const compression = require("compression");
 const helmet = require("helmet");
-const { API_KEY, PORT } = process.env;
+const { api_key, port } = require("./config");
 const routes = require("./routes");
 const rateLimit = require("express-rate-limit");
 const logger = require("./utils/logger");
 
 const checkApiKey = (req, res, next) => {
-  const apiKey = req.header("x-api-key");
-  if (!apiKey || apiKey !== API_KEY) {
-    return res.status(401).json({ error: "Unauthorized" });
-  }
+  const apiKey = req.header("api-key");
+  // if (!apiKey || apiKey !== api_key) {
+  //   return res.status(401).json({ error: "Unauthorized" });
+  // }
   next();
 };
 
-// Ensure API_KEY and PORT are defined
-if (!API_KEY || !PORT) {
+if (!api_key || !port) {
   logger.error("Missing required environment variables");
-  process.exit(1); // Stop the app if required environment variables are missing
+  process.exit(1);
 }
 
 // Security middleware
@@ -41,21 +40,15 @@ const limiter = rateLimit({
   max: 100, // limit each IP to 100 requests per windowMs
 });
 app.use(limiter);
-
-// API Key Middleware
 app.use(checkApiKey);
-
-// Routes
 routes(app);
-
-// Error middleware
 app.use(errorMiddleware);
 
 // Start DB and server
 connectDB()
   .then(() => {
-    app.listen(PORT, () => {
-      logger.info(`Server is listening on Port : ${PORT}`);
+    app.listen(port, () => {
+      logger.info(`Server is listening on port : ${port}`);
     });
   })
   .catch((error) => {
