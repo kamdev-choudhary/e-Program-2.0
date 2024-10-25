@@ -1,8 +1,12 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
+const optionSchema = new Schema({
+  optionName: { type: String, required: true },
+});
+
 const questionSchema = new Schema({
-  classes: String,
+  className: String,
   questionId: String,
   subject: String,
   topic: String,
@@ -16,29 +20,9 @@ const questionSchema = new Schema({
     default: "No",
   },
   questionText: String,
-  option1: {
-    text: String,
-    isCorrect: Boolean,
-  },
-  option2: {
-    text: String,
-    isCorrect: Boolean,
-  },
-  option3: {
-    text: String,
-    isCorrect: Boolean,
-  },
-  option4: {
-    text: String,
-    isCorrect: Boolean,
-  },
+  options: [optionSchema],
   correctAnswer: String,
   solution: String,
-  inTemplateId: [
-    {
-      type: String,
-    },
-  ],
 });
 
 const Question = mongoose.model("Question", questionSchema);
