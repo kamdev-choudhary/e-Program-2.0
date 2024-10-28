@@ -1,9 +1,14 @@
 const Lecture = require("../models/lectures");
+const response = require("../utils/responses");
 
 module.exports.viewLectures = async (req, res, next) => {
   try {
     const lectures = await Lecture.find({});
-    res.status(200).json({ lectures });
+    if (lectures) {
+      res.status(200).json({ lectures, ...response.success });
+    } else {
+      res.status(200).json({ ...response.notFound });
+    }
   } catch (error) {
     next(error);
   }
@@ -12,8 +17,15 @@ module.exports.viewLectures = async (req, res, next) => {
 module.exports.viewLecturesByClass = async (req, res, next) => {
   try {
     const { classname } = req.params;
+    if (!classname) {
+      res.status(200).json({ ...response.validation });
+    }
     const lectures = await Lecture.find({ class: classname });
-    res.status(200).json({ lectures });
+    if (lectures) {
+      res.status(200).json({ lectures, ...response.success });
+    } else {
+      res.status(200).json({ ...response.notFound });
+    }
   } catch (error) {
     next(error);
   }

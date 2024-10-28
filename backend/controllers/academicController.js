@@ -1,168 +1,510 @@
-const Academic = require("../models/academic");
+const Class = require("../models/class");
+const Subject = require("../models/subject");
+const SubSubject = require("../models/subSubject");
+const Topic = require("../models/topic");
+const SubTopic = require("../models/subTopic");
+const { validationResult, body } = require("express-validator");
+const response = require("../utils/responses");
+const logger = require("../utils/logger");
+const Pattern = require("../models/patterns");
 
-module.exports.academicData = async (req, res, next) => {
+// Classes
+module.exports.getClasses = async (req, res, next) => {
   try {
-    const academic = await Academic.find({});
-    res.status(200).json({ academic });
+    const classes = await Class.find({});
+    if (classes) {
+      res.status(200).json({ classes, ...response.success });
+    } else {
+      res.status(200).json({ ...response.notFound });
+    }
   } catch (error) {
     next(error);
   }
 };
 
-module.exports.updateAcademicData = async (req, res, next) => {
+module.exports.addClass = async (req, res, next) => {
   try {
-    const academic = await Academic.findOne({});
-    console.log(academic);
-    academic.subjects.push(req.body);
-    academic.save();
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(200).json({
+        errors: errors.array(),
+        message: "Validation error.",
+        status_code: 0,
+      });
+    }
+    const { name, value } = req.body;
+    const newClass = new Class({ name, value });
+    await newClass.save();
+    const classes = await Class.find({});
+    res.status(201).json({
+      classes,
+      ...response.created,
+    });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ error: "Internal Server Error" });
+    logger.error(error);
+    next(error);
   }
 };
 
-module.exports.updateAcademicTopic = async (req, res, next) => {
-  const { selectedClass, selectedSubject, newTopic } = req.body;
-
+module.exports.editClass = async (req, res, next) => {
   try {
-    const academic = await Academic.findOne({});
-
-    const subjectIndex = academic.subjects.findIndex(
-      (subject) => subject.name === selectedSubject
-    );
-
-    if (subjectIndex === -1) {
-      return res.status(404).json({ message: "Subject not found." });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        errors: errors.array(),
+        ...response.validation,
+      });
     }
 
-    const topic = {
-      className: selectedClass,
-      name: newTopic,
-      subtopics: [],
-    };
+    const { name, value, id_class } = req.body;
+    const { id } = req.params;
+    const updatedClass = await Class.findByIdAndUpdate(
+      id,
+      { name, value, id_class },
+      { new: true, runValidators: true }
+    );
 
-    academic.subjects[subjectIndex].topics.push(topic);
-
-    await academic.save();
-
-    res.status(200).json({ message: "New topic added successfully." });
+    if (!updatedClass) {
+      return res.status(404).json({
+        ...response.notFound,
+      });
+    }
+    const classes = await Class.find({});
+    res.status(200).json({
+      classes,
+      ...response.edited,
+    });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ message: "Internal server error." });
+    logger.error(error.message);
+    next(error);
   }
 };
 
-module.exports.updateAcademicSubtopic = async (req, res, next) => {
-  const { selectedClass, selectedSubject, selectedTopic, subtopic } = req.body;
-
+module.exports.removeClass = async (req, res, next) => {
   try {
-    const academic = await Academic.findOne({});
+    const { id } = req.params;
+    const deletedClass = await Class.findOneAndDelete({ _id: id });
 
-    const subjectIndex = academic.subjects.findIndex(
-      (subject) => subject.name === selectedSubject
-    );
-
-    if (subjectIndex === -1) {
-      return res.status(404).json({ message: "Subject not found." });
+    if (deletedClass) {
+      const classes = await Class.find({});
+      res.status(200).json({
+        classes,
+        ...response.deleted,
+      });
+    } else {
+      res.status(200).json({ message: "Class not found.", status_code: 0 });
     }
-
-    const topicIndex = academic.subjects[subjectIndex].topics.findIndex(
-      (topic) =>
-        topic.name === selectedTopic && topic.className === selectedClass
-    );
-
-    const newSubtopic = {
-      name: subtopic,
-    };
-
-    academic.subjects[subjectIndex].topics[topicIndex].subtopics.push(
-      newSubtopic
-    );
-
-    await academic.save();
-
-    res.status(200).json({ message: "New Subtopic added successfully." });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ message: "Internal server error." });
+    logger.error(error.message);
+    next(error);
   }
 };
 
-module.exports.deleteTopic = async (req, res, next) => {
-  const { className, name, topicId } = req.body;
+// Subject
 
+module.exports.getSubject = async (req, res, next) => {
   try {
-    const academic = await Academic.findOne({});
-    if (!academic) {
-      return res.status(404).json({ message: "Academic data not found." });
+    const subjects = await Subject.find({});
+    if (subjects) {
+      res.status(200).json({ subjects, ...response.success });
+    } else {
+      res.status(200).json({ subjects, ...response.notFound });
     }
-
-    const subjectIndex = academic.subjects.findIndex(
-      (subject) => subject.name === name
-    );
-
-    if (subjectIndex === -1) {
-      return res.status(404).json({ message: "Subject not found." });
-    }
-
-    const topicIndex = academic.subjects[subjectIndex].topics.findIndex(
-      (topic) => topic._id.toString() === topicId
-    );
-
-    if (topicIndex === -1) {
-      return res.status(404).json({ message: "Topic not found." });
-    }
-
-    const abc = academic.subjects[subjectIndex].topics.splice(topicIndex, 1); // Remove the topic
-
-    await academic.save();
-
-    res.status(200).json({ message: "Topic deleted successfully." });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ message: "Internal server error." });
+    logger.error(error.message);
+    next(error);
   }
 };
 
-module.exports.deleteSubtopic = async (req, res, next) => {
-  const { className, name, topicId, subtopicId } = req.body;
-
+module.exports.addSubject = async (req, res, next) => {
   try {
-    const academic = await Academic.findOne({});
-    if (!academic) {
-      return res.status(404).json({ message: "Academic data not found." });
+    const errors = validationResult(req);
+    if (!errors.isEmpty()) {
+      return res.status(200).json({
+        errors: errors.array(),
+        message: "Validation error.",
+        status_code: 0,
+      });
     }
-
-    const subjectIndex = academic.subjects.findIndex(
-      (subject) => subject.name === name
-    );
-
-    if (subjectIndex === -1) {
-      return res.status(404).json({ message: "Subject not found." });
-    }
-
-    const topicIndex = academic.subjects[subjectIndex].topics.findIndex(
-      (topic) => topic._id.toString() === topicId
-    );
-
-    if (topicIndex === -1) {
-      return res.status(404).json({ message: "Topic not found." });
-    }
-
-    const subtopicIndex = academic.subjects[subjectIndex].topics[
-      topicIndex
-    ].subtopics.findIndex((subtopic) => subtopic._id.toString() === subtopicId);
-
-    academic.subjects[subjectIndex].topics[topicIndex].subtopics.splice(
-      subtopicIndex,
-      1
-    );
-
-    await academic.save();
-
-    res.status(200).json({ message: "Subtopic deleted successfully." });
+    const { name } = req.body;
+    const newSubject = new Subject({ name });
+    await newSubject.save();
+    const subjects = await Subject.find({});
+    res.status(200).json({
+      subjects,
+      ...response.created,
+    });
   } catch (error) {
-    console.error("Error:", error);
-    res.status(500).json({ message: "Internal server error." });
+    logger.error(error.message);
+    next(error);
+  }
+};
+
+module.exports.editSubject = async (req, res, next) => {
+  try {
+    const { name } = req.body;
+    const { id } = req.params;
+
+    if (!name) {
+      res.status(200).json({ message: "Name is Required", status_code: 1 });
+    }
+
+    const subject = await Subject.findByIdAndUpdate(
+      id,
+      { name },
+      { new: true, runValidators: true }
+    );
+    const subjects = await Subject.find({});
+    res.status(200).json({ subjects, ...response.edited });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.removeSubject = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const deletedSubject = await Subject.findOneAndDelete({ _id: id });
+    const deletedSubSubject = await SubSubject.deleteMany({
+      id_subejct: deletedSubject.id_subject,
+    });
+    const deletedTopic = await Topic.deleteMany({
+      id_subject: deletedSubject.id_subject,
+    });
+    const deletedSubTopic = await SubTopic.deleteMany({
+      id_subject: deletedSubject.id_subject,
+    });
+    const subjects = await Subject.find({});
+    const subSubjects = await SubSubject.find({});
+    const topics = await Topic.find({});
+    const subTopics = await SubTopic.find({});
+    if (deletedSubject) {
+      res.status(200).json({
+        subjects,
+        subSubjects,
+        topics,
+        subTopics,
+        ...response.deleted,
+      });
+    } else {
+      res.status(200).json({ message: "Subject Not Found", status_code: 1 });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Sub Subject
+module.exports.getSubSubjects = async (req, res, next) => {
+  try {
+    const subSubjects = await SubSubject.find({});
+    if (subSubjects) {
+      res.status(200).json({ subSubjects, ...response.success });
+    } else {
+      res.status(200).json({ ...response.notFound });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.addSubSubject = async (req, res, next) => {
+  try {
+    const { name, _id_subject } = req.body;
+    if (!name || !_id_subject) {
+      return res
+        .status(400)
+        .json({ message: "Name and subject ID are required.", status_code: 0 });
+    }
+    const subject = await Subject.findById(_id_subject);
+    if (!subject) {
+      return res
+        .status(404)
+        .json({ message: "Subject not found.", status_code: 0 });
+    }
+    const lastSubSubject = await SubSubject.findOne(
+      {},
+      { id_sub_subject: 1 }
+    ).sort({
+      id_sub_subject: -1,
+    });
+    const id_sub_subject = lastSubSubject
+      ? lastSubSubject.id_sub_subject + 1
+      : 1;
+    const newSubSubject = new SubSubject({
+      name,
+      id_subject: subject.id_subject,
+      id_sub_subject,
+    });
+
+    await newSubSubject.save();
+    const subSubjects = await SubSubject.find({});
+    res.status(200).json({ subSubjects, ...response.created });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.editSubSubject = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { name } = req.body;
+    const editedSubTopic = await SubTopic.findByIdAndUpdate(
+      id,
+      { name },
+      { new: true, runValidators: true }
+    );
+    const subSubjects = await SubSubject.find({});
+    res.status(200).json({ subSubjects, ...response.edited });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.removeSubSubject = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const deletedSubSubject = await SubSubject.findOneAndDelete({ _id: id });
+    const deletedTopic = await Topic.deleteMany({
+      id_sub_subject: deletedSubSubject.id_sub_subject,
+    });
+    const deletedSubTopic = await SubTopic.deleteMany({
+      id_sub_subject: deletedSubSubject.id_sub_subject,
+    });
+    const subSubjects = await SubSubject.find({});
+    if (deletedSubSubject) {
+      res.status(200).json({
+        subSubjects,
+        message: "Sub Subject Deleted Successfully.",
+        status_code: 1,
+      });
+    } else {
+      res.status(200).json({
+        subSubjects,
+        message: "Sub Subject not found.",
+        status_code: 1,
+      });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Topic
+module.exports.getTopics = async (req, res, next) => {
+  try {
+    const topics = await Topic.find({});
+    if (topics) {
+      res.status(200).json({ topics, ...response.success });
+    } else {
+      res.status(200).json({ ...response.notFound });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.addTopic = async (req, res, next) => {
+  try {
+    const { name, _id_subject, _id_sub_subject } = req.body;
+    if (!name || !_id_subject || !_id_sub_subject) {
+      return res.status(400).json({
+        message: "Name and subject ID and Sub Subject ID are required.",
+        status_code: 0,
+      });
+    }
+    const sub_subject = await SubSubject.findById(_id_sub_subject);
+    if (!sub_subject) {
+      return res
+        .status(404)
+        .json({ message: "Subject or Sub Subject not found.", status_code: 0 });
+    }
+    // Determine the next topic ID
+    const lastTopic = await Topic.findOne({}, { id_topic: 1 }).sort({
+      id_topic: -1,
+    });
+
+    const id_topic =
+      lastTopic && lastTopic.id_topic ? lastTopic.id_topic + 1 : 1;
+
+    const newTopic = new Topic({
+      name,
+      id_subject: sub_subject.id_subject,
+      id_sub_subject: sub_subject.id_sub_subject,
+      id_topic,
+    });
+    newTopic.save();
+    const topics = await Topic.find({});
+    res.status(200).json({ topics, ...response.success });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.editTopic = async (req, res, next) => {
+  try {
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.removeTopic = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const deletedTopic = await Topic.findOneAndDelete({ _id: id });
+    const deletedSubTopic = await SubTopic.deleteMany({
+      id_topic: deletedTopic.id_topic,
+    });
+    if (!deletedTopic) {
+      res.status(200).json({ ...response.notFound });
+    } else {
+      const topics = await Topic.find({});
+      res.status(200).json({ topics, ...response.deleted });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+// Sub topic
+module.exports.getSubTopic = async (req, res, next) => {
+  try {
+    const subTopics = await SubTopic.find({});
+    if (!subTopics) {
+      res.status(200).json({ ...response.notFound });
+    } else {
+      res.status(200).json({ subTopics, ...response.success });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.addSubTopic = async (req, res, next) => {
+  try {
+    const { name, _id_topic } = req.body;
+    if ((!name, !_id_topic)) {
+      res
+        .status(200)
+        .json({ message: "Name and Topic is Required", status_code: 0 });
+    }
+    const topic = await Topic.findById(_id_topic);
+    if (!topic) {
+      res.status(200).json({ message: "Topic not found", status_code: 0 });
+    }
+    const lastSubtopic = await SubTopic.findOne({}, { id_sub_topic: 1 }).sort({
+      id_sub_topic: -1,
+    });
+
+    const id_sub_topic =
+      lastSubtopic && lastSubtopic.id_topic ? lastSubtopic.id_topic + 1 : 1;
+
+    const newSubTopic = new SubTopic({
+      name,
+      id_subject: topic.id_subject,
+      id_sub_subject: topic.id_sub_subject,
+      id_topic: topic.id_topic,
+      id_sub_topic,
+    });
+    newSubTopic.save();
+    const subTopics = await SubTopic.find({});
+    res.status(200).json({ subTopics, ...response.success });
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.editSubTopic = async (req, res, next) => {
+  try {
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.removeSubTopic = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const deleteSubTopic = await SubTopic.findOneAndDelete({ _id: id });
+    if (!deleteSubTopic) {
+      res.status(200).json({ ...response.notFound });
+    } else {
+      const subTopics = await SubTopic.find({});
+      res.status(200).json({ subTopics, ...response.deleted });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.getPatterns = async (req, res, next) => {
+  try {
+    const patterns = await Pattern.find({});
+    if (patterns) {
+      res.status(200).json({ patterns, ...response.success });
+    } else {
+      res.status(200).json({ ...response.notFound });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.addPattern = async (req, res, next) => {
+  try {
+    const { name, description } = req.body;
+    if (!name) {
+      res.status(200).json({ ...response.validation });
+    }
+    const newPattern = new Pattern({
+      name,
+      description,
+    });
+    await newPattern.save();
+    const patterns = await Pattern.find({});
+    if (patterns) {
+      res.status(200).json({ patterns, ...response.success });
+    } else {
+      res.status(200).json({ ...response.notFound });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.deletePattern = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const deletedPattern = await Pattern.findOneAndDelete({ _id: id });
+    if (!deletedPattern) {
+      res.status(200).json({ ...response.notFound });
+    }
+    const patterns = await Pattern.find({});
+    if (patterns) {
+      res.status(200).json({ patterns, ...response.success });
+    } else {
+      res.status(200).json({ ...response.notFound });
+    }
+  } catch (error) {
+    next(error);
+  }
+};
+
+module.exports.editPattern = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const { name, description } = req.body;
+    const updatedPattern = await Pattern.findByIdAndUpdate(
+      id,
+      { name, description },
+      { new: true, runValidators: true }
+    );
+    const patterns = await Pattern.find({});
+    if (patterns) {
+      res.status(200).json({ patterns, ...response.success });
+    } else {
+      res.status(200).json({ ...response.notFound });
+    }
+  } catch (error) {
+    next(error);
   }
 };

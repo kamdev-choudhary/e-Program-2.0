@@ -25,6 +25,7 @@ import LoginPage from "../pages/auth/LoginPage";
 import SignUpPage from "../pages/auth/SignUpPage";
 import ScrollableTabs from "../components/ScrollableTabs";
 import { icons } from "../constants/helper";
+import { useNavigate } from "react-router-dom";
 
 const Header = ({ handleButtonClick, expanded }) => {
   const {
@@ -44,6 +45,7 @@ const Header = ({ handleButtonClick, expanded }) => {
   const openThemeMenu = Boolean(themeMenuEl);
   const [showAuthPage, setShowAuthPage] = useState(false);
   const [selectedAuthPage, setSelectedAuthPage] = useState("login");
+  const navigate = useNavigate();
 
   const toggleFullscreen = () => {
     if (!isFullscreen) {
@@ -87,7 +89,21 @@ const Header = ({ handleButtonClick, expanded }) => {
       >
         {expanded ? <MenuOpenRounded /> : <MenuRounded />}
       </IconButton>
-      <img src={BrandName} alt="Brand Logo" height={25} />
+      {/* <img src={BrandName} alt="Brand Logo" height={25} /> */}
+      <Typography
+        component="a"
+        variant="h6"
+        sx={{
+          fontWeight: 700,
+          cursor: "pointer",
+          ":hover": {
+            color: "#aaa",
+          },
+        }}
+        onClick={() => navigate("/")}
+      >
+        E-Program
+      </Typography>
       <Box sx={{ flexGrow: 1 }} />
       <IconButton aria-label="change theme" onClick={handleThemeMenuClick}>
         <SettingsRounded />

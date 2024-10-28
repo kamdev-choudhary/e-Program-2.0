@@ -11,8 +11,8 @@ module.exports.viewBatch = async (req, res, next) => {
 
 module.exports.AddBatch = async (req, res, next) => {
   try {
-    let newBatch = await new Batch(req.body);
-    newBatch.save();
+    let newBatch = new Batch(req.body);
+    await newBatch.save();
     res.status(200).json({ newBatch });
   } catch (error) {
     next(error);

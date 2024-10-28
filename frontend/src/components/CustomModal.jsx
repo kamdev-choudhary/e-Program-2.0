@@ -3,12 +3,15 @@ import {
   Modal,
   Box,
   Typography,
-  Button,
   Divider,
   IconButton,
   useMediaQuery,
 } from "@mui/material";
-import { FullscreenExitRounded, FullscreenRounded } from "@mui/icons-material";
+import {
+  CancelRounded,
+  FullscreenExitRounded,
+  FullscreenRounded,
+} from "@mui/icons-material";
 import { useGlobalProvider } from "../GlobalProvider";
 
 export const style = {
@@ -28,7 +31,7 @@ export const CustomModal = ({
   open = false,
   autoClose = true,
   children,
-  header = "Modal",
+  header = "",
   onClose,
   height = "90vh",
   width = "80vw",
@@ -63,10 +66,10 @@ export const CustomModal = ({
                 display: "flex",
                 justifyContent: "space-between",
                 alignItems: "center",
-                mb: 1,
+                mt: 1,
               }}
             >
-              <Typography variant="h6" sx={{ ml: 1 }}>
+              <Typography variant="subtitle1" sx={{ ml: 1, fontSize: 23 }}>
                 {header}
               </Typography>
               <Box sx={{ display: "flex", alignItems: "center" }}>
@@ -83,17 +86,17 @@ export const CustomModal = ({
                     )}
                   </IconButton>
                 )}
-                <Button
+                <IconButton
                   sx={{ ml: 1 }}
                   onClick={onClose}
                   variant="contained"
                   color="error"
                 >
-                  Close
-                </Button>
+                  <CancelRounded />
+                </IconButton>
               </Box>
             </Box>
-            <Divider sx={{ mt: 1 }} />
+            <Divider sx={{ my: 1 }} />
           </>
         )}
 
@@ -105,7 +108,7 @@ export const CustomModal = ({
             overflowX: "hidden",
             maxHeight: fullScreen
               ? "calc(100vh - 70px)"
-              : `calc(${height} - 70px)`, // Adjust height for the content based on the header height
+              : `calc(${height} - 70px)`,
             p: isSmallScreen ? 0 : 1,
           }}
         >

@@ -2,19 +2,59 @@ const express = require("express");
 const router = express(express.Router);
 const academicController = require("../controllers/academicController");
 
-router.route("/").get(academicController.academicData);
+router
+  .route("/class")
+  .get(academicController.getClasses)
+  .post(academicController.addClass);
+router
+  .route("/class/:id")
+  .patch(academicController.editClass)
+  .delete(academicController.removeClass);
 
-router.route("/update").put(academicController.updateAcademicData);
+router
+  .route("/subject")
+  .get(academicController.getSubject)
+  .post(academicController.addSubject);
+router
+  .route("/subject/:id")
+  .patch(academicController.editSubject)
+  .delete(academicController.removeSubject);
 
-// router.route("/update/subject").put(academicController)
+router
+  .route("/sub-subject")
+  .get(academicController.getSubSubjects)
+  .post(academicController.addSubSubject);
+router
+  .route("/sub-subject/:id")
+  .patch(academicController.editSubSubject)
+  .delete(academicController.removeSubSubject);
 
-router.route("/update/topic").put(academicController.updateAcademicTopic);
+router
+  .route("/topic")
+  .get(academicController.getTopics)
+  .post(academicController.addTopic);
+router
+  .route("/topic/:id")
+  .patch(academicController.editTopic)
+  .delete(academicController.editTopic);
 
-router.route("/update/subtopic").put(academicController.updateAcademicSubtopic);
+router
+  .route("/sub-topic")
+  .get(academicController.getSubTopic)
+  .post(academicController.addSubTopic);
+router
+  .route("/sub-topic/:id")
+  .patch(academicController.editSubTopic)
+  .delete(academicController.removeSubTopic);
 
-router.route("/deletesubtopic").delete(academicController.deleteSubtopic);
-router.route("/deletetopic").delete(academicController.deleteTopic);
+router
+  .route("/pattern")
+  .get(academicController.getPatterns)
+  .post(academicController.addPattern);
 
-// router.route("/update/subtopic").put(academicController);
+router
+  .route("/pattern/:id")
+  .delete(academicController.deletePattern)
+  .patch(academicController.editPattern);
 
 module.exports = router;

@@ -1,10 +1,14 @@
 import { Alert, Snackbar } from "@mui/material";
 import { createContext, useContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
+import { useSelector, useDispatch } from "react-redux";
+import Loader from "./components/Loader";
 
 export const GlobalContext = createContext();
 
 export const GlobalProvider = ({ children }) => {
+  const loading = useSelector((state) => state.loading);
+  const dispatch = useDispatch();
   const [user, setUser] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [deviceTheme, detDeviceTheme] = useState("light");
@@ -34,27 +38,23 @@ export const GlobalProvider = ({ children }) => {
   }, []);
 
   const isValidResponse = (response) => {
-    if (
-      response?.data?.status_code === 1 ||
-      response?.data?.status_code === "1"
-    ) {
-      showNotification(response?.data?.message, "success");
+    const statusCode = response?.data?.status_code;
+    const message = response.data?.message;
+
+    if ([1, 2, 3, "1", "2", "3"].includes(statusCode)) {
+      showNotification(message, "success");
       return true;
-    } else if (
-      response?.data?.status_code === 401 ||
-      response?.data?.status_code === "401"
-    ) {
-      logoutUser();
-      showNotification(response?.data?.message, "error");
-      return false;
-    } else if (
-      response?.data?.status_code === 2 ||
-      response?.data?.status_code === "2"
-    ) {
-      return false;
-    } else {
+    }
+    if ([0, 5, "0", "5"].includes(statusCode)) {
+      showNotification(message, "error");
       return false;
     }
+    if (statusCode == 401) {
+      logoutUser();
+      showNotification(message, "error");
+      return false;
+    }
+    return false;
   };
 
   const showNotification = (message, type = "success", variant) => {
@@ -100,6 +100,7 @@ export const GlobalProvider = ({ children }) => {
           {notification.message}
         </Alert>
       </Snackbar>
+      <Loader open={loading} />
     </GlobalContext.Provider>
   );
 };

@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from "react";
 import YouTubeVideo from "../../components/YouTubeVideoPlayer";
 import { useGlobalProvider } from "../../GlobalProvider";
-import { API_URL } from "../../constants/helper";
+import { API_URL, icons } from "../../constants/helper";
 import CustomDropDown from "../../components/CustomDropDown";
 import { Search as SearchIcon } from "@mui/icons-material";
+import { useDispatch } from "react-redux";
+import axios from "axios";
 
 import {
-  Skeleton,
   Box,
   InputAdornment,
   OutlinedInput,
@@ -54,9 +55,12 @@ function CollapsibleTable({ lectures, playLecture }) {
               <TableCell align="center">{lecture.chapterName}</TableCell>
               <TableCell align="center">{lecture.lectureNumber}</TableCell>
               <TableCell align="center">
-                <Typography variant="body" color="error">
-                  &nbsp;Play
-                </Typography>
+                <Box sx={{ display: "flex", alignItems: "center" }}>
+                  <img src={icons.youTube} height={25} width={25} />
+                  <Typography variant="body" color="error">
+                    Play
+                  </Typography>
+                </Box>
               </TableCell>
             </TableRow>
           ))}
@@ -67,88 +71,47 @@ function CollapsibleTable({ lectures, playLecture }) {
 }
 
 export default function LecturePage() {
-  const { isAdmin, isLoggedIn, userId, role } = useGlobalProvider();
-
+  const { isLoggedIn, isValidResponse } = useGlobalProvider();
+  const dispatch = useDispatch();
   const [lectures, setLectures] = useState([]);
-  const [error, setError] = useState(null);
   const [collapsedChapter, setCollapsedChapter] = useState(null);
   const [currVID, setCurrVID] = useState(null);
   const [filterText, setFilterText] = useState("");
   const [showVideoPopup, setShowVideoPopup] = useState(false);
   const [selectedClass, setSelectedClass] = useState("IX");
-  const [academic, setAcademic] = useState([]);
   const [selectedSubject, setSelectedSubject] = useState("");
-  const [user, setUser] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showAddLecturePopup, setShowAddLecturePopup] = useState(false);
-  const [newLecture, setNewLecture] = useState({
-    class: "",
-    subject: "",
-    chapterName: "",
-    lectureNumber: "",
-    videoId: "",
-  });
-  const [filteredTopics, setFilteredTopics] = useState([]);
+  const [classes, setClasses] = useState([]);
 
   const handleFilterTextChange = (e) => {
     setFilterText(e.target.value);
   };
 
+  const getLectures = async () => {
+    dispatch({ type: "SET_LOADING", payload: true });
+    try {
+      const response = await axios.get(`${API_URL}/lectures`);
+      if (isValidResponse(response)) {
+        const sortedLectures = response?.data?.lectures.sort((a, b) => {
+          if (a.class !== b.class) {
+            return a.class.localeCompare(b.class);
+          }
+          if (a.subject !== b.subject) {
+            return a.subject.localeCompare(b.subject);
+          }
+          return a.lectureNumber - b.lectureNumber;
+        });
+        setLectures(sortedLectures);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      dispatch({ type: "SET_LOADING", payload: false });
+    }
+  };
+
   useEffect(() => {
-    fetch(`${API_URL}/academic`)
-      .then((response) => response.json())
-      .then((data) => {
-        setAcademic(data.academic[0]);
-        setIsLoading(false);
-      })
-      .catch((error) => console.log(error));
+    getLectures();
   }, []);
-
-  useEffect(() => {
-    if (isLoggedIn && role === "student") {
-      fetch(`${API_URL}/lectures/${selectedClass}`)
-        .then((response) => response.json())
-        .then((data) => {
-          setLectures(data.lectures);
-        })
-        .catch((error) => console.log(error));
-    } else {
-      fetch(`${API_URL}/lectures`)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("Network response was not ok");
-          }
-          return response.json();
-        })
-        .then((data) => {
-          const sortedLectures = data.lectures.sort((a, b) => {
-            if (a.class !== b.class) {
-              return a.class.localeCompare(b.class);
-            }
-            if (a.subject !== b.subject) {
-              return a.subject.localeCompare(b.subject);
-            }
-            return a.lectureNumber - b.lectureNumber;
-          });
-          setLectures(sortedLectures);
-        })
-        .catch((error) => setError(error.message));
-    }
-  }, [selectedClass]);
-
-  useEffect(() => {
-    if (isLoggedIn && role === "student") {
-      fetch(`${API_URL}/auth/user/${userId}`)
-        .then((response) => response.json())
-        .then((data) => {
-          setUser((prevUser) => ({ ...prevUser, ...data.user }));
-          if (data.user.currentClass !== "") {
-            setSelectedClass(data.user.currentClass);
-          }
-        })
-        .catch((error) => console.log(error));
-    }
-  }, [isLoggedIn]);
 
   const filteredLecture = () => {
     return lectures.filter(
@@ -182,78 +145,6 @@ export default function LecturePage() {
     setCurrVID(videoId);
     setShowVideoPopup(true);
   };
-  useEffect(() => {
-    if (newLecture.class && newLecture.subject && academic.subjects) {
-      const selectedSubjectData = academic.subjects.find(
-        (subject) => subject.name === newLecture.subject
-      );
-
-      if (selectedSubjectData) {
-        const filteredTopicss = selectedSubjectData.topics.filter(
-          (topic) => topic.className === newLecture.class
-        );
-        setFilteredTopics(filteredTopicss);
-      }
-    }
-  }, [, newLecture.subject, academic.subjects]);
-
-  if (isLoading) {
-    return (
-      <>
-        <Grid container spacing={2}>
-          <Grid item xs={6} md={6} lg={3}>
-            <Skeleton
-              sx={{ borderRadius: 10 }}
-              variant="rectangular"
-              height={40}
-            />
-          </Grid>
-          <Grid item xs={6} md={6} lg={3}>
-            <Skeleton
-              sx={{ borderRadius: 10 }}
-              variant="rectangular"
-              height={40}
-            />
-          </Grid>
-          <Grid item xs={12} md={6} lg={6}>
-            <Skeleton
-              sx={{ borderRadius: 10 }}
-              variant="rectangular"
-              height={40}
-            />
-          </Grid>
-          <Grid item xs={12} lg={6}>
-            <TableContainer component={Paper}>
-              <Table>
-                <TableHead sx={{ backgroundColor: "#28844f" }}>
-                  <TableRow>
-                    <TableCell sx={{ color: "#fff" }}>subject</TableCell>
-                    <TableCell sx={{ color: "#fff" }}>Chapter Name</TableCell>
-                    <TableCell sx={{ color: "#fff" }}># of Lectures</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {[...Array(10)].map((_, index) => (
-                    <TableRow key={index}>
-                      <TableCell>
-                        <Skeleton />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton />
-                      </TableCell>
-                      <TableCell>
-                        <Skeleton />
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Grid>
-        </Grid>
-      </>
-    );
-  }
 
   return (
     <>
@@ -261,7 +152,7 @@ export default function LecturePage() {
         <Grid container spacing={1} component={Paper} sx={{ p: 1, py: 2 }}>
           <Grid size={{ xs: 6, lg: 3 }}>
             <CustomDropDown
-              data={academic?.classes}
+              data={[{ class: "Class IX", classes: "IX" }]}
               value={selectedClass}
               dropdownValue="classes"
               label="Class"
@@ -269,16 +160,8 @@ export default function LecturePage() {
               onChange={(e) => setSelectedClass(e.target.value)}
             />
           </Grid>
-          <Grid item size={{ xs: 6, md: 3 }}>
-            <CustomDropDown
-              data={academic?.subjects}
-              value={selectedSubject}
-              dropdownValue="name"
-              label="Subject"
-              name="name"
-            />
-          </Grid>
-          <Grid item size={{ xs: 12, lg: 6 }}>
+          <Grid size={{ xs: 6, md: 3 }}></Grid>
+          <Grid size={{ xs: 12, lg: 6 }}>
             <FormControl fullWidth size="small">
               <OutlinedInput
                 sx={{ borderRadius: 10 }}
@@ -295,7 +178,7 @@ export default function LecturePage() {
       </Box>
       <Box sx={{ marginTop: 1 }}>
         <Grid container spacing={1}>
-          <Grid item size={{ xs: 12, lg: 6 }} sx={{ order: { xs: 1, lg: 2 } }}>
+          <Grid size={{ xs: 12, lg: 6 }} sx={{ order: { xs: 1, lg: 2 } }}>
             {showVideoPopup && (
               <>
                 <Box sx={{ padding: 1 }}>
@@ -304,7 +187,7 @@ export default function LecturePage() {
               </>
             )}
           </Grid>
-          <Grid item size={{ xs: 12, lg: 6 }} sx={{ order: { xs: 2, lg: 1 } }}>
+          <Grid size={{ xs: 12, lg: 6 }} sx={{ order: { xs: 2, lg: 1 } }}>
             <TableContainer component={Paper} style={{ maxHeight: "70vh" }}>
               <Table aria-label="simple table">
                 <TableHead

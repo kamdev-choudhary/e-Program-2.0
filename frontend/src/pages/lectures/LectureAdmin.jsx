@@ -182,7 +182,7 @@ export default function LecturePage() {
     <>
       <Box>
         <Grid container spacing={2}>
-          <Grid item size={{ xs: 6, lg: 3, md: 6 }}>
+          <Grid size={{ xs: 6, lg: 3, md: 6 }}>
             <CustomDropDown
               data={academic.classes}
               label="Class"

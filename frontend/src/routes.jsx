@@ -11,7 +11,9 @@ const OnlineExam = React.lazy(() => import("./pages/exam/OnlineExam"));
 const OfflineExam = React.lazy(() => import("./pages/exam/OfflineExam"));
 const ExamMaster = React.lazy(() => import("./pages/exam/ExamMaster"));
 const QuestionBank = React.lazy(() => import("./pages/question/QuestionBank"));
-const AcademicInfo = React.lazy(() => import("./pages/admin/AcademicInfo"));
+const Message = React.lazy(() => import("./pages/messages/Message"));
+const BookOpen = React.lazy(() => import("./pages/library/BookOpen"));
+const MetaData = React.lazy(() => import("./pages/admin/MetaData"));
 
 const createRoute = (path, name, isLoginRequired, available, Component) => ({
   path,
@@ -60,11 +62,7 @@ export const routes = [
     ["admin"],
     QuestionBank
   ),
-  createRoute(
-    "/admin/academic/info",
-    "Academic Info",
-    true,
-    ["admin"],
-    AcademicInfo
-  ),
+  createRoute("/admin/metadata", "Academic Info", true, ["admin"], MetaData),
+  createRoute("/message", "Message", false, ["all"], Message),
+  createRoute("/library/book/:id", "Open Book", false, ["all"], BookOpen),
 ];

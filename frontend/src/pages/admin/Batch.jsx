@@ -83,7 +83,7 @@ export default function Batch() {
     return (
       <>
         <Grid container spacing={2}>
-          <Grid item xs={12} lg={12}>
+          <Grid xs={12} lg={12}>
             <Box>
               <Skeleton
                 sx={{ borderRadius: 2 }}
@@ -92,7 +92,7 @@ export default function Batch() {
               />
             </Box>
           </Grid>
-          <Grid item xs={12} lg={12}>
+          <Grid xs={12} lg={12}>
             <Box>
               <Skeleton
                 sx={{ borderRadius: 2 }}
@@ -124,7 +124,7 @@ export default function Batch() {
         <hr />
 
         <Grid container spacing={2}>
-          <Grid item xs={12} md={8} lg={8}>
+          <Grid xs={12} md={8} lg={8}>
             <FormControl fullWidth size="small">
               <OutlinedInput
                 id="outlined-adornment-amount"
@@ -137,7 +137,7 @@ export default function Batch() {
               />
             </FormControl>
           </Grid>
-          <Grid item xs={12} md={4} lg={4}>
+          <Grid xs={12} md={4} lg={4}>
             <Button variant="contained" sx={{ borderRadius: 10 }}>
               Add New Batch
             </Button>

@@ -2,9 +2,10 @@ const express = require("express");
 const router = express(express.Router);
 const materialController = require("../controllers/materialContoller");
 
-router.route("/").get(materialController.viewLibrary);
+router.route("/").get(materialController.getAllBooks);
 
-router.route("/savenewbook").post(materialController.saveNewBook);
 router.route("/:id").delete(materialController.deleteBook);
+
+router.route("/upload").post(materialController.uploadPdf);
 
 module.exports = router;

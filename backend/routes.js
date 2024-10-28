@@ -6,7 +6,6 @@ const authRouter = require("./routers/authRouter");
 const lectureRouter = require("./routers/lectureRouter");
 const questionRouter = require("./routers/questionRoute");
 const materialRouter = require("./routers/materialRoute");
-const adminRoute = require("./routers/adminRoute");
 const examRouter = require("./routers/examRouter");
 const batchRouter = require("./routers/batchRoute");
 const academicRoute = require("./routers/academicRoute");
@@ -26,13 +25,12 @@ const routes = (app) => {
   });
   app.use("/api/v1/auth", authRouter, authLimiter);
   app.use("/api/v1/user", userRoute);
-  app.use("/api/v1/admin", adminRoute);
+  app.use("/api/v1/academic", academicRoute);
   app.use("/api/v1/lectures", lectureRouter);
   app.use("/api/v1/questionbank", questionRouter);
   app.use("/api/v1/materials", materialRouter);
   app.use("/api/v1/exams", examRouter);
   app.use("/api/v1/batch", batchRouter);
-  app.use("/api/v1/academic", academicRoute);
   app.use("/api/v1/doubts", doubtRoute);
   app.get("/health", (req, res) => {
     res.status(200).json({ status: "OK", uptime: process.uptime() });

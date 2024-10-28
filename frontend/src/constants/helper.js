@@ -1,4 +1,5 @@
-export const API_URL = "http://localhost:5000/api";
+export const BASE_API_URL = "http://localhost:5000";
+export const API_URL = `${BASE_API_URL}/api/v1`;
 
 export const BrandName = "https://img.icons8.com/3d-fluency/94/physics.png";
 
@@ -19,6 +20,13 @@ export const icons = {
   info: "https://img.icons8.com/3d-fluency/94/info-1.png",
   batches: "https://img.icons8.com/3d-fluency/94/layers.png",
   questionBank: "https://img.icons8.com/3d-fluency/94/help.png",
+  chat: "https://img.icons8.com/color/48/chat--v1.png",
+
+  youTube: "https://img.icons8.com/color/48/youtube-play.png",
+  class: "https://img.icons8.com/3d-fluency/94/classroom.png",
+  subjects: "https://img.icons8.com/3d-fluency/94/books.png",
+  exams: "https://img.icons8.com/3d-fluency/94/paper.png",
+  pattern: "https://img.icons8.com/3d-fluency/94/workflow.png",
 };
 
 export const images = {};

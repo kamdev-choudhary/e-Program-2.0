@@ -7,13 +7,6 @@ const createIcon = (src, dimension = 35) => (
 
 const pages = [
   {
-    name: "Home",
-    path: "/",
-    isLoginRequired: false,
-    available: ["admin"],
-    icon: createIcon(icons.dashboard),
-  },
-  {
     name: "Admin",
     path: "/admin",
     available: ["admin"],
@@ -23,7 +16,7 @@ const pages = [
     subMenuItem: [
       {
         name: "Academic Info",
-        path: "/admin/academic/info",
+        path: "/admin/metadata",
         icon: createIcon(icons.info),
       },
       {
@@ -67,6 +60,13 @@ const pages = [
         icon: createIcon(icons.offlineExam),
       },
     ],
+  },
+  {
+    name: "Messages",
+    path: "/message",
+    isLoginRequired: false,
+    available: ["0"],
+    icon: createIcon(icons.chat),
   },
   {
     name: "Articles",

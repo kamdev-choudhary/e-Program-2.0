@@ -1,12 +1,15 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
+const AutoIncrement = require("mongoose-sequence")(mongoose);
 
 const subSubjectSchema = new Schema({
-  id_sub_subject: { type: String, required: true },
-  id_subject: { type: String, required: true },
+  id_subject: { type: Number, required: true },
+  id_sub_subject: { type: Number, unique: true },
   name: { type: String, required: true },
 });
 
-const subSubject = mongoose.model("subSubject", subSubjectSchema);
+subSubjectSchema.plugin(AutoIncrement, { inc_field: "id_sub_subject" });
 
-module.exports = subSubject;
+const SubSubject = mongoose.model("SubSubject", subSubjectSchema);
+
+module.exports = SubSubject;

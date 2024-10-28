@@ -9,7 +9,9 @@ module.exports.getUserData = async (req, res, next) => {
   try {
     const user = await User.findOne({ _id: id }, { password: 0 });
     if (user) {
-      res.status(200).json({ user });
+      res
+        .status(200)
+        .json({ user, message: "User Not available", status_code: 0 });
     } else {
       res.status(400).json({ message: "User Not available", status_code: 0 });
     }
@@ -29,12 +31,11 @@ module.exports.updateUserData = async (req, res, next) => {
     });
     updatedUser.isProfileUpdated = true;
     updatedUser.save();
+    const users = await User.find({ role: updatedUser.role });
     if (!updatedUser) {
       res.status(200).json("User not Found");
     }
-    res
-      .status(200)
-      .json({ message: "User updated successfully", user: updatedUser });
+    res.status(200).json({ message: "User updated successfully", users });
   } catch (error) {
     next(error);
   }
@@ -45,8 +46,9 @@ module.exports.updateUserData = async (req, res, next) => {
 module.exports.getUserbyRole = async (req, res, next) => {
   try {
     const { role } = req.params;
+    console.log(role);
     const users = await User.find({ role: role });
-    res.status(200).json({ status_code: 1, users });
+    res.status(200).json({ status_code: 1, message: "Record Found.", users });
   } catch (error) {
     next(error);
   }

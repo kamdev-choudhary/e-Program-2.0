@@ -12,12 +12,12 @@ import { API_URL, icons } from "../../constants/helper";
 import { DataGrid } from "@mui/x-data-grid";
 import axios from "axios";
 import { useGlobalProvider } from "../../GlobalProvider";
-import Loader from "../../components/Loader";
 import CustomToolbar from "../../components/CustomToolbar";
 import { CustomModal } from "../../components/CustomModal";
 import CustomDropDown from "../../components/CustomDropDown";
 import { DeleteRounded, EditRounded } from "@mui/icons-material";
 import Swal from "sweetalert2";
+import { useDispatch } from "react-redux";
 
 const tabs = [
   { name: "Admin", value: "admin", icon: icons.admin },
@@ -26,6 +26,7 @@ const tabs = [
 
 function Users() {
   const { isValidResponse } = useGlobalProvider();
+  const dispatch = useDispatch();
   const [selectedTab, setSelectedTab] = useState("admin");
   const [users, setUsers] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -48,17 +49,15 @@ function Users() {
 
   const getUsersByRole = async () => {
     try {
-      setIsLoading(true);
-      const response = await axios.get(
-        `${API_URL}/auth/getuser/${selectedTab}`
-      );
+      dispatch({ type: "SET_LOADING", payload: true });
+      const response = await axios.get(`${API_URL}/user/role/${selectedTab}`);
       if (isValidResponse(response)) {
         setUsers(response?.data?.users);
       }
     } catch (error) {
       console.error(error);
     } finally {
-      setIsLoading(false);
+      dispatch({ type: "SET_LOADING", payload: false });
     }
   };
 
@@ -132,7 +131,8 @@ function Users() {
 
     if (result.isConfirmed) {
       try {
-        const response = await axios.delete(`${API_URL}/auth/user/${user._id}`);
+        dispatch({ type: "SET_LOADING", payload: true });
+        const response = await axios.delete(`${API_URL}/user/${user._id}`);
         if (isValidResponse(response)) {
           setUsers(response.data.users);
           Swal.fire({
@@ -140,7 +140,6 @@ function Users() {
             text: "The user has been deleted.",
             icon: "success",
           });
-          // Optionally refresh the user list or update state here
         }
       } catch (error) {
         Swal.fire({
@@ -149,6 +148,8 @@ function Users() {
           icon: "error",
         });
         console.error("Delete user error:", error);
+      } finally {
+        dispatch({ type: "SET_LOADING", payload: false });
       }
     }
   };
@@ -169,11 +170,12 @@ function Users() {
 
   const handleSaveEditUser = async () => {
     if (validateFields(selectedUser)) {
-      const response = await axios.patch(`${API_URL}/auth/user`, {
-        ...newUser,
-        method: "admin",
-        password: "Password",
-      });
+      const response = await axios.patch(
+        `${API_URL}/user/${selectedUser?._id}`,
+        {
+          ...selectedUser,
+        }
+      );
       if (isValidResponse(response)) {
         setShowEditUser(false);
         setSelectedUser({ name: "", email: "", mobile: "", role: "" });
@@ -399,9 +401,6 @@ function Users() {
           </Button>
         </Box>
       </CustomModal>
-
-      {/* Loader */}
-      <Loader open={isLoading} />
     </Box>
   );
 }
