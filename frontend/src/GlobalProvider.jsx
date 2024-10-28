@@ -41,7 +41,7 @@ export const GlobalProvider = ({ children }) => {
     const statusCode = response?.data?.status_code;
     const message = response.data?.message;
 
-    if ([1, 2, 3, "1", "2", "3"].includes(statusCode)) {
+    if ([1, 2, 3, 4, "1", "2", "3", "4"].includes(statusCode)) {
       showNotification(message, "success");
       return true;
     }

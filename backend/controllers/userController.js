@@ -46,7 +46,6 @@ module.exports.updateUserData = async (req, res, next) => {
 module.exports.getUserbyRole = async (req, res, next) => {
   try {
     const { role } = req.params;
-    console.log(role);
     const users = await User.find({ role: role });
     res.status(200).json({ status_code: 1, message: "Record Found.", users });
   } catch (error) {

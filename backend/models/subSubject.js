@@ -3,8 +3,8 @@ const Schema = mongoose.Schema;
 const AutoIncrement = require("mongoose-sequence")(mongoose);
 
 const subSubjectSchema = new Schema({
-  id_subject: { type: Number, required: true },
-  id_sub_subject: { type: Number, unique: true },
+  id_sub_subject: { type: Number }, // remove unique constraint
+  id_subject: { type: Number, required: true }, // ensure this isn't set as unique
   name: { type: String, required: true },
 });
 

@@ -222,19 +222,10 @@ module.exports.addSubSubject = async (req, res, next) => {
         .status(404)
         .json({ message: "Subject not found.", status_code: 0 });
     }
-    const lastSubSubject = await SubSubject.findOne(
-      {},
-      { id_sub_subject: 1 }
-    ).sort({
-      id_sub_subject: -1,
-    });
-    const id_sub_subject = lastSubSubject
-      ? lastSubSubject.id_sub_subject + 1
-      : 1;
+
     const newSubSubject = new SubSubject({
       name,
       id_subject: subject.id_subject,
-      id_sub_subject,
     });
 
     await newSubSubject.save();

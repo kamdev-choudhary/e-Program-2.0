@@ -1,256 +1,81 @@
-import React, { useState, useEffect } from "react";
+import React, { useMemo, useState } from "react";
+import { Box, IconButton, Paper } from "@mui/material";
+import { DataGrid } from "@mui/x-data-grid";
+import CustomToolbar from "../../components/CustomToolbar";
+import { useGlobalProvider } from "../../GlobalProvider";
+import axios from "axios";
+import { API_URL } from "../../constants/helper";
+import { DeleteRounded, EditRounded } from "@mui/icons-material";
 import { CustomModal } from "../../components/CustomModal";
 
-import {
-  Box,
-  Button,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  OutlinedInput,
-  InputAdornment,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  TextField,
-  Grid,
-  Typography,
-  Skeleton,
-} from "@mui/material";
-import SearchIcon from "@mui/icons-material/Search";
-
-const API_URL = "http://localhost:5000/api/";
-
-export default function Batch() {
-  const [academic, setAcademic] = useState({});
-  const [isLoading, setIsLoading] = useState(true);
-  const [newAcademics, setNewAcademic] = useState([]);
+function Batch() {
+  const { isValidResponse } = useGlobalProvider();
   const [batches, setBatches] = useState([]);
-  const [batch, setBatch] = useState({});
-  const [showAddBatchModal, setShowAddBatchModal] = useState(false);
-  const [refresh, setRefresh] = useState(false);
 
-  useEffect(() => {
-    fetch(`${API_URL}/academic`)
-      .then((response) => response.json())
-      .then((data) => {
-        setAcademic(data.academic[0]);
-        setIsLoading(false);
-      });
-  }, [refresh]);
-
-  const handleSaveBatch = () => {
-    fetch(`${API_URL}/batch/addnew`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(batch),
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        if (data.ok) {
-          setShowAddBatchModal(false);
-        }
-      })
-      .catch((error) => {
-        console.error("Error:", error);
-      });
+  const getBatches = async () => {
+    try {
+      const response = await axios.get(`${API_URL}/batch`);
+      if (isValidResponse(response)) {
+        setBatches(response?.data?.batches);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
-  const handleBatchInputChange = (e) => {
-    setBatch({ ...batch, [e.target.name]: e.target.value });
-  };
+  const handleEditBatch = () => {};
+  const handleDeleteBatch = (id) => {};
 
-  useEffect(() => {
-    fetch(`${API_URL}/batch`)
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error("Network response was not ok");
-        }
-        return response.json();
-      })
-      .then((data) => setBatches(data.batches))
-      .catch((error) => console.error("Error:", error));
-  }, []);
+  const columns = [
+    { field: "id", headerName: "SN", minWidth: 40, flex: 1 },
+    { field: "name", headerName: "Name", minWidth: 150, flex: 1 },
+    {
+      field: "targetClass",
+      headerName: "Target Class",
+      minWidth: 150,
+      flex: 1,
+    },
+    { field: "scholars", headerName: "Scholars", minWidth: 150, flex: 1 },
+    {
+      field: "action",
+      headerName: "Action",
+      minWidth: 150,
+      flex: 1,
+      renderCell: (params) => (
+        <>
+          <IconButton onClick={() => handleEditBatch(params.row)}>
+            <EditRounded />
+          </IconButton>
+          <IconButton onClick={() => handleDeleteBatch(params.row, _id)}>
+            <DeleteRounded />
+          </IconButton>
+        </>
+      ),
+    },
+  ];
 
-  if (isLoading) {
-    return (
-      <>
-        <Grid container spacing={2}>
-          <Grid xs={12} lg={12}>
-            <Box>
-              <Skeleton
-                sx={{ borderRadius: 2 }}
-                variant="rectangular"
-                height={400}
-              />
-            </Box>
-          </Grid>
-          <Grid xs={12} lg={12}>
-            <Box>
-              <Skeleton
-                sx={{ borderRadius: 2 }}
-                variant="rectangular"
-                height={400}
-              />
-            </Box>
-          </Grid>
-        </Grid>
-      </>
-    );
-  }
+  const rows = useMemo(() => {
+    return batches?.map((b, index) => ({
+      id: index + 1,
+      ...b,
+    }));
+  }, [batches]);
 
   return (
     <>
-      <Box
-        sx={{
-          marginBottom: 1,
-          padding: 2,
-          borderRadius: 2,
-          border: "1px solid rgba(0,0,0,0.3)",
-        }}
-      >
-        <Box sx={{ marginLeft: 2, marginRight: 1, marginTop: 1 }}>
-          <Typography variant="h5" sx={{ textAlign: "center" }}>
-            Batches
-          </Typography>
-        </Box>
-        <hr />
-
-        <Grid container spacing={2}>
-          <Grid xs={12} md={8} lg={8}>
-            <FormControl fullWidth size="small">
-              <OutlinedInput
-                id="outlined-adornment-amount"
-                sx={{ borderRadius: 10 }}
-                startAdornment={
-                  <InputAdornment position="start">
-                    Search <SearchIcon />
-                  </InputAdornment>
-                }
-              />
-            </FormControl>
-          </Grid>
-          <Grid xs={12} md={4} lg={4}>
-            <Button variant="contained" sx={{ borderRadius: 10 }}>
-              Add New Batch
-            </Button>
-          </Grid>
-        </Grid>
-
-        <Box sx={{ marginTop: 2 }}>
-          <TableContainer component={Paper}>
-            <Table sx={{ minWidth: 650 }} aria-label="simple table">
-              <TableHead className="bg bg-success ">
-                <TableRow>
-                  <TableCell align="center" className="text-white">
-                    SN
-                  </TableCell>
-                  <TableCell align="center" className="text-white">
-                    Batch Name
-                  </TableCell>
-                  <TableCell align="center" className="text-white">
-                    Batch Class
-                  </TableCell>
-                  <TableCell align="center" className="text-white">
-                    Preparing For
-                  </TableCell>
-
-                  <TableCell align="center" className="text-white">
-                    Scholar Count
-                  </TableCell>
-                </TableRow>
-              </TableHead>
-              <TableBody>
-                {batches.map((batch, index) => (
-                  <TableRow
-                    key={batch._id}
-                    sx={{
-                      "&:last-child td, &:last-child th": { border: 0 },
-                    }}
-                  >
-                    <TableCell align="center">{index + 1}</TableCell>
-                    <TableCell align="center">{batch.batchName}</TableCell>
-                    <TableCell align="center">{batch.batchClass}</TableCell>
-                    <TableCell align="center">{batch.batchStream}</TableCell>
-                    <TableCell align="center">
-                      {batch.scholars.length}
-                    </TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </TableContainer>
-        </Box>
-      </Box>
-
-      <CustomModal
-        show={showAddBatchModal}
-        onHide={() => setShowAddBatchModal(false)}
-      >
-        <Modal.Header>Add Batch</Modal.Header>
-        <TextField
-          label="Batch Name"
-          fullWidth
-          id="batchName"
-          name="batchName"
-          value={batch.batchName}
-          onChange={handleBatchInputChange}
-          style={{ marginBottom: "10px" }}
+      <Box component={Paper}>
+        <DataGrid
+          columns={columns}
+          rows={rows}
+          initialState={{ pagination: { paginationModel: { pageSize: 20 } } }}
+          pageSizeOptions={[20, 30, 50]}
+          slots={{ toolbar: () => <CustomToolbar /> }}
         />
-        <FormControl fullWidth sx={{ marginBottom: 1 }}>
-          <InputLabel id="demo-simple-select-label">Class</InputLabel>
-          <Select
-            labelId="demo-simple-select-label"
-            id="batchClass"
-            name="batchClass"
-            label="Class"
-            value={batch.batchClass || ""}
-            onChange={handleBatchInputChange}
-          >
-            {academic &&
-              academic.classes &&
-              academic.classes.map((classes, index) => (
-                <MenuItem key={index} value={classes}>
-                  {classes}
-                </MenuItem>
-              ))}
-          </Select>
-        </FormControl>
-        <FormControl fullWidth sx={{ marginBottom: 1 }}>
-          <InputLabel id="demo-simple-select-label">
-            Target or Stream
-          </InputLabel>
-          <Select
-            id="batchStream"
-            name="batchStream"
-            label="Target or Stream"
-            value={batch.batchStream || ""}
-            onChange={handleBatchInputChange}
-          >
-            {academic &&
-              academic.target &&
-              academic.target.map((tget, index) => (
-                <MenuItem key={index} value={tget}>
-                  {tget}
-                </MenuItem>
-              ))}
-          </Select>
-        </FormControl>
-
-        <Button variant="contained" color="success" onClick={handleSaveBatch}>
-          Save
-        </Button>
-        <Button variant="danger" onClick={() => setShowAddBatchModal(false)}>
-          Close
-        </Button>
-      </CustomModal>
+      </Box>
+      {/* Custom Modal */}
+      <CustomModal></CustomModal>
     </>
   );
 }
+
+export default Batch;

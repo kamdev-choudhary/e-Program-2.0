@@ -15,7 +15,7 @@ const pages = [
     subMenu: true,
     subMenuItem: [
       {
-        name: "Academic Info",
+        name: "Meta Data",
         path: "/admin/metadata",
         icon: createIcon(icons.info),
       },

@@ -32,7 +32,11 @@ function AcademicInfo() {
   const getClasses = async () => {
     try {
       dispatch({ type: "SET_LOADING", payload: true });
-      const response = await axios.get(`${API_URL}/academic/class`);
+      const response = await axios.get(`${API_URL}/academic/class`, {
+        headers: {
+          "api-key": "kd",
+        },
+      });
       if (isValidResponse(response)) {
         setClasses(response.data.classes);
       }
@@ -88,7 +92,7 @@ function AcademicInfo() {
           const response = await axios.delete(
             `${API_URL}/academic/class/${id}`
           );
-          if (response?.data?.status_code === 1) {
+          if (isValidResponse(response)) {
             setClasses(response.data.classes);
             Swal.fire({
               title: "Deleted!",
@@ -183,10 +187,6 @@ function AcademicInfo() {
             label="Class Name"
             value={newClass.name}
             onChange={(e) => setNewClass({ ...newClass, name: e.target.value })}
-            error={!newClass.name && error}
-            helperText={
-              !newClass.name && error ? "Class Name is required." : ""
-            }
           />
           <TextField
             size="small"
@@ -196,8 +196,6 @@ function AcademicInfo() {
             onChange={(e) =>
               setNewClass({ ...newClass, value: e.target.value })
             }
-            error={!newClass.value && error}
-            helperText={!newClass.value && error ? "Value is required." : ""}
           />
           <Button variant="contained" onClick={handleSaveClass}>
             Save
@@ -221,10 +219,6 @@ function AcademicInfo() {
             onChange={(e) =>
               setSelectedClass({ ...selectedClass, name: e.target.value })
             }
-            error={!selectedClass.name && error}
-            helperText={
-              !selectedClass.name && error ? "Class Name is required." : ""
-            }
           />
           <TextField
             size="small"
@@ -233,10 +227,6 @@ function AcademicInfo() {
             value={selectedClass.value}
             onChange={(e) =>
               setSelectedClass({ ...selectedClass, value: e.target.value })
-            }
-            error={!selectedClass.value && error}
-            helperText={
-              !selectedClass.value && error ? "Value is required." : ""
             }
           />
           <Button variant="contained" onClick={handleSaveClassEdit}>

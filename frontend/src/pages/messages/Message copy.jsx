@@ -19,72 +19,89 @@ import { useGlobalProvider } from "../../GlobalProvider";
 import ScrollableTabs from "../../components/ScrollableTabs";
 import { DataGrid } from "@mui/x-data-grid";
 import CustomToolbar from "../../components/CustomToolbar";
-import { API_URL, icons } from "../../constants/helper";
+import { icons } from "../../constants/helper";
 import { useWebSocket } from "../../websocketContext";
-import ChatContent from "./ChatContent";
-import { useDispatch } from "react-redux";
-import axios from "axios";
 
 const tabs = [
-  { name: "Admin", value: "admin", icon: icons.admin },
-  { name: "Scholars", value: "student", icon: icons.users },
+  { name: "Admin", value: "1", icon: icons.admin },
+  { name: "Scholars", value: "5", icon: icons.users },
 ];
+
+const mockFetchChats = (contactName) => {
+  return [
+    { sender: "You", text: "Hello!" },
+    { sender: contactName, text: "Hi there!" },
+    { sender: "You", text: "How are you?" },
+  ];
+};
 
 function Messages() {
   const { user, isValidResponse } = useGlobalProvider();
-  const dispatch = useDispatch();
   const socket = useWebSocket();
-  const [chats, setChats] = useState([]);
+  const [chats, setChats] = useState([
+    { name: "kD", id_user: "12112" },
+    { name: "Alex", id_user: "541" },
+    { name: "Sarah", id_user: "1112" },
+  ]);
   const [currentMessages, setCurrentMessages] = useState([]);
+  const [currentMessage, setCurrentMessage] = useState("");
+  const [activeChatIndex, setActiveChatIndex] = useState(null);
   const [showUsersList, setShowUsersList] = useState(false);
   const [users, setUsers] = useState([]);
-  const [selectedTab, setSelectedTab] = useState("admin");
-  const [currentChatUserId, setCurrentChatUserId] = useState("");
-  const [currentChatId, setCurrentChatId] = useState("");
-  const [newChat, setNewChat] = useState(false);
+  const [selectedTab, setSelectedTab] = useState("1");
+  const [isLoading, setIsLoading] = useState(false);
 
-  const getUsersByRole = async ({ role }) => {
-    dispatch({ type: "SET_LOADING", payload: true });
+  socket.current?.on("exampleEvent", () => {
+    alert("Connected");
+  });
+
+  const getUsersByRole = async ({ idRole }) => {};
+
+  const fetchUsers = async () => {
+    setIsLoading(true);
     try {
-      const response = await axios.get(`${API_URL}/user/role/${role}`);
+      const response = await getUsersByRole({ idRole: selectedTab });
       if (isValidResponse(response)) {
         setUsers(response?.data?.users);
       }
     } catch (error) {
       console.error(error);
     } finally {
-      dispatch({ type: "SET_LOADING", payload: false });
-    }
-  };
-
-  const getChats = async () => {
-    dispatch({ type: "SET_LOADING", payload: true });
-    try {
-      const response = await axios.get(`${API_URL}/chats/${user?.userId}`);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      dispatch({ type: "SET_LOADING", payload: false });
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
-    getUsersByRole({ role: selectedTab });
+    fetchUsers();
   }, [selectedTab]);
 
-  const handleChatClick = async (userId) => {
+  async function fetchChats() {
+    return;
+  }
+
+  const handleChatClick = async (index) => {
     try {
-      setCurrentChatUserId(userId);
-      const chat = chats?.find((c) => {
-        return c.participants.includes(userId);
-      });
-      if (chat) {
-        setCurrentChatId(chat?._id);
+      if (index) {
+        const chatName = chats[index]?.name;
+        const messages = mockFetchChats(chatName);
+        setCurrentMessages(messages);
+        setActiveChatIndex(index);
       } else {
-        setNewChat(true);
+        const response = await fetchChats();
+        if (isValidResponse(response)) {
+          setCurrentMessage(response.data.messages);
+        }
       }
-    } catch (error) {
-      console.error(error);
+    } catch (error) {}
+  };
+
+  const handleSendMessage = () => {
+    if (currentMessage.trim()) {
+      setCurrentMessages((prevMessages) => [
+        { sender: "You", text: currentMessage },
+        ...prevMessages,
+      ]);
+      setCurrentMessage("");
     }
   };
 
@@ -109,12 +126,7 @@ function Messages() {
       minWidth: 200,
       renderCell: (params) => (
         <>
-          <Button
-            variant="contained"
-            onClick={() => handleChatClick(params?.row?._id)}
-          >
-            Message
-          </Button>
+          <Button>Message</Button>
         </>
       ),
     },
@@ -129,9 +141,10 @@ function Messages() {
 
   return (
     <>
+      <p> {socket.current?.id}</p>
       <Box
-        component={Paper}
         sx={{
+          bgcolor: "background.paper",
           display: "flex",
           flexDirection: "row",
           height: "79vh",
@@ -151,7 +164,7 @@ function Messages() {
             <Box sx={{ p: 1, overflowY: "auto", height: "77vh" }}>
               <TextField fullWidth size="small" label="Search" />
               <Divider sx={{ my: 1 }} />
-              {chats?.map((chat, index) => (
+              {chats.map((chat, index) => (
                 <List key={index}>
                   <ListItem button onClick={() => handleChatClick(index)}>
                     <ListItemAvatar>
@@ -186,17 +199,61 @@ function Messages() {
             </Box>
           </Grid>
           <Grid
-            size={{ xs: 12, md: 6, lg: 8 }}
+            item
+            xs={12}
+            md={9}
+            lg={9}
             sx={{ display: "flex", flexDirection: "column" }}
           >
-            <ChatContent
-              currentChatId={currentChatId}
-              currentChatUserId={currentChatUserId}
-              newChat={newChat}
-            />
+            <Box
+              sx={{
+                p: 2,
+                overflowY: "auto",
+                height: "calc(77vh - 64px)", // Adjust height to leave space for input box
+                borderLeft: "1px solid rgba(0,0,0,0.1)",
+                flexGrow: 1,
+              }}
+            >
+              {currentMessages.map((message, index) => (
+                <Box
+                  key={index}
+                  sx={{
+                    mb: 1,
+                    textAlign: message.sender === "You" ? "right" : "left",
+                  }}
+                >
+                  <span>
+                    <strong>{message.sender}: </strong>
+                    {message.text}
+                  </span>
+                </Box>
+              ))}
+            </Box>
+            <Box
+              sx={{
+                p: 1,
+                borderTop: "1px solid rgba(0,0,0,0.1)",
+                bgcolor: "background.default",
+                display: "flex",
+                alignItems: "center",
+                columnGap: 2,
+              }}
+            >
+              <TextField
+                multiline
+                maxRows={3}
+                size="small"
+                label="Type a message"
+                value={currentMessage}
+                onChange={(e) => setCurrentMessage(e.target.value)}
+                sx={{ flexGrow: 1 }}
+              />
+              <Button onClick={handleSendMessage} variant="contained">
+                Send
+              </Button>
+            </Box>
           </Grid>
         </Grid>
-        {/* Users */}
         <CustomModal
           open={showUsersList}
           onClose={() => setShowUsersList(false)}

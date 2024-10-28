@@ -7,15 +7,18 @@ import store from "./store/store";
 import { GlobalProvider } from "./GlobalProvider";
 import App from "./App.jsx";
 import "./index.css";
+import { WebSocketProvider } from "./WebsocketContext";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <Provider store={store}>
       <GlobalProvider>
-        <ThemeProvider theme={lightTheme}>
-          <CssBaseline />
-          <App />
-        </ThemeProvider>
+        <WebSocketProvider>
+          <ThemeProvider theme={lightTheme}>
+            <CssBaseline />
+            <App />
+          </ThemeProvider>
+        </WebSocketProvider>
       </GlobalProvider>
     </Provider>
   </StrictMode>

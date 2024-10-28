@@ -52,20 +52,37 @@ function AcademicInfo() {
       return subSubjects; //
     }
     return subSubjects?.filter(
-      (ss) => ss.id_subject === selectedSubject.id_subject
+      (ss) => !selectedSubject || ss.id_subject === selectedSubject.id_subject
     );
   }, [subSubjects, selectedSubject]);
 
   const filteredTopics = useMemo(() => {
-    return topics?.filter((t) => {
+    if (!topics) return [];
+
+    return topics.filter((t) => {
       const subjectMatch =
         !selectedSubject || t.id_subject === selectedSubject.id_subject;
       const subSubjectMatch =
         !selectedSubSubject ||
-        t._id_sub_subject === selectedSubSubject._id_sub_subject;
-      return subjectMatch && subSubjectMatch;
+        t.id_sub_subject === selectedSubSubject.id_sub_subject;
+
+      return subjectMatch || subSubjectMatch;
     });
   }, [topics, selectedSubject, selectedSubSubject]);
+
+  const filteredSubTopics = useMemo(() => {
+    if (!subTopics) return [];
+    return subTopics?.filter((s) => {
+      const subjectMatch =
+        !selectedSubject || s.id_subject === selectedSubject.id_subject;
+      const subSubjectMatch =
+        !selectedSubSubject ||
+        s.id_sub_subject === selectedSubSubject.id_sub_subject;
+      const topicMatch =
+        !selectedTopic || s.id_topic === selectedTopic.id_topic;
+      return subjectMatch || subSubjectMatch || topicMatch;
+    });
+  }, [subTopics, selectedSubject, selectedSubSubject, selectedTopic]);
 
   const getData = async () => {
     dispatch({ type: "SET_LOADING", payload: true });
@@ -181,13 +198,13 @@ function AcademicInfo() {
 
   const handleSaveSubSubject = async () => {
     try {
-      if (!newSubSubject || selectedSubject) {
+      if (!newSubSubject || !selectedSubject) {
         return setError("Both Subject and Name are required.");
       }
-      console.log(newSubSubject);
       dispatch({ type: "SET_LOADING", payload: true });
       const response = await axios.post(`${API_URL}/academic/sub-subject`, {
         name: newSubSubject,
+        _id_subject: selectedSubject?._id,
       });
       isValidResponse(response);
       setSubSubjects(response.data.subSubjects);
@@ -295,7 +312,7 @@ function AcademicInfo() {
     <div>
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          <Box component={Paper}>
+          <Box component={Paper} sx={{ borderRadius: 2 }}>
             <Box
               sx={{
                 display: "flex",
@@ -305,7 +322,13 @@ function AcademicInfo() {
                 bgcolor: "#28844f",
               }}
             >
-              <Typography sx={{ ml: 1, color: "#fff" }} variant="h6">
+              <Typography
+                sx={{
+                  ml: 1,
+                  color: "#fff",
+                }}
+                variant="h6"
+              >
                 Subjects
               </Typography>
               <IconButton
@@ -461,7 +484,7 @@ function AcademicInfo() {
             </Box>
             <Divider />
             <List sx={{ height: 350, overflow: "auto" }}>
-              {topics?.map((topic, index) => (
+              {filteredTopics?.map((topic, index) => (
                 <ListItem
                   onClick={() => setSelectedTopic(topic)}
                   key={index}
@@ -521,7 +544,7 @@ function AcademicInfo() {
             </Box>
             <Divider />
             <List sx={{ height: 350, overflow: "auto" }}>
-              {subTopics?.map((subTopic, index) => (
+              {filteredSubTopics?.map((subTopic, index) => (
                 <ListItem
                   onClick={() => setSelectedsubTopic(subTopic)}
                   key={index}
