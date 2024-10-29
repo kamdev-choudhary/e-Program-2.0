@@ -60,13 +60,20 @@ function Messages() {
   const getChats = async () => {
     dispatch({ type: "SET_LOADING", payload: true });
     try {
-      const response = await axios.get(`${API_URL}/chats/${user?.userId}`);
+      const response = await axios.get(`${API_URL}/chat/${user?.userId}`);
+      if (isValidResponse(response)) {
+        setChats(response?.data?.chats);
+      }
     } catch (error) {
       console.error(error);
     } finally {
       dispatch({ type: "SET_LOADING", payload: false });
     }
   };
+
+  useEffect(() => {
+    getChats();
+  }, []);
 
   useEffect(() => {
     getUsersByRole({ role: selectedTab });
@@ -76,12 +83,14 @@ function Messages() {
     try {
       setCurrentChatUserId(userId);
       const chat = chats?.find((c) => {
-        return c.participants.includes(userId);
+        return c.participants.some((p) => p._id === userId);
       });
-      if (chat) {
-        setCurrentChatId(chat?._id);
-      } else {
+      console.log(chat);
+      if (!chat) {
         setNewChat(true);
+      } else {
+        setNewChat(false);
+        setCurrentChatId(chat._id);
       }
     } catch (error) {
       console.error(error);
@@ -153,21 +162,16 @@ function Messages() {
               <Divider sx={{ my: 1 }} />
               {chats?.map((chat, index) => (
                 <List key={index}>
-                  <ListItem button onClick={() => handleChatClick(index)}>
+                  <ListItem
+                    button
+                    onClick={() => handleChatClick(chat.participant._id)}
+                  >
                     <ListItemAvatar>
                       <Avatar>
                         <Image />
                       </Avatar>
                     </ListItemAvatar>
-                    <ListItemText
-                      primary={chat.name}
-                      secondary={
-                        currentMessages.length > 0 &&
-                        chat.name === currentMessages[0]?.sender
-                          ? currentMessages[0].text
-                          : "No messages yet"
-                      }
-                    />
+                    <ListItemText primary={chat?.participant?.name} />
                   </ListItem>
                 </List>
               ))}
@@ -186,13 +190,15 @@ function Messages() {
             </Box>
           </Grid>
           <Grid
-            size={{ xs: 12, md: 6, lg: 8 }}
+            size={{ xs: 12, md: 6, lg: 6 }}
             sx={{ display: "flex", flexDirection: "column" }}
           >
             <ChatContent
               currentChatId={currentChatId}
               currentChatUserId={currentChatUserId}
               newChat={newChat}
+              setNewChat={setNewChat}
+              setShowUsersList={setShowUsersList}
             />
           </Grid>
         </Grid>

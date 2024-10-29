@@ -1,19 +1,18 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const Batch = require("../models/batch");
+const response = require("../utils/responses");
 
 // GETTING USER DATA
 
 module.exports.getUserData = async (req, res, next) => {
   const { id } = req.params;
   try {
-    const user = await User.findOne({ _id: id }, { password: 0 });
+    const user = await User.findOne({ _id: id }, { password: 0 }); // Exclude password field
     if (user) {
-      res
-        .status(200)
-        .json({ user, message: "User Not available", status_code: 0 });
+      res.status(200).json({ user, ...response.success });
     } else {
-      res.status(400).json({ message: "User Not available", status_code: 0 });
+      res.status(200).json({ message: "User not found", ...response.notFound });
     }
   } catch (error) {
     next(error);
