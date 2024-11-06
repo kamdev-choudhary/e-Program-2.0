@@ -26,16 +26,13 @@ import SignUpPage from "../pages/auth/SignUpPage";
 import ScrollableTabs from "../components/ScrollableTabs";
 import { icons } from "../constants/helper";
 import { useNavigate } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
 
 const Header = ({ handleButtonClick, expanded }) => {
-  const {
-    logoutUser,
-    deviceTheme,
-    setDeviceTheme,
-    user,
-    scholarDetails,
-    isLoggedIn,
-  } = useGlobalProvider();
+  const { logoutUser, setDeviceTheme, user, scholarDetails, isLoggedIn } =
+    useGlobalProvider();
+  const authPage = useSelector((state) => state.authPage);
+  const dispatch = useDispatch();
   const isSmallScreen = useMediaQuery("(max-width:500px)");
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -208,7 +205,7 @@ const Header = ({ handleButtonClick, expanded }) => {
       ) : (
         <Box>
           <Button
-            onClick={() => setShowAuthPage(true)}
+            onClick={() => dispatch({ type: "SET_AUTHPAGE", payload: true })}
             sx={{ mr: 1 }}
             variant="contained"
           >
@@ -285,12 +282,12 @@ const Header = ({ handleButtonClick, expanded }) => {
       </CustomModal>
 
       <CustomModal
-        open={showAuthPage}
+        open={authPage}
         showFullScreenButton={false}
         height="auto"
         width="auto"
         header=""
-        onClose={() => setShowAuthPage(false)}
+        onClose={() => dispatch({ type: "SET_AUTHPAGE", payload: false })}
       >
         <Box sx={{ mb: 2 }}>
           <ScrollableTabs
@@ -307,15 +304,9 @@ const Header = ({ handleButtonClick, expanded }) => {
           />
         </Box>
         {selectedAuthPage === "login" ? (
-          <LoginPage
-            setShowAuthPage={setShowAuthPage}
-            setSelectedAuthPage={setSelectedAuthPage}
-          />
+          <LoginPage setSelectedAuthPage={setSelectedAuthPage} />
         ) : (
-          <SignUpPage
-            setShowAuthPage={setShowAuthPage}
-            setSelectedAuthPage={setSelectedAuthPage}
-          />
+          <SignUpPage setSelectedAuthPage={setSelectedAuthPage} />
         )}
       </CustomModal>
     </Toolbar>

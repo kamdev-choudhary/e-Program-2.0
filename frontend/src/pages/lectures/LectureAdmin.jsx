@@ -21,17 +21,19 @@ import { DataGrid } from "@mui/x-data-grid";
 import CustomToolbar from "../../components/CustomToolbar";
 import { CustomModal } from "../../components/CustomModal";
 import CustomDropDown from "../../components/CustomDropDown";
-import axios from "axios";
-import Loader from "../../components/Loader";
 import Swal from "sweetalert2";
+import { getLecturesByClass } from "../../api/lectures";
+import { useDispatch } from "react-redux";
+import { getClasses } from "../../api/academic";
 
 export default function LecturePage() {
   const { isValidResponse } = useGlobalProvider();
-
+  const dispatch = useDispatch();
   const [lectures, setLectures] = useState([]);
   const [currVID, setCurrVID] = useState(null);
   const [showVideoPopup, setShowVideoPopup] = useState(false);
   const [selectedClass, setSelectedClass] = useState("IX");
+  const [classes, setClasses] = useState([]);
   const [academic, setAcademic] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [showAddLecturePopup, setShowAddLecturePopup] = useState(false);
@@ -45,25 +47,28 @@ export default function LecturePage() {
   const [filteredTopics, setFilteredTopics] = useState([]);
 
   useEffect(() => {
-    fetch(`${API_URL}/academic`)
-      .then((response) => response.json())
-      .then((data) => {
-        setAcademic(data.academic[0]);
-        setIsLoading(false);
-      })
-      .catch((error) => console.log(error));
+    const getClass = async () => {
+      try {
+        const response = await getClasses();
+        if (isValidResponse(response)) {
+          setClasses(response?.data?.classes);
+        }
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getClass();
   }, []);
 
   const getLectures = async () => {
-    setIsLoading(true);
+    dispatch({ type: "SET_LOADING", payload: true });
     try {
-      const response = await axios.get(`${API_URL}/lectures/${selectedClass}`);
+      const response = await getLecturesByClass({ className: selectedClass });
       setLectures(response.data.lectures);
-      console.log("response:", response);
     } catch (error) {
       console.error(error);
     } finally {
-      setIsLoading(false);
+      dispatch({ type: "SET_LOADING", payload: false });
     }
   };
 
@@ -184,10 +189,11 @@ export default function LecturePage() {
         <Grid container spacing={2}>
           <Grid size={{ xs: 6, lg: 3, md: 6 }}>
             <CustomDropDown
-              data={academic.classes}
+              data={classes}
               label="Class"
+              name="name"
               value={selectedClass}
-              dropdownValue="classes"
+              dropdownValue="value"
               onChange={(e) => setSelectedClass(e.target.value)}
             />
           </Grid>
@@ -327,7 +333,7 @@ export default function LecturePage() {
         </Box>
       </CustomModal>
 
-      {/* Video as popip */}
+      {/* Video as popup */}
       <CustomModal
         open={showVideoPopup}
         onClose={() => setShowVideoPopup(false)}
@@ -339,9 +345,6 @@ export default function LecturePage() {
       >
         <YouTubeVideoPlayer videoId={currVID} />
       </CustomModal>
-
-      {/* Loader */}
-      <Loader open={isLoading} />
     </>
   );
 }

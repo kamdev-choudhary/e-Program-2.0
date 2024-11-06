@@ -15,6 +15,7 @@ const Message = React.lazy(() => import("./pages/messages/Message"));
 const BookOpen = React.lazy(() => import("./pages/library/BookOpen"));
 const MetaData = React.lazy(() => import("./pages/admin/MetaData"));
 const Batch = React.lazy(() => import("./pages/admin/Batch"));
+const Test = React.lazy(() => import("./pages/test/Test"));
 
 const createRoute = (path, name, isLoginRequired, available, Component) => ({
   path,
@@ -29,7 +30,7 @@ const createRoute = (path, name, isLoginRequired, available, Component) => ({
 });
 
 export const routes = [
-  createRoute("/", "Home", false, ["0"], Home),
+  createRoute("/", "Home", false, ["all"], Home),
   createRoute("/article", "Articles", false, ["0"], Article),
   createRoute("/library", "Library", false, ["0"], Library),
   createRoute("/lectures", "Lectures", false, ["0"], Lectures),
@@ -64,7 +65,8 @@ export const routes = [
     QuestionBank
   ),
   createRoute("/admin/metadata", "Academic Info", true, ["admin"], MetaData),
-  createRoute("/message", "Message", false, ["all"], Message),
+  createRoute("/message", "Message", true, ["all"], Message),
   createRoute("/library/book/:id", "Open Book", false, ["all"], BookOpen),
   createRoute("/admin/batches", "Batch", false, ["All"], Batch),
+  createRoute("/test", "Test", false, ["all"], Test),
 ];

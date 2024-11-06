@@ -11,7 +11,18 @@ function Body() {
   const location = useLocation();
 
   // Find the current route based on the path
-  const currentRoute = routes.find((route) => route.path === location.pathname);
+  const currentRoute = routes?.find(
+    (route) => route.path === location.pathname
+  );
+
+  const filteredRoutes = routes?.filter((route) => {
+    if (!route.isLoginRequired && route.available.includes("all")) return true;
+    const roleMatch =
+      route?.available?.includes("all") ||
+      route?.available?.includes(user?.role);
+
+    return roleMatch;
+  });
 
   return (
     <>
@@ -48,19 +59,9 @@ function Body() {
       )}
 
       <Routes>
-        {routes
-          .filter((route) => {
-            if (!route.isLoginRequired) {
-              return true;
-            } else if (route.available.includes(user?.role)) {
-              return true;
-            } else {
-              return false;
-            }
-          })
-          .map((route) => (
-            <Route key={route.path} path={route.path} element={route.element} />
-          ))}
+        {filteredRoutes?.map((route) => (
+          <Route key={route.path} path={route.path} element={route.element} />
+        ))}
         <Route path="*" element={<ErrorPage />} />
       </Routes>
     </>

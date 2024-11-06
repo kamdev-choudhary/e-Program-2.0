@@ -16,11 +16,11 @@ module.exports.viewLectures = async (req, res, next) => {
 
 module.exports.viewLecturesByClass = async (req, res, next) => {
   try {
-    const { classname } = req.params;
-    if (!classname) {
+    const { id } = req.params;
+    if (!id) {
       res.status(200).json({ ...response.validation });
     }
-    const lectures = await Lecture.find({ class: classname });
+    const lectures = await Lecture.find({ class: id });
     if (lectures) {
       res.status(200).json({ lectures, ...response.success });
     } else {

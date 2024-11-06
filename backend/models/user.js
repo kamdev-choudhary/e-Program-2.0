@@ -3,6 +3,7 @@ const Schema = mongoose.Schema;
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const { jwtSecret } = require("../config/config");
+const logger = require("../utils/logger");
 
 const userSchema = new Schema(
   {
@@ -40,6 +41,7 @@ const userSchema = new Schema(
       emum: [0, 1],
       default: 1,
     },
+    apiToken: String,
   },
   {
     timestamps: true,
@@ -78,7 +80,7 @@ userSchema.methods.generateToken = async function () {
       { expiresIn: "15d" }
     );
   } catch (err) {
-    console.error(err);
+    logger.error(err);
     throw new Error("Token generation failed");
   }
 };

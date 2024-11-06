@@ -57,4 +57,6 @@ router
   .delete(academicController.deletePattern)
   .patch(academicController.editPattern);
 
+router.route("/metadata").get(academicController.getAllMetaData);
+
 module.exports = router;

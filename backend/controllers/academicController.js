@@ -499,3 +499,26 @@ module.exports.editPattern = async (req, res, next) => {
     next(error);
   }
 };
+
+module.exports.getAllMetaData = async (req, res, next) => {
+  try {
+    const classes = await Class.find({});
+    const subjects = await Subject.find({});
+    const subSubjects = await SubSubject.find({});
+    const topics = await Topic.find({});
+    const subTopics = await SubTopic.find({});
+    const patterns = await Pattern.find({});
+
+    res.status(200).json({
+      classes,
+      subjects,
+      subSubjects,
+      topics,
+      subTopics,
+      patterns,
+      ...response.success,
+    });
+  } catch (error) {
+    next(error);
+  }
+};

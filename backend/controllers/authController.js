@@ -1,41 +1,38 @@
 const User = require("../models/user");
 const bcrypt = require("bcryptjs");
 const Batch = require("../models/batch");
+const { v4: uuid } = require("uuid");
 
-module.exports.login = async (req, res) => {
+module.exports.login = async (req, res, next) => {
   try {
     const { id, password } = req.body;
-    console.log(id, password);
     const userExist = await User.findOne({ email: id });
-
     if (!userExist) {
-      return res
+      res
         .status(200)
         .json({ message: "Email or Password is incorrect", status_code: 0 });
     }
     const isPasswordValid = await bcrypt.compare(password, userExist.password);
     if (isPasswordValid) {
-      return res.status(200).json({
-        message: "Login Successful",
-        token: await userExist.generateToken(),
+      const token = await userExist.generateToken();
+      res.status(200).json({
+        message: "Login Successful.",
+        token: token,
         userId: userExist._id.toString(),
         status_code: 1,
       });
     } else {
-      return res
-        .status(401)
+      res
+        .status(200)
         .json({ message: "Invalid email or password", status_code: 1 });
     }
   } catch (error) {
-    console.error(error);
-    return res.status(500).json("Internal Server Error");
+    next(error);
   }
 };
 
-module.exports.register = async (req, res) => {
-  let { name, email, password, mobile, role, method } = req.body;
-
-  if (!password) password = "Password";
+module.exports.register = async (req, res, next) => {
+  let { name, email, password = "Password", mobile, role, method } = req.body;
 
   try {
     let userExist = await User.findOne({ email: email });
@@ -59,12 +56,12 @@ module.exports.register = async (req, res) => {
     });
 
     if (method === "admin") {
-      return res.status(200).json({
+      res.status(200).json({
         message: "Registration Successful.",
         status_code: 1,
       });
     } else {
-      return res.status(200).json({
+      res.status(200).json({
         message: "Registration Successful",
         token: await newUser.generateToken(),
         userId: newUser._id.toString(),
@@ -72,7 +69,14 @@ module.exports.register = async (req, res) => {
       });
     }
   } catch (err) {
-    console.error(err);
-    return res.status(500).json("Internal Server Error");
+    next(error);
+  }
+};
+
+module.exports.test = async (req, res, next) => {
+  try {
+    res.status(200).json({ message: "Test" });
+  } catch (error) {
+    next(error);
   }
 };

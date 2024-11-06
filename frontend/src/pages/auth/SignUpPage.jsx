@@ -3,9 +3,11 @@ import axios from "axios";
 import React, { useState } from "react";
 import { API_URL } from "../../constants/helper";
 import { useGlobalProvider } from "../../GlobalProvider";
+import { useDispatch } from "react-redux";
 
-function SignUpPage({ setSelectedAuthPage, setShowAuthPage }) {
+function SignUpPage({ setSelectedAuthPage }) {
   const { handleLogin } = useGlobalProvider();
+  const dispatch = useDispatch();
   const [user, setUser] = useState({
     email: "",
     mobile: "",
@@ -55,15 +57,18 @@ function SignUpPage({ setSelectedAuthPage, setShowAuthPage }) {
 
   const handleRegisterNewUser = async () => {
     try {
+      dispatch({ type: "SET_LOADING", payload: true });
       if (validateFields()) {
         const response = await axios.post(`${API_URL}/auth/register`, {
           ...user,
         });
         handleLogin(response);
-        setShowAuthPage(false);
+        dispatch({ type: "SET_AUTHPAGE", payload: false });
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      dispatch({ type: "SET_LOADING", payload: false });
     }
   };
 

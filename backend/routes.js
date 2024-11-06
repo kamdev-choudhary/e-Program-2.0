@@ -41,7 +41,7 @@ const routes = (app) => {
   );
 
   // Auth route with rate limiter
-  app.use("/api/v1/auth", authLimiter, authRouter);
+  app.use("/api/v1/auth", authRouter);
 
   // API routes with API key check where applicable
   app.use("/api/v1/user", userRoute);

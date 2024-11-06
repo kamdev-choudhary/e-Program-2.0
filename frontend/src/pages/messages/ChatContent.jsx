@@ -1,37 +1,56 @@
-import { Box, TextField, Button } from "@mui/material";
-import React, { useState, useEffect } from "react";
+import {
+  Box,
+  TextField,
+  Button,
+  Card,
+  CardHeader,
+  Avatar,
+  IconButton,
+} from "@mui/material";
+import React, {
+  useState,
+  useEffect,
+  forwardRef,
+  useImperativeHandle,
+} from "react";
 import { useDispatch } from "react-redux";
 import { useGlobalProvider } from "../../GlobalProvider";
 import axios from "axios";
 import { API_URL } from "../../constants/helper";
+import { MoreVert } from "@mui/icons-material";
 
-function ChatContent({
-  currentChatId,
-  currentChatUserId,
-  newChat,
-  setNewChat,
-  setShowUsersList,
-}) {
-  const dispactch = useDispatch();
+const ChatContent = forwardRef((props, ref) => {
+  const dispatch = useDispatch();
+  const {
+    currentChatId,
+    currentChatUserId,
+    newChat,
+    setNewChat,
+    setShowUsersList,
+  } = props;
   const { user, isValidResponse } = useGlobalProvider();
   const [messages, setMessages] = useState([]);
   const [currentMessage, setCurrentMessage] = useState("");
   const [selectedUser, setSelectedUser] = useState([]);
 
   const getUserDetails = async () => {
-    const response = await axios.get(`${API_URL}/user/${currentChatUserId}`);
-    if (isValidResponse(response)) {
-      setSelectedUser(response?.data?.user);
-      setShowUsersList(false);
-    }
+    dispatch({ type: "SET_LOADING", payload: true });
     try {
+      const response = await axios.get(`${API_URL}/user/${currentChatUserId}`);
+      if (isValidResponse(response)) {
+        setSelectedUser(response?.data?.user);
+        setShowUsersList(false);
+      }
     } catch (error) {
       console.error(error);
+    } finally {
+      dispatch({ type: "SET_LOADING", payload: false });
     }
   };
 
   const fetchMessages = async () => {
     try {
+      dispatch({ type: "SET_LOADING", payload: true });
       const response = await axios.get(
         `${API_URL}/chat/messages/${currentChatId}`
       );
@@ -40,6 +59,8 @@ function ChatContent({
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      dispatch({ type: "SET_LOADING", payload: false });
     }
   };
 
@@ -57,6 +78,7 @@ function ChatContent({
 
   const send = async () => {
     try {
+      dispatch({ type: "SET_LOADING", payload: true });
       const response = await axios.post(`${API_URL}/chat/send`, {
         id1: user?.userId,
         id2: currentChatUserId,
@@ -69,44 +91,68 @@ function ChatContent({
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      dispatch({ type: "SET_LOADING", payload: false });
     }
   };
 
   const createChatAndSend = async () => {
     try {
+      dispatch({ type: "SET_LOADING", payload: true });
       const response = await axios.post(`${API_URL}/chat/create`, {
         id1: user?.userId,
         id2: currentChatUserId,
         content: currentMessage,
         groudId: currentChatId,
       });
+      if (isValidResponse(response)) {
+        setMessages(response?.data?.messages);
+      }
     } catch (error) {
       console.error(error);
+    } finally {
+      dispatch({ type: "SET_LOADING", payload: true });
     }
   };
 
   const handleSendMessage = () => {
     if (newChat) {
       createChatAndSend();
-      console.log("new Chat");
     } else {
       send();
-      console.log("old Chat");
     }
   };
 
+  // Expose functions to parent
+  useImperativeHandle(ref, () => ({
+    fetchMessages,
+    send,
+  }));
+
   return (
     <>
+      <Card>
+        <CardHeader
+          avatar={
+            <Avatar sx={{ bgcolor: "red" }}>{selectedUser?.name?.[0]}</Avatar>
+          }
+          action={
+            <IconButton>
+              <MoreVert />
+            </IconButton>
+          }
+          title={selectedUser?.name}
+          subheader="Online"
+        />
+      </Card>
       <Box
         sx={{
-          display: "flex",
-          flexDirection: "column-reverse", // This will map from bottom to top
-          maxHeight: "70vh",
-          overflowY: "auto",
-          padding: "1rem",
-          backgroundColor: "#e5ddd5",
-          borderRadius: 2,
           flex: 1,
+          p: 2,
+          overflowY: "auto",
+          bgcolor: "#e5ddd5",
+          display: "flex",
+          flexDirection: "column-reverse",
         }}
       >
         {messages?.map((message, index) => (
@@ -114,39 +160,21 @@ function ChatContent({
             key={index}
             sx={{
               display: "flex",
-              flexDirection: "column",
-              alignItems:
-                message.sender !== user?.userId ? "flex-end" : "flex-start",
+              justifyContent:
+                message.sender === "me" ? "flex-end" : "flex-start",
               mb: 1,
             }}
           >
             <Box
               sx={{
-                bgcolor:
-                  message.sender !== user?.userId ? "#dcf8c6" : "#ffffff",
-                color: "#333",
+                bgcolor: message.sender === "me" ? "#dcf8c6" : "#ffffff",
+                p: 1,
                 borderRadius: 2,
-                padding: "8px 12px",
-                // maxWidth: "70%",
+                maxWidth: "70%",
                 boxShadow: "0 1px 2px rgba(0, 0, 0, 0.15)",
               }}
             >
-              <span>{message.content}</span>
-              <Box
-                component="span"
-                sx={{
-                  fontSize: "0.75rem",
-                  color: "#888",
-                  display: "block",
-                  textAlign: "right",
-                  mt: 0.5,
-                }}
-              >
-                {new Date(message.timestamp).toLocaleTimeString([], {
-                  hour: "2-digit",
-                  minute: "2-digit",
-                })}
-              </Box>
+              {message.content}
             </Box>
           </Box>
         ))}
@@ -154,29 +182,26 @@ function ChatContent({
 
       <Box
         sx={{
+          display: "flex",
           p: 1,
           borderTop: "1px solid rgba(0,0,0,0.1)",
-          bgcolor: "background.default",
-          display: "flex",
-          alignItems: "center",
-          columnGap: 2,
+          bgcolor: "#ffffff",
         }}
       >
         <TextField
-          multiline
-          maxRows={3}
-          size="small"
-          label="Type a message"
+          variant="outlined"
+          placeholder="Type a message"
+          fullWidth
           value={currentMessage}
           onChange={(e) => setCurrentMessage(e.target.value)}
-          sx={{ flexGrow: 1 }}
+          size="small"
         />
-        <Button onClick={handleSendMessage} variant="contained">
+        <Button variant="contained" sx={{ ml: 1 }} onClick={handleSendMessage}>
           Send
         </Button>
       </Box>
     </>
   );
-}
+});
 
 export default ChatContent;

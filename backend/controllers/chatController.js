@@ -85,7 +85,9 @@ module.exports.createChat = async (req, res, next) => {
 
 module.exports.sendChat = async (req, res, next) => {
   try {
-    const { id1, id2, content, groupId } = req.body;
+    const { id1, id2, content, groupId, page = 1 } = req.body;
+    const limit = 10;
+    const skip = (page - 1) * 10;
     const newMessage = new Message({
       sender: id1,
       receiver: id2,
@@ -93,7 +95,10 @@ module.exports.sendChat = async (req, res, next) => {
       content: content,
     });
     await newMessage.save();
-    const messages = await Message.find({ groupId });
+    const messages = await Message.find({ groupId })
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(limit);
     res
       .status(200)
       .json({ messages, messgae: "Message send Successfully", status_code: 1 });

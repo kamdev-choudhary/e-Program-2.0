@@ -8,7 +8,6 @@ export const GlobalContext = createContext();
 
 export const GlobalProvider = ({ children }) => {
   const loading = useSelector((state) => state.loading);
-  const dispatch = useDispatch();
   const [user, setUser] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [deviceTheme, detDeviceTheme] = useState("light");

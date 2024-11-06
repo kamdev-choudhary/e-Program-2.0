@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo, useEffect, useRef } from "react";
 import {
   Avatar,
   Box,
@@ -12,7 +12,6 @@ import {
   Button,
   Paper,
 } from "@mui/material";
-import Grid from "@mui/material/Grid2";
 import { Image, Add as AddIcon } from "@mui/icons-material";
 import { CustomModal } from "../../components/CustomModal";
 import { useGlobalProvider } from "../../GlobalProvider";
@@ -34,14 +33,15 @@ function Messages() {
   const { user, isValidResponse } = useGlobalProvider();
   const dispatch = useDispatch();
   const socket = useWebSocket();
+  const chatContentRef = useRef();
   const [chats, setChats] = useState([]);
-  const [currentMessages, setCurrentMessages] = useState([]);
   const [showUsersList, setShowUsersList] = useState(false);
   const [users, setUsers] = useState([]);
   const [selectedTab, setSelectedTab] = useState("admin");
   const [currentChatUserId, setCurrentChatUserId] = useState("");
   const [currentChatId, setCurrentChatId] = useState("");
   const [newChat, setNewChat] = useState(false);
+  const [searchText, setSearchText] = useState("");
 
   const getUsersByRole = async ({ role }) => {
     dispatch({ type: "SET_LOADING", payload: true });
@@ -83,14 +83,16 @@ function Messages() {
     try {
       setCurrentChatUserId(userId);
       const chat = chats?.find((c) => {
-        return c.participants.some((p) => p._id === userId);
+        return c.participants.some((p) => p?._id === userId);
       });
-      console.log(chat);
       if (!chat) {
         setNewChat(true);
       } else {
         setNewChat(false);
         setCurrentChatId(chat._id);
+        if (chatContentRef.current) {
+          chatContentRef.current.fetchMessages();
+        }
       }
     } catch (error) {
       console.error(error);
@@ -142,87 +144,112 @@ function Messages() {
         component={Paper}
         sx={{
           display: "flex",
-          flexDirection: "row",
-          height: "79vh",
+          flexDirection: { xs: "column", md: "row" },
+          height: "80vh",
         }}
       >
-        <Grid container>
-          <Grid
-            item
-            xs={12}
-            md={3}
-            lg={3}
-            sx={{
-              borderRight: "1px solid rgba(0,0,0,0.1)",
-              position: "relative",
-            }}
-          >
-            <Box sx={{ p: 1, overflowY: "auto", height: "77vh" }}>
-              <TextField fullWidth size="small" label="Search" />
-              <Divider sx={{ my: 1 }} />
-              {chats?.map((chat, index) => (
-                <List key={index}>
-                  <ListItem
-                    button
-                    onClick={() => handleChatClick(chat.participant._id)}
-                  >
-                    <ListItemAvatar>
-                      <Avatar>
-                        <Image />
-                      </Avatar>
-                    </ListItemAvatar>
-                    <ListItemText primary={chat?.participant?.name} />
-                  </ListItem>
-                </List>
-              ))}
-              <Fab
-                size="small"
+        {/* Chat List Panel */}
+        <Box
+          sx={{
+            width: { xs: "100%", md: "30%" },
+            maxHeight: { xs: "30vh", md: "100vh" },
+            overflowY: "auto",
+            borderRight: { md: "1px solid #ddd" },
+            position: "relative",
+          }}
+        >
+          <Box sx={{ p: 1 }}>
+            <TextField
+              fullWidth
+              size="small"
+              label="Search Chat"
+              value={searchText}
+              onChange={(e) => setSearchText(e.target.value)}
+            />
+          </Box>
+          <Divider />
+          <Box sx={{ p: 1 }}>
+            {chats?.map((chat, index) => (
+              <List
+                dense={true}
+                key={index}
                 sx={{
-                  position: "absolute",
-                  bottom: 16,
-                  right: 16,
+                  cursor: "pointer",
+                  bgcolor: currentChatId === chat?._id ? "#CDC1FF" : "",
+                  borderRadius: 3,
+                  m: 0,
+                  p: 1,
                 }}
-                color="primary"
-                onClick={() => setShowUsersList(true)}
               >
-                <AddIcon />
-              </Fab>
-            </Box>
-          </Grid>
-          <Grid
-            size={{ xs: 12, md: 6, lg: 6 }}
-            sx={{ display: "flex", flexDirection: "column" }}
+                <ListItem
+                  button
+                  onClick={() => handleChatClick(chat.participant._id)}
+                >
+                  <ListItemAvatar>
+                    <Avatar>
+                      <Image />
+                    </Avatar>
+                  </ListItemAvatar>
+                  <ListItemText primary={chat?.participant?.name} />
+                </ListItem>
+              </List>
+            ))}
+          </Box>
+          <Fab
+            size="small"
+            sx={{
+              position: "absolute",
+              bottom: 16,
+              right: 16,
+            }}
+            color="primary"
+            onClick={() => setShowUsersList(true)}
           >
+            <AddIcon />
+          </Fab>
+        </Box>
+
+        {/* Chat Content Panel */}
+        <Box
+          sx={{
+            flex: 1,
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between",
+          }}
+        >
+          {currentChatUserId && (
             <ChatContent
+              ref={chatContentRef}
               currentChatId={currentChatId}
               currentChatUserId={currentChatUserId}
               newChat={newChat}
               setNewChat={setNewChat}
               setShowUsersList={setShowUsersList}
             />
-          </Grid>
-        </Grid>
-        {/* Users */}
-        <CustomModal
-          open={showUsersList}
-          onClose={() => setShowUsersList(false)}
-          autoClose={true}
-          header="User List"
-        >
-          <ScrollableTabs
-            tabs={tabs}
-            selectedTab={selectedTab}
-            setSelectedTab={setSelectedTab}
-          />
-          <Box component={Paper}>
-            <DataGrid
-              columns={columnsForUsers}
-              rows={rowsForUser}
-              slots={{ toolbar: () => <CustomToolbar showAddButton={false} /> }}
-            />
-          </Box>
-        </CustomModal>
+          )}
+        </Box>
       </Box>
+      {/* Users */}
+      <CustomModal
+        open={showUsersList}
+        onClose={() => setShowUsersList(false)}
+        autoClose={true}
+        header="User List"
+      >
+        <ScrollableTabs
+          tabs={tabs}
+          selectedTab={selectedTab}
+          setSelectedTab={setSelectedTab}
+        />
+        <Box component={Paper}>
+          <DataGrid
+            columns={columnsForUsers}
+            rows={rowsForUser}
+            slots={{ toolbar: () => <CustomToolbar showAddButton={false} /> }}
+          />
+        </Box>
+      </CustomModal>
     </>
   );
 }

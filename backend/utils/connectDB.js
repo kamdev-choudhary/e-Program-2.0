@@ -1,13 +1,13 @@
-require("dotenv").config();
 const mongoose = require("mongoose");
 const { mongoURI } = require("../config/config");
+const logger = require("../utils/logger");
 
 const connectDB = async () => {
   try {
     await mongoose.connect(mongoURI);
-    console.log("Connected to Mongoose Database");
+    logger.info("Connected to Mongoose Database");
   } catch (err) {
-    console.log(err);
+    logger.error(err);
   }
 };
 

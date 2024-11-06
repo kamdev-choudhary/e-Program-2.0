@@ -3,6 +3,7 @@ const router = express(express.Router);
 const lectureController = require("../controllers/lectureController");
 
 router.route("/").get(lectureController.viewLectures);
-router.route("/:classname").get(lectureController.viewLecturesByClass);
+
+router.route("/:id").get(lectureController.viewLecturesByClass);
 
 module.exports = router;

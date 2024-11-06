@@ -10,9 +10,11 @@ import React, { useState } from "react";
 import axios from "axios";
 import { API_URL } from "../../constants/helper";
 import { useGlobalProvider } from "../../GlobalProvider";
+import { useDispatch } from "react-redux";
 
-function LoginPage({ setShowAuthPage, setSelectedAuthPage }) {
+function LoginPage({ setSelectedAuthPage }) {
   const { handleLogin } = useGlobalProvider();
+  const dispatch = useDispatch();
   const [user, setUser] = useState({
     id: "",
     password: "",
@@ -20,15 +22,18 @@ function LoginPage({ setShowAuthPage, setSelectedAuthPage }) {
 
   const handleLoginButton = async () => {
     try {
+      dispatch({ type: "SET_LOADING", payload: true });
       const response = await axios.post(`${API_URL}/auth/login`, {
         ...user,
       });
       handleLogin(response);
       if (response.data.status_code === 1) {
-        setShowAuthPage(false);
+        dispatch({ type: "SET_AUTHPAGE", payload: false });
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      dispatch({ type: "SET_LOADING", payload: false });
     }
   };
 
