@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useMemo } from "react";
 import Grid from "@mui/material/Grid2";
-import Class from "./Class";
 import { useGlobalProvider } from "../../../GlobalProvider";
 import {
   Box,
@@ -66,7 +65,7 @@ function AcademicInfo() {
         !selectedSubSubject ||
         t.id_sub_subject === selectedSubSubject.id_sub_subject;
 
-      return subjectMatch || subSubjectMatch;
+      return subjectMatch && subSubjectMatch;
     });
   }, [topics, selectedSubject, selectedSubSubject]);
 
@@ -80,7 +79,7 @@ function AcademicInfo() {
         s.id_sub_subject === selectedSubSubject.id_sub_subject;
       const topicMatch =
         !selectedTopic || s.id_topic === selectedTopic.id_topic;
-      return subjectMatch || subSubjectMatch || topicMatch;
+      return subjectMatch && subSubjectMatch && topicMatch;
     });
   }, [subTopics, selectedSubject, selectedSubSubject, selectedTopic]);
 
@@ -312,30 +311,24 @@ function AcademicInfo() {
     <div>
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          <Box component={Paper} sx={{ borderRadius: 2 }}>
+          <Box component={Paper} elevation={4}>
             <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
                 p: 1,
-                bgcolor: "#28844f",
+                bgcolor: "rgba(126, 87, 194, 0.1)",
+                borderTopRightRadius: 10,
+                borderTopLeftRadius: 10,
               }}
             >
-              <Typography
-                sx={{
-                  ml: 1,
-                  color: "#fff",
-                }}
-                variant="h6"
-              >
-                Subjects
-              </Typography>
+              <Typography variant="h6">Subjects</Typography>
               <IconButton
                 variant="contained"
                 onClick={() => setShowAddSubject(true)}
               >
-                <AddRounded sx={{ color: "#fff" }} />
+                <AddRounded />
               </IconButton>
             </Box>
             <Divider />
@@ -385,24 +378,26 @@ function AcademicInfo() {
           </Box>
         </Grid>
         <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          <Box component={Paper}>
+          <Box component={Paper} elevation={4}>
             <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
                 p: 1,
-                bgcolor: "#28844f",
+                bgcolor: "rgba(126, 87, 194, 0.1)",
+                borderTopRightRadius: 10,
+                borderTopLeftRadius: 10,
               }}
             >
-              <Typography sx={{ ml: 1, color: "#fff" }} variant="h6">
+              <Typography sx={{ ml: 1 }} variant="h6">
                 Sub Subjects
               </Typography>
               <IconButton
                 variant="contained"
                 onClick={() => setShowAddSubSubject(true)}
               >
-                <AddRounded sx={{ color: "#fff" }} />
+                <AddRounded />
               </IconButton>
             </Box>
             <Divider />
@@ -462,24 +457,26 @@ function AcademicInfo() {
           </Box>
         </Grid>
         <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          <Box component={Paper}>
+          <Box component={Paper} elevation={4}>
             <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
                 p: 1,
-                bgcolor: "#28844f",
+                bgcolor: "rgba(126, 87, 194, 0.1)",
+                borderTopRightRadius: 10,
+                borderTopLeftRadius: 10,
               }}
             >
-              <Typography sx={{ ml: 1, color: "#fff" }} variant="h6">
+              <Typography sx={{ ml: 1 }} variant="h6">
                 Topics
               </Typography>
               <IconButton
                 variant="contained"
                 onClick={() => setShowAddTopic(true)}
               >
-                <AddRounded sx={{ color: "#fff" }} />
+                <AddRounded />
               </IconButton>
             </Box>
             <Divider />
@@ -522,24 +519,26 @@ function AcademicInfo() {
           </Box>
         </Grid>
         <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          <Box component={Paper}>
+          <Box component={Paper} elevation={4}>
             <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
                 p: 1,
-                bgcolor: "#28844f",
+                bgcolor: "rgba(126, 87, 194, 0.1)",
+                borderTopRightRadius: 10,
+                borderTopLeftRadius: 10,
               }}
             >
-              <Typography sx={{ ml: 1, color: "#fff" }} variant="h6">
+              <Typography sx={{ ml: 1 }} variant="h6">
                 Sub Topics
               </Typography>
               <IconButton
                 variant="contained"
                 onClick={() => setShowAddSubTopic(true)}
               >
-                <AddRounded sx={{ color: "#fff" }} />
+                <AddRounded />
               </IconButton>
             </Box>
             <Divider />

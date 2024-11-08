@@ -1,7 +1,5 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { ThemeProvider, CssBaseline } from "@mui/material";
-import { lightTheme } from "./constants/theme";
 import { Provider } from "react-redux";
 import store from "./store/store";
 import { GlobalProvider } from "./GlobalProvider";
@@ -14,10 +12,7 @@ createRoot(document.getElementById("root")).render(
     <Provider store={store}>
       <GlobalProvider>
         <WebSocketProvider>
-          <ThemeProvider theme={lightTheme}>
-            <CssBaseline />
-            <App />
-          </ThemeProvider>
+          <App />
         </WebSocketProvider>
       </GlobalProvider>
     </Provider>

@@ -3,7 +3,6 @@ import CustomDropDown from "../../components/CustomDropDown";
 import {
   Box,
   Button,
-  Checkbox,
   Menu,
   MenuItem,
   Pagination,
@@ -18,6 +17,7 @@ import { useDispatch } from "react-redux";
 import { CustomModal } from "../../components/CustomModal";
 import { DataGrid } from "@mui/x-data-grid";
 import { AddRounded, MenuRounded, RefreshRounded } from "@mui/icons-material";
+import QuestionTypeForm from "./QuestionTypeForm";
 
 function QuestionBank() {
   const { isValidResponse } = useGlobalProvider();
@@ -37,6 +37,8 @@ function QuestionBank() {
   const [searchText, setSearchText] = useState("");
 
   const [showQuestionTypes, setShowQuestionTypes] = useState(false);
+  const [showAddQuestion, setShowAddQuestion] = useState(false);
+  const [addQuestionType, setAddQuestionType] = useState("");
   const [anchorElUser, setAnchorElUser] = useState(null);
 
   const handleOpenUserMenu = (event) => {
@@ -81,7 +83,7 @@ function QuestionBank() {
     );
   }, [topics, selectedSubSubject]);
 
-  const filteredSubTopic = useMemo(() => {
+  const filteredSubTopics = useMemo(() => {
     return subTopics.filter((t) => {
       const subjectMatch = t.id_subject === selectedSubject;
       const subSubjectMatch = t.id_sub_subject === selectedSubSubject;
@@ -94,7 +96,7 @@ function QuestionBank() {
 
   const columns = [
     {
-      field: "SN",
+      field: "id",
       headerName: "SN",
       flex: 1,
       minWidth: 60,
@@ -105,8 +107,22 @@ function QuestionBank() {
       flex: 1,
       minWidth: 200,
     },
+    {
+      field: "class",
+      headerName: "Class Name",
+      flex: 1,
+      minWidth: 150,
+    },
+    {
+      field: "subject",
+      headerName: "Subject",
+      flex: 1,
+      minWidth: 200,
+    },
   ];
-  const rows = [];
+  const rows = [
+    { id: 1, questionText: "jdhjhj", class: 12, subject: "Physics" },
+  ];
 
   return (
     <div>
@@ -154,7 +170,7 @@ function QuestionBank() {
           </Grid>
           <Grid size={{ xs: 12, md: 6, lg: 4 }}>
             <CustomDropDown
-              data={filteredSubTopic}
+              data={filteredSubTopics}
               value={selectedSubTopic}
               name="name"
               label="Sub Topic"
@@ -270,13 +286,40 @@ function QuestionBank() {
           <Box sx={{ display: "grid", rowGap: 1 }}>
             {questionTypes?.map((type, index) => (
               <React.Fragment key={index}>
-                <Button variant="contained" fullWidth>
+                <Button
+                  onClick={() => {
+                    setShowAddQuestion(true);
+                    setAddQuestionType(type?.id_pattern);
+                    setShowQuestionTypes(false);
+                  }}
+                  variant="contained"
+                  fullWidth
+                >
                   {type?.name}
                 </Button>
               </React.Fragment>
             ))}
           </Box>
         </Box>
+      </CustomModal>
+
+      {/* Modal for Question type */}
+      <CustomModal
+        open={showAddQuestion}
+        onClose={() => setShowAddQuestion(false)}
+        header="Add Question"
+      >
+        <QuestionTypeForm
+          type={addQuestionType}
+          subjects={subjects}
+          subSubjects={subSubjects}
+          filteredTopics={filteredTopics}
+          filteredSubTopics={filteredSubTopics}
+          selectedSubject={selectedSubject}
+          setSelectedSubject={setSelectedSubject}
+          selectedSubSubject={selectedSubSubject}
+          setSelectedSubSubject={setSelectedSubSubject}
+        />
       </CustomModal>
     </div>
   );

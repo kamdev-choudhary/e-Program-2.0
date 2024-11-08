@@ -17,6 +17,7 @@ export default function Layout2() {
         height: "100vh",
         display: "flex",
         flexDirection: "column",
+        bgcolor: "background.paper",
       }}
     >
       <Box
@@ -27,7 +28,7 @@ export default function Layout2() {
           position: "fixed",
           top: 0,
           left: 0,
-          // background: "background.paper",
+          background: "background.paper",
           zIndex: 1,
         }}
       >
@@ -80,7 +81,7 @@ export default function Layout2() {
           sx={{
             flex: 1, // This will take the remaining space
             padding: 1.5,
-            bgcolor: "#f0f3fb",
+            bgcolor: "background.default",
             overflowY: "auto",
             height: "100%", // Ensure it takes full height
             pb: 2,

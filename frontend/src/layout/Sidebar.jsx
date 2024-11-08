@@ -71,7 +71,7 @@ function Sidebar({ isSmallScreen, expanded = true }) {
   const [openMenus, setOpenMenus] = useState({});
   const navigate = useNavigate();
   const location = useLocation();
-  const isDarkMode = false;
+  const isDarkMode = deviceTheme === "dark";
 
   const handleMenuClick = (menuName) => {
     setOpenMenus((prev) => ({
@@ -79,6 +79,15 @@ function Sidebar({ isSmallScreen, expanded = true }) {
       [menuName]: !prev[menuName],
     }));
   };
+
+  const filteredPages = pages?.filter((route) => {
+    if (!route.isLoginRequired && route.available.includes("all")) return true;
+    const roleMatch =
+      route?.available?.includes("all") ||
+      route?.available?.includes(user?.role);
+
+    return roleMatch;
+  });
 
   return (
     <Box>

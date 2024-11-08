@@ -1,6 +1,6 @@
 import { Backdrop, Box, Modal, Typography } from "@mui/material";
 import React from "react";
-import { SyncLoader } from "react-spinners";
+import { MoonLoader } from "react-spinners";
 import { useGlobalProvider } from "../GlobalProvider";
 
 function Loader({ open }) {
@@ -23,7 +23,7 @@ function Loader({ open }) {
           pt: 5,
         }}
       >
-        <SyncLoader speedMultiplier={0.7} color="#28844f" />
+        <MoonLoader speedMultiplier={0.7} color="#4584a8" />
         <Typography sx={{ mt: 1 }}>Please wait ...</Typography>
       </Box>
     </Backdrop>

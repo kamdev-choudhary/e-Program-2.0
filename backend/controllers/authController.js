@@ -8,21 +8,21 @@ module.exports.login = async (req, res, next) => {
     const { id, password } = req.body;
     const userExist = await User.findOne({ email: id });
     if (!userExist) {
-      res
+      return res
         .status(200)
         .json({ message: "Email or Password is incorrect", status_code: 0 });
     }
     const isPasswordValid = await bcrypt.compare(password, userExist.password);
     if (isPasswordValid) {
       const token = await userExist.generateToken();
-      res.status(200).json({
+      return res.status(200).json({
         message: "Login Successful.",
         token: token,
         userId: userExist._id.toString(),
         status_code: 1,
       });
     } else {
-      res
+      return res
         .status(200)
         .json({ message: "Invalid email or password", status_code: 1 });
     }
@@ -54,6 +54,7 @@ module.exports.register = async (req, res, next) => {
       mobile,
       role,
     });
+    newUser.save();
 
     if (method === "admin") {
       res.status(200).json({

@@ -2,46 +2,50 @@ import { createTheme } from "@mui/material/styles";
 
 // Define a light theme
 export const lightTheme = createTheme({
-  // palette: {
-  //   mode: "light",
-  //   primary: { main: "rgba(40, 132, 79, 0.9)" },
-  //   secondary: {
-  //     main: "rgba(145, 77, 126, 0.9)",
-  //   },
-  //   error: { main: "rgba(189,0,1,0.9)" },
-  //   success: { main: "rgba(40, 132, 79, 0.9)", contrastText: "#fff" },
-  //   warning: { main: "rgba(232, 150, 15, 0.9)" },
-  //   background: {
-  //     bg: "#f0f3fb",
-  //     paper: "#fff",
-  //     primary: "rgba(40, 132, 79, 0.2)",
-  //     secondary: "rgba(145, 77, 126, 0.2)",
-  //     hover: "#f1f1f1",
-  //     error: "rgba(255,0,0,0.2)",
-  //     warning: "rgba(255,204,0,0.4)",
-  //     gradient:
-  //       "linear-gradient(to bottom right, rgba(145, 77, 126, 0.2), rgba(40, 132, 79, 0.2))",
-  //   },
-  // },
-  typography: {
-    fontFamily: "sans-serif,Roboto, Arial",
+  palette: {
+    mode: "light",
+    primary: {
+      main: "#4CAF50", // Soft green
+      contrastText: "#ffffff",
+    },
+    secondary: {
+      main: "#7E57C2", // Lavender purple
+      contrastText: "#ffffff",
+    },
+    error: {
+      main: "#F44336", // Soft red
+    },
+    success: {
+      main: "#388E3C", // Forest green
+      contrastText: "#ffffff",
+    },
+    warning: {
+      main: "#FFC107", // Amber
+    },
+    background: {
+      default: "#F4F6F8", // Light grey background
+      paper: "#ffffff",
+      primary: "rgba(76, 175, 80, 0.1)", // Primary background accent
+      secondary: "rgba(126, 87, 194, 0.1)", // Secondary background accent
+      hover: "#f0f0f0", // Light hover shade
+      gradient: "linear-gradient(to bottom right, #4CAF50, #7E57C2)", // Gradient for special elements
+    },
   },
-  // shape: {
-  //   borderRadius: 4,
-  // },
+  typography: {
+    fontFamily: "Roboto, Arial, sans-serif",
+  },
+  shape: {
+    borderRadius: 8, // Softer rounded corners
+  },
   components: {
     MuiButton: {
       styleOverrides: {
         root: {
-          borderRadius: 6,
-          minWidth: 100,
+          borderRadius: 8,
           textTransform: "none",
-          //boxShadow: "none",
-          textTransform: "none", // No uppercase text
-          padding: "8px 16px", // Custom padding
+          padding: "10px 20px",
           "&:hover": {
-            boxShadow: "none", // No shadow on hover
-            // backgroundColor: "rgba(0, 0, 0, 0.04)", // Slight hover background color
+            boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.2)",
           },
         },
       },
@@ -49,22 +53,25 @@ export const lightTheme = createTheme({
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          backgroundColor: "#fff",
+          backgroundColor: "#ffffff",
+          "&:hover": {
+            backgroundColor: "#f5f5f5",
+          },
         },
       },
     },
     MuiButtonGroup: {
       styleOverrides: {
         root: {
-          borderRadius: 2,
+          borderRadius: 8,
         },
       },
     },
     MuiDataGrid: {
       styleOverrides: {
         columnHeader: {
-          backgroundColor: "#7D8ABC",
-          color: "#fff",
+          backgroundColor: "#4CAF50",
+          color: "#ffffff",
         },
         columnHeaderTitle: {
           fontWeight: "bold",
@@ -74,32 +81,41 @@ export const lightTheme = createTheme({
   },
 });
 
-// Dark Theme
-
 // Define a dark theme
 export const darkTheme = createTheme({
   palette: {
     mode: "dark",
     primary: {
-      main: "#28844f",
+      main: "#80CBC4", // Teal for primary accents
+      contrastText: "#121212",
     },
     secondary: {
-      main: "#f48fb1",
+      main: "#FFAB91", // Soft orange
+      contrastText: "#121212",
+    },
+    error: {
+      main: "#FF5252", // Bright red
+    },
+    success: {
+      main: "#66BB6A", // Light green
+    },
+    warning: {
+      main: "#FFCA28", // Yellow accent
     },
     background: {
-      default: "#121212",
-      bg: "#1d1d1d",
-      paper: "#1d1d1d",
-      primary: "#1d1d1d",
-      secondary: "#2d2d2d",
-      hover: "#414141",
+      default: "#1C1C1C", // Dark grey background
+      paper: "#232323",
+      primary: "#282828", // Darker background for accents
+      secondary: "#333333", // Dark secondary background
+      hover: "#424242", // Hover color
+      gradient: "linear-gradient(to bottom right, #80CBC4, #FFAB91)", // Gradient
     },
   },
   typography: {
     fontFamily: "Roboto, Arial, sans-serif",
   },
   shape: {
-    borderRadius: 4,
+    borderRadius: 8,
   },
   components: {
     MuiButton: {
@@ -107,28 +123,35 @@ export const darkTheme = createTheme({
         root: {
           minWidth: 100,
           textTransform: "none",
+          padding: "10px 20px",
+          "&:hover": {
+            boxShadow: "0px 4px 10px rgba(255, 255, 255, 0.1)",
+          },
         },
       },
     },
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
-          backgroundColor: "#232323",
+          backgroundColor: "#333333",
+          "&:hover": {
+            backgroundColor: "#444444",
+          },
         },
       },
     },
     MuiButtonGroup: {
       styleOverrides: {
         root: {
-          borderRadius: 400,
+          borderRadius: 8,
         },
       },
     },
     MuiDataGrid: {
       styleOverrides: {
         columnHeader: {
-          backgroundColor: "#1d1d1d",
-          color: "#fff",
+          backgroundColor: "#80CBC4",
+          color: "#121212",
         },
         columnHeaderTitle: {
           fontWeight: "bold",

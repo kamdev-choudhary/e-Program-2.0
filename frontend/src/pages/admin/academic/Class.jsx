@@ -10,6 +10,9 @@ import {
   TextField,
   Paper,
   IconButton,
+  Card,
+  CardHeader,
+  CardContent,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { API_URL } from "../../../constants/helper";
@@ -130,46 +133,47 @@ function AcademicInfo() {
     <>
       <Grid container>
         <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          {" "}
-          <Box component={Paper}>
-            <Box
-              sx={{
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "space-between",
-                p: 1,
-                bgcolor: "#28844f",
-              }}
-            >
-              <Typography sx={{ ml: 1, color: "#fff" }} variant="h6">
-                Classes
-              </Typography>
-              <IconButton
-                variant="contained"
-                onClick={() => setShowAddClass(true)}
+          <Card elevation={4}>
+            <CardContent sx={{ p: 1, bgcolor: "background.secondary" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "space-between",
+                }}
               >
-                <AddRounded sx={{ color: "#fff" }} />
-              </IconButton>
-            </Box>
-            <Divider />
-            <List sx={{ height: 350, overflow: "auto" }}>
-              {classes.map((classItem, index) => (
-                <ListItem key={index} sx={{ justifyContent: "space-between" }}>
-                  <Typography>{classItem.name}</Typography>
-                  <Box>
-                    <IconButton onClick={() => handleEditClass(classItem)}>
-                      <Edit />
-                    </IconButton>
-                    <IconButton
-                      onClick={() => handleDeleteClass(classItem?._id)}
-                    >
-                      <Delete />
-                    </IconButton>
-                  </Box>
-                </ListItem>
-              ))}
-            </List>
-          </Box>
+                <Typography variant="h6">Classes</Typography>
+                <IconButton
+                  variant="contained"
+                  onClick={() => setShowAddClass(true)}
+                >
+                  <AddRounded />
+                </IconButton>
+              </Box>
+            </CardContent>
+            <CardContent sx={{ p: 1 }}>
+              <List sx={{ height: 350, overflow: "auto" }}>
+                {classes.map((classItem, index) => (
+                  <ListItem
+                    key={index}
+                    sx={{ justifyContent: "space-between" }}
+                  >
+                    <Typography>{classItem.name}</Typography>
+                    <Box>
+                      <IconButton onClick={() => handleEditClass(classItem)}>
+                        <Edit />
+                      </IconButton>
+                      <IconButton
+                        onClick={() => handleDeleteClass(classItem?._id)}
+                      >
+                        <Delete />
+                      </IconButton>
+                    </Box>
+                  </ListItem>
+                ))}
+              </List>
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
 

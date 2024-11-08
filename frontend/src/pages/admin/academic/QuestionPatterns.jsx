@@ -57,6 +57,8 @@ function QuestionPatterns() {
       if (isValidResponse(response)) {
         setPatterns(response?.data?.patterns);
         setShowAddPattern(false);
+        setNewPatternName("");
+        setPatternDesription("");
       }
     } catch (error) {
       console.error(error);
@@ -91,24 +93,26 @@ function QuestionPatterns() {
     <>
       <Grid container>
         <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          <Box component={Paper} sx={{ display: "grid" }}>
+          <Box component={Paper} elevation={4} sx={{ display: "grid" }}>
             <Box
               sx={{
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "space-between",
                 p: 1,
-                bgcolor: "#28844f",
+                bgcolor: "rgba(126, 87, 194, 0.1)",
+                borderTopRightRadius: 10,
+                borderTopLeftRadius: 10,
               }}
             >
-              <Typography sx={{ ml: 1, color: "#fff" }} variant="h6">
+              <Typography sx={{ ml: 1 }} variant="h6">
                 Question Patterns
               </Typography>
               <IconButton
                 variant="contained"
                 onClick={() => setShowAddPattern(true)}
               >
-                <AddRounded sx={{ color: "#fff" }} />
+                <AddRounded sx={{}} />
               </IconButton>
             </Box>
             <Divider />
@@ -149,7 +153,7 @@ function QuestionPatterns() {
             onChange={(e) => setNewPatternName(e.target.value)}
           />
           <TextField
-            minRows={3}
+            rows={2}
             placeholder="Pattern Description"
             label="Pattern Description"
             value={patternDescription}

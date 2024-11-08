@@ -1,7 +1,7 @@
 import { Alert, Snackbar } from "@mui/material";
 import { createContext, useContext, useEffect, useState } from "react";
 import { jwtDecode } from "jwt-decode";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import Loader from "./components/Loader";
 
 export const GlobalContext = createContext();
@@ -10,13 +10,21 @@ export const GlobalProvider = ({ children }) => {
   const loading = useSelector((state) => state.loading);
   const [user, setUser] = useState("");
   const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [deviceTheme, detDeviceTheme] = useState("light");
+  const [deviceTheme, setDeviceTheme] = useState("light");
   const [notification, setNotification] = useState({
     open: false,
     message: "",
     type: "success",
     variant: "",
   });
+
+  const toggleTheme = () => {
+    if (deviceTheme === "light") {
+      setDeviceTheme("dark");
+    } else {
+      setDeviceTheme("light");
+    }
+  };
 
   const handleLogin = (response) => {
     if (response?.data?.status_code === 1) {
@@ -82,6 +90,7 @@ export const GlobalProvider = ({ children }) => {
         handleLogin,
         deviceTheme,
         logoutUser,
+        toggleTheme,
       }}
     >
       {children}

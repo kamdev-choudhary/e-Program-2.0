@@ -40,7 +40,7 @@ const routes = (app) => {
     swaggerUi.setup(swaggerDocument)
   );
 
-  // Auth route with rate limiter
+  // Auth route
   app.use("/api/v1/auth", authRouter);
 
   // API routes with API key check where applicable

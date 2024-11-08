@@ -7,7 +7,6 @@ import {
   Typography,
   Divider,
   Button,
-  Card,
 } from "@mui/material";
 import {
   Fullscreen as FullscreenIcon,
@@ -17,7 +16,6 @@ import {
   SettingsRounded,
 } from "@mui/icons-material";
 import { useGlobalProvider } from "../GlobalProvider";
-import { BrandName } from "../constants/helper";
 // import UpdatePassword from "../pages/auth/UpdatePassword";
 import { CustomModal } from "../components/CustomModal";
 import { useMediaQuery } from "@mui/material";
@@ -27,6 +25,7 @@ import ScrollableTabs from "../components/ScrollableTabs";
 import { icons } from "../constants/helper";
 import { useNavigate } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
+import SiteSetting from "./SiteSetting";
 
 const Header = ({ handleButtonClick, expanded }) => {
   const { logoutUser, setDeviceTheme, user, scholarDetails, isLoggedIn } =
@@ -40,7 +39,6 @@ const Header = ({ handleButtonClick, expanded }) => {
   const [showUpdatePassword, setShowUpdatePassword] = useState(false);
   const [themeMenuEl, setThemeMenuEl] = useState(null);
   const openThemeMenu = Boolean(themeMenuEl);
-  const [showAuthPage, setShowAuthPage] = useState(false);
   const [selectedAuthPage, setSelectedAuthPage] = useState("login");
   const navigate = useNavigate();
 
@@ -71,18 +69,13 @@ const Header = ({ handleButtonClick, expanded }) => {
     setThemeMenuEl(event.currentTarget);
   };
 
-  const handleThemeChange = (theme) => {
-    setDeviceTheme(theme);
-    handleMenuClose();
-  };
-
   return (
     <Toolbar>
       <IconButton
         aria-label="open drawer"
         onClick={handleButtonClick}
         edge="start"
-        sx={{ mr: 1, bgcolor: "background.hover" }}
+        sx={{ mr: 1, bgcolor: "background.paper" }}
       >
         {expanded ? <MenuOpenRounded /> : <MenuRounded />}
       </IconButton>
@@ -120,69 +113,7 @@ const Header = ({ handleButtonClick, expanded }) => {
             flexDirection: "column",
           }}
         >
-          {/* Light Mode Card */}
-          <Card
-            onClick={() => handleThemeChange("light")}
-            sx={{
-              width: "100%",
-              height: "150px",
-              boxShadow: 3,
-              cursor: "pointer",
-              "&:hover": {
-                boxShadow: 6,
-              },
-              mb: 2,
-              bgcolor: "white",
-            }}
-          >
-            <Typography
-              variant="h6"
-              align="center"
-              sx={{ mt: 2, color: "#000" }}
-            >
-              Light Mode
-            </Typography>
-          </Card>
-
-          {/* Dark Mode Card */}
-          <Card
-            onClick={() => handleThemeChange("dark")}
-            sx={{
-              width: "100%",
-              height: "150px",
-              boxShadow: 3,
-              cursor: "pointer",
-              "&:hover": {
-                boxShadow: 6,
-              },
-              mb: 2,
-              bgcolor: "grey",
-            }}
-          >
-            <Typography
-              variant="h6"
-              align="center"
-              sx={{ mt: 2, color: "#fff" }}
-            >
-              Dark Mode
-            </Typography>
-            <Box
-              sx={{
-                height: "80%",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                borderRadius: 1,
-              }}
-            >
-              {/* Dark Mode Skeleton */}
-            </Box>
-          </Card>
-          <Card>
-            <Typography sx={{ p: 2 }}>Primary Color</Typography>
-            <Divider />
-            <Box></Box>
-          </Card>
+          <SiteSetting />
         </Box>
       </Menu>
 
