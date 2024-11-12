@@ -1,5 +1,6 @@
 import React from "react";
 import { Editor } from "@tinymce/tinymce-react";
+import { TINY_API_KEY } from "../constants/helper";
 
 const TinyBox = ({
   content,
@@ -9,7 +10,7 @@ const TinyBox = ({
 }) => {
   return (
     <Editor
-      //   apiKey={TINY_API_KEY}
+      apiKey={TINY_API_KEY}
       init={{
         height,
         readonly: readOnly,

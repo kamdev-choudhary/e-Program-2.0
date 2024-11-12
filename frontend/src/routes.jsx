@@ -31,9 +31,9 @@ const createRoute = (path, name, isLoginRequired, available, Component) => ({
 
 export const routes = [
   createRoute("/", "Home", false, ["all"], Home),
-  createRoute("/article", "Articles", false, ["0"], Article),
+  createRoute("/article", "Articles", false, ["all"], Article),
   createRoute("/library", "Library", false, ["admin"], Library),
-  createRoute("/lectures", "Lectures", false, ["0"], Lectures),
+  createRoute("/lectures", "Lectures", false, ["admin"], Lectures),
   createRoute("/admin/lectures", "Lectures", true, ["admin"], LectureAdmin),
   createRoute("/admin/users", "Users", true, ["admin"], Users),
   createRoute(

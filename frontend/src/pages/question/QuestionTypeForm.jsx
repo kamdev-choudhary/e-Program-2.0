@@ -5,36 +5,45 @@ import MultiCorrectType from "./MultiCorrectType"; // Adjust the path as needed
 const QuestionTypeForm = ({
   type,
   subjects,
+  filteredSubSubjects,
+  filteredTopics,
+  filteredSubTopics,
   selectedSubject,
   setSelectedSubject,
-  subSubjects,
   selectedSubSubject,
   setSelectedSubSubject,
+  selectedTopic,
+  setSelectedTopic,
+  selectedSubTopic,
+  setSelectedSubTopic,
+  classes,
+  selectedClass,
+  setSelectedClass,
 }) => {
+  const commonProps = {
+    subjects,
+    filteredSubSubjects,
+    filteredTopics,
+    filteredSubTopics,
+    selectedSubject,
+    setSelectedSubject,
+    selectedSubSubject,
+    setSelectedSubSubject,
+    selectedTopic,
+    setSelectedTopic,
+    selectedSubTopic,
+    setSelectedSubTopic,
+    classes,
+    selectedClass,
+    setSelectedClass,
+  };
+
   if (type === 1) {
-    return (
-      <SingleCorrectType
-        subjects={subjects}
-        selectedSubject={selectedSubject}
-        setSelectedSubject={setSelectedSubject}
-        subSubjects={subSubjects}
-        selectedSubSubject={selectedSubSubject}
-        setSelectedSubSubject={setSelectedSubSubject}
-      />
-    );
+    return <SingleCorrectType {...commonProps} />;
   }
 
   if (type === 2) {
-    return (
-      <MultiCorrectType
-        subjects={subjects}
-        selectedSubject={selectedSubject}
-        setSelectedSubject={setSelectedSubject}
-        subSubjects={subSubjects}
-        selectedSubSubject={selectedSubSubject}
-        setSelectedSubSubject={setSelectedSubSubject}
-      />
-    );
+    return <MultiCorrectType {...commonProps} />;
   }
 
   return null;

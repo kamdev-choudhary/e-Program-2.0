@@ -308,17 +308,25 @@ function QuestionBank() {
         open={showAddQuestion}
         onClose={() => setShowAddQuestion(false)}
         header="Add Question"
+        height="98vh"
       >
         <QuestionTypeForm
           type={addQuestionType}
+          classes={classes}
+          selectedClass={selectedClass}
+          setSelectedClass={setSelectedClass}
           subjects={subjects}
-          subSubjects={subSubjects}
+          filteredSubSubjects={filteredSubSubjects}
           filteredTopics={filteredTopics}
           filteredSubTopics={filteredSubTopics}
           selectedSubject={selectedSubject}
           setSelectedSubject={setSelectedSubject}
           selectedSubSubject={selectedSubSubject}
           setSelectedSubSubject={setSelectedSubSubject}
+          selectedTopic={selectedTopic}
+          setSelectedTopic={setSelectedTopic}
+          selectedSubTopic={selectedSubTopic}
+          setSelectedSubTopic={setSelectedSubTopic}
         />
       </CustomModal>
     </div>

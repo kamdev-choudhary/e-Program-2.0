@@ -2,6 +2,7 @@ export const BASE_API_URL = "http://localhost:5000";
 export const API_URL = `${BASE_API_URL}/api/v1`;
 
 export const BrandName = "https://img.icons8.com/3d-fluency/94/physics.png";
+export const TINY_API_KEY = "hf7akdrx2grz0ncrhdpjehptx8q8hivzp1xaarqht6toj2i9";
 
 export const icons = {
   dashboard: "https://img.icons8.com/color/48/dashboard-layout.png",
