@@ -192,7 +192,7 @@ export default function LecturePage() {
               <Table aria-label="simple table">
                 <TableHead
                   sx={{
-                    bgcolor: "#28844f",
+                    bgcolor: "#4CAF50",
                     position: "sticky",
                     top: 0,
                     zIndex: 1,

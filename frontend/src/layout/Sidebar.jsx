@@ -14,14 +14,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { images } from "../constants/helper";
 
-function SubMenu({
-  menu,
-  isOpen,
-  navigate,
-  user,
-  isDarkMode,
-  expanded = true,
-}) {
+function SubMenu({ menu, isOpen, navigate, isDarkMode, expanded = true }) {
   return (
     <Collapse in={isOpen} timeout="auto" unmountOnExit>
       {menu?.subMenuItem?.map((submenu, index) => (
@@ -33,13 +26,13 @@ function SubMenu({
               backgroundColor:
                 location.pathname === submenu.path
                   ? expanded
-                    ? "rgba(40,132,79,1)"
+                    ? "rgba(76, 175, 80, 0.9)"
                     : "background.primary"
                   : "transparent",
               "&:hover": {
                 backgroundColor:
                   location.pathname === submenu.path
-                    ? "rgba(40,132,79,0.6)"
+                    ? "rgba(76, 175, 80, 1)"
                     : isDarkMode
                     ? "rgba(0,0,0,0.6)"
                     : "#f1f1f1",
@@ -85,7 +78,6 @@ function Sidebar({ isSmallScreen, expanded = true }) {
     const roleMatch =
       route?.available?.includes("all") ||
       route?.available?.includes(user?.role);
-
     return roleMatch;
   });
 
@@ -119,7 +111,7 @@ function Sidebar({ isSmallScreen, expanded = true }) {
               textAlign: "center",
               fontSize: 40,
               fontWeight: "bold",
-              color: "#28844f",
+              color: "#4CAF50",
               backgroundImage: images[user?.email]
                 ? `url(${images[user.email]})`
                 : "none",
@@ -180,7 +172,7 @@ function Sidebar({ isSmallScreen, expanded = true }) {
                   backgroundColor:
                     location.pathname === page.path
                       ? expanded
-                        ? "rgba(40,132,79,0.9)"
+                        ? "rgba(76, 175, 80, 0.9)"
                         : isDarkMode
                         ? "#000"
                         : "rgba(40,132,79,0.3)"
@@ -189,7 +181,7 @@ function Sidebar({ isSmallScreen, expanded = true }) {
                     backgroundColor:
                       location.pathname === page.path
                         ? expanded
-                          ? "rgba(40,132,79,0.8)" // Lighter on hover when active
+                          ? "rgba(76, 175, 80, 1)" // Lighter on hover when active
                           : isDarkMode
                           ? "rgba(0, 0, 0, 0.8)" // Darker for dark mode
                           : "rgba(40,132,79,0.5)" // Lighter for light mode
@@ -202,7 +194,7 @@ function Sidebar({ isSmallScreen, expanded = true }) {
                   borderRadius: 1,
                 }}
               >
-                {page.icon && <>{page.icon}</>}
+                {page.icon && <>{page?.icon}</>}
                 {expanded && (
                   <>
                     <ListItemText

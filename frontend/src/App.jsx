@@ -11,7 +11,7 @@ function App() {
   const theme = createTheme();
   return (
     <Suspense fallback={<Loader open={true} />}>
-      <ThemeProvider theme={theme}>
+      <ThemeProvider theme={deviceTheme === "light" ? lightTheme : darkTheme}>
         <CssBaseline />
         <BrowserRouter>
           <Routes>

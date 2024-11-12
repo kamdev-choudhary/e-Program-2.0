@@ -13,8 +13,9 @@ import { useGlobalProvider } from "../../GlobalProvider";
 import { useDispatch } from "react-redux";
 
 function LoginPage({ setSelectedAuthPage }) {
-  const { handleLogin } = useGlobalProvider();
+  const { handleLogin, isValidResponse } = useGlobalProvider();
   const dispatch = useDispatch();
+  const [loginError, setLoginError] = useState("");
   const [user, setUser] = useState({
     id: "",
     password: "",
@@ -26,9 +27,11 @@ function LoginPage({ setSelectedAuthPage }) {
       const response = await axios.post(`${API_URL}/auth/login`, {
         ...user,
       });
-      handleLogin(response);
-      if (response.data.status_code === 1) {
+      if (isValidResponse(response)) {
+        handleLogin(response);
         dispatch({ type: "SET_AUTHPAGE", payload: false });
+      } else {
+        setLoginError(response?.data?.message);
       }
     } catch (error) {
       console.error(error);
@@ -67,32 +70,43 @@ function LoginPage({ setSelectedAuthPage }) {
         </Box>
         <TextField
           value={user?.id}
-          onChange={
-            (e) => setUser((prev) => ({ ...prev, id: e.target.value })) // Ensure correct spreading
-          }
+          onChange={(e) => {
+            setUser((prev) => ({ ...prev, id: e.target.value }));
+            setLoginError("");
+          }}
           label="Email/Mobile"
           sx={{ minWidth: 350 }}
+          error={!!loginError}
+          helperText={loginError}
         />
         <TextField
           value={user?.password}
-          onChange={(e) =>
-            setUser((prev) => ({ ...prev, password: e.target.value }))
-          }
+          onChange={(e) => {
+            setUser((prev) => ({ ...prev, password: e.target.value }));
+            setLoginError("");
+          }}
           label="Password"
           sx={{ minWidth: 350 }}
           type="password"
+          error={!!loginError}
+          helperText={loginError}
         />
         <Box>
           <Checkbox />
           Remember me
         </Box>
-        <Button variant="contained" onClick={handleLoginButton}>
+        <Button
+          disabled={!user?.id || !user?.password}
+          variant="contained"
+          onClick={handleLoginButton}
+        >
           Login
         </Button>
         <Button
+          variant="outlined"
           onClick={() => setSelectedAuthPage("register")}
           color="secondary"
-          style={{ textDecoration: "none" }}
+          sx={{ textTransform: "none" }}
         >
           Don't have an Account? Sign Up.
         </Button>

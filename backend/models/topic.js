@@ -3,9 +3,9 @@ const Schema = mongoose.Schema;
 const AutoIncrement = require("mongoose-sequence")(mongoose);
 
 const topicSchema = new Schema({
-  id_subject: { type: Number, required: true },
-  id_sub_subject: { type: Number, required: true },
-  id_topic: { type: Number, uniue: true },
+  id_subject: { type: Number, required: true, unique: false },
+  id_sub_subject: { type: Number, required: true, unique: false },
+  id_topic: { type: Number, unique: true }, // Corrected typo here
   name: { type: String, required: true },
 });
 

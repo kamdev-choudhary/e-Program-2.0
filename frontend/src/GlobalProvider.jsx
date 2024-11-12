@@ -27,13 +27,9 @@ export const GlobalProvider = ({ children }) => {
   };
 
   const handleLogin = (response) => {
-    if (response?.data?.status_code === 1) {
-      localStorage.setItem("token", response?.data?.token);
-      showNotification(response?.data?.message);
-      setUser(jwtDecode(response?.data?.token));
-      setIsLoggedIn(true);
-      showNotification(response?.data?.message, "success");
-    }
+    localStorage.setItem("token", response?.data?.token);
+    setUser(jwtDecode(response?.data?.token));
+    setIsLoggedIn(true);
   };
 
   useEffect(() => {
