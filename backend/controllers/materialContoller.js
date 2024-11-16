@@ -2,7 +2,7 @@ const cloudinary = require("cloudinary").v2;
 const multer = require("multer");
 const fs = require("fs");
 const config = require("../config/config");
-const Book = require("../models/Book"); // Assuming the Book model is in this directory
+const Book = require("../models/book"); // Assuming the Book model is in this directory
 const response = require("../utils/responses");
 
 cloudinary.config({
