@@ -48,6 +48,7 @@ export const CustomModal = ({
       onClose={() => {
         if (autoClose) onClose();
       }}
+      sx={{ zIndex: 10 }}
     >
       <Box
         sx={{

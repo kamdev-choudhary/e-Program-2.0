@@ -28,8 +28,7 @@ import { useSelector, useDispatch } from "react-redux";
 import SiteSetting from "./SiteSetting";
 
 const Header = ({ handleButtonClick, expanded }) => {
-  const { logoutUser, setDeviceTheme, user, scholarDetails, isLoggedIn } =
-    useGlobalProvider();
+  const { logoutUser, photo, user, isLoggedIn } = useGlobalProvider();
   const authPage = useSelector((state) => state.authPage);
   const dispatch = useDispatch();
   const isSmallScreen = useMediaQuery("(max-width:500px)");
@@ -159,25 +158,8 @@ const Header = ({ handleButtonClick, expanded }) => {
           <Typography>Email: {user?.email}</Typography>
           <Typography>Mobile: {user?.mobile}</Typography>
         </Box>
-        {user?.id_role === "5" && <Divider sx={{ my: 1 }} />}
-        {user?.id_role === "5" && (
-          <Box
-            sx={{
-              px: 2,
-              display: "flex",
-              flexDirection: "column",
-              m: 1,
-              mb: 2,
-              rowGap: 1,
-            }}
-          >
-            <Typography>CoE: {scholarDetails?.coe_name}</Typography>
-            <Typography>Batch: {scholarDetails?.batch_name}</Typography>
-            <Typography>Section: {scholarDetails?.section_name}</Typography>
-            <Typography>Address: {scholarDetails?.address}</Typography>
-          </Box>
-        )}
         <Divider sx={{ my: 1 }} />
+
         <Box
           sx={{
             px: 2,
@@ -187,6 +169,13 @@ const Header = ({ handleButtonClick, expanded }) => {
             rowGap: 1,
           }}
         >
+          <Button
+            fullWidth
+            variant="contained"
+            onClick={() => navigate("/profile")}
+          >
+            Profile
+          </Button>
           <Button
             onClick={() => {
               handleMenuClose();

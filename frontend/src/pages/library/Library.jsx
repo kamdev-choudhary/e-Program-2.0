@@ -9,6 +9,7 @@ import {
   Paper,
   IconButton,
 } from "@mui/material";
+import Grid from "@mui/material/Grid2";
 import { API_URL } from "../../constants/helper";
 import axios from "axios";
 import { DataGrid } from "@mui/x-data-grid";
@@ -18,6 +19,7 @@ import { DeleteRounded, EditRounded } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 import Swal from "sweetalert2";
 import { useNavigate } from "react-router-dom";
+import CustomDropDown from "../../components/CustomDropDown";
 
 function Library() {
   const { isValidResponse, user } = useGlobalProvider();
@@ -239,6 +241,13 @@ function Library() {
   return (
     <>
       <Box sx={{ mt: 1 }} component={Paper}>
+        <Box sx={{ p: 1 }}>
+          <Grid container spacing={2}>
+            <Grid item size={{ xs: 12, md: 6, lg: 4 }}>
+              <CustomDropDown label="Category" />
+            </Grid>
+          </Grid>
+        </Box>
         <DataGrid
           columns={columns}
           rows={rows}

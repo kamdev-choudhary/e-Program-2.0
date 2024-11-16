@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const Question = require("./questions");
+const Question = require("./question");
 
 const formatDate = () => {
   const date = new Date();

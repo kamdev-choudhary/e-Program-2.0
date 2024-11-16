@@ -16,6 +16,7 @@ const BookOpen = React.lazy(() => import("./pages/library/BookOpen"));
 const MetaData = React.lazy(() => import("./pages/admin/MetaData"));
 const Batch = React.lazy(() => import("./pages/admin/Batch"));
 const Test = React.lazy(() => import("./pages/test/Test"));
+const Profile = React.lazy(() => import("./pages/auth/Profile"));
 
 const createRoute = (path, name, isLoginRequired, available, Component) => ({
   path,
@@ -69,4 +70,5 @@ export const routes = [
   createRoute("/library/book/:id", "Open Book", false, ["all"], BookOpen),
   createRoute("/admin/batches", "Batch", false, ["All"], Batch),
   createRoute("/test", "Test", false, ["all"], Test),
+  createRoute("/profile", "Profile", true, ["all"], Profile),
 ];

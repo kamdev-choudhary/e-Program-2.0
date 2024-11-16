@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box, Divider, TextField, Typography } from "@mui/material";
 import React from "react";
 import { useGlobalProvider } from "../GlobalProvider";
 import dark from "../assets/dark.png";
@@ -9,9 +9,10 @@ function SiteSetting() {
 
   return (
     <Box>
-      <Box sx={{ display: "flex", justifyContent: "center", py: 1 }}>
+      <Box sx={{ display: "flex", justifyContent: "center", pb: 1 }}>
         <Typography>Themes</Typography>
       </Box>
+      <Divider sx={{ mb: 1 }} />
       <Box
         onClick={toggleTheme}
         sx={{ cursor: "pointer", display: "flex", columnGap: 2 }}
@@ -21,7 +22,7 @@ function SiteSetting() {
             flex: 1,
             p: 0.5,
             ...(deviceTheme === "dark" && {
-              border: "2px solid rgba(0,0,0,0.4)",
+              border: "2px solid rgba(255,255,255,0.4)",
               borderRadius: 2,
             }),
           }}
@@ -56,6 +57,13 @@ function SiteSetting() {
             <Typography>Light Theme</Typography>
           </Box>
         </Box>
+      </Box>
+      <Box sx={{ display: "flex", justifyContent: "center", py: 1 }}>
+        <Typography>Colors</Typography>
+      </Box>
+      <Divider sx={{ mb: 1 }} />
+      <Box sx={{ display: "flex", p: 1 }}>
+        <TextField label="Primary Color" fullWidth type="color" />
       </Box>
     </Box>
   );

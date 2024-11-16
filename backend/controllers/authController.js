@@ -6,26 +6,44 @@ const { v4: uuid } = require("uuid");
 module.exports.login = async (req, res, next) => {
   try {
     const { id, password } = req.body;
-    const userExist = await User.findOne({ email: id });
-    if (!userExist) {
-      return res
-        .status(200)
-        .json({ message: "Email or Password is incorrect", status_code: 0 });
-    }
-    const isPasswordValid = await bcrypt.compare(password, userExist.password);
-    if (isPasswordValid) {
-      const token = await userExist.generateToken();
+    if (!id || !password) {
       return res.status(200).json({
-        message: "Login Successful.",
-        token: token,
-        userId: userExist._id.toString(),
-        status_code: 1,
+        message: "Both ID and password are required.",
+        status_code: 0,
       });
-    } else {
-      return res
-        .status(200)
-        .json({ message: "Invalid email or password", status_code: 0 });
     }
+    const userExist = await User.findOne({
+      $or: [{ email: id }, { mobile: id }],
+    });
+
+    // If user doesn't exist
+    if (!userExist) {
+      return res.status(200).json({
+        message: "Invalid ID or password.",
+        status_code: 0,
+      });
+    }
+
+    // Validate password
+    const isPasswordValid = await bcrypt.compare(password, userExist.password);
+    if (!isPasswordValid) {
+      return res.status(200).json({
+        message: "Invalid ID or password.",
+        status_code: 0,
+      });
+    }
+
+    // Generate token
+    const token = await userExist.generateToken();
+
+    // Respond with success
+    return res.status(200).json({
+      message: "Login Successful.",
+      token,
+      userId: userExist._id.toString(),
+      photo: userExist.photo || null,
+      status_code: 1,
+    });
   } catch (error) {
     next(error);
   }

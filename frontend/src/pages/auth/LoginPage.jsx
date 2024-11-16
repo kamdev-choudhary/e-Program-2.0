@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   Checkbox,
+  FormControlLabel,
   Paper,
   TextField,
   Typography,
@@ -21,7 +22,8 @@ function LoginPage({ setSelectedAuthPage }) {
     password: "",
   });
 
-  const handleLoginButton = async () => {
+  const handleLoginButton = async (event) => {
+    event.preventDefault(); // Prevent default form submission
     try {
       dispatch({ type: "SET_LOADING", payload: true });
       const response = await axios.post(`${API_URL}/auth/login`, {
@@ -31,9 +33,10 @@ function LoginPage({ setSelectedAuthPage }) {
         handleLogin(response);
         dispatch({ type: "SET_AUTHPAGE", payload: false });
       } else {
-        setLoginError(response?.data?.message);
+        setLoginError(response?.data?.message || "Invalid login credentials");
       }
     } catch (error) {
+      setLoginError("An error occurred during login. Please try again.");
       console.error(error);
     } finally {
       dispatch({ type: "SET_LOADING", payload: false });
@@ -46,70 +49,64 @@ function LoginPage({ setSelectedAuthPage }) {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        h: "100%",
+        height: "100%",
+        p: 2,
       }}
+      component={Paper}
     >
       <Box
         sx={{
           display: "flex",
           flexDirection: "column",
-          columnGap: 1,
-          rowGap: 2,
-          p: 4,
+          gap: 2,
+
+          minWidth: 350,
         }}
-        component={Paper}
+        component="form"
+        onSubmit={handleLoginButton}
       >
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
-          <Typography variant="h6">Login</Typography>
-        </Box>
+        <Typography variant="h6" align="center">
+          Login
+        </Typography>
         <TextField
-          value={user?.id}
+          value={user.id}
           onChange={(e) => {
             setUser((prev) => ({ ...prev, id: e.target.value }));
             setLoginError("");
           }}
           label="Email/Mobile"
-          sx={{ minWidth: 350 }}
           error={!!loginError}
           helperText={loginError}
         />
         <TextField
-          value={user?.password}
+          value={user.password}
           onChange={(e) => {
             setUser((prev) => ({ ...prev, password: e.target.value }));
             setLoginError("");
           }}
           label="Password"
-          sx={{ minWidth: 350 }}
           type="password"
           error={!!loginError}
           helperText={loginError}
         />
-        <Box>
-          <Checkbox />
-          Remember me
-        </Box>
+        <FormControlLabel control={<Checkbox />} label="Remember me" />
         <Button
-          disabled={!user?.id || !user?.password}
+          type="submit"
+          disabled={!user.id || !user.password}
           variant="contained"
-          onClick={handleLoginButton}
+          fullWidth
         >
           Login
         </Button>
-        <Button
-          variant="outlined"
+        <Typography
+          variant="body2"
+          align="center"
           onClick={() => setSelectedAuthPage("register")}
           color="secondary"
-          sx={{ textTransform: "none" }}
+          sx={{ cursor: "pointer" }}
         >
-          Don't have an Account? Sign Up.
-        </Button>
+          Don't have an account? Sign Up.
+        </Typography>
       </Box>
     </Box>
   );

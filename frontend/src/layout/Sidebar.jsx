@@ -13,6 +13,7 @@ import { pages } from "./Pages";
 import { useNavigate, useLocation } from "react-router-dom";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { images } from "../constants/helper";
+import ProfilePic from "./ProfilePic";
 
 function SubMenu({ menu, isOpen, navigate, isDarkMode, expanded = true }) {
   return (
@@ -93,46 +94,7 @@ function Sidebar({ isSmallScreen, expanded = true }) {
             m: 1,
           }}
         >
-          <Box
-            sx={{
-              height: expanded ? 95 : 38,
-              width: expanded ? 95 : 38,
-              border: `1px solid ${
-                isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"
-              }`,
-              borderRadius: "50%",
-              mb: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              backgroundColor: isDarkMode ? "#424242" : "#f0f0f0",
-              position: "relative",
-              overflow: "hidden",
-              textAlign: "center",
-              fontSize: 40,
-              fontWeight: "bold",
-              color: "#4CAF50",
-              backgroundImage: images[user?.email]
-                ? `url(${images[user.email]})`
-                : "none",
-              backgroundSize: "cover",
-              backgroundPosition: "top",
-            }}
-          >
-            {!images[user?.email] && (
-              <span
-                style={{
-                  position: "absolute",
-                  top: "50%",
-                  left: "50%",
-                  transform: "translate(-50%, -50%)",
-                }}
-              >
-                {user?.name?.[0] || ""}
-                {user?.name?.split(" ")?.[1]?.[0] || ""}
-              </span>
-            )}
-          </Box>
+          <ProfilePic expanded={expanded} />
 
           {expanded && (
             <>

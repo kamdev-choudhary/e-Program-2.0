@@ -27,10 +27,9 @@ const authLimiter = rateLimit({
 const routes = (app) => {
   // Health check and root endpoint
   app.get("/", (req, res) =>
-    res.status(200).json({ message: "Backend is Running", status_code: 1 })
-  );
-  app.get("/health", (req, res) =>
-    res.status(200).json({ status: "OK", uptime: process.uptime() })
+    res
+      .status(200)
+      .json({ status: "OK", uptime: process.uptime(), status_code: 1 })
   );
 
   // API documentation
@@ -47,7 +46,7 @@ const routes = (app) => {
   app.use("/api/v1/user", userRoute);
   app.use("/api/v1/academic", academicRoute);
   app.use("/api/v1/lectures", lectureRouter);
-  app.use("/api/v1/questionbank", questionRouter);
+  app.use("/api/v1/question", questionRouter);
   app.use("/api/v1/materials", materialRouter);
   app.use("/api/v1/exams", examRouter);
   app.use("/api/v1/batch", batchRouter);
@@ -56,7 +55,7 @@ const routes = (app) => {
 
   // Fallback for unknown routes
   app.use("/*", (req, res) =>
-    res.status(404).json({ message: "Route not found" })
+    res.status(404).json({ message: "Route not available" })
   );
 };
 

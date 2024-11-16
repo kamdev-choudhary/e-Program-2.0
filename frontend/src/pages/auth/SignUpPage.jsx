@@ -135,10 +135,15 @@ function SignUpPage({ setSelectedAuthPage }) {
           value={user.mobile}
           name="mobile"
           onChange={(e) => handleInputChanges(e)}
-          type="tel"
+          type="number"
           sx={{ minWidth: 350 }}
           error={!!errors.mobile}
           helperText={errors.mobile}
+          slotProps={{
+            input: {
+              appearance: "textfield",
+            },
+          }}
         />
         <TextField
           label="Password"

@@ -1,6 +1,6 @@
 import { Alert, Snackbar } from "@mui/material";
 import { createContext, useContext, useEffect, useState } from "react";
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from "jwt-decode"; // Remove the destructuring from jwtDecode import
 import { useSelector } from "react-redux";
 import Loader from "./components/Loader";
 
@@ -8,8 +8,9 @@ export const GlobalContext = createContext();
 
 export const GlobalProvider = ({ children }) => {
   const loading = useSelector((state) => state.loading);
-  const [user, setUser] = useState("");
+  const [user, setUser] = useState(null); // Initialize as null
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [photo, setPhoto] = useState(null);
   const [deviceTheme, setDeviceTheme] = useState("light");
   const [notification, setNotification] = useState({
     open: false,
@@ -19,24 +20,41 @@ export const GlobalProvider = ({ children }) => {
   });
 
   const toggleTheme = () => {
-    if (deviceTheme === "light") {
-      setDeviceTheme("dark");
-    } else {
-      setDeviceTheme("light");
-    }
+    setDeviceTheme((prevTheme) => (prevTheme === "light" ? "dark" : "light"));
   };
 
   const handleLogin = (response) => {
-    localStorage.setItem("token", response?.data?.token);
-    setUser(jwtDecode(response?.data?.token));
-    setIsLoggedIn(true);
+    const token = response?.data?.token;
+    const photo = response?.data?.photo;
+    if (token) {
+      try {
+        localStorage.setItem("token", token);
+        localStorage.setItem("photo", photo);
+        setPhoto(photo);
+        setUser(jwtDecode(token));
+        setIsLoggedIn(true);
+      } catch (error) {
+        console.error(error);
+      }
+    }
   };
 
   useEffect(() => {
     const token = localStorage.getItem("token");
+    const photo = localStorage.getItem("photo");
     if (token) {
-      setIsLoggedIn(true);
-      setUser(jwtDecode(token));
+      try {
+        const decodedUser = jwtDecode(token);
+        if (decodedUser) {
+          setUser(decodedUser);
+          setPhoto(photo);
+          setIsLoggedIn(true);
+        }
+      } catch (error) {
+        console.error("Invalid token:", error);
+        localStorage.clear();
+        setIsLoggedIn(false); // Ensure user is logged out if the token is invalid
+      }
     }
   }, []);
 
@@ -64,7 +82,6 @@ export const GlobalProvider = ({ children }) => {
     setNotification({ open: true, message, type, variant });
   };
 
-  // Handle notification close
   const handleClose = (event, reason) => {
     if (reason === "timeout" || reason === "clickaway") {
       setNotification((prev) => ({ ...prev, open: false }));
@@ -82,9 +99,10 @@ export const GlobalProvider = ({ children }) => {
       value={{
         user,
         isLoggedIn,
+        deviceTheme,
+        photo,
         isValidResponse,
         handleLogin,
-        deviceTheme,
         logoutUser,
         toggleTheme,
       }}
@@ -101,7 +119,7 @@ export const GlobalProvider = ({ children }) => {
           sx={{ width: "100%" }}
           variant={notification.variant}
         >
-          {notification.message}
+          {notification?.message}
         </Alert>
       </Snackbar>
       <Loader open={loading} />
@@ -110,5 +128,9 @@ export const GlobalProvider = ({ children }) => {
 };
 
 export const useGlobalProvider = () => {
-  return useContext(GlobalContext);
+  const context = useContext(GlobalContext);
+  if (!context) {
+    throw new Error("useGlobalProvider must be used within a GlobalProvider");
+  }
+  return context;
 };

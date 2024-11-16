@@ -72,3 +72,34 @@ module.exports.deleteUser = async (req, res, next) => {
     next(error);
   }
 };
+
+// Update Profile Pics
+module.exports.updateProfilePic = async (req, res, next) => {
+  try {
+    const { id, photo } = req.body; // Assuming 'photo' is Base64 or a URL
+    if (!id || !photo) {
+      return res.status(400).json({ message: "Missing id or photo" });
+    }
+
+    // Find the user by their ID
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Update the user's profile picture
+    user.photo = photo; // Assuming 'photo' is the field where profile pic is stored
+    await user.save();
+
+    return res
+      .status(200)
+      .json({
+        message: "Profile picture updated successfully",
+        user,
+        status_code: 1,
+      });
+  } catch (error) {
+    console.error(error);
+    next(error);
+  }
+};

@@ -10,4 +10,6 @@ router
 
 router.route("/role/:role").get(userController.getUserbyRole);
 
+router.route("/profile-pic").post(userController.updateProfilePic);
+
 module.exports = router;

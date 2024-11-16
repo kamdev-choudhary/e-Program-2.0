@@ -127,7 +127,7 @@ function QuestionBank() {
   return (
     <div>
       <Box component={Paper} sx={{ p: 1 }}>
-        <Grid container spacing={2}>
+        <Grid container spacing={1}>
           <Grid size={{ xs: 12, md: 6, lg: 4 }}>
             <CustomDropDown
               data={classes}
@@ -192,7 +192,7 @@ function QuestionBank() {
       </Box>
 
       <Box component={Paper} sx={{ mt: 1, p: 1 }}>
-        <Grid container spacing={2}>
+        <Grid container spacing={1}>
           <Grid size={{ xs: 12, md: 6, lg: 6 }}>
             <TextField
               fullWidth

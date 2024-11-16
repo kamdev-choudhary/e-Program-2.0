@@ -1,30 +1,20 @@
-import { Backdrop, Box, Modal, Typography } from "@mui/material";
+import { Backdrop, Box, Typography } from "@mui/material";
 import React from "react";
 import { MoonLoader } from "react-spinners";
-import { useGlobalProvider } from "../GlobalProvider";
 
 function Loader({ open }) {
-  const { deviceTheme } = useGlobalProvider();
-
   return (
-    <Backdrop open={open} sx={{ zIndex: 1500 }}>
-      <Box
-        sx={{
-          bgcolor: deviceTheme === "light" ? "#fff" : "#333",
-          p: 3.5,
-          borderRadius: 2,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          flexDirection: "column",
-          alignContent: "center",
-          columnGap: 2,
-          rowGap: 2,
-          pt: 5,
-        }}
-      >
-        <MoonLoader speedMultiplier={0.7} color="#4584a8" />
-        <Typography sx={{ mt: 1 }}>Please wait ...</Typography>
+    <Backdrop
+      open={open}
+      sx={{
+        zIndex: 1500,
+        backdropFilter: "blur(5px)", // Adjust the blur level here
+        backgroundColor: "rgba(0, 0, 0, 0.5)", // Optional: Add some transparency to the background
+      }}
+    >
+      <Box>
+        <MoonLoader speedMultiplier={0.5} color="#fff" />
+        <Typography sx={{ mt: 1, color: "#fff" }}>Please wait ...</Typography>
       </Box>
     </Backdrop>
   );

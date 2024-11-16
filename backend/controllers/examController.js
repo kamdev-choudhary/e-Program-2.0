@@ -1,5 +1,5 @@
 const ExamTemplate = require("../models/examTemplate");
-const Question = require("../models/questions");
+const Question = require("../models/question");
 const Batch = require("../models/batch");
 
 module.exports.addToTemplate = async (req, res, next) => {

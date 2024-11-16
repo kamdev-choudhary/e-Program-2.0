@@ -181,10 +181,7 @@ function Messages() {
                   p: 1,
                 }}
               >
-                <ListItem
-                  button
-                  onClick={() => handleChatClick(chat.participant._id)}
-                >
+                <ListItem onClick={() => handleChatClick(chat.participant._id)}>
                   <ListItemAvatar>
                     <Avatar>
                       <Image />

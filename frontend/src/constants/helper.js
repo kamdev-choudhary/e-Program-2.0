@@ -30,4 +30,8 @@ export const icons = {
   pattern: "https://img.icons8.com/3d-fluency/94/workflow.png",
 };
 
+export const lightColor = {
+  primary: "#1976D2",
+};
+
 export const images = {};

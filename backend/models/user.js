@@ -70,7 +70,7 @@ userSchema.methods.generateToken = async function () {
   try {
     return jwt.sign(
       {
-        userId: this._id.toString(),
+        _id: this._id.toString(),
         email: this.email,
         role: this.role,
         name: this.name,

@@ -11,6 +11,7 @@ function BookOpen() {
       <h1>BookOpen</h1>
       <p>Book ID: {bookId}</p>
       <p>Book link: {fileLink}</p>
+      <iframe src={fileLink} frameborder="0"></iframe>
     </div>
   );
 }
