@@ -19,7 +19,6 @@ import ScrollableTabs from "../../components/ScrollableTabs";
 import { DataGrid } from "@mui/x-data-grid";
 import CustomToolbar from "../../components/CustomToolbar";
 import { API_URL, icons } from "../../constants/helper";
-import { useWebSocket } from "../../websocketContext";
 import ChatContent from "./ChatContent";
 import { useDispatch } from "react-redux";
 import axios from "axios";
@@ -32,7 +31,6 @@ const tabs = [
 function Messages() {
   const { user, isValidResponse } = useGlobalProvider();
   const dispatch = useDispatch();
-  const socket = useWebSocket();
   const chatContentRef = useRef();
   const [chats, setChats] = useState([]);
   const [showUsersList, setShowUsersList] = useState(false);
