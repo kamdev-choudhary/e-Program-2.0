@@ -9,17 +9,15 @@ const helmet = require("helmet");
 const { port } = require("./config/config");
 const routes = require("./routes");
 const logger = require("./utils/logger");
-const limiter = require("./middlewares/rateLimiter");
 const http = require("http");
 const setupSocket = require("./utils/socket");
 
 // Middleware setup
 app.use(helmet());
 app.use(cors());
-app.use(bodyParser.json({ limit: "10mb" }));
-app.use(bodyParser.urlencoded({ limit: "10mb", extended: true }));
+app.use(bodyParser.json({ limit: "50mb" }));
+app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
 app.use(compression());
-// app.use(limiter);
 routes(app);
 app.use(errorMiddleware);
 
