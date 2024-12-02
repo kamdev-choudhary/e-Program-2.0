@@ -19,6 +19,12 @@ import { CustomModal } from "../../../components/CustomModal";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
 import CustomDropDown from "../../../components/CustomDropDown";
+import {
+  getAllSubjects,
+  getAllSubSubjects,
+  getAllSubTopics,
+  getAllTopics,
+} from "../../../api/academic";
 
 function AcademicInfo() {
   const { isValidResponse } = useGlobalProvider();
@@ -86,21 +92,19 @@ function AcademicInfo() {
   const getData = async () => {
     dispatch({ type: "SET_LOADING", payload: true });
     try {
-      const subjectResponse = await axios.get(`${API_URL}/academic/subject`);
+      const subjectResponse = await getAllSubjects();
       if (isValidResponse(subjectResponse)) {
         setSubjects(subjectResponse?.data?.subjects);
       }
-      const subSubjectResponse = await axios.get(
-        `${API_URL}/academic/sub-subject`
-      );
+      const subSubjectResponse = getAllSubSubjects();
       if (isValidResponse(subSubjectResponse)) {
         setSubSubjects(subSubjectResponse?.data?.subSubjects);
       }
-      const topicResponse = await axios.get(`${API_URL}/academic/topic`);
+      const topicResponse = await getAllTopics();
       if (isValidResponse(topicResponse)) {
         setTopics(topicResponse?.data?.topics);
       }
-      const subTopicResponse = await axios.get(`${API_URL}/academic/sub-topic`);
+      const subTopicResponse = await getAllSubTopics();
       if (isValidResponse(subTopicResponse)) {
         setSubTopics(subTopicResponse?.data?.subTopics);
       }

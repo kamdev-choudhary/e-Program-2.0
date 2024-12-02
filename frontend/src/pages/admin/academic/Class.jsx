@@ -1,26 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { AddRounded, Delete, Edit } from "@mui/icons-material";
 import {
-  Divider,
   Typography,
   Box,
   Button,
   List,
   ListItem,
   TextField,
-  Paper,
   IconButton,
   Card,
-  CardHeader,
   CardContent,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
-import { API_URL } from "../../../constants/helper";
-import axios from "axios";
 import { useGlobalProvider } from "../../../GlobalProvider";
 import { CustomModal } from "../../../components/CustomModal";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
+import {
+  addNewClass,
+  deleteClass,
+  editClass,
+  getClasses,
+} from "../../../api/academic";
 
 function AcademicInfo() {
   const { isValidResponse } = useGlobalProvider();
@@ -29,17 +30,12 @@ function AcademicInfo() {
   const [showAddClass, setShowAddClass] = useState(false);
   const [showEditClass, setShowEditClass] = useState(false);
   const [newClass, setNewClass] = useState({ name: "", value: "" });
-  const [error, setError] = useState("");
   const [selectedClass, setSelectedClass] = useState([]);
 
-  const getClasses = async () => {
+  const fetchClasses = async () => {
     try {
       dispatch({ type: "SET_LOADING", payload: true });
-      const response = await axios.get(`${API_URL}/academic/class`, {
-        headers: {
-          "api-key": "kd",
-        },
-      });
+      const response = await getClasses();
       if (isValidResponse(response)) {
         setClasses(response.data.classes);
       }
@@ -51,7 +47,7 @@ function AcademicInfo() {
   };
 
   useEffect(() => {
-    getClasses();
+    fetchClasses();
   }, []);
 
   const handleSaveClass = async () => {
@@ -62,7 +58,7 @@ function AcademicInfo() {
 
     try {
       dispatch({ type: "SET_LOADING", payload: true });
-      const response = await axios.post(`${API_URL}/academic/class`, newClass);
+      const response = await addNewClass({ newClass: newClass });
       if (isValidResponse(response)) {
         setClasses(response.data.classes);
         setNewClass({ name: "", value: "" }); // Reset form
@@ -92,9 +88,7 @@ function AcademicInfo() {
         confirmButtonText: "Yes, delete it!",
       }).then(async (result) => {
         if (result.isConfirmed) {
-          const response = await axios.delete(
-            `${API_URL}/academic/class/${id}`
-          );
+          const response = await deleteClass({ id: id });
           if (isValidResponse(response)) {
             setClasses(response.data.classes);
             Swal.fire({
@@ -106,7 +100,7 @@ function AcademicInfo() {
         }
       });
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -116,12 +110,7 @@ function AcademicInfo() {
         Swal.fire({ title: "Both Class Name and Value are required" });
         return;
       }
-      const response = await axios.patch(
-        `${API_URL}/academic/class/${selectedClass?._id}`,
-        {
-          ...selectedClass,
-        }
-      );
+      const response = await editClass({ selectedClass: selectedClass });
       setClasses(response?.data?.classes);
       setShowEditClass(false);
     } catch (error) {

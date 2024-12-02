@@ -1,12 +1,11 @@
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
-import axios from "axios";
 import React, { useState } from "react";
-import { API_URL } from "../../constants/helper";
 import { useGlobalProvider } from "../../GlobalProvider";
 import { useDispatch } from "react-redux";
+import { registerUser } from "../../api/user";
 
 function SignUpPage({ setSelectedAuthPage }) {
-  const { handleLogin } = useGlobalProvider();
+  const { handleLogin, isValidResponse } = useGlobalProvider();
   const dispatch = useDispatch();
   const [user, setUser] = useState({
     email: "",
@@ -59,11 +58,12 @@ function SignUpPage({ setSelectedAuthPage }) {
     try {
       dispatch({ type: "SET_LOADING", payload: true });
       if (validateFields()) {
-        const response = await axios.post(`${API_URL}/auth/register`, {
-          ...user,
-        });
-        handleLogin(response);
-        dispatch({ type: "SET_AUTHPAGE", payload: false });
+        const response = await registerUser({ user: user });
+        if (isValidResponse(response)) {
+          handleLogin(response);
+          dispatch({ type: "SET_AUTHPAGE", payload: false });
+        } else {
+        }
       }
     } catch (error) {
       console.error(error);

@@ -1,17 +1,19 @@
 import React, { useEffect, useState } from "react";
 import YouTubeVideo from "../../components/YouTubeVideoPlayer";
 import { useGlobalProvider } from "../../GlobalProvider";
-import { API_URL, icons } from "../../constants/helper";
+import { icons } from "../../constants/helper";
 import CustomDropDown from "../../components/CustomDropDown";
-import { Search as SearchIcon } from "@mui/icons-material";
-import { useDispatch } from "react-redux";
-import axios from "axios";
-
+import {
+  Search as SearchIcon,
+  KeyboardArrowDown,
+  KeyboardArrowUp,
+} from "@mui/icons-material";
 import {
   Box,
+  Collapse,
+  FormControl,
   InputAdornment,
   OutlinedInput,
-  FormControl,
   Paper,
   Table,
   TableBody,
@@ -20,88 +22,43 @@ import {
   TableHead,
   TableRow,
   Typography,
+  IconButton,
 } from "@mui/material";
 import Grid from "@mui/material/Grid2";
+import { useDispatch } from "react-redux";
+import _ from "lodash";
+import { getLecturesByClass } from "../../api/lectures";
+import { getAllAcademicData } from "../../api/academic";
 
-function CollapsibleTable({ lectures, playLecture }) {
-  return (
-    <TableContainer dense={true} component={Paper} elevation={3}>
-      <Table aria-label="simple table">
-        <TableHead sx={{ bgcolor: "#914D7E" }}>
-          <TableRow>
-            <TableCell align="center" sx={{ color: "#fff" }}>
-              Chapter Name
-            </TableCell>
-            <TableCell align="center" sx={{ color: "#fff" }}>
-              Lecture #
-            </TableCell>
-            <TableCell align="center" sx={{ color: "#fff" }}>
-              Video
-            </TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {lectures.map((lecture, lectureIndex) => (
-            <TableRow
-              onClick={() => playLecture(lecture.videoId)}
-              sx={{
-                cursor: "pointer",
-                ":hover": {
-                  bgcolor: "#f2f2f2",
-                },
-              }}
-              key={lectureIndex}
-            >
-              <TableCell align="center">{lecture.chapterName}</TableCell>
-              <TableCell align="center">{lecture.lectureNumber}</TableCell>
-              <TableCell align="center">
-                <Box sx={{ display: "flex", alignItems: "center" }}>
-                  <img src={icons.youTube} height={25} width={25} />
-                  <Typography variant="body" color="error">
-                    Play
-                  </Typography>
-                </Box>
-              </TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
-  );
-}
-
-export default function LecturePage() {
-  const { isLoggedIn, isValidResponse } = useGlobalProvider();
+function LecturePage() {
+  const { isValidResponse } = useGlobalProvider();
   const dispatch = useDispatch();
   const [lectures, setLectures] = useState([]);
   const [collapsedChapter, setCollapsedChapter] = useState(null);
   const [currVID, setCurrVID] = useState(null);
   const [filterText, setFilterText] = useState("");
   const [showVideoPopup, setShowVideoPopup] = useState(false);
-  const [selectedClass, setSelectedClass] = useState("IX");
-  const [selectedSubject, setSelectedSubject] = useState("");
+  const [selectedClass, setSelectedClass] = useState("");
   const [classes, setClasses] = useState([]);
 
-  const handleFilterTextChange = (e) => {
-    setFilterText(e.target.value);
+  const handleFilterTextChange = (e) => setFilterText(e.target.value);
+
+  const getAcademicData = async () => {
+    try {
+      const response = await getAllAcademicData();
+      if (isValidResponse(response)) {
+        setClasses(response?.data?.classes);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const getLectures = async () => {
     dispatch({ type: "SET_LOADING", payload: true });
     try {
-      const response = await axios.get(`${API_URL}/lectures`);
-      if (isValidResponse(response)) {
-        const sortedLectures = response?.data?.lectures.sort((a, b) => {
-          if (a.class !== b.class) {
-            return a.class.localeCompare(b.class);
-          }
-          if (a.subject !== b.subject) {
-            return a.subject.localeCompare(b.subject);
-          }
-          return a.lectureNumber - b.lectureNumber;
-        });
-        setLectures(sortedLectures);
-      }
+      const response = await getLecturesByClass({ classLevel: selectedClass });
+      setLectures(response?.data?.lectures);
     } catch (error) {
       console.error(error);
     } finally {
@@ -110,36 +67,14 @@ export default function LecturePage() {
   };
 
   useEffect(() => {
+    getAcademicData();
     getLectures();
   }, []);
 
-  const filteredLecture = () => {
-    return lectures.filter(
-      (lecture) =>
-        (lecture.class === selectedClass || lecture.class === "") &&
-        (selectedSubject === "" || lecture.subject === selectedSubject) &&
-        Object.values(lecture).some(
-          (field) =>
-            (typeof field === "string" || typeof field === "number") &&
-            field.toString().toLowerCase().includes(filterText.toLowerCase())
-        )
-    );
-  };
+  const groupedLectures = _.groupBy(lectures, "chapterName");
 
-  const filteredLectures = filteredLecture();
-
-  const toggleChapter = (chapterName) => {
+  const toggleChapter = (chapterName) =>
     setCollapsedChapter(collapsedChapter === chapterName ? null : chapterName);
-  };
-
-  const lecturesByChapter = filteredLectures.reduce((acc, lecture) => {
-    const { chapterName } = lecture;
-    if (!acc[chapterName]) {
-      acc[chapterName] = [];
-    }
-    acc[chapterName].push(lecture);
-    return acc;
-  }, {});
 
   const playLecture = (videoId) => {
     setCurrVID(videoId);
@@ -152,11 +87,11 @@ export default function LecturePage() {
         <Grid container spacing={1} component={Paper} sx={{ p: 1, py: 2 }}>
           <Grid size={{ xs: 6, lg: 3 }}>
             <CustomDropDown
-              data={[{ class: "Class IX", classes: "IX" }]}
+              data={classes}
               value={selectedClass}
-              dropdownValue="classes"
+              dropdownValue="value"
               label="Class"
-              name="class"
+              name="name"
               onChange={(e) => setSelectedClass(e.target.value)}
             />
           </Grid>
@@ -168,7 +103,7 @@ export default function LecturePage() {
                 onChange={handleFilterTextChange}
                 startAdornment={
                   <InputAdornment position="start">
-                    Search <SearchIcon />
+                    <SearchIcon />
                   </InputAdornment>
                 }
               />
@@ -180,72 +115,101 @@ export default function LecturePage() {
         <Grid container spacing={1}>
           <Grid size={{ xs: 12, lg: 6 }} sx={{ order: { xs: 1, lg: 2 } }}>
             {showVideoPopup && (
-              <>
-                <Box sx={{ padding: 1 }}>
-                  <YouTubeVideo videoId={currVID} />
-                </Box>
-              </>
+              <Box sx={{ padding: 1 }}>
+                <YouTubeVideo videoId={currVID} />
+              </Box>
             )}
           </Grid>
           <Grid size={{ xs: 12, lg: 6 }} sx={{ order: { xs: 2, lg: 1 } }}>
             <TableContainer component={Paper} style={{ maxHeight: "70vh" }}>
-              <Table aria-label="simple table">
-                <TableHead
-                  sx={{
-                    bgcolor: "#4CAF50",
-                    position: "sticky",
-                    top: 0,
-                    zIndex: 1,
-                  }}
-                >
-                  <TableRow sx={{ bgcolor: "#28844f" }}>
-                    <TableCell align="center" sx={{ color: "#fff" }}>
-                      Subject
-                    </TableCell>
-                    <TableCell align="center" sx={{ color: "#fff" }}>
-                      Chapter
-                    </TableCell>
-                    <TableCell align="center" sx={{ color: "#fff" }}>
-                      # of Lectures
-                    </TableCell>
+              <Table stickyHeader>
+                <TableHead>
+                  <TableRow>
+                    <TableCell align="center">Chapter Name</TableCell>
+                    <TableCell align="center">Subject</TableCell>
+                    <TableCell align="center"># of Lectures</TableCell>
+                    <TableCell />
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {Object.keys(lecturesByChapter).map((chapterName, index) => (
+                  {Object.keys(groupedLectures).map((chapterName, index) => (
                     <React.Fragment key={index}>
-                      {(index === 0 ||
-                        chapterName !==
-                          Object.keys(lecturesByChapter)[index - 1]) && (
-                        <TableRow
-                          sx={{
-                            cursor: "pointer",
-                            ":hover": {
-                              bgcolor: "#f2f3f4",
-                            },
-                          }}
-                          onClick={() => toggleChapter(chapterName)}
+                      <TableRow onClick={() => toggleChapter(chapterName)}>
+                        <TableCell align="center">{chapterName}</TableCell>
+                        <TableCell align="center">
+                          {groupedLectures[chapterName][0]?.subject}
+                        </TableCell>
+                        <TableCell align="center">
+                          {groupedLectures[chapterName].length}
+                        </TableCell>
+                        <TableCell>
+                          <IconButton size="small">
+                            {collapsedChapter === chapterName ? (
+                              <KeyboardArrowUp />
+                            ) : (
+                              <KeyboardArrowDown />
+                            )}
+                          </IconButton>
+                        </TableCell>
+                      </TableRow>
+                      <TableRow>
+                        <TableCell
+                          style={{ paddingBottom: 0, paddingTop: 0 }}
+                          colSpan={4}
                         >
-                          <TableCell align="center">
-                            {lecturesByChapter[chapterName][0].subject}
-                          </TableCell>
-                          <TableCell align="center">
-                            {lecturesByChapter[chapterName][0].chapterName}
-                          </TableCell>
-                          <TableCell align="center">
-                            {lecturesByChapter[chapterName].length}
-                          </TableCell>
-                        </TableRow>
-                      )}
-                      {collapsedChapter === chapterName && (
-                        <TableRow key={index + "-collapse"}>
-                          <TableCell colSpan="4">
-                            <CollapsibleTable
-                              lectures={lecturesByChapter[chapterName]}
-                              playLecture={playLecture}
-                            />
-                          </TableCell>
-                        </TableRow>
-                      )}
+                          <Collapse
+                            in={collapsedChapter === chapterName}
+                            timeout="auto"
+                            unmountOnExit
+                            sx={{ px: 2 }}
+                          >
+                            <Box sx={{ margin: 1 }}>
+                              {groupedLectures[chapterName].map(
+                                (lecture, idx) => (
+                                  <Box
+                                    key={idx}
+                                    sx={{
+                                      display: "flex",
+                                      justifyContent: "space-between",
+                                      alignItems: "center",
+                                      paddingY: 1,
+                                    }}
+                                  >
+                                    <Typography>
+                                      Lecture #{lecture.lectureNumber}:{" "}
+                                      {lecture.lectureTitle}
+                                    </Typography>
+                                    <Box
+                                      onClick={() =>
+                                        playLecture(lecture.videoId)
+                                      }
+                                      sx={{
+                                        display: "flex",
+                                        alignItems: "center",
+                                        cursor: "pointer",
+                                      }}
+                                    >
+                                      <img
+                                        src={icons.youTube}
+                                        height={25}
+                                        width={25}
+                                        alt="Play"
+                                      />
+                                      <Typography
+                                        sx={{ ml: 1 }}
+                                        variant="body2"
+                                        color="error"
+                                      >
+                                        Play
+                                      </Typography>
+                                    </Box>
+                                  </Box>
+                                )
+                              )}
+                            </Box>
+                          </Collapse>
+                        </TableCell>
+                      </TableRow>
                     </React.Fragment>
                   ))}
                 </TableBody>
@@ -257,3 +221,5 @@ export default function LecturePage() {
     </>
   );
 }
+
+export default LecturePage;

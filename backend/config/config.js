@@ -12,6 +12,8 @@ const config = {
   cloudName: "dgwlqoijt",
   cloudApiKey: "295749936547257",
   cloudSecret: "LKxfF4nyG0lIb1pgpHvDrfAZWmY",
+  Auth0Domain: "",
+  Auth0Audience: "",
 };
 
 module.exports = config;

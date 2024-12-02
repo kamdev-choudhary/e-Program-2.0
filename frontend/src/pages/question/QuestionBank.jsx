@@ -10,14 +10,13 @@ import {
   TextField,
 } from "@mui/material";
 import { Grid2 as Grid } from "@mui/material";
-import { API_URL } from "../../constants/helper";
 import { useGlobalProvider } from "../../GlobalProvider";
-import axios from "axios";
 import { useDispatch } from "react-redux";
 import { CustomModal } from "../../components/CustomModal";
 import { DataGrid } from "@mui/x-data-grid";
 import { AddRounded, MenuRounded, RefreshRounded } from "@mui/icons-material";
 import QuestionTypeForm from "./QuestionTypeForm";
+import { getAllAcademicData } from "../../api/academic";
 
 function QuestionBank() {
   const { isValidResponse } = useGlobalProvider();
@@ -51,7 +50,7 @@ function QuestionBank() {
   const getMetaData = async () => {
     try {
       dispatch({ type: "SET_LOADING", payload: true });
-      const response = await axios.get(`${API_URL}/academic/metadata`);
+      const response = await getAllAcademicData();
       if (isValidResponse(response)) {
         setClasses(response.data.classes);
         setSubjects(response.data.subjects);

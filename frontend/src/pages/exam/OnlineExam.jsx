@@ -4,11 +4,10 @@ import { DataGrid } from "@mui/x-data-grid";
 import CustomToolbar from "../../components/CustomToolbar";
 import { DeleteRounded, EditRounded } from "@mui/icons-material";
 import Swal from "sweetalert2";
-import axios from "axios";
-import { API_URL } from "../../constants/helper";
 import { CustomModal } from "../../components/CustomModal";
 import Loader from "../../components/Loader";
 import { useGlobalProvider } from "../../GlobalProvider";
+import { getAllExamTemplates } from "../../api/exam";
 
 function OnlineExam() {
   const { isValidResponse } = useGlobalProvider();
@@ -23,7 +22,7 @@ function OnlineExam() {
   const getTemplates = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get(`${API_URL}/exam/templates`);
+      const response = await getAllExamTemplates();
       if (isValidResponse(response)) {
         setTemplates(response?.data?.templates);
       }

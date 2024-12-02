@@ -68,7 +68,7 @@ export const routes = [
   createRoute("/admin/metadata", "Academic Info", true, ["admin"], MetaData),
   createRoute("/message", "Message", true, ["all"], Message),
   createRoute("/library/book/:id", "Open Book", false, ["all"], BookOpen),
-  createRoute("/admin/batches", "Batch", false, ["All"], Batch),
+  createRoute("/admin/batches", "Batch", true, ["admin"], Batch),
   createRoute("/test", "Test", false, ["all"], Test),
   createRoute("/profile", "Profile", true, ["all"], Profile),
 ];

@@ -2,6 +2,7 @@ const rateLimit = require("express-rate-limit");
 const swaggerUi = require("swagger-ui-express");
 const swaggerDocument = require("./swagger.json");
 const { api_key } = require("./config/config");
+const verifyToken = require("./middlewares/verify-token");
 
 // Routers
 const authRouter = require("./routers/authRouter");
@@ -43,15 +44,15 @@ const routes = (app) => {
   app.use("/api/v1/auth", authRouter);
 
   // API routes with API key check where applicable
-  app.use("/api/v1/user", userRoute);
-  app.use("/api/v1/academic", academicRoute);
-  app.use("/api/v1/lectures", lectureRouter);
-  app.use("/api/v1/question", questionRouter);
-  app.use("/api/v1/materials", materialRouter);
-  app.use("/api/v1/exams", examRouter);
-  app.use("/api/v1/batch", batchRouter);
-  app.use("/api/v1/doubts", doubtRoute);
-  app.use("/api/v1/chat", chatRoute);
+  app.use("/api/v1/user", verifyToken, userRoute);
+  app.use("/api/v1/academic", verifyToken, academicRoute);
+  app.use("/api/v1/lectures", verifyToken, lectureRouter);
+  app.use("/api/v1/question", verifyToken, questionRouter);
+  app.use("/api/v1/materials", verifyToken, materialRouter);
+  app.use("/api/v1/exams", verifyToken, examRouter);
+  app.use("/api/v1/batch", verifyToken, batchRouter);
+  app.use("/api/v1/doubts", verifyToken, doubtRoute);
+  app.use("/api/v1/chat", verifyToken, chatRoute);
 
   // Fallback for unknown routes
   app.use("/*", (req, res) =>

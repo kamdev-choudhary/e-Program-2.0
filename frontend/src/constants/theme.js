@@ -48,7 +48,6 @@ export const getCustomTheme = (mode = "light", customColors = {}) => {
           root: {
             minWidth: 100,
             textTransform: "none",
-            padding: "10px 20px",
             "&:hover": {
               boxShadow: "0px 4px 10px rgba(255, 255, 255, 0.1)",
             },

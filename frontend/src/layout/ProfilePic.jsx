@@ -3,9 +3,8 @@ import { Box, IconButton, Button, OutlinedInput } from "@mui/material";
 import { useGlobalProvider } from "../GlobalProvider";
 import { CustomModal } from "../components/CustomModal";
 import { EditRounded, VisibilityRounded } from "@mui/icons-material";
-import axios from "axios";
-import { API_URL } from "../constants/helper";
 import { useDispatch } from "react-redux";
+import { uploadProfilePic } from "../api/user";
 
 function ProfilePic({ expanded }) {
   const { user, deviceTheme, photo, isValidResponse } = useGlobalProvider();
@@ -36,8 +35,8 @@ function ProfilePic({ expanded }) {
     try {
       dispatch({ type: "SET_LOADING", payload: true });
       if (newPhoto) {
-        const response = await axios.post(`${API_URL}/user/profile-pic`, {
-          id: user?._id,
+        const response = await uploadProfilePic({
+          user: user,
           photo: newPhoto,
         });
         if (isValidResponse(response)) {

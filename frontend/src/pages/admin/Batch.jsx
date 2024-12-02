@@ -1,12 +1,11 @@
 import React, { useMemo, useState } from "react";
+import { DeleteRounded, EditRounded } from "@mui/icons-material";
 import { Box, IconButton, Paper } from "@mui/material";
 import { DataGrid } from "@mui/x-data-grid";
+import { getAllBatches } from "../../api/batch";
+import { CustomModal } from "../../components/CustomModal";
 import CustomToolbar from "../../components/CustomToolbar";
 import { useGlobalProvider } from "../../GlobalProvider";
-import axios from "axios";
-import { API_URL } from "../../constants/helper";
-import { DeleteRounded, EditRounded } from "@mui/icons-material";
-import { CustomModal } from "../../components/CustomModal";
 
 function Batch() {
   const { isValidResponse } = useGlobalProvider();
@@ -14,7 +13,7 @@ function Batch() {
 
   const getBatches = async () => {
     try {
-      const response = await axios.get(`${API_URL}/batch`);
+      const response = await getAllBatches();
       if (isValidResponse(response)) {
         setBatches(response?.data?.batches);
       }

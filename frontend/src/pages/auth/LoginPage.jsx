@@ -8,10 +8,9 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
-import axios from "axios";
-import { API_URL } from "../../constants/helper";
 import { useGlobalProvider } from "../../GlobalProvider";
 import { useDispatch } from "react-redux";
+import { loginUser } from "../../api/user";
 
 function LoginPage({ setSelectedAuthPage }) {
   const { handleLogin, isValidResponse } = useGlobalProvider();
@@ -26,9 +25,7 @@ function LoginPage({ setSelectedAuthPage }) {
     event.preventDefault(); // Prevent default form submission
     try {
       dispatch({ type: "SET_LOADING", payload: true });
-      const response = await axios.post(`${API_URL}/auth/login`, {
-        ...user,
-      });
+      const response = await loginUser({ user: user });
       if (isValidResponse(response)) {
         handleLogin(response);
         dispatch({ type: "SET_AUTHPAGE", payload: false });

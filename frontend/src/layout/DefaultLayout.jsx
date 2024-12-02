@@ -3,10 +3,8 @@ import Sidebar from "./Sidebar";
 import Body from "./Body";
 import Header from "./Header";
 import { Box, useMediaQuery, Drawer } from "@mui/material";
-import { useGlobalProvider } from "../GlobalProvider";
 
 export default function Layout2() {
-  const { deviceTheme } = useGlobalProvider();
   const [expanded, setExpanded] = useState(true);
   const isSmallScreen = useMediaQuery("(max-width:500px)");
   const [openDrawer, setOpenDrawer] = useState(false);

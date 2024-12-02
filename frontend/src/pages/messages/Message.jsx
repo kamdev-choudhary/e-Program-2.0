@@ -18,10 +18,11 @@ import { useGlobalProvider } from "../../GlobalProvider";
 import ScrollableTabs from "../../components/ScrollableTabs";
 import { DataGrid } from "@mui/x-data-grid";
 import CustomToolbar from "../../components/CustomToolbar";
-import { API_URL, icons } from "../../constants/helper";
+import { icons } from "../../constants/helper";
 import ChatContent from "./ChatContent";
 import { useDispatch } from "react-redux";
-import axios from "axios";
+import { getChats } from "../../api/chat";
+import { getUsersByRole } from "../../api/user";
 
 const tabs = [
   { name: "Admin", value: "admin", icon: icons.admin },
@@ -41,10 +42,10 @@ function Messages() {
   const [newChat, setNewChat] = useState(false);
   const [searchText, setSearchText] = useState("");
 
-  const getUsersByRole = async ({ role }) => {
+  const fetchUsersByRole = async ({ role }) => {
     dispatch({ type: "SET_LOADING", payload: true });
     try {
-      const response = await axios.get(`${API_URL}/user/role/${role}`);
+      const response = await getUsersByRole({ role: role });
       if (isValidResponse(response)) {
         setUsers(response?.data?.users);
       }
@@ -55,10 +56,10 @@ function Messages() {
     }
   };
 
-  const getChats = async () => {
+  const fetchChats = async () => {
     dispatch({ type: "SET_LOADING", payload: true });
     try {
-      const response = await axios.get(`${API_URL}/chat/${user?.userId}`);
+      const response = await getChats({ user: user });
       if (isValidResponse(response)) {
         setChats(response?.data?.chats);
       }
@@ -70,11 +71,11 @@ function Messages() {
   };
 
   useEffect(() => {
-    getChats();
+    fetchChats();
   }, []);
 
   useEffect(() => {
-    getUsersByRole({ role: selectedTab });
+    fetchUsersByRole({ role: selectedTab });
   }, [selectedTab]);
 
   const handleChatClick = async (userId) => {

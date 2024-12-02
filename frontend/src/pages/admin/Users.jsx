@@ -8,9 +8,8 @@ import {
   TextField,
   Typography,
 } from "@mui/material";
-import { API_URL, icons } from "../../constants/helper";
+import { icons } from "../../constants/helper";
 import { DataGrid } from "@mui/x-data-grid";
-import axios from "axios";
 import { useGlobalProvider } from "../../GlobalProvider";
 import CustomToolbar from "../../components/CustomToolbar";
 import { CustomModal } from "../../components/CustomModal";
@@ -18,6 +17,12 @@ import CustomDropDown from "../../components/CustomDropDown";
 import { DeleteRounded, EditRounded } from "@mui/icons-material";
 import Swal from "sweetalert2";
 import { useDispatch } from "react-redux";
+import {
+  addNewUserAdmin,
+  deleteUser,
+  getUsersByRole,
+  saveEditUser,
+} from "../../api/user";
 
 const tabs = [
   { name: "Admin", value: "admin", icon: icons.admin },
@@ -29,7 +34,6 @@ function Users() {
   const dispatch = useDispatch();
   const [selectedTab, setSelectedTab] = useState("admin");
   const [users, setUsers] = useState([]);
-  const [isLoading, setIsLoading] = useState(false);
   const [showAddUserModal, setShowAddUserModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState([]);
   const [showUser, setShowUser] = useState(false);
@@ -47,10 +51,10 @@ function Users() {
     role: "",
   });
 
-  const getUsersByRole = async () => {
+  const getUsers = async () => {
     try {
       dispatch({ type: "SET_LOADING", payload: true });
-      const response = await axios.get(`${API_URL}/user/role/${selectedTab}`);
+      const response = await getUsersByRole({ role: selectedTab });
       if (isValidResponse(response)) {
         setUsers(response?.data?.users);
       }
@@ -62,7 +66,7 @@ function Users() {
   };
 
   useEffect(() => {
-    getUsersByRole();
+    getUsers();
   }, [selectedTab]);
 
   const columns = [
@@ -132,7 +136,7 @@ function Users() {
     if (result.isConfirmed) {
       try {
         dispatch({ type: "SET_LOADING", payload: true });
-        const response = await axios.delete(`${API_URL}/user/${user._id}`);
+        const response = await deleteUser({ user: user });
         if (isValidResponse(response)) {
           setUsers(response.data.users);
           Swal.fire({
@@ -156,11 +160,7 @@ function Users() {
 
   const handleSaveNewUser = async () => {
     if (validateFields(newUser)) {
-      const response = await axios.post(`${API_URL}/auth/register`, {
-        ...newUser,
-        method: "admin",
-        password: "Password",
-      });
+      const response = addNewUserAdmin({ newUser: newUser });
       if (isValidResponse(response)) {
         setShowAddUserModal(false);
         setNewUser({ name: "", email: "", mobile: "", role: "" });
@@ -170,12 +170,7 @@ function Users() {
 
   const handleSaveEditUser = async () => {
     if (validateFields(selectedUser)) {
-      const response = await axios.patch(
-        `${API_URL}/user/${selectedUser?._id}`,
-        {
-          ...selectedUser,
-        }
-      );
+      const response = await saveEditUser({ user: selectedUser });
       if (isValidResponse(response)) {
         setShowEditUser(false);
         setSelectedUser({ name: "", email: "", mobile: "", role: "" });

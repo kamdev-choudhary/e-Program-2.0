@@ -16,9 +16,11 @@ import { AddRounded, DeleteRounded, EditRounded } from "@mui/icons-material";
 import { CustomModal } from "../../../components/CustomModal";
 import { useGlobalProvider } from "../../../GlobalProvider";
 import { useDispatch } from "react-redux";
-import axios from "axios";
-import { API_URL } from "../../../constants/helper";
 import Swal from "sweetalert2";
+import {
+  addNewQuestionPattern,
+  getAllQuestionPatterns,
+} from "../../../api/academic";
 
 function QuestionPatterns() {
   const { isValidResponse } = useGlobalProvider();
@@ -31,7 +33,7 @@ function QuestionPatterns() {
   const getPatterns = async () => {
     dispatch({ type: "SET_LOADING", payload: true });
     try {
-      const response = await axios.get(`${API_URL}/academic/pattern`);
+      const response = await getAllQuestionPatterns();
       if (isValidResponse(response)) {
         setPatterns(response?.data?.patterns);
         setShowAddPattern(false);
@@ -50,7 +52,7 @@ function QuestionPatterns() {
   const handleSavePattern = async () => {
     try {
       dispatch({ type: "SET_LOADING", payload: true });
-      const response = await axios.post(`${API_URL}/academic/pattern`, {
+      const response = await addNewQuestionPattern({
         name: newPatternName,
         description: patternDescription,
       });

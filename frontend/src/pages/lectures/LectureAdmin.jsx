@@ -1,30 +1,20 @@
 import React, { useEffect, useMemo, useState } from "react";
 import { useGlobalProvider } from "../../GlobalProvider";
-import { API_URL } from "../../constants/helper";
 import YouTubeVideoPlayer from "../../components/YouTubeVideoPlayer";
-import { EditRounded, DeleteRounded } from "@mui/icons-material";
+import { EditRounded, DeleteRounded, UploadRounded } from "@mui/icons-material";
+import { getAllAcademicData } from "../../api/academic";
 
-import {
-  TextField,
-  Modal,
-  IconButton,
-  Box,
-  Select,
-  Button,
-  InputLabel,
-  MenuItem,
-  FormControl,
-  Paper,
-} from "@mui/material";
+import { IconButton, Box, Button, Paper } from "@mui/material";
 import Grid from "@mui/material/Grid2";
 import { DataGrid } from "@mui/x-data-grid";
 import CustomToolbar from "../../components/CustomToolbar";
 import { CustomModal } from "../../components/CustomModal";
 import CustomDropDown from "../../components/CustomDropDown";
 import Swal from "sweetalert2";
-import { getLecturesByClass } from "../../api/lectures";
+import { deleteLecture, getLecturesByClass } from "../../api/lectures";
 import { useDispatch } from "react-redux";
-import { getClasses } from "../../api/academic";
+import UploadLectureSingle from "./components/UploadLectureSingle";
+import UploadLectureBulk from "./components/UploadLectureBulk";
 
 export default function LecturePage() {
   const { isValidResponse } = useGlobalProvider();
@@ -32,33 +22,33 @@ export default function LecturePage() {
   const [lectures, setLectures] = useState([]);
   const [currVID, setCurrVID] = useState(null);
   const [showVideoPopup, setShowVideoPopup] = useState(false);
-  const [selectedClass, setSelectedClass] = useState("IX");
-  const [classes, setClasses] = useState([]);
-  const [academic, setAcademic] = useState([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showAddLecturePopup, setShowAddLecturePopup] = useState(false);
-  const [newLecture, setNewLecture] = useState({
-    class: "",
-    subject: "",
-    chapterName: "",
-    lectureNumber: "",
-    videoId: "",
-  });
-  const [filteredTopics, setFilteredTopics] = useState([]);
+  const [selectedClass, setSelectedClass] = useState("");
 
-  useEffect(() => {
-    const getClass = async () => {
-      try {
-        const response = await getClasses();
-        if (isValidResponse(response)) {
-          setClasses(response?.data?.classes);
-        }
-      } catch (error) {
-        console.error(error);
+  const [classes, setClasses] = useState([]);
+  const [subjects, setSubjects] = useState([]);
+  const [subSubjects, setSubSubjects] = useState([]);
+  const [topics, setTopics] = useState([]);
+  const [subTopics, setSubTopics] = useState([]);
+
+  const [showAddLecturePopup, setShowAddLecturePopup] = useState(false);
+  const [showBulkUploadLecture, setShowBulkUploadLecture] = useState(false);
+
+  const getAcademicData = async () => {
+    try {
+      const response = await getAllAcademicData();
+
+      if (isValidResponse(response)) {
+        const data = response.data;
+        setClasses(data?.classes);
+        setSubjects(data?.subjects);
+        setSubSubjects(data?.subSubjects);
+        setTopics(data?.topics);
+        setSubTopics(data?.subTopics);
       }
-    };
-    getClass();
-  }, []);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const getLectures = async () => {
     dispatch({ type: "SET_LOADING", payload: true });
@@ -73,18 +63,14 @@ export default function LecturePage() {
   };
 
   useEffect(() => {
+    getAcademicData();
     getLectures();
   }, [selectedClass]);
-
-  const handleAddNewLecture = () => {
-    console.log("haha");
-  };
 
   const handleEditLecture = () => {};
 
   const handleDeleteLecture = async (lecture) => {
-    console.log(lecture);
-    Swal.fire({
+    const result = await Swal.fire({
       title: "Delete Lecture?",
       text: "You won't be able to revert this!",
       icon: "warning",
@@ -92,21 +78,41 @@ export default function LecturePage() {
       confirmButtonColor: "#3085d6",
       cancelButtonColor: "#d33",
       confirmButtonText: "Yes, delete it!",
-    }).then((result) => {
-      if (result.isConfirmed) {
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const response = await deleteLecture({ id: lecture?._id });
+        console.log(response);
+
+        if (isValidResponse(response)) {
+          // Properly filter out the deleted lecture
+          const deletedLectureId = response?.data?.deletedLecture;
+          setLectures((prevLectures) =>
+            prevLectures.filter((l) => l._id !== deletedLectureId)
+          );
+
+          await Swal.fire({
+            title: "Deleted!",
+            text: "Lecture has been deleted.",
+            icon: "success",
+          });
+        }
+      } catch (error) {
+        console.error("Error deleting lecture:", error);
         Swal.fire({
-          title: "Deleted!",
-          text: "Your file has been deleted.",
-          icon: "success",
+          title: "Error",
+          text: "Something went wrong while deleting the lecture.",
+          icon: "error",
         });
       }
-    });
+    }
   };
 
   const columns = [
     { field: "id", headerName: "SN", width: 40 },
     {
-      field: "class",
+      field: "classLevel",
       headerName: "Class",
       minWidth: 40,
       flex: 1,
@@ -118,24 +124,24 @@ export default function LecturePage() {
       headerName: "Subject",
       minWidth: 80,
       flex: 1,
-      align: "center",
-      headerAlign: "center",
     },
     {
       field: "chapterName",
       headerName: "Chapter Name",
       minWidth: 300,
       flex: 1,
-      align: "center",
-      headerAlign: "center",
     },
     {
       field: "lectureNumber",
       headerName: "Lecture #",
       minWidth: 40,
       flex: 1,
-      align: "center",
-      headerAlign: "center",
+    },
+    {
+      field: "facultyName",
+      headerName: "Faculty Name",
+      minWidth: 80,
+      flex: 1,
     },
     {
       field: "videoId",
@@ -147,6 +153,8 @@ export default function LecturePage() {
       renderCell: (params) => (
         <>
           <Button
+            variant="outlined"
+            color="secondary"
             onClick={() => {
               setCurrVID(params.row.videoId);
               setShowVideoPopup(true);
@@ -197,6 +205,15 @@ export default function LecturePage() {
               onChange={(e) => setSelectedClass(e.target.value)}
             />
           </Grid>
+          <Grid size={{ xs: 6, lg: 3, md: 6 }}>
+            <Button
+              onClick={() => setShowBulkUploadLecture(true)}
+              variant="contained"
+              startIcon={<UploadRounded />}
+            >
+              Bulk Upload
+            </Button>
+          </Grid>
         </Grid>
       </Box>
 
@@ -210,6 +227,8 @@ export default function LecturePage() {
             toolbar: () => (
               <CustomToolbar
                 onAddButtonClick={() => setShowAddLecturePopup(true)}
+                showRefreshButton={true}
+                onRefreshButtonClick={getLectures}
               />
             ),
           }}
@@ -224,113 +243,25 @@ export default function LecturePage() {
         header="Add Lectures"
         showFullScreenButton={false}
       >
-        <Box sx={{ display: "grid", rowGap: 1 }}>
-          <FormControl fullWidth size="small">
-            <InputLabel id="demo-simple-select-label">Class</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="class"
-              name="class"
-              label="Class"
-              value={selectedClass}
-              onChange={(e) =>
-                setNewLecture({ ...newLecture, class: e.target.value })
-              }
-            >
-              {academic &&
-                academic.classes &&
-                academic.classes.map((classes, index) => (
-                  <MenuItem key={index} value={classes}>
-                    {"Class : "}
-                    {classes}
-                  </MenuItem>
-                ))}
-            </Select>
-          </FormControl>
-          <FormControl fullWidth size="small">
-            <InputLabel id="demo-simple-select-label">Subject</InputLabel>
-            <Select
-              labelId="demo-simple-select-label"
-              id="demo-simple-select"
-              name="subject"
-              label="Subject"
-              value={newLecture.subject}
-              onChange={(e) =>
-                setNewLecture({
-                  ...newLecture,
-                  subject: e.target.value,
-                })
-              }
-            >
-              {academic &&
-                academic.subjects &&
-                academic.subjects.map((subject, index) => (
-                  <MenuItem key={index} value={subject.name}>
-                    {subject.name}
-                  </MenuItem>
-                ))}
-            </Select>
-          </FormControl>
-          <FormControl fullWidth size="small">
-            <InputLabel id="demo-simple-select-label">Topic</InputLabel>
-            <Select
-              labelId="Topic Selection"
-              id="selectTopic"
-              name="chapterName"
-              label="Chapter Name"
-              value={newLecture.chapterName}
-              onChange={(e) =>
-                setNewLecture({
-                  ...newLecture,
-                  chapterName: e.target.value,
-                })
-              }
-            >
-              {filteredTopics &&
-                filteredTopics.map((topics, index) => (
-                  <MenuItem key={index} value={topics.name}>
-                    {topics.name}
-                  </MenuItem>
-                ))}
-            </Select>
-          </FormControl>
-          <TextField
-            id="outlined-basic"
-            label="Lecture Number"
-            fullWidth
-            size="small"
-            variant="outlined"
-            value={newLecture.lectureNumber}
-            onChange={(e) =>
-              setNewLecture({
-                ...newLecture,
-                lectureNumber: e.target.value,
-              })
-            }
-          />
-          <TextField
-            id="outlined-basic"
-            label="Video ID"
-            fullWidth
-            size="small"
-            variant="outlined"
-            value={newLecture.videoId}
-            onChange={(e) =>
-              setNewLecture({
-                ...newLecture,
-                videoId: e.target.value,
-              })
-            }
-          />
-          <Button
-            onClick={handleAddNewLecture}
-            variant="contained"
-            color="success"
-            fullWidth
-          >
-            Save Lecture
-          </Button>
-        </Box>
+        <UploadLectureSingle
+          setShowAddLecturePopup={setShowAddLecturePopup}
+          classes={classes}
+          subjects={subjects}
+          subSubjects={subSubjects}
+          topics={topics}
+          subTopics={subTopics}
+        />
+      </CustomModal>
+
+      {/* Bulk Upload Lectures */}
+      <CustomModal
+        header="Upload Lectures"
+        open={showBulkUploadLecture}
+        onClose={() => setShowBulkUploadLecture(false)}
+      >
+        <UploadLectureBulk
+          setShowBulkUploadLecture={setShowBulkUploadLecture}
+        />
       </CustomModal>
 
       {/* Video as popup */}

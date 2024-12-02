@@ -11,12 +11,14 @@ const routes = require("./routes");
 const logger = require("./utils/logger");
 const http = require("http");
 const setupSocket = require("./utils/socket");
+const path = require("path");
 
 // Middleware setup
 app.use(helmet());
 app.use(cors());
 app.use(bodyParser.json({ limit: "50mb" }));
 app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(compression());
 routes(app);
 app.use(errorMiddleware);
