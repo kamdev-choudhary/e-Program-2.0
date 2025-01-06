@@ -7,14 +7,18 @@ import App from "./App.jsx";
 import "./index.css";
 import { WebSocketProvider } from "./WebsocketContext";
 
+const isDevelopment = import.meta.env.NODE_ENV === "development";
+
+const AppWrapper = (
+  <Provider store={store}>
+    <GlobalProvider>
+      <WebSocketProvider>
+        <App />
+      </WebSocketProvider>
+    </GlobalProvider>
+  </Provider>
+);
+
 createRoot(document.getElementById("root")).render(
-  <StrictMode>
-    <Provider store={store}>
-      <GlobalProvider>
-        <WebSocketProvider>
-          <App />
-        </WebSocketProvider>
-      </GlobalProvider>
-    </Provider>
-  </StrictMode>
+  isDevelopment ? <StrictMode>{AppWrapper}</StrictMode> : AppWrapper
 );
