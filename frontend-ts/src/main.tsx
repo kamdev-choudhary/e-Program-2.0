@@ -8,8 +8,6 @@ import { CssBaseline, ThemeProvider } from "@mui/material";
 import { lightTheme } from "./constant/theme.ts";
 import { GlobalProvider } from "./GlobalProvider.tsx";
 import { BrowserRouter } from "react-router-dom";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 
 const isDevelopment = import.meta.env.MODE === "development";
 
@@ -19,9 +17,7 @@ const AppWrapper = (
       <ThemeProvider theme={lightTheme}>
         <CssBaseline />
         <BrowserRouter>
-          <LocalizationProvider dateAdapter={AdapterDayjs}>
-            <App />;
-          </LocalizationProvider>
+          <App />
         </BrowserRouter>
       </ThemeProvider>
     </Provider>

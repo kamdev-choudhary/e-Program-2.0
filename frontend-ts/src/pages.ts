@@ -1,29 +1,52 @@
 import React, { lazy } from "react";
+import HomeIcon from "@mui/icons-material/Home";
+import SettingsIcon from "@mui/icons-material/Settings";
+
 import { RouteProps } from "react-router-dom";
 
-// Define types for roles and routes
-type Role = "admin" | "user" | "guest";
-
-type AppRoute = RouteProps & {
+export type AppRoute = RouteProps & {
   path: string;
   component: React.LazyExoticComponent<React.ComponentType<any>>;
   restrictedTo?: Role[];
   requiresLogin?: boolean;
   icon?: React.ElementType;
+  subRoutes?: AppRoute[]; // Allow nesting of subroutes
 };
 
-// Icons (Example: Material-UI Icons or other icon library)
-import HomeIcon from "@mui/icons-material/Home";
+// Pages (lazy-loaded components)
+const HomePage = lazy(() => import("./pages/home/HomePage"));
+const SettingsPage = lazy(() => import("./pages/settings/Settings"));
+const ProfilePage = lazy(() => import("./pages/auth/Profile"));
+const NotFound = lazy(() => import("./pages/404/NotFound"));
 
-// Lazy loaded components
-const AuthPage = lazy(() => import("./pages/auth/AuthPage"));
+type Role = "admin" | "user" | "guest";
 
-// Route configuration
 const routes: AppRoute[] = [
   {
     path: "/",
-    component: AuthPage,
+    component: HomePage,
     icon: HomeIcon,
+    requiresLogin: false,
+  },
+  {
+    path: "/settings",
+    component: SettingsPage,
+    icon: SettingsIcon,
+    requiresLogin: true,
+    restrictedTo: ["admin", "user"],
+    subRoutes: [
+      {
+        path: "/settings/profile",
+        component: ProfilePage,
+        requiresLogin: true,
+      },
+    ],
+  },
+  {
+    path: "/*",
+    component: NotFound,
+    icon: HomeIcon,
+    requiresLogin: false,
   },
 ];
 
