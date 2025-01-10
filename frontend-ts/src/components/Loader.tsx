@@ -2,10 +2,14 @@ import { Backdrop, Box, Typography } from "@mui/material";
 import React from "react";
 import { MoonLoader } from "react-spinners";
 
-function Loader({ open }) {
+interface LoaderProps {
+  open?: boolean;
+}
+
+const Loader: React.FC<LoaderProps> = ({ open }) => {
   return (
     <Backdrop
-      open={open}
+      open={open || true}
       sx={{
         zIndex: 1500,
         backdropFilter: "blur(5px)", // Adjust the blur level here
@@ -18,6 +22,6 @@ function Loader({ open }) {
       </Box>
     </Backdrop>
   );
-}
+};
 
 export default Loader;

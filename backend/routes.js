@@ -28,9 +28,7 @@ const authLimiter = rateLimit({
 const routes = (app) => {
   // Health check and root endpoint
   app.get("/", (req, res) =>
-    res
-      .status(200)
-      .json({ status: "OK", uptime: process.uptime(), status_code: 1 })
+    res.status(200).json({ status: "OK", uptime: process.uptime() })
   );
 
   // API documentation

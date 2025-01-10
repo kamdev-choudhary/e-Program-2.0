@@ -1,25 +1,34 @@
-interface States {
+export interface State {
+  online: boolean;
   loading: boolean;
-  showAuth: boolean;
-  authPage: boolean;
 }
 
-const initialState: States = {
+const defaultState: State = {
   loading: false,
-  showAuth: false,
-  authPage: false,
+  online: false,
 };
 
+type Action =
+  | { type: "SET_LOADING"; payload: boolean }
+  | { type: "SET_ONLINE"; payload: boolean };
+
+// Retrieve and validate stored state
+
+// Ensure initialState is always of type State
+const initialState: State = defaultState;
+
 export const rootReducers = (
-  state = initialState,
-  action: { type: string; payload: boolean }
-): States => {
+  state: State = initialState, // Ensure state is always of type State
+  action: Action
+): State => {
   switch (action.type) {
     case "SET_LOADING":
       return { ...state, loading: action.payload };
-    case "SET_AUTHPAGE":
-      return { ...state, authPage: action.payload };
+
+    case "SET_ONLINE":
+      return { ...state, online: action.payload };
+
     default:
-      return state; // Return the current state if no action matches
+      return state;
   }
 };

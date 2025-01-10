@@ -1,6 +1,6 @@
 import React, { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { useGlobalContext } from "../GlobalProvider";
+import { useGlobalContext } from "../contexts/GlobalProvider";
 
 interface ProtectedRoute {
   children: ReactNode;
