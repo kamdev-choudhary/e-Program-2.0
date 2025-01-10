@@ -27,7 +27,7 @@ const server = http.createServer(app);
 
 const startServer = async () => {
   try {
-    await connectDB();
+    // await connectDB();
     const io = setupSocket(server);
     server.listen(port, () => {
       logger.info(`Server is listening on port: ${port}`);

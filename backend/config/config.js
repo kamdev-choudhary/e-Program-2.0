@@ -12,6 +12,7 @@ const config = {
   cloudName: "dgwlqoijt",
   cloudApiKey: "295749936547257",
   cloudSecret: "LKxfF4nyG0lIb1pgpHvDrfAZWmY",
+  ocrSpaceKey: "K85053215688957",
   Auth0Domain: "",
   Auth0Audience: "",
 };

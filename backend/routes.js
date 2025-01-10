@@ -15,6 +15,7 @@ const academicRoute = require("./routers/academicRoute");
 const doubtRoute = require("./routers/doubtRoute");
 const userRoute = require("./routers/userRouter");
 const chatRoute = require("./routers/chatRoute");
+const automationRoute = require("./routers/automationRouter");
 
 // Rate Limiter for login route
 const authLimiter = rateLimit({
@@ -51,6 +52,7 @@ const routes = (app) => {
   app.use("/api/v1/batch", batchRouter);
   app.use("/api/v1/doubts", doubtRoute);
   app.use("/api/v1/chat", chatRoute);
+  app.use("/api/v1/automation", automationRoute);
 
   // Fallback for unknown routes
   app.use("/*", (req, res) =>
