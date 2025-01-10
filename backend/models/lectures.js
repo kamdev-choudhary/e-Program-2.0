@@ -19,7 +19,7 @@ const lectureSchema = new Schema(
         "UPSC",
         "SSC",
         "Other",
-      ], // Ensure consistency in class/exam levels
+      ],
     },
     subject: {
       type: String,

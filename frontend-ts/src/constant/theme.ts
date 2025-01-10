@@ -1,68 +1,44 @@
-import { createTheme } from "@mui/material";
+import { createTheme, ThemeOptions } from "@mui/material/styles";
 
-const commonTheme = {
+// Common properties for both light and dark themes
+const commonThemeOptions: ThemeOptions = {
   shape: {
-    borderRadius: 8, // Rounded corners for all components
+    borderRadius: 8, // Set default border radius
   },
   typography: {
-    fontFamily: " 'Aptos','Roboto', 'Helvetica', 'Arial', sans-serif", // Default font family
-    button: {
-      textTransform: "none", // Prevent uppercase button text
-    },
-    // You can add other typography-related settings here
+    fontFamily: "'Aptos', 'Roboto', 'Arial', sans-serif",
+    fontSize: 13, // Default font size
   },
   components: {
-    // You can add component-specific overrides here in the future
-    // Example:
-    // MuiButton: {
-    //   styleOverrides: {
-    //     root: {
-    //       borderRadius: 12, // Example: custom button radius
-    //     },
-    //   },
-    // },
+    MuiButton: {
+      styleOverrides: {
+        root: {
+          textTransform: "none", // Prevent buttons from having uppercase text
+          fontSize: "1rem",
+          borderRadius: 100,
+          padding: "5px 16px",
+        },
+      },
+    },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          borderRadius: 12, // Slightly rounded corners for a modern look
+          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // Subtle shadow for modern elevation
+          padding: 16, // Standardized padding for better content spacing
+        },
+      },
+    },
   },
 };
 
-export const lightTheme = createTheme({
-  ...commonTheme,
+// Define light theme options with academic-friendly colors
+const lightThemeOptions: ThemeOptions = {
+  ...commonThemeOptions,
   palette: {
     mode: "light",
-    primary: {
-      main: "#5E35B1", // Rich purple
-    },
-    secondary: {
-      main: "#388E3C", // Deep green
-    },
-
-    background: {
-      default: "#f1f3fb", // Neutral light background
-      paper: "#ffffff", // Pure white paper background
-    },
-    text: {
-      primary: "#212121", // Deep black text
-      secondary: "#616161", // Subtle gray text
-    },
   },
-});
+};
 
-export const darkTheme = createTheme({
-  ...commonTheme,
-  palette: {
-    mode: "dark",
-    primary: {
-      main: "#9575CD", // Lighter purple for dark mode
-    },
-    secondary: {
-      main: "#4CAF50", // Softer green for dark mode
-    },
-    background: {
-      default: "#121212", // Neutral dark background
-      paper: "#1E1E1E", // Slightly lighter dark for paper
-    },
-    text: {
-      primary: "#FFFFFF", // Pure white text
-      secondary: "#BDBDBD", // Subtle gray text
-    },
-  },
-});
+// Create themes
+export const lightTheme = createTheme(lightThemeOptions);

@@ -2,7 +2,6 @@ import {
   HomeRounded,
   LibraryBooksRounded,
   SchoolRounded,
-  SchoolTwoTone,
 } from "@mui/icons-material";
 import React from "react";
 
@@ -33,23 +32,11 @@ export const buttons: Button[] = [
   },
   {
     label: "Lectures",
-    path: "",
+    path: "/lectures",
     icon: SchoolRounded,
     color: "#28844f",
-    type: "menu",
+    type: "button",
     size: 20,
-    options: [
-      {
-        label: "Class 10",
-        path: "/lecture/10",
-        icon: SchoolTwoTone,
-      },
-      {
-        label: "Class 12",
-        path: "/lecture/12",
-        icon: SchoolTwoTone,
-      },
-    ],
   },
   {
     label: "Books",

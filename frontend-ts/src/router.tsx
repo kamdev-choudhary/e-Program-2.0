@@ -9,6 +9,7 @@ const HomePage = lazy(() => import("./pages/home/HomePage"));
 const NotFound = lazy(() => import("./pages/404/NotFound"));
 const Dashboard = lazy(() => import("./pages/dashboard/Dashboard"));
 const AuthPage = lazy(() => import("./pages/auth/AuthPage"));
+const Lectures = lazy(() => import("./pages/lectures/Lectures"));
 
 // Define Routes
 const router = createBrowserRouter([
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
             <Dashboard />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: "/lectures",
+        element: <Lectures />,
       },
     ],
   },

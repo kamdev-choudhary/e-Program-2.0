@@ -98,6 +98,8 @@ const Navbar: React.FC = () => {
         }
         return null;
       })}
+
+      <Button onClick={() => navigate("/auth")}>Login</Button>
     </Box>
   );
 };

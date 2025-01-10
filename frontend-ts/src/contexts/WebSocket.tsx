@@ -6,7 +6,7 @@ import React, {
   ReactNode,
 } from "react";
 import { io, Socket } from "socket.io-client";
-import { apiUrl } from "../config/environment";
+import { baseUrl } from "../config/environment";
 
 // Define the shape of the context
 interface WebSocketContextType {
@@ -28,7 +28,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
   const [socket, setSocket] = useState<Socket | null>(null);
 
   useEffect(() => {
-    const newSocket = io(apiUrl);
+    const newSocket = io(baseUrl);
     setSocket(newSocket);
 
     // Cleanup the socket connection on component unmount
