@@ -6,20 +6,37 @@ import React, {
   ReactNode,
 } from "react";
 
-// Define types for the context
-interface GlobalContextType {
-  theme: string;
-  toggleTheme: () => void;
-}
-
-// Create the context with a default value
-const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
-
 interface GlobalProviderProps {
   children: ReactNode;
 }
 
+interface User {
+  username: string;
+  role: string;
+  email?: string;
+}
+
+interface LoginResponse {
+  token: string;
+  user: User;
+}
+
+// Define types for the context
+interface GlobalContextType {
+  theme: string;
+  toggleTheme: () => void;
+  isLoggedIn: boolean;
+  user: User | null;
+  token: string;
+  handleUserLogin: (response: LoginResponse) => void;
+}
+
+const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
+
 export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
+  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const [user, setUser] = useState<User | null>(null);
+  const [token, setToken] = useState<string>("");
   const [theme, setTheme] = useState<string>("light");
 
   // Fetch and set the theme based on device preference or localStorage
@@ -42,12 +59,20 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     localStorage.setItem("theme", theme);
   }, [theme]);
 
+  const handleUserLogin = (response: LoginResponse) => {
+    setIsLoggedIn(true);
+    setUser(response.user);
+    setToken(response.token);
+  };
+
   const toggleTheme = () => {
     setTheme((currentTheme) => (currentTheme === "light" ? "dark" : "light"));
   };
 
   return (
-    <GlobalContext.Provider value={{ theme, toggleTheme }}>
+    <GlobalContext.Provider
+      value={{ theme, toggleTheme, isLoggedIn, user, token, handleUserLogin }}
+    >
       {children}
     </GlobalContext.Provider>
   );

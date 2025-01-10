@@ -1,0 +1,35 @@
+import { lazy } from "react";
+import { createBrowserRouter, Navigate } from "react-router-dom";
+
+import ProtectedRoute from "./hooks/ProtectedRoute";
+
+// Page Components
+const DefaultLayout = lazy(() => import("./layout/DefaultLayout"));
+const HomePage = lazy(() => import("./pages/home/HomePage"));
+const NotFound = lazy(() => import("./pages/404/NotFound"));
+const Dashboard = lazy(() => import("./pages/dashboard/Dashboard"));
+
+// Define Routes
+const router = createBrowserRouter([
+  {
+    element: <DefaultLayout />,
+    children: [
+      { path: "/", element: <HomePage /> },
+      { path: "*", element: <NotFound /> },
+      {
+        path: "/admin/dashboard",
+        element: (
+          <ProtectedRoute requiredRole="admin">
+            <Dashboard />
+          </ProtectedRoute>
+        ),
+      },
+    ],
+  },
+  {
+    path: "/redirect-to-login",
+    element: <Navigate to="/login" replace />,
+  },
+]);
+
+export default router;
