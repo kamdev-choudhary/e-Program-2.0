@@ -1,25 +1,36 @@
 import { Box, Button, MenuItem, Menu } from "@mui/material";
 import React, { useState } from "react";
 import { buttons } from "./buttons";
+import { ArrowDropDownRounded } from "@mui/icons-material";
+import { useNavigate } from "react-router-dom";
 
-const CustomButton = ({
-  label,
-  icon: Icon,
-  color = "#000",
-}: {
+interface ButtonProps {
   label: string;
+  path?: string;
   icon: React.ElementType;
+  type: "button" | "menu";
   color: string;
-}) => {
+  size: number;
+  options?: { label: string; path: string }[];
+}
+
+const CustomButton: React.FC<{
+  button: ButtonProps;
+  handleButtonClick: (button: ButtonProps) => void;
+}> = ({ button, handleButtonClick }) => {
   return (
-    <Button variant="outlined" startIcon={<Icon sx={{ color: color }} />}>
-      {label}
+    <Button
+      onClick={() => handleButtonClick(button)}
+      startIcon={<button.icon sx={{ fontSize: button.size }} />}
+    >
+      {button.label}
     </Button>
   );
 };
 
 const Navbar: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const navigate = useNavigate();
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -27,6 +38,12 @@ const Navbar: React.FC = () => {
 
   const handleCloseMenu = () => {
     setAnchorEl(null);
+  };
+
+  const handleButtonClick = (button: ButtonProps) => {
+    if (button.path) {
+      navigate(button.path);
+    }
   };
 
   return (
@@ -46,29 +63,40 @@ const Navbar: React.FC = () => {
           return (
             <CustomButton
               key={index}
-              label={button.label}
-              icon={button.icon}
-              color={button.color}
+              button={button}
+              handleButtonClick={handleButtonClick}
             />
           );
-        } else if (button.type === "menu") {
+        } else if (button.type === "menu" && button.options) {
           return (
-            <div key={index}>
-              <Button onClick={handleMenuClick}>{button.label}</Button>
+            <React.Fragment key={index}>
+              <Button
+                endIcon={<ArrowDropDownRounded />}
+                onClick={handleMenuClick}
+              >
+                {button.label}
+              </Button>
               <Menu
                 anchorEl={anchorEl}
                 open={Boolean(anchorEl)}
                 onClose={handleCloseMenu}
               >
-                {button.options?.map((option, index) => (
-                  <MenuItem key={index} onClick={handleCloseMenu}>
+                {button.options.map((option, index) => (
+                  <MenuItem
+                    key={index}
+                    onClick={() => {
+                      handleCloseMenu();
+                      navigate(option.path);
+                    }}
+                  >
                     {option.label}
                   </MenuItem>
                 ))}
               </Menu>
-            </div>
+            </React.Fragment>
           );
         }
+        return null;
       })}
     </Box>
   );

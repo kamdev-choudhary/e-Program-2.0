@@ -1,4 +1,9 @@
-import { HomeRounded, SchoolRounded, SchoolTwoTone } from "@mui/icons-material";
+import {
+  HomeRounded,
+  LibraryBooksRounded,
+  SchoolRounded,
+  SchoolTwoTone,
+} from "@mui/icons-material";
 import React from "react";
 
 interface Option {
@@ -14,7 +19,7 @@ interface Button {
   type: "button" | "menu";
   options?: Option[];
   color: string;
-  size?: number;
+  size: number;
 }
 
 export const buttons: Button[] = [
@@ -24,7 +29,7 @@ export const buttons: Button[] = [
     icon: HomeRounded,
     color: "#28844f",
     type: "button",
-    size: 25,
+    size: 20,
   },
   {
     label: "Lectures",
@@ -32,6 +37,7 @@ export const buttons: Button[] = [
     icon: SchoolRounded,
     color: "#28844f",
     type: "menu",
+    size: 20,
     options: [
       {
         label: "Class 10",
@@ -44,5 +50,13 @@ export const buttons: Button[] = [
         icon: SchoolTwoTone,
       },
     ],
+  },
+  {
+    label: "Books",
+    path: "/books",
+    icon: LibraryBooksRounded,
+    type: "button",
+    color: "#28844f",
+    size: 20,
   },
 ];
