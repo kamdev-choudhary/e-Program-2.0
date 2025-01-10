@@ -21,6 +21,11 @@ interface LoginResponse {
   user: User;
 }
 
+interface Response {
+  status: number;
+  data: any;
+}
+
 // Define types for the context
 interface GlobalContextType {
   theme: string;
@@ -29,6 +34,7 @@ interface GlobalContextType {
   user: User | null;
   token: string;
   handleUserLogin: (response: LoginResponse) => void;
+  isValidResponse: (response: Response) => boolean;
 }
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
@@ -69,9 +75,21 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     setTheme((currentTheme) => (currentTheme === "light" ? "dark" : "light"));
   };
 
+  const isValidResponse = (response: Response): boolean => {
+    return response.status === 200;
+  };
+
   return (
     <GlobalContext.Provider
-      value={{ theme, toggleTheme, isLoggedIn, user, token, handleUserLogin }}
+      value={{
+        isValidResponse,
+        theme,
+        toggleTheme,
+        isLoggedIn,
+        user,
+        token,
+        handleUserLogin,
+      }}
     >
       {children}
     </GlobalContext.Provider>
