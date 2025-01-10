@@ -81,6 +81,7 @@ const Login: React.FC = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setUser((prev) => ({ ...prev, password: e.target.value }))
             }
+            autoComplete=""
           />
           <Button
             type="submit"
