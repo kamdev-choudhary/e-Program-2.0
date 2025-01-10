@@ -1,6 +1,6 @@
 import axios from "../hooks/AxiosInterceptor";
 
-export const loginUser = async ({ user }) => {
+export const userLogin = async ({ user }) => {
   try {
     return await axios.post("/auth/login", {
       ...user,

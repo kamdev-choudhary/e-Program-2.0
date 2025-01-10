@@ -7,7 +7,6 @@ import {
   CircularProgress,
 } from "@mui/material";
 import React, { useState } from "react";
-import { userLogin } from "../../api/user";
 
 interface User {
   id: string;
@@ -26,8 +25,8 @@ const Login: React.FC = () => {
     setLoading(true);
     e.preventDefault();
     try {
-      const response = await userLogin();
-      console.log(response);
+      // const response = await userLogin();
+      // console.log(response);
     } catch (error) {
       console.error(error);
       setError(true);
