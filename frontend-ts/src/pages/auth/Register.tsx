@@ -60,7 +60,7 @@ const Register: React.FC<RegisterProps> = ({ setActiveTab }) => {
         }}
       >
         <Typography variant="h5" gutterBottom>
-          Login
+          Register
         </Typography>
         <Box component="form" onSubmit={handleLogin}>
           <TextField
