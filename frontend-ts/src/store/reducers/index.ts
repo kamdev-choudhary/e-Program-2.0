@@ -1,16 +1,19 @@
 export interface State {
   online: boolean;
   loading: boolean;
+  showAuth: boolean;
 }
 
 const defaultState: State = {
   loading: false,
   online: false,
+  showAuth: false,
 };
 
 type Action =
   | { type: "SET_LOADING"; payload: boolean }
-  | { type: "SET_ONLINE"; payload: boolean };
+  | { type: "SET_ONLINE"; payload: boolean }
+  | { type: "SET_AUTHPAGE"; payload: boolean };
 
 // Retrieve and validate stored state
 
@@ -27,7 +30,8 @@ export const rootReducers = (
 
     case "SET_ONLINE":
       return { ...state, online: action.payload };
-
+    case "SET_AUTHPAGE":
+      return { ...state, showAuth: action.payload };
     default:
       return state;
   }

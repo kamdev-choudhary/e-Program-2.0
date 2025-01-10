@@ -3,6 +3,7 @@ import React, { useState } from "react";
 import { buttons } from "./buttons";
 import { ArrowDropDownRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
+import { useDispatch } from "react-redux";
 
 interface ButtonProps {
   label: string;
@@ -31,6 +32,7 @@ const CustomButton: React.FC<{
 const Navbar: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const navigate = useNavigate();
+  const dispatch = useDispatch();
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -99,7 +101,9 @@ const Navbar: React.FC = () => {
         return null;
       })}
 
-      <Button onClick={() => navigate("/auth")}>Login</Button>
+      <Button onClick={() => dispatch({ type: "SET_AUTHPAGE", payload: true })}>
+        Login
+      </Button>
     </Box>
   );
 };

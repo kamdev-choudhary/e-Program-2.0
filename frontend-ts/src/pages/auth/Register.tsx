@@ -11,13 +11,15 @@ import React, { useState } from "react";
 interface User {
   id: string;
   password: string;
+  mobile?: string;
+  email?: string;
 }
 
-interface LoginProps {
+interface RegisterProps {
   setActiveTab: (value: number) => void;
 }
 
-const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
+const Register: React.FC<RegisterProps> = ({ setActiveTab }) => {
   const [user, setUser] = useState<User>({
     id: "",
     password: "",
@@ -91,7 +93,11 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
             sx={{ mt: 2 }}
             disabled={loading}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : "Login"}
+            {loading ? (
+              <CircularProgress size={24} color="inherit" />
+            ) : (
+              "Register"
+            )}
           </Button>
           {error && (
             <Typography color="error" variant="body2" sx={{ mt: 2 }}>
@@ -100,9 +106,9 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
           )}
         </Box>
         <Box sx={{ display: "flex" }}>
-          <Typography sx={{ mt: 1 }}>Don't have an account. </Typography>
-          <Button size="small" onClick={() => setActiveTab(1)}>
-            Sign up
+          <Typography sx={{ mt: 1 }}>Already have an account. </Typography>
+          <Button size="small" onClick={() => setActiveTab(0)}>
+            Log in
           </Button>
         </Box>
       </Paper>
@@ -110,4 +116,4 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
   );
 };
 
-export default Login;
+export default Register;
