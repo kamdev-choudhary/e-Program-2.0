@@ -1,6 +1,7 @@
 import {
   HomeRounded,
   LibraryBooksRounded,
+  LocationCityRounded,
   SchoolRounded,
 } from "@mui/icons-material";
 import React from "react";
@@ -44,6 +45,14 @@ export const buttons: Button[] = [
     icon: LibraryBooksRounded,
     type: "button",
     color: "#28844f",
+    size: 20,
+  },
+  {
+    label: "CITY Info",
+    path: "/automation/jee/cityinfo",
+    icon: LocationCityRounded,
+    type: "button",
+    color: "#fff",
     size: 20,
   },
 ];
