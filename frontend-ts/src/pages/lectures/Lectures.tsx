@@ -25,7 +25,6 @@ import {
 } from "@mui/material";
 import { useDispatch } from "react-redux";
 import _ from "lodash";
-import { getLecturesByClass } from "../../api/lectures";
 import { getAllAcademicData } from "../../api/academic";
 import { useGlobalContext } from "../../contexts/GlobalProvider";
 
@@ -55,6 +54,7 @@ const LecturePage: React.FC = () => {
 
   const handleFilterTextChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setFilterText(e.target.value);
+  console.log(filterText);
 
   const getAcademicData = async () => {
     try {
@@ -64,16 +64,17 @@ const LecturePage: React.FC = () => {
       }
     } catch (error) {
       console.error(error);
+      setLectures([]);
     }
   };
 
   const getLectures = async () => {
     dispatch({ type: "SET_LOADING", payload: true });
     try {
-      const response = await getLecturesByClass({ classLevel: selectedClass });
-      if (response?.data?.lectures) {
-        setLectures(response.data.lectures);
-      }
+      // const response = await getLecturesByClass({ classLevel: selectedClass });
+      // if (response?.data?.lectures) {
+      //   setLectures(response.data.lectures);
+      // }
     } catch (error) {
       console.error(error);
     } finally {

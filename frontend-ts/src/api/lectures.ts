@@ -1,52 +1,127 @@
 import axios from "../hooks/AxiosInterceptor";
 
-export async function getLecturesByClass({ classLevel }) {
-  try {
-    const response = await axios.get(`/lectures/${classLevel || ""}`);
-    return response;
-  } catch (error) {
-    console.error(error);
-  }
+// Define interfaces for type safety
+interface ClassData {
+  _id?: string; // Optional for new class
+  name: string;
+  description?: string;
 }
 
-export const addNewLectureSingle = async ({ newLecture }) => {
+interface QuestionPatternData {
+  name: string;
+  description: string;
+}
+
+// Constants for endpoints
+const API_PATHS = {
+  CLASSES: "/academic/class",
+  METADATA: "/academic/metadata",
+  PATTERNS: "/academic/pattern",
+  SUBJECTS: "/academic/subject",
+  SUB_SUBJECTS: "/academic/sub-subject",
+  TOPICS: "/academic/topic",
+  SUB_TOPICS: "/academic/sub-topic",
+};
+
+// Get all classes
+export const getClasses = async () => {
   try {
-    const response = await axios.post(`/lectures`, { ...newLecture });
-    return response;
+    return await axios.get(API_PATHS.CLASSES);
   } catch (error) {
-    console.error(error);
+    throw error;
   }
 };
 
-export const addLecturesMultiple = async ({ formData }) => {
+// Save a new class
+export const addNewClass = async (newClass: ClassData) => {
   try {
-    const response = await axios.post(`/lectures/upload`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
-    return response;
+    return await axios.post(API_PATHS.CLASSES, newClass);
   } catch (error) {
-    console.error(error);
+    throw error;
   }
 };
 
-export const deleteLecture = async ({ id }) => {
+// Delete a class
+export const deleteClass = async (id: string) => {
   try {
-    const response = await axios.delete(`/lectures/${id}`);
-    return response;
+    return await axios.delete(`${API_PATHS.CLASSES}/${id}`);
   } catch (error) {
-    console.error(error);
+    throw error;
   }
 };
 
-export const getAllLecturesWithPagination = async ({ limit = 0, page = 1 }) => {
+// Edit a class
+export const editClass = async (selectedClass: ClassData) => {
   try {
-    const response = await axios.get(
-      `/lectures/getlectureswithpagination/${limit}/${page}`
-    );
-    return response;
+    const { _id, ...data } = selectedClass;
+    if (!_id) {
+      throw new Error("Class ID is required for editing.");
+    }
+    return await axios.put(`${API_PATHS.CLASSES}/${_id}`, data);
   } catch (error) {
-    console.error(error);
+    throw error;
+  }
+};
+
+// Get all academic metadata
+export const getAllAcademicData = async () => {
+  try {
+    return await axios.get(API_PATHS.METADATA);
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Get all question patterns
+export const getAllQuestionPatterns = async () => {
+  try {
+    return await axios.get(API_PATHS.PATTERNS);
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Add a new question pattern
+export const addNewQuestionPattern = async (data: QuestionPatternData) => {
+  try {
+    return await axios.post(API_PATHS.PATTERNS, data);
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Get all subjects
+export const getAllSubjects = async () => {
+  try {
+    return await axios.get(API_PATHS.SUBJECTS);
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Get all sub-subjects
+export const getAllSubSubjects = async () => {
+  try {
+    return await axios.get(API_PATHS.SUB_SUBJECTS);
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Get all topics
+export const getAllTopics = async () => {
+  try {
+    return await axios.get(API_PATHS.TOPICS);
+  } catch (error) {
+    throw error;
+  }
+};
+
+// Get all sub-topics
+export const getAllSubTopics = async () => {
+  try {
+    return await axios.get(API_PATHS.SUB_TOPICS);
+  } catch (error) {
+    throw error;
   }
 };
