@@ -3,18 +3,12 @@ import multer from "multer";
 import { unlinkSync } from "fs";
 import Book from "../models/book.js"; // Assuming the Book model is in this directory
 import response from "../utils/responses.js";
-import dotenv from "dotenv";
-
-dotenv.config();
-
-const cloudName = process.env.CLOUD_NAME;
-const cloudApiKey = process.env.CLOUD_API_KEY;
-const cloudSecret = process.env.CLOUD_SECRET;
+import config from "../config/config.js";
 
 cloudinary.config({
-  cloud_name: cloudName,
-  api_key: cloudApiKey,
-  api_secret: cloudSecret,
+  cloud_name: config.cloudName,
+  api_key: config.cloudApiKey,
+  api_secret: config.cloudSecret,
   secure: true,
 });
 

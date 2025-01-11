@@ -1,12 +1,12 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
+import config from "../config/config.js";
+
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import dotenv from "dotenv";
-dotenv.config();
 
-const jwtSecret = process.env.JWT_SECRET;
+const jwtSecret = config.jwtSecret;
 import logger from "../utils/logger.js";
 
 const userSchema = new Schema(

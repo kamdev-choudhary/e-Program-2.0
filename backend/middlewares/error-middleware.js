@@ -1,4 +1,4 @@
-// import logger from "../utils/logger";
+import logger from "../utils/logger.js";
 
 const errorMiddleware = (err, req, res, next) => {
   // Set status and message
@@ -6,12 +6,12 @@ const errorMiddleware = (err, req, res, next) => {
   const message = err.message || "Internal server error";
 
   // Log the error details
-  // logger.error({
-  //   message: err.message,
-  //   stack: err.stack,
-  //   status,
-  //   path: req.originalUrl,
-  // });
+  logger.error({
+    message: err.message,
+    stack: err.stack,
+    status,
+    path: req.originalUrl,
+  });
 
   // Prepare response
   const response = {

@@ -1,21 +1,19 @@
 import express, { static as serveStatic } from "express";
-import connectDB from "./utils/connectDB.js";
-import errorMiddleware from "./middlewares/error-middleware.js";
 import cors from "cors";
 import bodyparser from "body-parser";
 import compression from "compression";
+import path from "path";
 import helmet from "helmet";
+import { fileURLToPath } from "url";
 import routes from "./routes.js";
 import logger from "./utils/logger.js";
 import { createServer } from "http";
 import setupSocket from "./utils/socket.js";
-import { fileURLToPath } from "url";
-import path from "path";
+import connectDB from "./utils/connectDB.js";
+import errorMiddleware from "./middlewares/error-middleware.js";
+import config from "./config/config.js";
 
-import dotenv from "dotenv";
-dotenv.config();
-
-const port = process.env.PORT || "5000";
+const port = config.port || 5000;
 
 // Resolve __dirname for ESModules
 const __filename = fileURLToPath(import.meta.url);

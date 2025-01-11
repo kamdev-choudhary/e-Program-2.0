@@ -1,9 +1,8 @@
 import { connect } from "mongoose";
-import dotenv from "dotenv";
-dotenv.config();
+import config from "../config/config.js";
 import logger from "../utils/logger.js";
 
-const mongoUrl = process.env.MONGO_URL;
+const mongoUrl = config.mongoUrl;
 
 const connectDB = async () => {
   try {

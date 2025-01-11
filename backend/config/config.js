@@ -1,11 +1,10 @@
 import dotenv from "dotenv";
 dotenv.config();
 
-// Configuration object
 const config = {
   port: process.env.PORT || 5000,
-  mongoURI:
-    process.env.MONGO_URI ||
+  mongoUrl:
+    process.env.MONGO_URL ||
     "mongodb+srv://kamdevchoudhary:mongopassword@cluster0.mrszysb.mongodb.net/?retryWrites=true&w=majority",
   jwtSecret: process.env.JWT_SECRET || "supersecretkey",
   nodeEnv: process.env.NODE_ENV || "development",
