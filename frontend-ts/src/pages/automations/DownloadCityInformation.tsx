@@ -475,6 +475,15 @@ const DownloadCityInformation: React.FC = () => {
             >
               Download PDF
             </Button>
+            <Button
+              startIcon={<DownloadRounded />}
+              variant="contained"
+              component="a"
+              href="/sample.xlsx" // Path to the file in the public folder
+              download // Enables direct download
+            >
+              Sample
+            </Button>
           </Box>
         </Box>
         <Box sx={{ mt: 2 }}>
@@ -495,6 +504,8 @@ const DownloadCityInformation: React.FC = () => {
               },
             }}
             processRowUpdate={handleProcessRowUpdate}
+            initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
+            pageSizeOptions={[10, 30, 50, 100, 200]}
           />
         </Box>
       </Paper>
