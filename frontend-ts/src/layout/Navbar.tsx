@@ -4,15 +4,17 @@ import { buttons } from "./buttons";
 import { ArrowDropDownRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
+import { useGlobalContext } from "../contexts/GlobalProvider";
 
 interface ButtonProps {
   label: string;
   path?: string;
   icon: React.ElementType;
   type: "button" | "menu";
-  color: string;
-  size: number;
+  color?: string;
+  size?: number;
   options?: { label: string; path: string }[];
+  loginRequired?: boolean;
 }
 
 const CustomButton: React.FC<{
@@ -33,6 +35,7 @@ const Navbar: React.FC = () => {
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const navigate = useNavigate();
   const dispatch = useDispatch();
+  const { isLoggedIn } = useGlobalContext();
 
   const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorEl(event.currentTarget);
@@ -61,6 +64,7 @@ const Navbar: React.FC = () => {
       }}
     >
       {buttons?.map((button, index) => {
+        if (button.loginRequired && !isLoggedIn) return;
         if (button.type === "button") {
           return (
             <CustomButton

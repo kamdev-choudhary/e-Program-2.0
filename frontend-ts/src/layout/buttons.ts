@@ -9,6 +9,8 @@ interface Option {
   label: string;
   path: string;
   icon: React.ElementType;
+  role?: [];
+  loginRequired: boolean;
 }
 
 interface Button {
@@ -17,8 +19,10 @@ interface Button {
   icon: React.ElementType;
   type: "button" | "menu";
   options?: Option[];
-  color: string;
-  size: number;
+  color?: string;
+  size?: number;
+  role?: [];
+  loginRequired: boolean;
 }
 
 export const buttons: Button[] = [
@@ -29,6 +33,7 @@ export const buttons: Button[] = [
     color: "#28844f",
     type: "button",
     size: 20,
+    loginRequired: false,
   },
 
   {
@@ -38,24 +43,28 @@ export const buttons: Button[] = [
     type: "button",
     color: "#28844f",
     size: 20,
+    loginRequired: true,
   },
   {
     label: "JEE Main",
-    path: "/automation/jee/cityinfo",
+    path: "/automation/jeemain/cityinfo",
     icon: LocationCityRounded,
     type: "menu",
     color: "#fff",
     size: 20,
+    loginRequired: false,
     options: [
       {
         label: "JEE City Info Download",
-        path: "/automation/jee/cityinfo",
+        path: "/automation/jeemain/cityinfo",
         icon: LocationCityRounded,
+        loginRequired: false,
       },
       {
         label: "JEE Admit Card Download",
-        path: "/automation/jee/admitcard",
+        path: "/automation/jeemain/admitcard",
         icon: LocationCityRounded,
+        loginRequired: false,
       },
     ],
   },

@@ -10,9 +10,8 @@ const NotFound = lazy(() => import("./pages/404/NotFound"));
 const Dashboard = lazy(() => import("./pages/dashboard/Dashboard"));
 const AuthPage = lazy(() => import("./pages/auth/AuthPage"));
 const Lectures = lazy(() => import("./pages/lectures/Lectures"));
-const DownloadCityInformation = lazy(
-  () => import("./pages/automations/DownloadCityInformation")
-);
+const DCI = lazy(() => import("./pages/automations/DownloadCityInformation"));
+const DAC = lazy(() => import("./pages/automations/DownloadJeeMainAdmitCard"));
 
 // Define Routes
 const router = createBrowserRouter([
@@ -34,8 +33,12 @@ const router = createBrowserRouter([
         element: <Lectures />,
       },
       {
-        path: "/automation/jee/cityinfo",
-        element: <DownloadCityInformation />,
+        path: "/automation/jeemain/cityinfo",
+        element: <DCI />,
+      },
+      {
+        path: "/automation/jeemain/admitcard",
+        element: <DAC />,
       },
     ],
   },
