@@ -9,6 +9,7 @@ const { ocrSpaceKey } = require("../config/config");
  * @param {string} apiKey - Your OCR.Space API key
  * @returns {Promise<string>} - Recognized text from the image
  */
+
 async function getOCRFromImage(filePath) {
   // Ensure the file exists
   if (!fs.existsSync(filePath)) {

@@ -115,6 +115,13 @@ module.exports = {
       await browser.close();
     }
   },
+  downloadAdmitCard: async (req, res, next) => {
+    try {
+      res.status(200).json({ message: "Success" });
+    } catch (error) {
+      next(error);
+    }
+  },
 };
 
 /**
