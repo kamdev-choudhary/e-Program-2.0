@@ -17,6 +17,7 @@ const SELECTORS = {
   successPanel: "#ctl00_ContentPlaceHolder1_pnlAdmitcard",
   examDate: "#ctl00_ContentPlaceHolder1_dateofexamP1",
   examCity: "#ctl00_ContentPlaceHolder1_cityofexamP1",
+  errorSelector: "#ctl00_ContentPlaceHolder1_lblerror1",
 };
 
 const MAX_RETRIES = 3;
@@ -70,7 +71,15 @@ module.exports = {
 
           await page.type(SELECTORS.captchaInput, captchaText);
           await page.click(SELECTORS.loginButton);
-
+          const error = await page.$eval(
+            SELECTORS.errorSelector,
+            (el) => el.innerText
+          );
+          if (error && error === "Invalid Application No or Date of Birth.") {
+            return res.status(200).json({ error });
+          }
+          await page.waitForNetworkIdle({ timeout: 10000 });
+          console.log("Error", error);
           // Wait for success panel
           await page.waitForSelector(SELECTORS.successPanel, {
             timeout: 4000,
@@ -93,8 +102,6 @@ module.exports = {
       const date = await page.$eval(SELECTORS.examDate, (el) => el.innerText);
       const city = await page.$eval(SELECTORS.examCity, (el) => el.innerText);
 
-      await page.waitForNetworkIdle({ timeout: 10000 });
-
       // Save the PDF
       const pdfPath = `./uploads/${formattedDate}_${applicationNumber}.pdf`;
       await page.pdf({
@@ -115,6 +122,7 @@ module.exports = {
       await browser.close();
     }
   },
+
   downloadAdmitCard: async (req, res, next) => {
     try {
       res.status(200).json({ message: "Success" });
@@ -149,7 +157,7 @@ async function captureAndSolveCaptcha(page, captchaSelector, captchaPath) {
   } = await Tesseract.recognize(captchaPath, "eng");
   const captchaText = text.trim().replace(/\s/g, "");
 
-  if (!/^[A-Za-z0-9]+$/.test(captchaText)) {
+  if (!/^[A-Z0-9]+$/.test(captchaText)) {
     throw new Error("CAPTCHA text is invalid.");
   }
 

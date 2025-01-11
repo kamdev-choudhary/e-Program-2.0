@@ -123,6 +123,19 @@ const DownloadCityInformation: React.FC = () => {
                   pdfUrl: `${baseUrl}${response.data.pdfUrl}`,
                   date: response.data.date,
                   city: response.data.city,
+                  error: "",
+                }
+              : item
+          );
+        });
+      } else if (response.data?.error) {
+        setJsonData((prevData) => {
+          if (!prevData) return null; // If jsonData is null, maintain null state
+          return prevData.map((item) =>
+            item.drn === scholar.drn
+              ? {
+                  ...item,
+                  error: response.data.error,
                 }
               : item
           );
@@ -221,6 +234,7 @@ const DownloadCityInformation: React.FC = () => {
             pdfUrl: rowData.pdfUrl || "",
             city: rowData.city || "",
             date: rowData.date || "",
+            error: "",
           };
         });
 
@@ -278,7 +292,6 @@ const DownloadCityInformation: React.FC = () => {
       width: 80,
       align: "center",
       headerAlign: "center",
-      editable: true,
     },
     {
       field: "drn",
@@ -338,7 +351,6 @@ const DownloadCityInformation: React.FC = () => {
       minWidth: 150,
       align: "center",
       headerAlign: "center",
-      editable: true,
       flex: 1,
     },
     {
@@ -348,14 +360,12 @@ const DownloadCityInformation: React.FC = () => {
       minWidth: 150,
       align: "center",
       headerAlign: "center",
-      editable: true,
     },
     {
       field: "d",
       headerName: "PDF",
       align: "center",
       headerAlign: "center",
-      editable: true,
       minWidth: 200,
       flex: 1,
       renderCell: (params) => (
@@ -391,7 +401,6 @@ const DownloadCityInformation: React.FC = () => {
       headerName: "Data",
       align: "center",
       headerAlign: "center",
-      editable: true,
       minWidth: 200,
       flex: 1,
       renderCell: (params) => (
@@ -404,6 +413,18 @@ const DownloadCityInformation: React.FC = () => {
           >
             Fetch Data
           </Button>
+        </>
+      ),
+    },
+    {
+      field: "error",
+      headerName: "Error",
+      flex: 1,
+      minWidth: 250,
+      headerAlign: "center",
+      renderCell: (params) => (
+        <>
+          <span style={{ color: "red" }}>{params.row.error}</span>
         </>
       ),
     },
