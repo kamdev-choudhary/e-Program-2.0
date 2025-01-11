@@ -1,6 +1,5 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-const AutoIncrement = require("mongoose-sequence")(mongoose);
+import mongoose, { Schema as _Schema, model } from "mongoose";
+const Schema = _Schema;
 
 const bookSchema = new Schema({
   BookId: { type: Number, unique: true },
@@ -13,8 +12,6 @@ const bookSchema = new Schema({
   fileLink: { type: String },
 });
 
-bookSchema.plugin(AutoIncrement, { inc_field: "BookId" });
+const Book = model("Book", bookSchema);
 
-const Book = mongoose.model("Book", bookSchema);
-
-module.exports = Book;
+export default Book;

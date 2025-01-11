@@ -1,6 +1,7 @@
-const dotenv = require("dotenv");
+import dotenv from "dotenv";
 dotenv.config();
 
+// Configuration object
 const config = {
   port: process.env.PORT || 5000,
   mongoURI:
@@ -9,12 +10,12 @@ const config = {
   jwtSecret: process.env.JWT_SECRET || "supersecretkey",
   nodeEnv: process.env.NODE_ENV || "development",
   api_key: process.env.API_KEY || "kd",
-  cloudName: "dgwlqoijt",
-  cloudApiKey: "295749936547257",
-  cloudSecret: "LKxfF4nyG0lIb1pgpHvDrfAZWmY",
-  ocrSpaceKey: "K88503223788957",
-  Auth0Domain: "",
-  Auth0Audience: "",
+  cloudName: process.env.CLOUD_NAME || "dgwlqoijt",
+  cloudApiKey: process.env.CLOUD_API_KEY || "295749936547257",
+  cloudSecret: process.env.CLOUD_SECRET || "LKxfF4nyG0lIb1pgpHvDrfAZWmY",
+  ocrSpaceKey: process.env.OCR_SPACE_KEY || "K88503223788957",
+  Auth0Domain: process.env.AUTH0_DOMAIN || "",
+  Auth0Audience: process.env.AUTH0_AUDIENCE || "",
 };
 
-module.exports = config;
+export default config;

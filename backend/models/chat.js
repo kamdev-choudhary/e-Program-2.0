@@ -1,8 +1,8 @@
 // models/Chat.js
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import { Schema as _Schema, model } from "mongoose";
+const Schema = _Schema;
 
-const chatSchema = new mongoose.Schema(
+const chatSchema = new _Schema(
   {
     isGroupChat: { type: Boolean, default: false },
     participants: [{ type: Schema.Types.ObjectId, ref: "User" }],
@@ -15,4 +15,4 @@ const chatSchema = new mongoose.Schema(
   }
 );
 
-module.exports = mongoose.model("Chat", chatSchema);
+export default model("Chat", chatSchema);

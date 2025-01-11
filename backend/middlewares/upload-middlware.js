@@ -1,10 +1,10 @@
-const multer = require("multer");
-const path = require("path");
+import multer, { diskStorage } from "multer";
+import { join } from "path";
 
 // Configure storage
-const storage = multer.diskStorage({
+const storage = diskStorage({
   destination: (req, file, cb) => {
-    cb(null, path.join(__dirname, "../uploads")); // Save files to the 'uploads' folder
+    cb(null, join(__dirname, "../uploads")); // Save files to the 'uploads' folder
   },
   filename: (req, file, cb) => {
     const timestamp = Date.now();
@@ -31,4 +31,4 @@ const limits = { fileSize: 5 * 1024 * 1024 }; // 5 MB
 
 // Export upload middleware
 const upload = multer({ storage, fileFilter, limits });
-module.exports = upload;
+export default upload;

@@ -1,6 +1,5 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-const AutoIncrement = require("mongoose-sequence")(mongoose);
+import mongoose, { Schema as _Schema, model } from "mongoose";
+const Schema = _Schema;
 
 const topicSchema = new Schema({
   id_subject: { type: Number, required: true, unique: false },
@@ -9,8 +8,6 @@ const topicSchema = new Schema({
   name: { type: String, required: true },
 });
 
-topicSchema.plugin(AutoIncrement, { inc_field: "id_topic" });
+const Topic = model("Topic", topicSchema);
 
-const Topic = mongoose.model("Topic", topicSchema);
-
-module.exports = Topic;
+export default Topic;

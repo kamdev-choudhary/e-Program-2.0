@@ -1,4 +1,4 @@
-const logger = require("../utils/logger"); // Assuming you have a logger utility
+// import logger from "../utils/logger";
 
 const errorMiddleware = (err, req, res, next) => {
   // Set status and message
@@ -6,12 +6,12 @@ const errorMiddleware = (err, req, res, next) => {
   const message = err.message || "Internal server error";
 
   // Log the error details
-  logger.error({
-    message: err.message,
-    stack: err.stack,
-    status,
-    path: req.originalUrl,
-  });
+  // logger.error({
+  //   message: err.message,
+  //   stack: err.stack,
+  //   status,
+  //   path: req.originalUrl,
+  // });
 
   // Prepare response
   const response = {
@@ -28,4 +28,4 @@ const errorMiddleware = (err, req, res, next) => {
   return res.status(status).json(response);
 };
 
-module.exports = errorMiddleware;
+export default errorMiddleware;

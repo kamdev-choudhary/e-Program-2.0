@@ -1,14 +1,17 @@
-const mongoose = require("mongoose");
-const { mongoURI } = require("../config/config");
-const logger = require("../utils/logger");
+import { connect } from "mongoose";
+import dotenv from "dotenv";
+dotenv.config();
+import logger from "../utils/logger.js";
+
+const mongoUrl = process.env.MONGO_URL;
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(mongoURI);
+    await connect(mongoUrl);
     logger.info("Connected to Mongoose Database");
   } catch (err) {
     logger.error(err);
   }
 };
 
-module.exports = connectDB;
+export default connectDB;

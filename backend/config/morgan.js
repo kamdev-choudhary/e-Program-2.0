@@ -1,5 +1,5 @@
-const morgan = require("morgan");
-const logger = require("../utils/logger");
+import morgan from "morgan";
+import logger from "../utils/logger";
 
 const morganHTTP = morgan("combined", {
   stream: { write: (message) => logger.http(message.trim()) },

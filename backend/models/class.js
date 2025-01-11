@@ -1,6 +1,5 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-const AutoIncrement = require("mongoose-sequence")(mongoose);
+import mongoose, { Schema as _Schema, model } from "mongoose";
+const Schema = _Schema;
 
 const classSchema = new Schema({
   id_class: { type: Number, unique: true },
@@ -8,8 +7,6 @@ const classSchema = new Schema({
   value: { type: String, required: true },
 });
 
-classSchema.plugin(AutoIncrement, { inc_field: "id_class" });
+const Class = model("Class", classSchema);
 
-const Class = mongoose.model("Class", classSchema);
-
-module.exports = Class;
+export default Class;

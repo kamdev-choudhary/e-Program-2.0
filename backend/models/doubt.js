@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import { Schema as _Schema, model } from "mongoose";
+const Schema = _Schema;
 
 const doubtSchema = new Schema({
   postedBy: String,
@@ -22,6 +22,6 @@ const doubtSchema = new Schema({
   ],
 });
 
-const Doubt = mongoose.model("Doubt", doubtSchema);
+const Doubt = model("Doubt", doubtSchema);
 
-module.exports = Doubt;
+export default Doubt;

@@ -1,21 +1,18 @@
-const rateLimit = require("express-rate-limit");
-const swaggerUi = require("swagger-ui-express");
-const swaggerDocument = require("./swagger.json");
-const { api_key } = require("./config/config");
-const verifyToken = require("./middlewares/verify-token");
+import rateLimit from "express-rate-limit";
+import { serve, setup } from "swagger-ui-express";
 
 // Routers
-const authRouter = require("./routers/authRouter");
-const lectureRouter = require("./routers/lectureRouter");
-const questionRouter = require("./routers/questionRoute");
-const materialRouter = require("./routers/materialRoute");
-const examRouter = require("./routers/examRouter");
-const batchRouter = require("./routers/batchRoute");
-const academicRoute = require("./routers/academicRoute");
-const doubtRoute = require("./routers/doubtRoute");
-const userRoute = require("./routers/userRouter");
-const chatRoute = require("./routers/chatRoute");
-const automationRoute = require("./routers/automationRouter");
+import authRouter from "./routers/authRouter.js";
+import lectureRouter from "./routers/lectureRouter.js";
+import questionRouter from "./routers/questionRoute.js";
+import materialRouter from "./routers/materialRoute.js";
+import examRouter from "./routers/examRouter.js";
+import batchRouter from "./routers/batchRoute.js";
+import academicRoute from "./routers/academicRoute.js";
+import doubtRoute from "./routers/doubtRoute.js";
+import userRoute from "./routers/userRouter.js";
+import chatRoute from "./routers/chatRoute.js";
+import automationRoute from "./routers/automationRouter.js";
 
 // Rate Limiter for login route
 const authLimiter = rateLimit({
@@ -30,13 +27,6 @@ const routes = (app) => {
   // Health check and root endpoint
   app.get("/", (req, res) =>
     res.status(200).json({ status: "OK", uptime: process.uptime() })
-  );
-
-  // API documentation
-  app.use(
-    "/api/v1/api-docs",
-    swaggerUi.serve,
-    swaggerUi.setup(swaggerDocument)
   );
 
   // Auth route
@@ -60,4 +50,4 @@ const routes = (app) => {
   );
 };
 
-module.exports = routes;
+export default routes;

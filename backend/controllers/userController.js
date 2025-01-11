@@ -1,11 +1,11 @@
-const User = require("../models/user");
-const bcrypt = require("bcryptjs");
-const Batch = require("../models/batch");
-const response = require("../utils/responses");
+import User from "../models/user.js";
+import bcrypt from "bcryptjs";
+import Batch from "../models/batch.js";
+import response from "../utils/responses.js";
 
 // GETTING USER DATA
 
-module.exports.getUserData = async (req, res, next) => {
+export async function getUserData(req, res, next) {
   const { id } = req.params;
   try {
     const user = await User.findOne({ _id: id }, { password: 0 }); // Exclude password field
@@ -17,11 +17,11 @@ module.exports.getUserData = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
 // UPDATE USER DATA
 
-module.exports.updateUserData = async (req, res, next) => {
+export async function updateUserData(req, res, next) {
   const { id } = req.params;
   const userDataToUpdate = req.body;
   try {
@@ -38,11 +38,11 @@ module.exports.updateUserData = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
 // Get user by roles
 
-module.exports.getUserbyRole = async (req, res, next) => {
+export async function getUserbyRole(req, res, next) {
   try {
     const { role } = req.params;
     const users = await User.find({ role: role });
@@ -50,10 +50,10 @@ module.exports.getUserbyRole = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
 // Delete User
-module.exports.deleteUser = async (req, res, next) => {
+export async function deleteUser(req, res, next) {
   try {
     const { id } = req.params;
 
@@ -71,10 +71,10 @@ module.exports.deleteUser = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
 // Update Profile Pics
-module.exports.updateProfilePic = async (req, res, next) => {
+export async function updateProfilePic(req, res, next) {
   try {
     const { id, photo } = req.body; // Assuming 'photo' is Base64 or a URL
     if (!id || !photo) {
@@ -91,15 +91,13 @@ module.exports.updateProfilePic = async (req, res, next) => {
     user.photo = photo; // Assuming 'photo' is the field where profile pic is stored
     await user.save();
 
-    return res
-      .status(200)
-      .json({
-        message: "Profile picture updated successfully",
-        user,
-        status_code: 1,
-      });
+    return res.status(200).json({
+      message: "Profile picture updated successfully",
+      user,
+      status_code: 1,
+    });
   } catch (error) {
     console.error(error);
     next(error);
   }
-};
+}

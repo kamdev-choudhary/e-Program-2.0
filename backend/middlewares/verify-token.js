@@ -1,5 +1,5 @@
-const jwt = require("jsonwebtoken");
-const { jwtSecret } = require("../config/config");
+import { verify } from "jsonwebtoken";
+import { jwtSecret } from "../config/config";
 
 // Middleware to verify the JWT token
 const verifyToken = (req, res, next) => {
@@ -11,7 +11,7 @@ const verifyToken = (req, res, next) => {
 
   try {
     // Verify the token
-    const decoded = jwt.verify(token, jwtSecret);
+    const decoded = verify(token, jwtSecret);
     req.user = decoded;
     next();
   } catch (error) {
@@ -21,4 +21,4 @@ const verifyToken = (req, res, next) => {
   }
 };
 
-module.exports = verifyToken;
+export default verifyToken;

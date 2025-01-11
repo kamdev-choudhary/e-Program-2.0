@@ -1,8 +1,8 @@
-const Chat = require("../models/chat");
-const Message = require("../models/message");
-const response = require("../utils/responses");
+import Chat from "../models/chat.js";
+import Message from "../models/message.js";
+import response from "../utils/responses.js";
 
-module.exports.getAllChats = async (req, res, next) => {
+export async function getAllChats(req, res, next) {
   try {
     const { id } = req.params;
     if (!id) {
@@ -38,9 +38,9 @@ module.exports.getAllChats = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.createChat = async (req, res, next) => {
+export async function createChat(req, res, next) {
   try {
     const { id1, id2, content } = req.body;
 
@@ -81,9 +81,9 @@ module.exports.createChat = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.sendChat = async (req, res, next) => {
+export async function sendChat(req, res, next) {
   try {
     const { id1, id2, content, groupId, page = 1 } = req.body;
     const limit = 10;
@@ -105,15 +105,15 @@ module.exports.sendChat = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.getMessages = async (req, res, next) => {
+export async function getMessages(req, res, next) {
   try {
     const { id } = req.params;
-    const messages = await Message.find({ groupId: id }).lean(); // Await the query to get data
+    const messages = await find({ groupId: id }).lean(); // Await the query to get data
     res.status(200).json({ messages, ...response.success });
   } catch (error) {
     res.status(500).json({ message: "Server error", ...response.serverError });
     next(error);
   }
-};
+}

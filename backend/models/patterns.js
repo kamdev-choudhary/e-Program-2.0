@@ -1,6 +1,5 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-const AutoIncrement = require("mongoose-sequence")(mongoose);
+import mongoose, { Schema as _Schema, model } from "mongoose";
+const Schema = _Schema;
 
 const patternSchema = new Schema({
   id_pattern: { type: Number },
@@ -8,8 +7,6 @@ const patternSchema = new Schema({
   description: String,
 });
 
-patternSchema.plugin(AutoIncrement, { inc_field: "id_pattern" });
+const Pattern = model("Pattern", patternSchema);
 
-const Pattern = mongoose.model("Pattern", patternSchema);
-
-module.exports = Pattern;
+export default Pattern;

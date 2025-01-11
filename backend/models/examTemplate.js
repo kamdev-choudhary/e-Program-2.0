@@ -1,6 +1,6 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-const Question = require("./question");
+import { Schema as _Schema, model } from "mongoose";
+const Schema = _Schema;
+import Question from "./question.js";
 
 const formatDate = () => {
   const date = new Date();
@@ -86,6 +86,6 @@ const examTemplateSchema = new Schema({
   ],
 });
 
-const ExamTemplate = mongoose.model("ExamTemplate", examTemplateSchema);
+const ExamTemplate = model("ExamTemplate", examTemplateSchema);
 
-module.exports = ExamTemplate;
+export default ExamTemplate;

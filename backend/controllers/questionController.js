@@ -1,17 +1,17 @@
-const Question = require("../models/question");
-const ExamTemplate = require("../models/examTemplate");
+import Question from "../models/question.js";
+import ExamTemplate from "../models/examTemplate.js";
 
 // Questions info Routes
-module.exports.questionInfo = async (req, res, next) => {
+export async function questionInfo(req, res, next) {
   try {
     res.status(200).json({ message: "Questions info route" });
   } catch (error) {
     next(error);
   }
-};
+}
 
 // Get Questions with Paginations
-module.exports.getQuestionWithPagination = async (req, res, next) => {
+export async function getQuestionWithPagination(req, res, next) {
   try {
     // Parse limit and page, provide default values if not specified
     const limit = parseInt(req.query.limit) || 10; // Set a default limit of 10
@@ -41,18 +41,18 @@ module.exports.getQuestionWithPagination = async (req, res, next) => {
   } catch (error) {
     next(error); // Pass any errors to error-handling middleware
   }
-};
+}
 
 // Add Question
-module.exports.saveQuestion = async (req, res) => {
+export async function saveQuestion(req, res) {
   res.status(200).json("Data Saved Successfully");
-};
+}
 
 // Delete Question
-module.exports.deleteQuestion = async (req, res, next) => {};
+export async function deleteQuestion(req, res, next) {}
 
 // update Question
-module.exports.updateQuestion = async (req, res, next) => {
+export async function updateQuestion(req, res, next) {
   try {
     const question = await Question.findOneAndUpdate(
       { _id: req.body._id },
@@ -63,4 +63,4 @@ module.exports.updateQuestion = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}

@@ -1,25 +1,24 @@
-const express = require("express");
-const router = express(express.Router);
-const lectureController = require("../controllers/lectureController");
-const multer = require("multer");
+import express, { Router } from "express";
+const router = express(Router);
+import {
+  viewLectures,
+  addNewLectureSingle,
+  uploadLectureInfo,
+  viewLecturesByClass,
+  deleteLecture,
+  getLecturesWithPagination,
+} from "../controllers/lectureController.js";
+import multer from "multer";
 const upload = multer({ dest: "uploads/" });
 
-router
-  .route("/")
-  .get(lectureController.viewLectures)
-  .post(lectureController.addNewLectureSingle);
+router.route("/").get(viewLectures).post(addNewLectureSingle);
 
-router
-  .route("/upload")
-  .post(upload.single("file"), lectureController.uploadLectureInfo);
+router.route("/upload").post(upload.single("file"), uploadLectureInfo);
 
-router
-  .route("/:id")
-  .get(lectureController.viewLecturesByClass)
-  .delete(lectureController.deleteLecture);
+router.route("/:id").get(viewLecturesByClass).delete(deleteLecture);
 
 router
   .route("/getlectureswithpagination/:limit/:page")
-  .get(lectureController.getLecturesWithPagination);
+  .get(getLecturesWithPagination);
 
-module.exports = router;
+export default router;

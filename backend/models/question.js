@@ -1,6 +1,5 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-const AutoIncrement = require("mongoose-sequence")(mongoose);
+import mongoose, { Schema as _Schema, model } from "mongoose";
+const Schema = _Schema;
 
 // Option schema for multiple-choice questions
 const optionSchema = new Schema({
@@ -107,8 +106,7 @@ const questionSchema = new Schema(
 );
 
 // Add auto-increment for idQuestion field
-questionSchema.plugin(AutoIncrement, { inc_field: "idQuestion" });
 
-const Question = mongoose.model("Question", questionSchema);
+const Question = model("Question", questionSchema);
 
-module.exports = Question;
+export default Question;

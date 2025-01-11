@@ -1,15 +1,15 @@
-const Class = require("../models/class");
-const Subject = require("../models/subject");
-const SubSubject = require("../models/subSubject");
-const Topic = require("../models/topic");
-const SubTopic = require("../models/subTopic");
-const { validationResult, body } = require("express-validator");
-const response = require("../utils/responses");
-const logger = require("../utils/logger");
-const Pattern = require("../models/patterns");
+import Class from "../models/class.js";
+import Subject from "../models/subject.js";
+import SubSubject from "../models/subSubject.js";
+import Topic from "../models/topic.js";
+import SubTopic from "../models/subTopic.js";
+import { validationResult } from "express-validator";
+import response from "../utils/responses.js";
+import logger from "../utils/logger.js";
+import Pattern from "../models/patterns.js";
 
 // Classes
-module.exports.getClasses = async (req, res, next) => {
+export async function getClasses(req, res, next) {
   try {
     const classes = await Class.find({});
     if (classes) {
@@ -20,9 +20,9 @@ module.exports.getClasses = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.addClass = async (req, res, next) => {
+export async function addClass(req, res, next) {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -44,9 +44,9 @@ module.exports.addClass = async (req, res, next) => {
     logger.error(error);
     next(error);
   }
-};
+}
 
-module.exports.editClass = async (req, res, next) => {
+export async function editClass(req, res, next) {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -78,9 +78,9 @@ module.exports.editClass = async (req, res, next) => {
     logger.error(error.message);
     next(error);
   }
-};
+}
 
-module.exports.removeClass = async (req, res, next) => {
+export async function removeClass(req, res, next) {
   try {
     const { id } = req.params;
     const deletedClass = await Class.findOneAndDelete({ _id: id });
@@ -98,11 +98,11 @@ module.exports.removeClass = async (req, res, next) => {
     logger.error(error.message);
     next(error);
   }
-};
+}
 
 // Subject
 
-module.exports.getSubject = async (req, res, next) => {
+export async function getSubject(req, res, next) {
   try {
     const subjects = await Subject.find({});
     if (subjects) {
@@ -114,9 +114,9 @@ module.exports.getSubject = async (req, res, next) => {
     logger.error(error.message);
     next(error);
   }
-};
+}
 
-module.exports.addSubject = async (req, res, next) => {
+export async function addSubject(req, res, next) {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
@@ -138,9 +138,9 @@ module.exports.addSubject = async (req, res, next) => {
     logger.error(error.message);
     next(error);
   }
-};
+}
 
-module.exports.editSubject = async (req, res, next) => {
+export async function editSubject(req, res, next) {
   try {
     const { name } = req.body;
     const { id } = req.params;
@@ -159,9 +159,9 @@ module.exports.editSubject = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.removeSubject = async (req, res, next) => {
+export async function removeSubject(req, res, next) {
   try {
     const { id } = req.params;
     const deletedSubject = await Subject.findOneAndDelete({ _id: id });
@@ -192,10 +192,10 @@ module.exports.removeSubject = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
 // Sub Subject
-module.exports.getSubSubjects = async (req, res, next) => {
+export async function getSubSubjects(req, res, next) {
   try {
     const subSubjects = await SubSubject.find({});
     if (subSubjects) {
@@ -206,9 +206,9 @@ module.exports.getSubSubjects = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.addSubSubject = async (req, res, next) => {
+export async function addSubSubject(req, res, next) {
   try {
     const { name, _id_subject } = req.body;
     if (!name || !_id_subject) {
@@ -234,9 +234,9 @@ module.exports.addSubSubject = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.editSubSubject = async (req, res, next) => {
+export async function editSubSubject(req, res, next) {
   try {
     const { id } = req.params;
     const { name } = req.body;
@@ -250,9 +250,9 @@ module.exports.editSubSubject = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.removeSubSubject = async (req, res, next) => {
+export async function removeSubSubject(req, res, next) {
   try {
     const { id } = req.params;
     const deletedSubSubject = await SubSubject.findOneAndDelete({ _id: id });
@@ -279,10 +279,10 @@ module.exports.removeSubSubject = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
 // Topic
-module.exports.getTopics = async (req, res, next) => {
+export async function getTopics(req, res, next) {
   try {
     const topics = await Topic.find({});
     if (topics) {
@@ -293,9 +293,9 @@ module.exports.getTopics = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.addTopic = async (req, res, next) => {
+export async function addTopic(req, res, next) {
   try {
     const { name, _id_subject, _id_sub_subject } = req.body;
     if (!name || !_id_subject || !_id_sub_subject) {
@@ -330,16 +330,16 @@ module.exports.addTopic = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.editTopic = async (req, res, next) => {
+export async function editTopic(req, res, next) {
   try {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.removeTopic = async (req, res, next) => {
+export async function removeTopic(req, res, next) {
   try {
     const { id } = req.params;
     const deletedTopic = await Topic.findOneAndDelete({ _id: id });
@@ -355,10 +355,10 @@ module.exports.removeTopic = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
 // Sub topic
-module.exports.getSubTopic = async (req, res, next) => {
+export async function getSubTopic(req, res, next) {
   try {
     const subTopics = await SubTopic.find({});
     if (!subTopics) {
@@ -369,9 +369,9 @@ module.exports.getSubTopic = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.addSubTopic = async (req, res, next) => {
+export async function addSubTopic(req, res, next) {
   try {
     const { name, _id_topic } = req.body;
     if ((!name, !_id_topic)) {
@@ -403,16 +403,16 @@ module.exports.addSubTopic = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.editSubTopic = async (req, res, next) => {
+export async function editSubTopic(req, res, next) {
   try {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.removeSubTopic = async (req, res, next) => {
+export async function removeSubTopic(req, res, next) {
   try {
     const { id } = req.params;
     const deleteSubTopic = await SubTopic.findOneAndDelete({ _id: id });
@@ -425,9 +425,9 @@ module.exports.removeSubTopic = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.getPatterns = async (req, res, next) => {
+export async function getPatterns(req, res, next) {
   try {
     const patterns = await Pattern.find({});
     if (patterns) {
@@ -438,9 +438,9 @@ module.exports.getPatterns = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.addPattern = async (req, res, next) => {
+export async function addPattern(req, res, next) {
   try {
     const { name, description } = req.body;
     if (!name) {
@@ -460,9 +460,9 @@ module.exports.addPattern = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.deletePattern = async (req, res, next) => {
+export async function deletePattern(req, res, next) {
   try {
     const { id } = req.params;
     const deletedPattern = await Pattern.findOneAndDelete({ _id: id });
@@ -478,9 +478,9 @@ module.exports.deletePattern = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.editPattern = async (req, res, next) => {
+export async function editPattern(req, res, next) {
   try {
     const { id } = req.params;
     const { name, description } = req.body;
@@ -498,9 +498,9 @@ module.exports.editPattern = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.getAllMetaData = async (req, res, next) => {
+export async function getAllMetaData(req, res, next) {
   try {
     const classes = await Class.find({});
     const subjects = await Subject.find({});
@@ -521,4 +521,4 @@ module.exports.getAllMetaData = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}

@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import { Schema as _Schema, model } from "mongoose";
+const Schema = _Schema;
 
 const batchSchema = new Schema({
   batchName: {
@@ -31,6 +31,6 @@ const batchSchema = new Schema({
   ],
 });
 
-const Batch = mongoose.model("Batch", batchSchema);
+const Batch = model("Batch", batchSchema);
 
-module.exports = Batch;
+export default Batch;

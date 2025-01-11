@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import { Schema as _Schema, model } from "mongoose";
+const Schema = _Schema;
 
 const examResponsesSchema = new Schema({
   examID: String,
@@ -10,6 +10,6 @@ const examResponsesSchema = new Schema({
   },
 });
 
-const ExamResponse = mongoose.model("ExamResponse", examResponsesSchema);
+const ExamResponse = model("ExamResponse", examResponsesSchema);
 
-module.exports = ExamResponse;
+export default ExamResponse;

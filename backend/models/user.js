@@ -1,9 +1,13 @@
-const mongoose = require("mongoose");
+import mongoose from "mongoose";
 const Schema = mongoose.Schema;
-const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const { jwtSecret } = require("../config/config");
-const logger = require("../utils/logger");
+
+import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
+
+const jwtSecret = process.env.JWT_SECRET;
+import logger from "../utils/logger.js";
 
 const userSchema = new Schema(
   {
@@ -85,4 +89,4 @@ userSchema.methods.generateToken = async function () {
   }
 };
 
-module.exports = mongoose.model("User", userSchema);
+export default mongoose.model("User", userSchema);

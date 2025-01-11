@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import { Schema as _Schema, model } from "mongoose";
+const Schema = _Schema;
 
 const lectureSchema = new Schema(
   {
@@ -62,6 +62,6 @@ const lectureSchema = new Schema(
   { timestamps: true }
 );
 
-const Lecture = mongoose.model("Lecture", lectureSchema);
+const Lecture = model("Lecture", lectureSchema);
 
-module.exports = Lecture;
+export default Lecture;

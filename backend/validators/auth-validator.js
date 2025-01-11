@@ -1,4 +1,4 @@
-const { z } = require("zod");
+import { z } from "zod";
 
 const signUpSchema = z.object({
   username: z
@@ -22,4 +22,4 @@ const signUpSchema = z.object({
     .max(1024, { msg: "Password is too long" }),
 });
 
-module.exports = signUpSchema;
+export default signUpSchema;

@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import { Schema as _Schema, model } from "mongoose";
+const Schema = _Schema;
 
 const librarySchema = new Schema({
   bookId: Number,
@@ -12,6 +12,6 @@ const librarySchema = new Schema({
   file: Buffer,
 });
 
-const Library = mongoose.model("Library", librarySchema);
+const Library = model("Library", librarySchema);
 
-module.exports = Library;
+export default Library;

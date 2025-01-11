@@ -1,10 +1,13 @@
-const express = require("express");
-const router = express(express.router);
+import express from "express";
+const router = express.Router(); // Correct initialization of the router
 
-const automationController = require("../controllers/automationController");
+import {
+  downloadCityInformation,
+  downloadAdmitCard,
+} from "../controllers/automationController.js";
 
-router.route("/jee").post(automationController.downloadCityInformation);
+// Define routes
+router.route("/jee").post(downloadCityInformation);
+router.route("/jee/admitcard").get(downloadAdmitCard);
 
-router.route("/jee/admitcard").get(automationController.downloadAdmitCard);
-
-module.exports = router;
+export default router;

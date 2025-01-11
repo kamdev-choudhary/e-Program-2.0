@@ -1,30 +1,39 @@
-const express = require("express");
+import express, { static as serveStatic } from "express";
+import connectDB from "./utils/connectDB.js";
+import errorMiddleware from "./middlewares/error-middleware.js";
+import cors from "cors";
+import bodyparser from "body-parser";
+import compression from "compression";
+import helmet from "helmet";
+import routes from "./routes.js";
+import logger from "./utils/logger.js";
+import { createServer } from "http";
+import setupSocket from "./utils/socket.js";
+import { fileURLToPath } from "url";
+import path from "path";
+
+import dotenv from "dotenv";
+dotenv.config();
+
+const port = process.env.PORT || "5000";
+
+// Resolve __dirname for ESModules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
 const app = express();
-const connectDB = require("./utils/connectDB");
-const errorMiddleware = require("./middlewares/error-middleware");
-const cors = require("cors");
-const bodyParser = require("body-parser");
-const compression = require("compression");
-const helmet = require("helmet");
-const { port } = require("./config/config");
-const routes = require("./routes");
-const logger = require("./utils/logger");
-const http = require("http");
-const setupSocket = require("./utils/socket");
-const path = require("path");
 
 // Middleware setup
 app.use(helmet());
 app.use(cors());
-app.use(bodyParser.json({ limit: "50mb" }));
-app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use(bodyparser.json({ limit: "50mb" }));
+app.use(bodyparser.urlencoded({ limit: "50mb", extended: true }));
+app.use("/uploads", serveStatic(path.join(__dirname, "uploads")));
 app.use(compression());
 routes(app);
 app.use(errorMiddleware);
 
-const server = http.createServer(app);
-
+const server = createServer(app);
 const startServer = async () => {
   try {
     // await connectDB();
@@ -39,14 +48,3 @@ const startServer = async () => {
 };
 
 startServer();
-
-const gracefulShutdown = (signal) => {
-  logger.info(`Received ${signal}. Closing server...`);
-  server.close(() => {
-    logger.info("Server closed. Exiting process.");
-    process.exit(0);
-  });
-};
-
-process.on("SIGTERM", () => gracefulShutdown("SIGTERM"));
-process.on("SIGINT", () => gracefulShutdown("SIGINT"));

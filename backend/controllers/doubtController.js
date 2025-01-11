@@ -1,15 +1,15 @@
-const Doubt = require("../models/doubt");
+import Doubt from "../models/doubt.js";
 
-module.exports.viewDoubts = async (req, res, next) => {
+export async function viewDoubts(req, res, next) {
   try {
     const doubts = await Doubt.find({});
     res.status(200).json({ doubts });
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.saveNewDoubt = async (req, res, next) => {
+export async function saveNewDoubt(req, res, next) {
   try {
     const doubt = new Doubt(req.body);
     doubt.save();
@@ -17,9 +17,9 @@ module.exports.saveNewDoubt = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.saveSolution = async (req, res, next) => {
+export async function saveSolution(req, res, next) {
   const { id } = req.params;
   const solution = req.body;
   solution.solutionPostedDate = Date.now();
@@ -32,10 +32,10 @@ module.exports.saveSolution = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
 // Delete Doubt
-module.exports.deleteDoubt = async (req, res) => {
+export async function deleteDoubt(req, res) {
   try {
     const { id } = req.params;
     const deletedDoubt = await Doubt.findOneAndDelete({ _id: id });
@@ -43,4 +43,4 @@ module.exports.deleteDoubt = async (req, res) => {
   } catch (error) {
     next(error);
   }
-};
+}

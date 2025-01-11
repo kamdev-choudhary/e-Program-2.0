@@ -1,15 +1,15 @@
-const Batch = require("../models/batch");
+import Batch from "../models/batch.js";
 
-module.exports.viewBatch = async (req, res, next) => {
+export async function viewBatch(req, res, next) {
   try {
     const batches = await Batch.find({});
     res.status(200).json({ batches });
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.AddBatch = async (req, res, next) => {
+export async function AddBatch(req, res, next) {
   try {
     let newBatch = new Batch(req.body);
     await newBatch.save();
@@ -17,9 +17,9 @@ module.exports.AddBatch = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.getCurrBatch = async (req, res, next) => {
+export async function getCurrBatch(req, res, next) {
   try {
     let { id } = req.params;
     const batch = await Batch.findById(id).populate({
@@ -30,4 +30,4 @@ module.exports.getCurrBatch = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}

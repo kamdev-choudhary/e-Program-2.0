@@ -1,14 +1,16 @@
-const express = require("express");
-const router = express(express.Router);
-const doubtController = require("../controllers/doubtController");
+import express, { Router } from "express";
+const router = express(Router);
+import {
+  viewDoubts,
+  saveNewDoubt,
+  saveSolution,
+  deleteDoubt,
+} from "../controllers/doubtController.js";
 
-router.route("/").get(doubtController.viewDoubts);
+router.route("/").get(viewDoubts);
 
-router.route("/new").post(doubtController.saveNewDoubt);
+router.route("/new").post(saveNewDoubt);
 
-router
-  .route("/:id")
-  .post(doubtController.saveSolution)
-  .delete(doubtController.deleteDoubt);
+router.route("/:id").post(saveSolution).delete(deleteDoubt);
 
-module.exports = router;
+export default router;

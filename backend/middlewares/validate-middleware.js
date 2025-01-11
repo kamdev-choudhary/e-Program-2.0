@@ -1,4 +1,4 @@
-const logger = require("../utils/logger");
+import logger from "../utils/logger";
 
 const validate = (schema) => async (req, res, next) => {
   try {
@@ -11,4 +11,4 @@ const validate = (schema) => async (req, res, next) => {
   }
 };
 
-module.exports = validate;
+export default validate;

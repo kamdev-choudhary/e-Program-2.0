@@ -1,14 +1,20 @@
-const cloudinary = require("cloudinary").v2;
-const multer = require("multer");
-const fs = require("fs");
-const config = require("../config/config");
-const Book = require("../models/book"); // Assuming the Book model is in this directory
-const response = require("../utils/responses");
+import { v2 as cloudinary } from "cloudinary";
+import multer from "multer";
+import { unlinkSync } from "fs";
+import Book from "../models/book.js"; // Assuming the Book model is in this directory
+import response from "../utils/responses.js";
+import dotenv from "dotenv";
+
+dotenv.config();
+
+const cloudName = process.env.CLOUD_NAME;
+const cloudApiKey = process.env.CLOUD_API_KEY;
+const cloudSecret = process.env.CLOUD_SECRET;
 
 cloudinary.config({
-  cloud_name: config.cloudName,
-  api_key: config.cloudApiKey,
-  api_secret: config.cloudSecret,
+  cloud_name: cloudName,
+  api_key: cloudApiKey,
+  api_secret: cloudSecret,
   secure: true,
 });
 
@@ -35,8 +41,7 @@ const upload = multer({
   },
 });
 
-// Controller function to handle the file upload and save additional book data
-module.exports.uploadPdf = [
+export const uploadPdf = [
   upload.single("pdf"), // Set multer to expect a file with the field name "pdf"
   async (req, res, next) => {
     try {
@@ -52,7 +57,7 @@ module.exports.uploadPdf = [
       });
 
       // Remove the temporary file
-      fs.unlinkSync(filePath);
+      unlinkSync(filePath);
 
       // Save the book data along with the uploaded file's URL to MongoDB
       const { title, author, subject, classLevel, category, publishingYear } =
@@ -82,7 +87,7 @@ module.exports.uploadPdf = [
   },
 ];
 
-module.exports.getAllBooks = async (req, res, next) => {
+export async function getAllBooks(req, res, next) {
   try {
     const books = await Book.find({});
     if (books) {
@@ -93,9 +98,9 @@ module.exports.getAllBooks = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.deleteBook = async (req, res, next) => {
+export async function deleteBook(req, res, next) {
   try {
     const { id } = req.params;
     const deletedBook = await Book.findOneAndDelete({ _id: id });
@@ -108,4 +113,4 @@ module.exports.deleteBook = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}

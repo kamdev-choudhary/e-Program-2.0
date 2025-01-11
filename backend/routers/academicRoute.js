@@ -1,62 +1,52 @@
-const express = require("express");
-const router = express(express.Router);
-const academicController = require("../controllers/academicController");
+import express from "express";
+const router = express.Router();
 
-router
-  .route("/class")
-  .get(academicController.getClasses)
-  .post(academicController.addClass);
-router
-  .route("/class/:id")
-  .patch(academicController.editClass)
-  .delete(academicController.removeClass);
+import {
+  getClasses,
+  addClass,
+  editClass,
+  removeClass,
+  getSubject,
+  addSubject,
+  editSubject,
+  removeSubject,
+  getSubSubjects,
+  addSubSubject,
+  editSubSubject,
+  removeSubSubject,
+  getTopics,
+  addTopic,
+  editTopic,
+  getSubTopic,
+  addSubTopic,
+  editSubTopic,
+  removeSubTopic,
+  getPatterns,
+  addPattern,
+  deletePattern,
+  editPattern,
+  getAllMetaData,
+} from "../controllers/academicController.js";
 
-router
-  .route("/subject")
-  .get(academicController.getSubject)
-  .post(academicController.addSubject);
-router
-  .route("/subject/:id")
-  .patch(academicController.editSubject)
-  .delete(academicController.removeSubject);
+router.route("/class").get(getClasses).post(addClass);
+router.route("/class/:id").patch(editClass).delete(removeClass);
 
-router
-  .route("/sub-subject")
-  .get(academicController.getSubSubjects)
-  .post(academicController.addSubSubject);
-router
-  .route("/sub-subject/:id")
-  .patch(academicController.editSubSubject)
-  .delete(academicController.removeSubSubject);
+router.route("/subject").get(getSubject).post(addSubject);
+router.route("/subject/:id").patch(editSubject).delete(removeSubject);
 
-router
-  .route("/topic")
-  .get(academicController.getTopics)
-  .post(academicController.addTopic);
-router
-  .route("/topic/:id")
-  .patch(academicController.editTopic)
-  .delete(academicController.editTopic);
+router.route("/sub-subject").get(getSubSubjects).post(addSubSubject);
+router.route("/sub-subject/:id").patch(editSubSubject).delete(removeSubSubject);
 
-router
-  .route("/sub-topic")
-  .get(academicController.getSubTopic)
-  .post(academicController.addSubTopic);
-router
-  .route("/sub-topic/:id")
-  .patch(academicController.editSubTopic)
-  .delete(academicController.removeSubTopic);
+router.route("/topic").get(getTopics).post(addTopic);
+router.route("/topic/:id").patch(editTopic).delete(editTopic);
 
-router
-  .route("/pattern")
-  .get(academicController.getPatterns)
-  .post(academicController.addPattern);
+router.route("/sub-topic").get(getSubTopic).post(addSubTopic);
+router.route("/sub-topic/:id").patch(editSubTopic).delete(removeSubTopic);
 
-router
-  .route("/pattern/:id")
-  .delete(academicController.deletePattern)
-  .patch(academicController.editPattern);
+router.route("/pattern").get(getPatterns).post(addPattern);
 
-router.route("/metadata").get(academicController.getAllMetaData);
+router.route("/pattern/:id").delete(deletePattern).patch(editPattern);
 
-module.exports = router;
+router.route("/metadata").get(getAllMetaData);
+
+export default router;

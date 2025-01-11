@@ -1,6 +1,6 @@
 // socket.js
-const { Server } = require("socket.io");
-const logger = require("../utils/logger");
+import { Server } from "socket.io";
+import logger from "../utils/logger.js";
 
 const setupSocket = (server) => {
   const io = new Server(server, {
@@ -26,4 +26,4 @@ const setupSocket = (server) => {
   return io;
 };
 
-module.exports = setupSocket;
+export default setupSocket;

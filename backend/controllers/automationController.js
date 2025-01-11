@@ -1,7 +1,7 @@
-const puppeteer = require("puppeteer");
-const Tesseract = require("tesseract.js");
-const fs = require("fs/promises");
-const { getFormattedDate } = require("../utils/functions");
+import puppeteer from "puppeteer";
+import Tesseract from "tesseract.js";
+import { unlink } from "fs/promises";
+import { getFormattedDate } from "../utils/functions.js";
 
 const cityInfoSite =
   "https://examinationservices.nic.in/jeemain2025/DownloadAdmitCard/frmAuthforCity.aspx?enc=WPJ5WSCVWOMNiXoyyomJgDUffqDdG1LTsAPBKFcEC9W88CTkt2ITzilIsFR7gKxO";
@@ -22,115 +22,111 @@ const SELECTORS = {
 
 const MAX_RETRIES = 3;
 
-module.exports = {
-  downloadCityInformation: async (req, res, next) => {
-    const { applicationNumber, day, month, year } = req.body;
+export async function downloadCityInformation(req, res, next) {
+  const { applicationNumber, day, month, year } = req.body;
 
-    // Validate input
-    if (!applicationNumber || !day || !month || !year) {
-      return res.status(400).json({ message: "Missing required fields." });
-    }
+  // Validate input
+  if (!applicationNumber || !day || !month || !year) {
+    return res.status(400).json({ message: "Missing required fields." });
+  }
 
-    const formattedDay = String(day).padStart(2, "0");
-    const formattedMonth = String(month).padStart(2, "0");
-    const now = new Date();
-    const formattedDate = getFormattedDate(now);
-    const captchaPath = `./uploads/${formattedDate}_captcha.png`;
+  const formattedDay = String(day).padStart(2, "0");
+  const formattedMonth = String(month).padStart(2, "0");
+  const now = new Date();
+  const formattedDate = getFormattedDate(now);
+  const captchaPath = `./uploads/${formattedDate}_captcha.png`;
 
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
+  const browser = await puppeteer.launch({
+    headless: true,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
 
-    try {
-      const page = await browser.newPage();
-      await page.setViewport({ width: 1920, height: 1080 });
+  try {
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1920, height: 1080 });
 
-      // Navigate to the site
-      await page.goto(cityInfoSite);
+    // Navigate to the site
+    await page.goto(cityInfoSite);
 
-      // Fill in the form
-      await page.type(SELECTORS.applicationNumber, String(applicationNumber));
-      await page.select(SELECTORS.day, formattedDay);
-      await page.select(SELECTORS.month, formattedMonth);
-      await page.select(SELECTORS.year, String(year));
+    // Fill in the form
+    await page.type(SELECTORS.applicationNumber, String(applicationNumber));
+    await page.select(SELECTORS.day, formattedDay);
+    await page.select(SELECTORS.month, formattedMonth);
+    await page.select(SELECTORS.year, String(year));
 
-      // Handle CAPTCHA with retries
-      let success = false;
-      for (let i = 0; i < MAX_RETRIES; i++) {
-        try {
-          await page.waitForSelector(SELECTORS.captchaImage, { timeout: 5000 });
-          const captchaText = await captureAndSolveCaptcha(
-            page,
-            SELECTORS.captchaImage,
-            captchaPath
-          );
+    // Handle CAPTCHA with retries
+    let success = false;
+    for (let i = 0; i < MAX_RETRIES; i++) {
+      try {
+        await page.waitForSelector(SELECTORS.captchaImage, { timeout: 5000 });
+        const captchaText = await captureAndSolveCaptcha(
+          page,
+          SELECTORS.captchaImage,
+          captchaPath
+        );
 
-          // Clean up
-          await fs.unlink(captchaPath);
+        // Clean up
+        await unlink(captchaPath);
 
-          await page.type(SELECTORS.captchaInput, captchaText);
-          await page.click(SELECTORS.loginButton);
-          const error = await page.$eval(
-            SELECTORS.errorSelector,
-            (el) => el.innerText
-          );
-          if (error && error === "Invalid Application No or Date of Birth.") {
-            return res.status(200).json({ error });
-          }
-          await page.waitForNetworkIdle({ timeout: 10000 });
-          console.log("Error", error);
-          // Wait for success panel
-          await page.waitForSelector(SELECTORS.successPanel, {
-            timeout: 4000,
-          });
-          success = true;
-          break; // Break out of retry loop on success
-        } catch (err) {
-          console.error(`Retry ${i + 1} failed:`, err.message);
-          if (i === MAX_RETRIES - 1) {
-            throw new Error("Failed to process CAPTCHA after maximum retries.");
-          }
+        await page.type(SELECTORS.captchaInput, captchaText);
+        await page.click(SELECTORS.loginButton);
+        const error = await page.$eval(
+          SELECTORS.errorSelector,
+          (el) => el.innerText
+        );
+        if (error && error === "Invalid Application No or Date of Birth.") {
+          return res.status(200).json({ error });
+        }
+        await page.waitForNetworkIdle({ timeout: 10000 });
+        // Wait for success panel
+        await page.waitForSelector(SELECTORS.successPanel, {
+          timeout: 4000,
+        });
+        success = true;
+        break; // Break out of retry loop on success
+      } catch (err) {
+        console.error(`Retry ${i + 1} failed:`, err.message);
+        if (i === MAX_RETRIES - 1) {
+          throw new Error("Failed to process CAPTCHA after maximum retries.");
         }
       }
-
-      if (!success) {
-        return res.status(400).json({ message: "Failed to get City info." });
-      }
-
-      // Extract exam information
-      const date = await page.$eval(SELECTORS.examDate, (el) => el.innerText);
-      const city = await page.$eval(SELECTORS.examCity, (el) => el.innerText);
-
-      // Save the PDF
-      const pdfPath = `./uploads/${formattedDate}_${applicationNumber}.pdf`;
-      await page.pdf({
-        path: pdfPath,
-        format: "A4",
-        printBackground: true,
-        margin: { top: "20mm", right: "20mm", bottom: "20mm", left: "20mm" },
-      });
-
-      res.status(200).json({
-        pdfUrl: `/uploads/${formattedDate}_${applicationNumber}.pdf`,
-        date,
-        city,
-      });
-    } catch (error) {
-      next(error);
-    } finally {
-      await browser.close();
     }
-  },
 
-  downloadAdmitCard: async (req, res, next) => {
-    try {
-      res.status(200).json({ message: "Success" });
-    } catch (error) {
-      next(error);
+    if (!success) {
+      return res.status(400).json({ message: "Failed to get City info." });
     }
-  },
-};
+
+    // Extract exam information
+    const date = await page.$eval(SELECTORS.examDate, (el) => el.innerText);
+    const city = await page.$eval(SELECTORS.examCity, (el) => el.innerText);
+
+    // Save the PDF
+    const pdfPath = `./uploads/${formattedDate}_${applicationNumber}.pdf`;
+    await page.pdf({
+      path: pdfPath,
+      format: "A4",
+      printBackground: true,
+      margin: { top: "20mm", right: "20mm", bottom: "20mm", left: "20mm" },
+    });
+
+    res.status(200).json({
+      pdfUrl: `/uploads/${formattedDate}_${applicationNumber}.pdf`,
+      date,
+      city,
+    });
+  } catch (error) {
+    next(error);
+  } finally {
+    await browser.close();
+  }
+}
+export async function downloadAdmitCard(req, res, next) {
+  try {
+    res.status(200).json({ message: "Success" });
+  } catch (error) {
+    next(error);
+  }
+}
 
 /**
  * Captures and solves the CAPTCHA using Tesseract.js

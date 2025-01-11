@@ -1,5 +1,4 @@
-const { expressjwt: jwt } = require("express-jwt");
-const jwks = require("jwks-rsa");
+import { expressjwt as jwt } from "express-jwt";
 import { Auth0Audience, Auth0Domain } from "../config/config";
 
 const authMiddleware = jwt({
@@ -14,4 +13,4 @@ const authMiddleware = jwt({
   algorithms: ["RS256"],
 });
 
-module.exports = authMiddleware;
+export default authMiddleware;

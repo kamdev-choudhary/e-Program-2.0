@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import { Schema as _Schema, model } from "mongoose";
+const Schema = _Schema;
 
 const userDetailSchema = new Schema({
   addressLineOne: String,
@@ -10,6 +10,6 @@ const userDetailSchema = new Schema({
   pinCode: Number,
 });
 
-const UserDetail = mongoose.model("UserDetail", userDetailSchema);
+const UserDetail = model("UserDetail", userDetailSchema);
 
-module.exports = UserDetail;
+export default UserDetail;

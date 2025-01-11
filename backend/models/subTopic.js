@@ -1,6 +1,5 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
-const AutoIncrement = require("mongoose-sequence")(mongoose);
+import mongoose, { Schema as _Schema, model } from "mongoose";
+const Schema = _Schema;
 
 const subTopicSchema = new Schema({
   id_subject: { type: Number, required: true },
@@ -10,8 +9,6 @@ const subTopicSchema = new Schema({
   name: { type: String, required: true },
 });
 
-subTopicSchema.plugin(AutoIncrement, { inc_field: "id_sub_topic" });
+const SubTopic = model("SubTopic", subTopicSchema);
 
-const SubTopic = mongoose.model("SubTopic", subTopicSchema);
-
-module.exports = SubTopic;
+export default SubTopic;

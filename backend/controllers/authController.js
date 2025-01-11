@@ -1,9 +1,9 @@
-const User = require("../models/user");
-const bcrypt = require("bcryptjs");
-const Batch = require("../models/batch");
-const { v4: uuid } = require("uuid");
+import User from "../models/user.js";
+import bcrypt from "bcryptjs";
+import Batch from "../models/batch.js";
+import { v4 as uuid } from "uuid";
 
-module.exports.login = async (req, res, next) => {
+export async function login(req, res, next) {
   try {
     const { id, password } = req.body;
     if (!id || !password) {
@@ -47,19 +47,19 @@ module.exports.login = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.register = async (req, res, next) => {
+export async function register(req, res, next) {
   let { name, email, password = "Password", mobile, role, method } = req.body;
 
   try {
-    let userExist = await User.findOne({ email: email });
+    let userExist = await findOne({ email: email });
     if (userExist) {
       return res
         .status(200)
         .json({ message: "Email already Registered", status_code: 2 });
     }
-    let mobileExist = await User.findOne({ mobile: mobile });
+    let mobileExist = await findOne({ mobile: mobile });
     if (mobileExist) {
       return res
         .status(200)
@@ -90,12 +90,12 @@ module.exports.register = async (req, res, next) => {
   } catch (err) {
     next(error);
   }
-};
+}
 
-module.exports.test = async (req, res, next) => {
+export async function test(req, res, next) {
   try {
     res.status(200).json({ message: "Test" });
   } catch (error) {
     next(error);
   }
-};
+}

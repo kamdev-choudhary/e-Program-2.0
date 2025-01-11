@@ -1,11 +1,15 @@
-const express = require("express");
-const router = express(express.Router);
-const materialController = require("../controllers/materialContoller");
+import express, { Router } from "express";
+const router = express(Router);
+import {
+  getAllBooks,
+  deleteBook,
+  uploadPdf,
+} from "../controllers/materialContoller.js";
 
-router.route("/").get(materialController.getAllBooks);
+router.route("/").get(getAllBooks);
 
-router.route("/:id").delete(materialController.deleteBook);
+router.route("/:id").delete(deleteBook);
 
-router.route("/upload").post(materialController.uploadPdf);
+router.route("/upload").post(uploadPdf);
 
-module.exports = router;
+export default router;

@@ -1,14 +1,20 @@
-const express = require("express");
-const router = express(express.Router);
-const questionController = require("../controllers/questionController");
+import express, { Router } from "express";
+const router = express(Router);
+import {
+  getQuestionWithPagination,
+  saveQuestion,
+  updateQuestion,
+  deleteQuestion,
+  questionInfo,
+} from "../controllers/questionController.js";
 
 router
   .route("/")
-  .get(questionController.getQuestionWithPagination)
-  .post(questionController.saveQuestion)
-  .patch(questionController.updateQuestion)
-  .delete(questionController.deleteQuestion);
+  .get(getQuestionWithPagination)
+  .post(saveQuestion)
+  .patch(updateQuestion)
+  .delete(deleteQuestion);
 
-router.route("/info").get(questionController.questionInfo);
+router.route("/info").get(questionInfo);
 
-module.exports = router;
+export default router;

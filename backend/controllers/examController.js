@@ -1,8 +1,8 @@
-const ExamTemplate = require("../models/examTemplate");
-const Question = require("../models/question");
-const Batch = require("../models/batch");
+import ExamTemplate from "../models/examTemplate.js";
+import Question from "../models/question.js";
+import Batch from "../models/batch.js";
 
-module.exports.addToTemplate = async (req, res, next) => {
+export async function addToTemplate(req, res, next) {
   let { questionId, examTemplateId } = req.body;
   try {
     let currTemplate = await ExamTemplate.findById(examTemplateId);
@@ -34,18 +34,18 @@ module.exports.addToTemplate = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.viewExams = async (req, res, next) => {
+export async function viewExams(req, res, next) {
   try {
     const examTemplates = await ExamTemplate.find({});
     res.status(200).json({ examTemplates });
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.viewExamTemplate = async (req, res, next) => {
+export async function viewExamTemplate(req, res, next) {
   let id = req.params.id;
   try {
     const examTemplate = await ExamTemplate.findById(id).populate({
@@ -55,9 +55,9 @@ module.exports.viewExamTemplate = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.createTemplate = async (req, res, next) => {
+export async function createTemplate(req, res, next) {
   try {
     const newTemplate = new ExamTemplate(req.body);
     const exam = await ExamTemplate.findOne({}, { examId: 1 }).sort({
@@ -70,9 +70,9 @@ module.exports.createTemplate = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.addToBatch = async (req, res, next) => {
+export async function addToBatch(req, res, next) {
   try {
     const examTemplate = await ExamTemplate.findById(req.body.examTemplateId);
     const batch = await Batch.findById(req.body.batchId);
@@ -89,4 +89,4 @@ module.exports.addToBatch = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}

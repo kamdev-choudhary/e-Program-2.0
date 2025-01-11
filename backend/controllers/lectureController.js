@@ -1,11 +1,11 @@
-const Class = require("../models/class");
-const Lecture = require("../models/lectures");
-const Subject = require("../models/subject");
-const response = require("../utils/responses");
-const ExcelJS = require("exceljs");
-const fs = require("fs");
+import Class from "../models/class.js";
+import Lecture from "../models/lectures.js";
+import Subject from "../models/subject.js";
+import response from "../utils/responses.js";
+import ExcelJS from "exceljs";
+import { unlinkSync } from "fs";
 
-module.exports.viewLectures = async (req, res, next) => {
+export async function viewLectures(req, res, next) {
   try {
     const lectures = await Lecture.find({});
     if (lectures) {
@@ -16,9 +16,9 @@ module.exports.viewLectures = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.deleteLecture = async (req, res, next) => {
+export async function deleteLecture(req, res, next) {
   try {
     const { id } = req.params;
 
@@ -35,9 +35,9 @@ module.exports.deleteLecture = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.viewLecturesByClass = async (req, res, next) => {
+export async function viewLecturesByClass(req, res, next) {
   try {
     const { id } = req.params;
     if (!id) {
@@ -53,9 +53,9 @@ module.exports.viewLecturesByClass = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.addNewLectureSingle = async (req, res, next) => {
+export async function addNewLectureSingle(req, res, next) {
   try {
     const {
       classLevel,
@@ -93,17 +93,17 @@ module.exports.addNewLectureSingle = async (req, res, next) => {
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.addNewLecturesMultiple = async (req, res, next) => {
+export async function addNewLecturesMultiple(req, res, next) {
   try {
     res.status(200).json({ ...response.success });
   } catch (error) {
     next(error);
   }
-};
+}
 
-module.exports.uploadLectureInfo = async (req, res, next) => {
+export async function uploadLectureInfo(req, res, next) {
   try {
     // Ensure a file was uploaded
     if (!req.file) {
@@ -143,7 +143,7 @@ module.exports.uploadLectureInfo = async (req, res, next) => {
     const savedLectures = await Lecture.insertMany(lectures);
 
     // Delete the uploaded file after processing
-    fs.unlinkSync(path);
+    unlinkSync(path);
 
     res.status(200).json({
       message: "Lecture information uploaded successfully",
@@ -154,15 +154,15 @@ module.exports.uploadLectureInfo = async (req, res, next) => {
     console.error("Error uploading lecture info:", error);
     next(error);
   }
-};
+}
 
 // get Lectures with pagination
 
-module.exports.getLecturesWithPagination = async (req, res, next) => {
+export async function getLecturesWithPagination(req, res, next) {
   try {
     const { limit, page } = req.params;
     res.status(200).json({ ...response.success, page, limit });
   } catch (error) {
     next(error);
   }
-};
+}

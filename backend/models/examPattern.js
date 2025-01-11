@@ -1,5 +1,5 @@
-const mongoose = require("mongoose");
-const Schema = mongoose.Schema;
+import { Schema as _Schema, model } from "mongoose";
+const Schema = _Schema;
 
 const examPatternSchema = new Schema({
   name: { type: String, required: true },
@@ -10,6 +10,6 @@ const examPatternSchema = new Schema({
   ],
 });
 
-const ExamPattern = mongoose.model("ExamPattern", examPatternSchema);
+const ExamPattern = model("ExamPattern", examPatternSchema);
 
-module.exports = ExamPattern;
+export default ExamPattern;

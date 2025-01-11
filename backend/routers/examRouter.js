@@ -1,12 +1,18 @@
-const express = require("express");
-const router = express(express.Router);
-const examController = require("../controllers/examController");
+import express, { Router } from "express";
+const router = express(Router);
+import {
+  addToTemplate,
+  createTemplate,
+  viewExams,
+  viewExamTemplate,
+  addToBatch,
+} from "../controllers/examController.js";
 
-router.route("/addtotemplate").put(examController.addToTemplate);
-router.route("/createtemplate").put(examController.createTemplate);
-router.route("/").get(examController.viewExams);
-router.route("/templates/:id").get(examController.viewExamTemplate);
+router.route("/addtotemplate").put(addToTemplate);
+router.route("/createtemplate").put(createTemplate);
+router.route("/").get(viewExams);
+router.route("/templates/:id").get(viewExamTemplate);
 
-router.route("/addtobatch").post(examController.addToBatch);
+router.route("/addtobatch").post(addToBatch);
 
-module.exports = router;
+export default router;
