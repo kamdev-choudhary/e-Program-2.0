@@ -1,13 +1,14 @@
 import React from "react";
 import Navbar from "./Navbar";
 import { Outlet } from "react-router-dom";
+import { Box } from "@mui/material";
 
 const DefaultLayout: React.FC = () => {
   return (
-    <div>
+    <Box sx={{ bgcolor: "#f1f3fb", height: "100vh" }}>
       <Navbar />
       <Outlet />
-    </div>
+    </Box>
   );
 };
 

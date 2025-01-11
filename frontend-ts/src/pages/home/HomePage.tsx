@@ -4,9 +4,7 @@ import React from "react";
 const HomePage: React.FC = () => {
   return (
     <Box sx={{ p: 2 }}>
-      <Typography>
-        A initiative to provide the best resources in one place
-      </Typography>
+      <Typography>Home Page</Typography>
     </Box>
   );
 };

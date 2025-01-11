@@ -1,18 +1,20 @@
 import { Box, Paper, Button, Typography, IconButton } from "@mui/material";
 import React, { useMemo, useState } from "react";
-import axios from "../../hooks/AxiosInterceptor"; // Assuming this is your custom Axios instance
+import axios from "../../hooks/AxiosInterceptor";
 import saveAs from "file-saver";
 import { useDropzone } from "react-dropzone";
 import ExcelJS from "exceljs";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import {
   CloudDownloadRounded,
+  CloudUploadRounded,
   DownloadRounded,
   LaunchRounded,
   PictureAsPdfRounded,
   TableChartRounded,
 } from "@mui/icons-material";
 import { CustomToolbar } from "../../components/CustomToolbar";
+import { baseUrl } from "../../config/environment";
 
 interface ScholarData {
   drn: string;
@@ -118,7 +120,7 @@ const DownloadCityInformation: React.FC = () => {
             item.drn === scholar.drn
               ? {
                   ...item,
-                  pdfUrl: response.data.pdfUrl,
+                  pdfUrl: `${baseUrl}${response.data.pdfUrl}`,
                   date: response.data.date,
                   city: response.data.city,
                 }
@@ -253,6 +255,22 @@ const DownloadCityInformation: React.FC = () => {
     [jsonData]
   );
 
+  const handleProcessRowUpdate = (
+    newRow: ScholarData,
+    oldRow: ScholarData
+  ): ScholarData => {
+    setJsonData((prevData) => {
+      if (!prevData) return null; // Handle case when prevData is null
+      return prevData.map((item) =>
+        item.drn === oldRow.drn
+          ? { ...item, ...newRow } // Update the matching row
+          : item
+      );
+    });
+
+    return newRow;
+  };
+
   const columns: GridColDef[] = [
     {
       field: "id",
@@ -260,6 +278,7 @@ const DownloadCityInformation: React.FC = () => {
       width: 80,
       align: "center",
       headerAlign: "center",
+      editable: true,
     },
     {
       field: "drn",
@@ -274,6 +293,7 @@ const DownloadCityInformation: React.FC = () => {
       minWidth: 150,
       align: "center",
       headerAlign: "center",
+      editable: true,
       flex: 1,
     },
     {
@@ -282,6 +302,7 @@ const DownloadCityInformation: React.FC = () => {
       minWidth: 200,
       align: "center",
       headerAlign: "center",
+      editable: true,
       flex: 1,
     },
     {
@@ -290,6 +311,7 @@ const DownloadCityInformation: React.FC = () => {
       minWidth: 80,
       align: "center",
       headerAlign: "center",
+      editable: true,
       flex: 1,
     },
     {
@@ -298,6 +320,7 @@ const DownloadCityInformation: React.FC = () => {
       minWidth: 80,
       align: "center",
       headerAlign: "center",
+      editable: true,
       flex: 1,
     },
     {
@@ -306,6 +329,7 @@ const DownloadCityInformation: React.FC = () => {
       minWidth: 100,
       align: "center",
       headerAlign: "center",
+      editable: true,
       flex: 1,
     },
     {
@@ -314,6 +338,7 @@ const DownloadCityInformation: React.FC = () => {
       minWidth: 150,
       align: "center",
       headerAlign: "center",
+      editable: true,
       flex: 1,
     },
     {
@@ -323,12 +348,14 @@ const DownloadCityInformation: React.FC = () => {
       minWidth: 150,
       align: "center",
       headerAlign: "center",
+      editable: true,
     },
     {
       field: "d",
       headerName: "PDF",
       align: "center",
       headerAlign: "center",
+      editable: true,
       minWidth: 200,
       flex: 1,
       renderCell: (params) => (
@@ -364,6 +391,7 @@ const DownloadCityInformation: React.FC = () => {
       headerName: "Data",
       align: "center",
       headerAlign: "center",
+      editable: true,
       minWidth: 200,
       flex: 1,
       renderCell: (params) => (
@@ -371,6 +399,8 @@ const DownloadCityInformation: React.FC = () => {
           <Button
             size="small"
             onClick={() => handleDownloadCityInfo(params.row)}
+            startIcon={<CloudDownloadRounded />}
+            color="success"
           >
             Fetch Data
           </Button>
@@ -382,31 +412,32 @@ const DownloadCityInformation: React.FC = () => {
   return (
     <Box sx={{ p: 2, height: "70vh" }}>
       <Paper>
-        <Box>
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
           <Box
             {...getRootProps()}
             sx={{
-              padding: 4,
-              textAlign: "center",
-              border: "2px dashed #1976d2",
-              borderRadius: 2,
-              width: "100%",
+              border: "1px dashed #1976d2",
+              borderRadius: 20,
               cursor: "pointer",
+              flexGrow: 1,
+              alignContent: "center",
+              p: 1,
+              display: "flex",
+              justifyContent: "center",
             }}
           >
             <input {...getInputProps()} />
+            <CloudUploadRounded sx={{ mr: 1 }} />
             <Typography variant="body1">
               Drag & drop an Excel file here, or click to select a file
             </Typography>
           </Box>
-
           <Box
             sx={{
               display: "flex",
-              justifyContent: "flex-end",
               gap: 1,
-              p: 1,
-              mt: 2,
+
+              flexWrap: "wrap",
             }}
           >
             <Button
@@ -423,6 +454,7 @@ const DownloadCityInformation: React.FC = () => {
               startIcon={<TableChartRounded />}
               sx={{ px: 3 }}
               variant="contained"
+              disabled={!jsonData}
               onClick={() => {
                 if (jsonData) {
                   downloadJsonToExcel({
@@ -441,7 +473,7 @@ const DownloadCityInformation: React.FC = () => {
               onClick={handleDownloadAddPdf}
               sx={{ px: 3 }}
             >
-              Download All PDF
+              Download PDF
             </Button>
           </Box>
         </Box>
@@ -462,6 +494,7 @@ const DownloadCityInformation: React.FC = () => {
                 fontWeight: "bold", // Make header text bold
               },
             }}
+            processRowUpdate={handleProcessRowUpdate}
           />
         </Box>
       </Paper>
