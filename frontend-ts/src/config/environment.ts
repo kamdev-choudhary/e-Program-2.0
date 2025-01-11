@@ -2,7 +2,7 @@ export const mode = import.meta.env.MODE;
 
 export const baseUrl =
   mode === "development"
-    ? "http://10.0.12.85:5000"
+    ? "http://10.0.3.69:5000"
     : "https://expressjs-uscv.onrender.com";
 
 export const apiUrl =

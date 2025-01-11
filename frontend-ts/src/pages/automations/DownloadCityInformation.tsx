@@ -1,32 +1,95 @@
-import { Box, Paper, Button, Typography } from "@mui/material";
+import { Box, Paper, Button, Typography, IconButton } from "@mui/material";
 import React, { useMemo, useState } from "react";
 import axios from "../../hooks/AxiosInterceptor"; // Assuming this is your custom Axios instance
 import saveAs from "file-saver";
 import { useDropzone } from "react-dropzone";
 import ExcelJS from "exceljs";
-import { DataGrid, GridColDef } from "@mui/x-data-grid"; // Ensure proper import for columns
-
-type JsonDataType = Array<Record<string, any>>;
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import {
+  CloudDownloadRounded,
+  DownloadRounded,
+  LaunchRounded,
+  PictureAsPdfRounded,
+  TableChartRounded,
+} from "@mui/icons-material";
+import { CustomToolbar } from "../../components/CustomToolbar";
 
 interface ScholarData {
   drn: string;
   day: string;
   month: string;
   application: string;
-  yaar: string;
+  year: string;
+  pdfUrl: string;
+  city: string;
+  date: string;
+}
+
+interface DownloadJsonToExcelProps {
+  jsonData: Record<string, any>[];
+  fileName?: string;
 }
 
 const DownloadCityInformation: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [jsonData, setJsonData] = useState<JsonDataType | null>(null);
+  const [jsonData, setJsonData] = useState<ScholarData[] | null>(null);
 
-  const downloadPdf = async (url: string): Promise<void> => {
+  const downloadJsonToExcel = async ({
+    jsonData,
+    fileName = "data.xlsx",
+  }: DownloadJsonToExcelProps) => {
+    if (!jsonData || jsonData.length === 0) {
+      console.error("No data to export");
+      return;
+    }
+
+    // Create a new workbook and add a worksheet
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet("Sheet1");
+
+    // Extract headers from the first object's keys
+    const headers = Object.keys(jsonData[0]);
+
+    // Add headers to the worksheet
+    worksheet.addRow(headers);
+
+    // Add data rows
+    jsonData.forEach((row) => {
+      const rowData = headers.map((header) => row[header] ?? null); // Ensure data corresponds to headers
+      worksheet.addRow(rowData);
+    });
+
+    // Adjust column widths
+    worksheet.columns.forEach((column) => {
+      const maxLength =
+        column.values?.reduce(
+          (max: number, value: any) =>
+            Math.max(max, value?.toString().length || 0),
+          0
+        ) || 10;
+      column.width = maxLength + 2; // Add padding
+    });
+
     try {
-      const response = await fetch(url);
+      // Generate Excel file as a blob
+      const buffer = await workbook.xlsx.writeBuffer();
+      const blob = new Blob([buffer], {
+        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+      });
+
+      // Use FileSaver.js to save the file
+      saveAs(blob, fileName);
+    } catch (error) {
+      console.error("Error generating Excel file:", error);
+    }
+  };
+
+  const downloadPdf = async (scholar: ScholarData): Promise<void> => {
+    try {
+      const response = await fetch(scholar.pdfUrl);
       if (response.ok) {
-        // Convert the response to a blob and download
         const blob = await response.blob();
-        saveAs(blob, "downloaded-file.pdf");
+        saveAs(blob, `${scholar.drn}_${scholar.application}`);
       } else {
         console.error(
           `Failed to fetch the PDF file from URL: ${response.statusText}`
@@ -44,17 +107,65 @@ const DownloadCityInformation: React.FC = () => {
         drn: scholar.drn,
         day: scholar.day,
         month: scholar.month,
-        year: scholar.yaar,
-        application: scholar.application,
+        year: scholar.year,
+        applicationNumber: scholar.application,
       });
 
       if (response.data?.pdfUrl) {
-        downloadPdf(response.data.pdfUrl);
+        setJsonData((prevData) => {
+          if (!prevData) return null; // If jsonData is null, maintain null state
+          return prevData.map((item) =>
+            item.drn === scholar.drn
+              ? {
+                  ...item,
+                  pdfUrl: response.data.pdfUrl,
+                  date: response.data.date,
+                  city: response.data.city,
+                }
+              : item
+          );
+        });
       } else {
-        console.error("PDF URL not available in the response.");
+        console.error(
+          "PDF URL or data fields are not available in the response."
+        );
       }
     } catch (error) {
       console.error("Error downloading the PDF:", error);
+    }
+  };
+
+  const handleDownloadAddPdf = async () => {
+    try {
+      if (jsonData) {
+        // Use Promise.all to wait for all promises to resolve
+        await Promise.all(
+          jsonData.map(async (data) => {
+            if (data.pdfUrl) {
+              await handleDownloadCityInfo(data);
+            }
+          })
+        );
+      }
+    } catch (error) {
+      console.error("Error handling download info:", error);
+    }
+  };
+
+  const handleDownloadInfo = async () => {
+    try {
+      if (jsonData) {
+        await Promise.all(
+          jsonData.map(async (data) => {
+            if (!data.pdfUrl) {
+              // Fetch the missing PDF URL if not available
+              await handleDownloadCityInfo(data);
+            }
+          })
+        );
+      }
+    } catch (error) {
+      console.error("Error handling download info:", error);
     }
   };
 
@@ -82,7 +193,7 @@ const DownloadCityInformation: React.FC = () => {
         worksheet.eachRow((row) => {
           const rowValues = Array.isArray(row.values)
             ? row.values.slice(1)
-            : []; // Check if row.values is an array
+            : [];
           rows.push(rowValues);
         });
 
@@ -92,18 +203,25 @@ const DownloadCityInformation: React.FC = () => {
           return;
         }
 
-        // Assuming the first row contains headers
         const [headers, ...dataRows] = rows;
-        const json: JsonDataType = dataRows.map((row) => {
-          if (!headers) return {};
-          return headers.reduce(
-            (acc: Record<string, any>, header: any, index: number) => {
-              acc[String(header)] = row ? row[index] || null : null; // Safely handle undefined row
-              return acc;
-            },
-            {}
-          );
+        const json: ScholarData[] = dataRows.map((row) => {
+          const rowData = headers.reduce((acc, header, index) => {
+            acc[header] = row[index] || "";
+            return acc;
+          }, {} as Partial<ScholarData>);
+
+          return {
+            drn: rowData.drn || "",
+            day: rowData.day || "",
+            month: rowData.month || "",
+            year: rowData.year || "",
+            application: rowData.application || "",
+            pdfUrl: rowData.pdfUrl || "",
+            city: rowData.city || "",
+            date: rowData.date || "",
+          };
         });
+
         setJsonData(json);
       } catch (error) {
         console.error("Error reading the Excel file:", error);
@@ -126,66 +244,143 @@ const DownloadCityInformation: React.FC = () => {
     multiple: false,
   });
 
-  // Memoize rows to optimize rendering
-  const rows = useMemo(() => {
-    return (
+  const rows = useMemo(
+    () =>
       jsonData?.map((data, index) => ({
         ...data,
         id: index + 1,
-        city: "",
-        date: "",
-        pdfUrl: "",
-      })) || []
-    );
-  }, [jsonData]);
+      })) || [],
+    [jsonData]
+  );
 
-  // Define columns for DataGrid dynamically based on the jsonData headers
   const columns: GridColDef[] = [
     {
       field: "id",
       headerName: "SN",
+      width: 80,
+      align: "center",
+      headerAlign: "center",
     },
     {
       field: "drn",
       headerName: "Dakshana Roll #",
-    },
-    {
-      field: "name",
-      headerName: "Name",
+      width: 150,
+      align: "center",
+      headerAlign: "center",
     },
     {
       field: "application",
       headerName: "Application #",
+      minWidth: 150,
+      align: "center",
+      headerAlign: "center",
+      flex: 1,
+    },
+    {
+      field: "name",
+      headerName: "Name",
+      minWidth: 200,
+      align: "center",
+      headerAlign: "center",
+      flex: 1,
     },
     {
       field: "day",
       headerName: "Day",
+      minWidth: 80,
+      align: "center",
+      headerAlign: "center",
+      flex: 1,
     },
     {
       field: "month",
       headerName: "Month",
+      minWidth: 80,
+      align: "center",
+      headerAlign: "center",
+      flex: 1,
     },
     {
       field: "year",
       headerName: "Year",
+      minWidth: 100,
+      align: "center",
+      headerAlign: "center",
+      flex: 1,
     },
     {
       field: "city",
       headerName: "City",
+      minWidth: 150,
+      align: "center",
+      headerAlign: "center",
+      flex: 1,
     },
     {
       field: "date",
       headerName: "Exam Date",
+      flex: 1,
+      minWidth: 150,
+      align: "center",
+      headerAlign: "center",
     },
     {
-      field: "pdfUrl",
-      headerName: "PDF Link",
+      field: "d",
+      headerName: "PDF",
+      align: "center",
+      headerAlign: "center",
+      minWidth: 200,
+      flex: 1,
+      renderCell: (params) => (
+        <>
+          <Box
+            sx={{ display: "flex", gap: 1, justifyContent: "center", mt: 0.5 }}
+          >
+            {/* Open PDF Button */}
+            <IconButton
+              component="a"
+              href={params.row.pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              disabled={!params.row.pdfUrl}
+            >
+              <LaunchRounded sx={{ color: params.row.pdfUrl ? "blue" : "" }} />
+            </IconButton>
+            {/* Download PDF Button */}
+            <IconButton
+              disabled={!params.row.pdfUrl}
+              onClick={() => downloadPdf(params.row)}
+            >
+              <DownloadRounded
+                sx={{ color: params.row.pdfUrl ? "green" : "" }}
+              />
+            </IconButton>
+          </Box>
+        </>
+      ),
     },
-    { field: "fetchAgain", headerName: "Fetch Again" },
+    {
+      field: "pdfDownload",
+      headerName: "Data",
+      align: "center",
+      headerAlign: "center",
+      minWidth: 200,
+      flex: 1,
+      renderCell: (params) => (
+        <>
+          <Button
+            size="small"
+            onClick={() => handleDownloadCityInfo(params.row)}
+          >
+            Fetch Data
+          </Button>
+        </>
+      ),
+    },
   ];
 
   return (
-    <Box sx={{ p: 2 }}>
+    <Box sx={{ p: 2, height: "70vh" }}>
       <Paper>
         <Box>
           <Box
@@ -205,19 +400,69 @@ const DownloadCityInformation: React.FC = () => {
             </Typography>
           </Box>
 
-          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "flex-end",
+              gap: 1,
+              p: 1,
+              mt: 2,
+            }}
+          >
+            <Button
+              sx={{ px: 3 }}
+              variant="contained"
+              onClick={handleDownloadInfo}
+              disabled={isLoading || !jsonData}
+              startIcon={<CloudDownloadRounded sx={{ color: "#fff" }} />}
+            >
+              {isLoading ? "Loading..." : "Fetch Data"} (
+              {jsonData?.filter((data) => !data.pdfUrl).length})
+            </Button>
+            <Button
+              startIcon={<TableChartRounded />}
+              sx={{ px: 3 }}
+              variant="contained"
+              onClick={() => {
+                if (jsonData) {
+                  downloadJsonToExcel({
+                    jsonData: jsonData,
+                    fileName: "JEE Main City Info",
+                  });
+                }
+              }}
+            >
+              Download Excel ({jsonData?.filter((data) => data.pdfUrl).length})
+            </Button>
             <Button
               variant="contained"
-              onClick={handleDownloadCityInfo}
-              disabled={isLoading}
-              sx={{ mt: 2 }}
+              color="success"
+              startIcon={<PictureAsPdfRounded sx={{ color: "#fff" }} />}
+              onClick={handleDownloadAddPdf}
+              sx={{ px: 3 }}
             >
-              {isLoading ? "Loading..." : "Fetch All Data"}
+              Download All PDF
             </Button>
           </Box>
         </Box>
-        <Box sx={{ height: 400, mt: 2 }}>
-          <DataGrid columns={columns} rows={rows} loading={isLoading} />
+        <Box sx={{ mt: 2 }}>
+          <DataGrid
+            slots={{
+              toolbar: () => <CustomToolbar showAddButton={false} />,
+            }}
+            columns={columns}
+            rows={rows}
+            loading={isLoading}
+            sx={{
+              "& .MuiDataGrid-columnHeader": {
+                bgcolor: "#28844f", // Light background color for the header
+                color: "primary.contrastText", // Text color for the header
+              },
+              "& .MuiDataGrid-columnHeaderTitle": {
+                fontWeight: "bold", // Make header text bold
+              },
+            }}
+          />
         </Box>
       </Paper>
     </Box>
