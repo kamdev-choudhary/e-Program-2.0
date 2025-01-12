@@ -3,7 +3,7 @@ import { createTheme, ThemeOptions } from "@mui/material/styles";
 // Common properties for both light and dark themes
 const commonThemeOptions: ThemeOptions = {
   shape: {
-    borderRadius: 8, // Set default border radius
+    borderRadius: 4, // Set default border radius
   },
   typography: {
     fontFamily: "'Aptos', 'Roboto', 'Arial', sans-serif",
@@ -22,7 +22,7 @@ const commonThemeOptions: ThemeOptions = {
     MuiPaper: {
       styleOverrides: {
         root: {
-          borderRadius: 12, // Slightly rounded corners for a modern look
+          borderRadius: 14, // Slightly rounded corners for a modern look
           boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // Subtle shadow for modern elevation
           padding: 16, // Standardized padding for better content spacing
         },

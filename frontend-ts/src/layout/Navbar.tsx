@@ -1,10 +1,13 @@
-import { Box, Button, MenuItem, Menu } from "@mui/material";
 import React, { useState } from "react";
+import { Box, Button, MenuItem, Menu } from "@mui/material";
 import { buttons } from "./buttons";
 import { ArrowDropDownRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useGlobalContext } from "../contexts/GlobalProvider";
+import { RootState } from "../store/store";
+import { CustomModal } from "../components/CustomModal";
+import UpdatePassword from "./UpdatePassword";
 
 interface ButtonProps {
   label: string;
@@ -20,43 +23,40 @@ interface ButtonProps {
 const CustomButton: React.FC<{
   button: ButtonProps;
   handleButtonClick: (button: ButtonProps) => void;
-}> = ({ button, handleButtonClick }) => {
-  return (
-    <Button
-      onClick={() => handleButtonClick(button)}
-      startIcon={<button.icon sx={{ fontSize: button.size }} />}
-    >
-      {button.label}
-    </Button>
-  );
-};
+}> = ({ button, handleButtonClick }) => (
+  <Button
+    onClick={() => handleButtonClick(button)}
+    startIcon={<button.icon sx={{ fontSize: button.size }} />}
+  >
+    {button.label}
+  </Button>
+);
 
 const Navbar: React.FC = () => {
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const [anchorEl2, setAnchorEl2] = useState<null | HTMLElement>(null);
+  const [menuStates, setMenuStates] = useState<
+    Record<number, HTMLElement | null>
+  >({});
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { isLoggedIn, handleLogout, user } = useGlobalContext();
 
-  console.log(user);
+  const showForgotPassword = useSelector(
+    (state: RootState) => state.showForgotPassword
+  );
 
-  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
+  const handleMenuOpen = (
+    index: number,
+    event: React.MouseEvent<HTMLElement>
+  ) => {
+    setMenuStates((prev) => ({ ...prev, [index]: event.currentTarget }));
   };
 
-  const handleNameClick = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl2(event.currentTarget);
-  };
-
-  const handleCloseMenu = () => {
-    setAnchorEl(null);
-    setAnchorEl2(null);
+  const handleMenuClose = (index: number) => {
+    setMenuStates((prev) => ({ ...prev, [index]: null }));
   };
 
   const handleButtonClick = (button: ButtonProps) => {
-    if (button.path) {
-      navigate(button.path);
-    }
+    if (button.path) navigate(button.path);
   };
 
   return (
@@ -74,7 +74,8 @@ const Navbar: React.FC = () => {
     >
       <Box sx={{ display: "flex", gap: 1 }}>
         {buttons?.map((button, index) => {
-          if (button.loginRequired && !isLoggedIn) return;
+          if (button.loginRequired && !isLoggedIn) return null;
+
           if (button.type === "button") {
             return (
               <CustomButton
@@ -83,25 +84,27 @@ const Navbar: React.FC = () => {
                 handleButtonClick={handleButtonClick}
               />
             );
-          } else if (button.type === "menu" && button.options) {
+          }
+
+          if (button.type === "menu" && button.options) {
             return (
               <React.Fragment key={index}>
                 <Button
                   endIcon={<ArrowDropDownRounded />}
-                  onClick={handleMenuClick}
+                  onClick={(event) => handleMenuOpen(index, event)}
                 >
                   {button.label}
                 </Button>
                 <Menu
-                  anchorEl={anchorEl}
-                  open={Boolean(anchorEl)}
-                  onClose={handleCloseMenu}
+                  anchorEl={menuStates[index] || null}
+                  open={Boolean(menuStates[index])}
+                  onClose={() => handleMenuClose(index)}
                 >
-                  {button.options.map((option, index) => (
+                  {button.options.map((option, optionIndex) => (
                     <MenuItem
-                      key={index}
+                      key={optionIndex}
                       onClick={() => {
-                        handleCloseMenu();
+                        handleMenuClose(index);
                         navigate(option.path);
                       }}
                     >
@@ -120,33 +123,55 @@ const Navbar: React.FC = () => {
         {isLoggedIn ? (
           <>
             <Button
-              onClick={handleNameClick}
+              onClick={(event) => handleMenuOpen(-1, event)} // Separate menu state for user dropdown
               variant="outlined"
               endIcon={<ArrowDropDownRounded />}
             >
               {user?.name}
             </Button>
             <Menu
-              anchorEl={anchorEl2}
-              open={Boolean(anchorEl2)}
-              onClose={handleCloseMenu}
+              anchorEl={menuStates[-1] || null}
+              open={Boolean(menuStates[-1])}
+              onClose={() => handleMenuClose(-1)}
             >
-              <MenuItem sx={{ minWidth: 200 }}>Profile</MenuItem>
+              <MenuItem
+                onClick={() => navigate("/profile")}
+                sx={{ minWidth: 200 }}
+              >
+                Profile
+              </MenuItem>
+              <MenuItem
+                onClick={() =>
+                  dispatch({ type: "SET_FORGOTPASSWORD", payload: true })
+                }
+              >
+                Update Password
+              </MenuItem>
               <MenuItem onClick={handleLogout}>Logout</MenuItem>
             </Menu>
           </>
         ) : (
           <Button
-            onClick={() => {
+            onClick={() =>
               isLoggedIn
                 ? handleLogout()
-                : dispatch({ type: "SET_AUTHPAGE", payload: true });
-            }}
+                : dispatch({ type: "SET_AUTHPAGE", payload: true })
+            }
           >
             {isLoggedIn ? "Logout" : "Login"}
           </Button>
         )}
       </Box>
+
+      <CustomModal
+        open={showForgotPassword}
+        onClose={() => dispatch({ type: "SET_FORGOTPASSWORD", payload: false })}
+        showHeader={false}
+        width="auto"
+        height="auto"
+      >
+        <UpdatePassword />
+      </CustomModal>
     </Box>
   );
 };

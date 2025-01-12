@@ -6,6 +6,7 @@ import React, {
   ReactNode,
 } from "react";
 import { jwtDecode, JwtPayload } from "jwt-decode";
+import Loader from "../components/Loader";
 
 interface GlobalProviderProps {
   children: ReactNode;
@@ -15,6 +16,7 @@ interface User {
   name: string;
   role: string;
   email?: string;
+  mobile?: string;
 }
 
 interface LoginResponse {
@@ -46,6 +48,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [token, setToken] = useState<string>("");
   const [theme, setTheme] = useState<string>("light");
+  const [isLoaded, setIsLoaded] = useState<boolean>(false);
 
   // Fetch and set the theme based on device preference or localStorage
   useEffect(() => {
@@ -103,6 +106,8 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
         }
       } catch (storageError) {
         console.error("Error accessing localStorage:", storageError);
+      } finally {
+        setIsLoaded(true);
       }
     };
 
@@ -159,6 +164,10 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     setUser(null);
     setToken("");
   };
+
+  if (!isLoaded) {
+    return <Loader />;
+  }
 
   return (
     <GlobalContext.Provider

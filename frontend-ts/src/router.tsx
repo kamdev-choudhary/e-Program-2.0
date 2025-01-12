@@ -1,5 +1,5 @@
 import { lazy } from "react";
-import { createBrowserRouter, Navigate } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 
 import ProtectedRoute from "./hooks/ProtectedRoute";
 
@@ -13,6 +13,9 @@ const Lectures = lazy(() => import("./pages/lectures/Lectures"));
 const DCI = lazy(() => import("./pages/automations/DownloadCityInformation"));
 const DAC = lazy(() => import("./pages/automations/DownloadJeeMainAdmitCard"));
 const Books = lazy(() => import("./pages/books/Books"));
+const Profile = lazy(() => import("./pages/auth/Profile"));
+const AdminBatch = lazy(() => import("./pages/admin/batch/Batch"));
+const Academic = lazy(() => import("./pages/admin/academic/Academic"));
 
 // Define Routes
 const router = createBrowserRouter([
@@ -26,6 +29,22 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute requiredRole="admin">
             <Dashboard />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/admin/batch",
+        element: (
+          <ProtectedRoute>
+            <AdminBatch />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/admin/academic",
+        element: (
+          <ProtectedRoute>
+            <Academic />
           </ProtectedRoute>
         ),
       },
@@ -45,15 +64,19 @@ const router = createBrowserRouter([
         path: "/books",
         element: <Books />,
       },
+      {
+        path: "/profile",
+        element: (
+          <ProtectedRoute>
+            <Profile />
+          </ProtectedRoute>
+        ),
+      },
     ],
   },
   {
     path: "/auth",
     element: <AuthPage />,
-  },
-  {
-    path: "/redirect-to-login",
-    element: <Navigate to="/login" replace />,
   },
 ]);
 

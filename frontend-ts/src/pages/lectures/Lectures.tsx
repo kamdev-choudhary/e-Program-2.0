@@ -55,6 +55,7 @@ const LecturePage: React.FC = () => {
   const handleFilterTextChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setFilterText(e.target.value);
 
+  console.log(filterText);
   const getAcademicData = async () => {
     try {
       const response = await getAllAcademicData();

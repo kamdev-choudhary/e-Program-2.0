@@ -9,7 +9,7 @@ import React from "react";
 interface Option {
   label: string;
   path: string;
-  icon: React.ElementType;
+  icon?: React.ElementType;
   role?: [];
   loginRequired?: boolean;
 }
@@ -37,15 +37,6 @@ export const buttons: Button[] = [
     loginRequired: false,
   },
   {
-    label: "Lectures",
-    path: "/lectures",
-    icon: SchoolRounded,
-    color: "#28844f",
-    type: "button",
-    size: 20,
-    loginRequired: true,
-  },
-  {
     label: "Admin",
     icon: LocationCityRounded,
     type: "menu",
@@ -56,11 +47,25 @@ export const buttons: Button[] = [
       {
         label: "Academic Info",
         path: "/admin/academic",
-        icon: SchoolRounded,
+        loginRequired: true,
+      },
+      {
+        label: "Batch",
+        path: "/admin/batch",
         loginRequired: true,
       },
     ],
   },
+  {
+    label: "Lectures",
+    path: "/lectures",
+    icon: SchoolRounded,
+    color: "#28844f",
+    type: "button",
+    size: 20,
+    loginRequired: true,
+  },
+
   {
     label: "Books",
     path: "/books",
