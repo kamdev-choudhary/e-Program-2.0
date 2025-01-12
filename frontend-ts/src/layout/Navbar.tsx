@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Button, MenuItem, Menu } from "@mui/material";
 import { buttons } from "./buttons";
-import { ArrowDropDownRounded, LockRounded } from "@mui/icons-material";
+import { ArrowDropDownRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useGlobalContext } from "../contexts/GlobalProvider";
