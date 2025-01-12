@@ -1,8 +1,7 @@
 import puppeteer from "puppeteer";
-import Tesseract from "tesseract.js";
 import { v4 as uuid } from "uuid";
-import sharp from "sharp";
-import getOCRFromImageBinary from "../utils/getOCRfromImage.js";
+import { captureAndSolveCaptcha } from "../utils/captchaResolver.js";
+import logger from "../utils/logger.js";
 
 const cityInfoSite =
   "https://examinationservices.nic.in/jeemain2025/DownloadAdmitCard/frmAuthforCity.aspx?enc=WPJ5WSCVWOMNiXoyyomJgDUffqDdG1LTsAPBKFcEC9W88CTkt2ITzilIsFR7gKxO";
@@ -74,13 +73,18 @@ export async function downloadCityInformation(req, res, next) {
         }
         await page.waitForNetworkIdle({ timeout: 10000 });
         // Wait for success panel
-        await page.waitForSelector(SELECTORS.successPanel, {
-          timeout: 4000,
-        });
-        success = true;
-        break; // Break out of retry loop on success
+        const successSelector = await page.waitForSelector(
+          SELECTORS.successPanel,
+          {
+            timeout: 4000,
+          }
+        );
+        if (successSelector) {
+          success = true;
+          break;
+        }
       } catch (err) {
-        console.error(`Retry ${i + 1} failed:`, err.message);
+        logger.error(`Retry ${i + 1} failed:`, err.message);
         if (i === MAX_RETRIES - 1) {
           throw new Error("Failed to process CAPTCHA after maximum retries.");
         }
@@ -88,7 +92,7 @@ export async function downloadCityInformation(req, res, next) {
     }
 
     if (!success) {
-      return res.status(400).json({ message: "Failed to get City info." });
+      return res.status(400).json({ error: "Failed to get City info." });
     }
 
     // Extract exam information
@@ -104,8 +108,11 @@ export async function downloadCityInformation(req, res, next) {
       margin: { top: "20mm", right: "20mm", bottom: "20mm", left: "20mm" },
     });
 
+    const fullPdfUrl = `${req.protocol}://${req.get(
+      "host"
+    )}/uploads/${applicationNumber}_${uniqueId}.pdf`;
     res.status(200).json({
-      pdfUrl: `/uploads/${uniqueId}_${applicationNumber}.pdf`,
+      pdfUrl: fullPdfUrl,
       date,
       city,
     });
@@ -121,45 +128,4 @@ export async function downloadAdmitCard(req, res, next) {
   } catch (error) {
     next(error);
   }
-}
-
-/**
- * Captures and solves the CAPTCHA using Tesseract.js
- */
-async function captureAndSolveCaptcha(page, captchaSelector) {
-  const captchaElement = await page.$(captchaSelector);
-  const boundingBox = await captchaElement.boundingBox();
-  if (!boundingBox) {
-    throw new Error("Failed to locate CAPTCHA image.");
-  }
-
-  // Capture the screenshot as a buffer
-  const screenshotBuffer = await page.screenshot({
-    clip: {
-      x: Math.floor(boundingBox.x),
-      y: Math.floor(boundingBox.y),
-      width: Math.ceil(boundingBox.width),
-      height: Math.ceil(boundingBox.height),
-    },
-    omitBackground: true,
-  });
-
-  // // Preprocess the image using sharp (in-memory processing)
-  const processedBuffer = await sharp(screenshotBuffer)
-    .grayscale() // Convert to grayscale
-    .threshold(200) // Apply threshold for binarization
-    .toBuffer(); // Return the processed image as a buffer
-
-  // Recognize text with Tesseract directly from buffer
-  const {
-    data: { text },
-  } = await Tesseract.recognize(processedBuffer, "eng");
-  const captchaText = text.trim().replace(/\s/g, "").toUpperCase();
-
-  // Validate the CAPTCHA text
-  if (!/^[A-Z0-9]+$/.test(captchaText)) {
-    throw new Error("CAPTCHA text is invalid.");
-  }
-
-  return captchaText;
 }

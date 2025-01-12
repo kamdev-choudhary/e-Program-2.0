@@ -10,7 +10,7 @@ interface Option {
   label: string;
   path: string;
   icon?: React.ElementType;
-  role?: [];
+  role?: string[];
   loginRequired?: boolean;
 }
 
@@ -22,7 +22,7 @@ interface Button {
   options?: Option[];
   color?: string;
   size?: number;
-  role?: [];
+  role?: string[];
   loginRequired?: boolean;
 }
 
@@ -43,6 +43,7 @@ export const buttons: Button[] = [
     color: "#fff",
     size: 20,
     loginRequired: true,
+    role: ["admin"],
     options: [
       {
         label: "Academic Info",
@@ -52,6 +53,11 @@ export const buttons: Button[] = [
       {
         label: "Batch",
         path: "/admin/batch",
+        loginRequired: true,
+      },
+      {
+        label: "Lectures",
+        path: "/admin/lectures",
         loginRequired: true,
       },
     ],
@@ -64,8 +70,15 @@ export const buttons: Button[] = [
     type: "button",
     size: 20,
     loginRequired: true,
+    role: ["admin", "student"],
   },
-
+  {
+    label: "Batch",
+    path: "/batch",
+    icon: SchoolRounded,
+    type: "button",
+    loginRequired: true,
+  },
   {
     label: "Books",
     path: "/books",
@@ -74,6 +87,7 @@ export const buttons: Button[] = [
     color: "#28844f",
     size: 20,
     loginRequired: true,
+    role: ["admin", "student"],
   },
   {
     label: "JEE Main",

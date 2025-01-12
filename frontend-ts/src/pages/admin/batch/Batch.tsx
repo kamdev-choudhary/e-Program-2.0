@@ -14,6 +14,7 @@ import {
 import React, { useEffect, useState } from "react";
 import { CustomModal } from "../../../components/CustomModal";
 import AddBatch from "./AddBatch";
+import { useNavigate } from "react-router-dom";
 
 interface Batch {
   name: string;
@@ -23,6 +24,7 @@ interface Batch {
 }
 
 const Batch: React.FC = () => {
+  const navigate = useNavigate();
   const [batches, setBatches] = useState<Batch[] | null>(null);
   const [addBatchModal, setAddBatchModal] = useState<boolean>(false);
 
@@ -95,7 +97,11 @@ const Batch: React.FC = () => {
                   <Button sx={{ flex: 1 }} variant="contained">
                     Join
                   </Button>
-                  <Button sx={{ flex: 1 }} variant="contained">
+                  <Button
+                    onClick={() => navigate(`/batch/sdfdskjhkjhdk`)}
+                    sx={{ flex: 1 }}
+                    variant="contained"
+                  >
                     Details
                   </Button>
                 </CardActions>

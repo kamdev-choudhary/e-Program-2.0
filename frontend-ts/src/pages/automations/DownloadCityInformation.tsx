@@ -1,7 +1,13 @@
-import { Box, Paper, Button, Typography, IconButton } from "@mui/material";
+import {
+  Box,
+  Paper,
+  Button,
+  Typography,
+  IconButton,
+  CircularProgress,
+} from "@mui/material";
 import React, { useMemo, useState } from "react";
 import axios from "../../hooks/AxiosInterceptor";
-import saveAs from "file-saver";
 import { useDropzone } from "react-dropzone";
 import ExcelJS from "exceljs";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -14,7 +20,7 @@ import {
   TableChartRounded,
 } from "@mui/icons-material";
 import { CustomToolbar } from "../../components/CustomToolbar";
-import { baseUrl } from "../../config/environment";
+import { downloadJsonToExcel, downloadPdfFromUrl } from "../../hooks/commonfs";
 
 interface ScholarData {
   drn: string;
@@ -27,83 +33,23 @@ interface ScholarData {
   date: string;
 }
 
-interface DownloadJsonToExcelProps {
-  jsonData: Record<string, any>[];
-  fileName?: string;
-}
-
 const DownloadCityInformation: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [jsonData, setJsonData] = useState<ScholarData[] | null>(null);
 
-  const downloadJsonToExcel = async ({
-    jsonData,
-    fileName = "data.xlsx",
-  }: DownloadJsonToExcelProps) => {
-    if (!jsonData || jsonData.length === 0) {
-      console.error("No data to export");
-      return;
-    }
-
-    // Create a new workbook and add a worksheet
-    const workbook = new ExcelJS.Workbook();
-    const worksheet = workbook.addWorksheet("Sheet1");
-
-    // Extract headers from the first object's keys
-    const headers = Object.keys(jsonData[0]);
-
-    // Add headers to the worksheet
-    worksheet.addRow(headers);
-
-    // Add data rows
-    jsonData.forEach((row) => {
-      const rowData = headers.map((header) => row[header] ?? null); // Ensure data corresponds to headers
-      worksheet.addRow(rowData);
-    });
-
-    // Adjust column widths
-    worksheet.columns.forEach((column) => {
-      const maxLength =
-        column.values?.reduce(
-          (max: number, value: any) =>
-            Math.max(max, value?.toString().length || 0),
-          0
-        ) || 10;
-      column.width = maxLength + 2; // Add padding
-    });
-
-    try {
-      // Generate Excel file as a blob
-      const buffer = await workbook.xlsx.writeBuffer();
-      const blob = new Blob([buffer], {
-        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-      });
-
-      // Use FileSaver.js to save the file
-      saveAs(blob, fileName);
-    } catch (error) {
-      console.error("Error generating Excel file:", error);
-    }
-  };
-
-  const downloadPdf = async (scholar: ScholarData): Promise<void> => {
-    try {
-      const response = await fetch(scholar.pdfUrl);
-      if (response.ok) {
-        const blob = await response.blob();
-        saveAs(blob, `${scholar.drn}_${scholar.application}`);
-      } else {
-        console.error(
-          `Failed to fetch the PDF file from URL: ${response.statusText}`
-        );
-      }
-    } catch (error) {
-      console.error("Error while downloading the PDF:", error);
-    }
-  };
-
   const handleDownloadCityInfo = async (scholar: ScholarData) => {
     try {
+      setJsonData((prevData) => {
+        if (!prevData) return null; // If jsonData is null, maintain null state
+        return prevData.map((item) =>
+          item.drn === scholar.drn
+            ? {
+                ...item,
+                status: "loading",
+              }
+            : item
+        );
+      });
       // Request to get the PDF file path
       const response = await axios.post("/automation/jee", {
         drn: scholar.drn,
@@ -120,10 +66,11 @@ const DownloadCityInformation: React.FC = () => {
             item.drn === scholar.drn
               ? {
                   ...item,
-                  pdfUrl: `${baseUrl}${response.data.pdfUrl}`,
+                  pdfUrl: response.data.pdfUrl,
                   date: response.data.date,
                   city: response.data.city,
                   error: "",
+                  status: "fetched",
                 }
               : item
           );
@@ -140,13 +87,23 @@ const DownloadCityInformation: React.FC = () => {
               : item
           );
         });
-      } else {
-        console.error(
-          "PDF URL or data fields are not available in the response."
-        );
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error downloading the PDF:", error);
+
+      setJsonData((prevData) => {
+        if (!prevData) return null; // If jsonData is null, maintain null state
+        const errorMessage = error?.response?.data?.message || "Unknown error";
+        return prevData.map((item) =>
+          item.drn === scholar.drn
+            ? {
+                ...item,
+                error: errorMessage,
+                status: "idle",
+              }
+            : item
+        );
+      });
     }
   };
 
@@ -235,6 +192,7 @@ const DownloadCityInformation: React.FC = () => {
             city: rowData.city || "",
             date: rowData.date || "",
             error: "",
+            status: "idle",
           };
         });
 
@@ -386,7 +344,12 @@ const DownloadCityInformation: React.FC = () => {
             {/* Download PDF Button */}
             <IconButton
               disabled={!params.row.pdfUrl}
-              onClick={() => downloadPdf(params.row)}
+              onClick={() =>
+                downloadPdfFromUrl(
+                  params.row.pdfUrl,
+                  `${params.row.application}`
+                )
+              }
             >
               <DownloadRounded
                 sx={{ color: params.row.pdfUrl ? "green" : "" }}
@@ -408,10 +371,20 @@ const DownloadCityInformation: React.FC = () => {
           <Button
             size="small"
             onClick={() => handleDownloadCityInfo(params.row)}
-            startIcon={<CloudDownloadRounded />}
+            startIcon={
+              params.row.status === "loading" ? (
+                <CircularProgress size={20} />
+              ) : (
+                <CloudDownloadRounded />
+              )
+            }
             color="success"
+            disabled={
+              params.row.status === "fetched" || params.row.status === "loading"
+            }
+            variant="outlined"
           >
-            Fetch Data
+            {params.row.status === "loading" ? "loading" : "Fetch Data"}
           </Button>
         </>
       ),

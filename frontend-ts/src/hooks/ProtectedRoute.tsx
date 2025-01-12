@@ -3,13 +3,13 @@ import { Navigate, useLocation } from "react-router-dom";
 import { useGlobalContext } from "../contexts/GlobalProvider";
 import { useDispatch } from "react-redux";
 
-interface ProtectedRoute {
+interface ProtectedRouteProps {
   children: ReactNode;
-  requiredRole?: string;
+  requiredRole?: string[]; // Required roles are now an array of strings
 }
 
 // ProtectedRoute component to restrict access based on authentication and role
-const ProtectedRoute: React.FC<ProtectedRoute> = ({
+const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
   requiredRole,
 }) => {
@@ -17,19 +17,19 @@ const ProtectedRoute: React.FC<ProtectedRoute> = ({
   const location = useLocation();
   const dispatch = useDispatch();
 
-  // Check if user is authenticated
+  // Redirect to login if not authenticated
   if (!isLoggedIn) {
-    dispatch({ type: "SET_AUTH", payload: true });
-    return <Navigate to="/" state={{ from: location }} />;
+    dispatch({ type: "SET_AUTH", payload: true }); // Ensure this logic aligns with your app's needs
+    return <Navigate to="/" state={{ from: location }} replace />;
   }
 
-  // If role is required, check if the user has the correct role
-  if (requiredRole && user?.role !== requiredRole) {
-    // Redirect to a forbidden page or handle the error
-    return <Navigate to="/forbidden" />;
+  // Check if user's role is permitted
+  if (requiredRole && (!user || !requiredRole.includes(user.role))) {
+    return <Navigate to="/forbidden" replace />;
   }
 
-  return children;
+  // Render children if all checks pass
+  return <>{children}</>;
 };
 
 export default ProtectedRoute;

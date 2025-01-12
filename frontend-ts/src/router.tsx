@@ -16,6 +16,8 @@ const Books = lazy(() => import("./pages/books/Books"));
 const Profile = lazy(() => import("./pages/auth/Profile"));
 const AdminBatch = lazy(() => import("./pages/admin/batch/Batch"));
 const Academic = lazy(() => import("./pages/admin/academic/Academic"));
+const BatchDetails = lazy(() => import("./pages/batch/BatchDetails"));
+const Batches = lazy(() => import("./pages/batch/Batches"));
 
 // Define Routes
 const router = createBrowserRouter([
@@ -27,7 +29,7 @@ const router = createBrowserRouter([
       {
         path: "/admin/dashboard",
         element: (
-          <ProtectedRoute requiredRole="admin">
+          <ProtectedRoute requiredRole={["admin"]}>
             <Dashboard />
           </ProtectedRoute>
         ),
@@ -35,7 +37,7 @@ const router = createBrowserRouter([
       {
         path: "/admin/batch",
         element: (
-          <ProtectedRoute>
+          <ProtectedRoute requiredRole={["admin"]}>
             <AdminBatch />
           </ProtectedRoute>
         ),
@@ -43,22 +45,26 @@ const router = createBrowserRouter([
       {
         path: "/admin/academic",
         element: (
-          <ProtectedRoute>
+          <ProtectedRoute requiredRole={["admin"]}>
             <Academic />
           </ProtectedRoute>
         ),
       },
       {
         path: "/lectures",
-        element: <Lectures />,
+        element: (
+          <ProtectedRoute>
+            <Lectures />
+          </ProtectedRoute>
+        ),
       },
       {
-        path: "/automation/jeemain/cityinfo",
-        element: <DCI />,
+        path: "/batch",
+        element: <Batches />,
       },
       {
-        path: "/automation/jeemain/admitcard",
-        element: <DAC />,
+        path: "/batch/:id",
+        element: <BatchDetails />,
       },
       {
         path: "/books",
@@ -71,6 +77,14 @@ const router = createBrowserRouter([
             <Profile />
           </ProtectedRoute>
         ),
+      },
+      {
+        path: "/automation/jeemain/cityinfo",
+        element: <DCI />,
+      },
+      {
+        path: "/automation/jeemain/admitcard",
+        element: <DAC />,
       },
     ],
   },

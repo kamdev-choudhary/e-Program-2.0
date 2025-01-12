@@ -12,6 +12,7 @@ import setupSocket from "./utils/socket.js";
 import connectDB from "./utils/connectDB.js";
 import errorMiddleware from "./middlewares/error-middleware.js";
 import config from "./config/config.js";
+import fs from "fs";
 
 const port = config.port || 5000;
 
@@ -21,12 +22,17 @@ const __dirname = path.dirname(__filename);
 
 const app = express();
 
+const uploadsDir = path.join(__dirname, "uploads");
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+}
+
 // Middleware setup
 app.use(helmet());
 app.use(cors());
 app.use(bodyparser.json({ limit: "50mb" }));
 app.use(bodyparser.urlencoded({ limit: "50mb", extended: true }));
-app.use("/uploads", serveStatic(path.join(__dirname, "uploads")));
+app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use(compression());
 routes(app);
 app.use(errorMiddleware);
@@ -35,7 +41,7 @@ const server = createServer(app);
 const startServer = async () => {
   try {
     await connectDB();
-    const io = setupSocket(server);
+    setupSocket(server);
     server.listen(port, () => {
       logger.info(`Server is listening on port: ${port}`);
     });
