@@ -11,6 +11,7 @@ interface NewBatch {
 
 const AddBatch: React.FC<AddBatch> = ({ setAddBatchModal }) => {
   const [newBatch, setNewBatch] = useState<NewBatch | null>(null);
+
   return (
     <Box
       sx={{

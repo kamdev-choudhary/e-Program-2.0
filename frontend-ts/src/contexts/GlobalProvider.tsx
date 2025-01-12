@@ -163,6 +163,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     setIsLoggedIn(false);
     setUser(null);
     setToken("");
+    localStorage.clear();
   };
 
   if (!isLoaded) {
