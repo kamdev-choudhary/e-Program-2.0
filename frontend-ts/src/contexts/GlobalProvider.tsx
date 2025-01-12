@@ -5,13 +5,14 @@ import React, {
   useState,
   ReactNode,
 } from "react";
+import { jwtDecode, JwtPayload } from "jwt-decode";
 
 interface GlobalProviderProps {
   children: ReactNode;
 }
 
 interface User {
-  username: string;
+  name: string;
   role: string;
   email?: string;
 }
@@ -35,6 +36,7 @@ interface GlobalContextType {
   token: string;
   handleUserLogin: (response: LoginResponse) => void;
   isValidResponse: (response: Response) => boolean;
+  handleLogout: () => void;
 }
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
@@ -59,16 +61,89 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     }
   }, []);
 
+  useEffect(() => {
+    const initializeAuthState = () => {
+      try {
+        const storedToken = localStorage.getItem("token");
+        if (!storedToken) {
+          console.log("No token found in localStorage.");
+          return;
+        }
+
+        try {
+          // Decode the JWT token
+          const decodedToken = jwtDecode<
+            JwtPayload & { name: string; role: string; email: string }
+          >(storedToken);
+
+          if (
+            !decodedToken ||
+            !decodedToken.name ||
+            !decodedToken.role ||
+            !decodedToken.email
+          ) {
+            console.warn("Decoded token does not have all required fields.");
+            return;
+          }
+
+          const decodedUser: User = {
+            name: decodedToken.name,
+            role: decodedToken.role,
+            email: decodedToken.email,
+          };
+
+          // Update state
+          setIsLoggedIn(true);
+          setToken(storedToken);
+          setUser(decodedUser);
+        } catch (decodeError) {
+          console.error("Failed to decode token:", decodeError);
+          // Optionally: Clear invalid token from localStorage
+          localStorage.removeItem("token");
+        }
+      } catch (storageError) {
+        console.error("Error accessing localStorage:", storageError);
+      }
+    };
+
+    initializeAuthState();
+  }, []);
+
   // Update theme in localStorage and the DOM
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
   }, [theme]);
 
-  const handleUserLogin = (response: LoginResponse) => {
-    setIsLoggedIn(true);
-    setUser(response.user);
-    setToken(response.token);
+  const handleUserLogin = (data: LoginResponse) => {
+    const { token } = data;
+    let decodedUser: User | null = null;
+
+    try {
+      // Decode the JWT token
+      const decodedToken = jwtDecode<
+        JwtPayload & { name: string; role: string; email: string }
+      >(token);
+      if (decodedToken) {
+        decodedUser = {
+          name: decodedToken.name,
+          role: decodedToken.role,
+          email: decodedToken.email,
+        };
+      }
+    } catch (error) {
+      console.error("Failed to decode token:", error);
+    }
+
+    if (decodedUser) {
+      setIsLoggedIn(true);
+      setUser(decodedUser);
+      setToken(token);
+      localStorage.setItem("user", JSON.stringify(decodedUser));
+      localStorage.setItem("token", token);
+    } else {
+      console.error("Invalid token: Unable to set user.");
+    }
   };
 
   const toggleTheme = () => {
@@ -77,6 +152,12 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
 
   const isValidResponse = (response: Response): boolean => {
     return response.status === 200;
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false);
+    setUser(null);
+    setToken("");
   };
 
   return (
@@ -89,6 +170,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
         user,
         token,
         handleUserLogin,
+        handleLogout,
       }}
     >
       {children}

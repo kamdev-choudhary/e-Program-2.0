@@ -54,7 +54,6 @@ const LecturePage: React.FC = () => {
 
   const handleFilterTextChange = (e: React.ChangeEvent<HTMLInputElement>) =>
     setFilterText(e.target.value);
-  console.log(filterText);
 
   const getAcademicData = async () => {
     try {
@@ -98,15 +97,15 @@ const LecturePage: React.FC = () => {
   };
 
   return (
-    <>
+    <Paper>
       <Box>
-        <Grid container spacing={1} component={Paper} sx={{ p: 1, py: 2 }}>
+        <Grid container spacing={1} sx={{ p: 1, py: 2 }}>
           <Grid size={{ xs: 6, xl: 3 }}>
             <CustomDropDown
               data={classes}
               value={selectedClass}
               dropdownValue="value"
-              label="Class"
+              label="Select Class"
               name="name"
               onChange={(e) =>
                 setSelectedClass((e.target as HTMLInputElement).value)
@@ -230,7 +229,7 @@ const LecturePage: React.FC = () => {
           </Grid>
         </Grid>
       </Box>
-    </>
+    </Paper>
   );
 };
 

@@ -2,6 +2,7 @@ import {
   HomeRounded,
   LibraryBooksRounded,
   LocationCityRounded,
+  SchoolRounded,
 } from "@mui/icons-material";
 import React from "react";
 
@@ -10,7 +11,7 @@ interface Option {
   path: string;
   icon: React.ElementType;
   role?: [];
-  loginRequired: boolean;
+  loginRequired?: boolean;
 }
 
 interface Button {
@@ -22,7 +23,7 @@ interface Button {
   color?: string;
   size?: number;
   role?: [];
-  loginRequired: boolean;
+  loginRequired?: boolean;
 }
 
 export const buttons: Button[] = [
@@ -35,7 +36,31 @@ export const buttons: Button[] = [
     size: 20,
     loginRequired: false,
   },
-
+  {
+    label: "Lectures",
+    path: "/lectures",
+    icon: SchoolRounded,
+    color: "#28844f",
+    type: "button",
+    size: 20,
+    loginRequired: true,
+  },
+  {
+    label: "Admin",
+    icon: LocationCityRounded,
+    type: "menu",
+    color: "#fff",
+    size: 20,
+    loginRequired: true,
+    options: [
+      {
+        label: "Academic Info",
+        path: "/admin/academic",
+        icon: SchoolRounded,
+        loginRequired: true,
+      },
+    ],
+  },
   {
     label: "Books",
     path: "/books",
@@ -47,7 +72,6 @@ export const buttons: Button[] = [
   },
   {
     label: "JEE Main",
-    path: "/automation/jeemain/cityinfo",
     icon: LocationCityRounded,
     type: "menu",
     color: "#fff",

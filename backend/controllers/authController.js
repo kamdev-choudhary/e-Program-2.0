@@ -1,39 +1,41 @@
 import User from "../models/user.js";
 import bcrypt from "bcryptjs";
-import Batch from "../models/batch.js";
-import { v4 as uuid } from "uuid";
 
 export async function login(req, res, next) {
   try {
     const { id, password } = req.body;
+
+    // Validate input
     if (!id || !password) {
-      return res.status(200).json({
+      return res.status(400).json({
         message: "Both ID and password are required.",
         status_code: 0,
       });
     }
+
+    // Find user by email or mobile
     const userExist = await User.findOne({
       $or: [{ email: id }, { mobile: id }],
     });
 
     // If user doesn't exist
     if (!userExist) {
-      return res.status(200).json({
+      return res.status(400).json({
         message: "Invalid ID or password.",
         status_code: 0,
       });
     }
 
-    // Validate password
+    // Compare password with bcrypt
     const isPasswordValid = await bcrypt.compare(password, userExist.password);
     if (!isPasswordValid) {
-      return res.status(200).json({
+      return res.status(400).json({
         message: "Invalid ID or password.",
         status_code: 0,
       });
     }
 
-    // Generate token
+    // Generate a token
     const token = await userExist.generateToken();
 
     // Respond with success
@@ -45,57 +47,65 @@ export async function login(req, res, next) {
       status_code: 1,
     });
   } catch (error) {
+    console.error("Error in login:", error);
     next(error);
   }
 }
 
 export async function register(req, res, next) {
-  let { name, email, password = "Password", mobile, role, method } = req.body;
+  const { name, email, password, mobile, role = "student", method } = req.body;
 
   try {
-    let userExist = await findOne({ email: email });
-    if (userExist) {
-      return res
-        .status(200)
-        .json({ message: "Email already Registered", status_code: 2 });
+    // Validate input
+    if (!name || !email || !password || !mobile) {
+      return res.status(400).json({ message: "All fields are required." });
     }
-    let mobileExist = await findOne({ mobile: mobile });
-    if (mobileExist) {
-      return res
-        .status(200)
-        .json({ message: "Mobile number already Registered.", status_code: 2 });
+
+    // Check for existing email and mobile
+    const [checkMail, checkMobile] = await Promise.all([
+      User.findOne({ email }),
+      User.findOne({ mobile }),
+    ]);
+
+    if (checkMail) {
+      return res.status(400).json({ message: "Email already registered." });
     }
-    const newUser = await User.create({
+    if (checkMobile) {
+      return res.status(400).json({ message: "Mobile already registered." });
+    }
+
+    // Hash the password using bcrypt
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    // Create a new user
+    const newUser = new User({
       name,
       email,
-      password,
+      password: hashedPassword,
       mobile,
       role,
     });
-    newUser.save();
 
+    // Save the user in the database
+    await newUser.save();
+
+    // Generate a token if needed and respond
     if (method === "admin") {
       res.status(200).json({
         message: "Registration Successful.",
         status_code: 1,
       });
     } else {
+      const token = await newUser.generateToken();
       res.status(200).json({
-        message: "Registration Successful",
-        token: await newUser.generateToken(),
+        message: "Registration Successful.",
+        token,
         userId: newUser._id.toString(),
         status_code: 1,
       });
     }
-  } catch (err) {
-    next(error);
-  }
-}
-
-export async function test(req, res, next) {
-  try {
-    res.status(200).json({ message: "Test" });
   } catch (error) {
+    console.error("Error in register:", error);
     next(error);
   }
 }

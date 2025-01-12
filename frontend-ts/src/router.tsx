@@ -12,6 +12,7 @@ const AuthPage = lazy(() => import("./pages/auth/AuthPage"));
 const Lectures = lazy(() => import("./pages/lectures/Lectures"));
 const DCI = lazy(() => import("./pages/automations/DownloadCityInformation"));
 const DAC = lazy(() => import("./pages/automations/DownloadJeeMainAdmitCard"));
+const Books = lazy(() => import("./pages/books/Books"));
 
 // Define Routes
 const router = createBrowserRouter([
@@ -39,6 +40,10 @@ const router = createBrowserRouter([
       {
         path: "/automation/jeemain/admitcard",
         element: <DAC />,
+      },
+      {
+        path: "/books",
+        element: <Books />,
       },
     ],
   },

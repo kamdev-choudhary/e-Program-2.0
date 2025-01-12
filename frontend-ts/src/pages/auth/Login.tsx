@@ -7,6 +7,9 @@ import {
   CircularProgress,
 } from "@mui/material";
 import React, { useState } from "react";
+import axios from "../../hooks/AxiosInterceptor";
+import { useGlobalContext } from "../../contexts/GlobalProvider";
+import { useDispatch } from "react-redux";
 
 interface User {
   id: string;
@@ -18,6 +21,8 @@ interface LoginProps {
 }
 
 const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
+  const { handleUserLogin } = useGlobalContext();
+  const dispatch = useDispatch();
   const [user, setUser] = useState<User>({
     id: "",
     password: "",
@@ -29,9 +34,14 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
     setLoading(true);
     e.preventDefault();
     try {
-    } catch (error) {
+      const response = await axios.post("/auth/login", user);
+      if (response.status === 200) {
+        handleUserLogin(response.data);
+        dispatch({ type: "SET_AUTHPAGE", payload: false });
+      }
+    } catch (error: any) {
       console.error(error);
-      setError(true);
+      setError(error?.response?.data?.message);
     } finally {
       setLoading(false);
     }
@@ -95,7 +105,7 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
           </Button>
           {error && (
             <Typography color="error" variant="body2" sx={{ mt: 2 }}>
-              Login failed. Please try again.
+              {error}
             </Typography>
           )}
         </Box>

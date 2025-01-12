@@ -7,7 +7,9 @@ const DefaultLayout: React.FC = () => {
   return (
     <Box sx={{ bgcolor: "#f1f3fb", height: "100vh" }}>
       <Navbar />
-      <Outlet />
+      <Box sx={{ p: 2 }}>
+        <Outlet />
+      </Box>
     </Box>
   );
 };

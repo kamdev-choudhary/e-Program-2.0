@@ -52,23 +52,6 @@ const userSchema = new Schema(
   }
 );
 
-// Hash the password before saving
-userSchema.pre("save", async function (next) {
-  const user = this;
-
-  if (!user.isModified("password")) {
-    return next();
-  }
-
-  try {
-    const salt = await bcrypt.genSalt(10);
-    user.password = await bcrypt.hash(user.password, salt);
-    return next();
-  } catch (err) {
-    return next(err);
-  }
-});
-
 // Generate JWT token
 userSchema.methods.generateToken = async function () {
   try {

@@ -15,6 +15,7 @@ const commonThemeOptions: ThemeOptions = {
         root: {
           textTransform: "none", // Prevent buttons from having uppercase text
           borderRadius: 100,
+          padding: "5px 20px",
         },
       },
     },
