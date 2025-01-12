@@ -1,32 +1,38 @@
-import { post } from "axios";
-import { existsSync, createReadStream } from "fs";
+import axios from "axios";
 import FormData from "form-data";
-import { ocrSpaceKey } from "../config/config";
+import config from "../config/config.js";
 
 /**
  * Perform OCR on an image using OCR.Space API
- * @param {string} filePath - Path to the image file
- * @param {string} apiKey - Your OCR.Space API key
+ * @param {Buffer|Blob} imageBinary - Binary data of the image
  * @returns {Promise<string>} - Recognized text from the image
  */
 
-async function getOCRFromImage(filePath) {
-  // Ensure the file exists
-  if (!existsSync(filePath)) {
-    throw new Error(`File not found: ${filePath}`);
+async function getOCRFromImageBinary(imageBinary) {
+  if (!imageBinary) {
+    throw new Error("No image binary provided.");
   }
 
   // Prepare form data for OCR.Space API
   const formData = new FormData();
-  formData.append("file", createReadStream(filePath)); // Attach the image file
-  formData.append("apikey", ocrSpaceKey); // Add your API key
+
+  // Make sure to append image as a buffer
+  formData.append("file", imageBinary, { filename: "image.png" }); // Provide a filename for the buffer
+  formData.append("apikey", config.ocrSpaceKey); // Add your API key
   formData.append("language", "eng"); // Specify the language (adjust as needed)
 
   try {
     // Send POST request to OCR.Space API
-    const response = await post("https://api.ocr.space/parse/image", formData, {
-      headers: formData.getHeaders(), // Set the headers for form data
-    });
+    const response = await axios.post(
+      "https://api.ocr.space/parse/image",
+      formData,
+      {
+        headers: {
+          ...formData.getHeaders(),
+          "Content-Length": formData.getLengthSync(), // Ensure content length is correctly set
+        },
+      }
+    );
 
     // Extract the recognized text
     const parsedResults = response.data.ParsedResults;
@@ -42,4 +48,4 @@ async function getOCRFromImage(filePath) {
   }
 }
 
-export default getOCRFromImage;
+export default getOCRFromImageBinary;

@@ -6,9 +6,10 @@ import {
   Divider,
   IconButton,
   useMediaQuery,
+  Button,
 } from "@mui/material";
 import {
-  CancelRounded,
+  CloseRounded,
   FullscreenExitRounded,
   FullscreenRounded,
 } from "@mui/icons-material";
@@ -97,9 +98,15 @@ export const CustomModal: React.FC<CustomModalProps> = ({
                     )}
                   </IconButton>
                 )}
-                <IconButton sx={{ ml: 1 }} onClick={onClose} color="error">
-                  <CancelRounded />
-                </IconButton>
+                <Button
+                  variant="contained"
+                  sx={{ ml: 1 }}
+                  onClick={onClose}
+                  color="error"
+                  startIcon={<CloseRounded />}
+                >
+                  Close
+                </Button>
               </Box>
             </Box>
             <Divider sx={{ my: 1 }} />
