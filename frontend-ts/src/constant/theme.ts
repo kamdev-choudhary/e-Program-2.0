@@ -2,9 +2,9 @@ import { createTheme, ThemeOptions } from "@mui/material/styles";
 
 // Common properties for both light and dark themes
 const commonThemeOptions: ThemeOptions = {
-  shape: {
-    borderRadius: 4, // Set default border radius
-  },
+  // shape: {
+  //   borderRadius: 4, // Set default border radius
+  // },
   typography: {
     fontFamily: "'Aptos', 'Roboto', 'Arial', sans-serif",
     fontSize: 13, // Default font size
@@ -14,16 +14,15 @@ const commonThemeOptions: ThemeOptions = {
       styleOverrides: {
         root: {
           textTransform: "none", // Prevent buttons from having uppercase text
-          borderRadius: 100,
-          padding: "5px 20px",
+          borderRadius: 4,
         },
       },
     },
     MuiPaper: {
       styleOverrides: {
         root: {
-          borderRadius: 14, // Slightly rounded corners for a modern look
-          boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // Subtle shadow for modern elevation
+          borderRadius: 8, // Slightly rounded corners for a modern look
+          // boxShadow: "0px 4px 12px rgba(0, 0, 0, 0.1)", // Subtle shadow for modern elevation
           padding: 16, // Standardized padding for better content spacing
         },
       },

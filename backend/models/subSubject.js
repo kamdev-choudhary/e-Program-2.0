@@ -1,12 +1,17 @@
-import mongoose, { Schema as _Schema, model } from "mongoose";
-const Schema = _Schema;
+import mongoose from "mongoose";
 
-const subSubjectSchema = new Schema({
-  id_sub_subject: { type: Number }, // remove unique constraint
-  id_subject: { type: Number, required: true }, // ensure this isn't set as unique
-  name: { type: String, required: true },
-});
+const subSubjectSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    description: { type: String },
+    subject: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Subject",
+      required: true,
+    }, // Link to parent subject
+  },
+  { timestamps: true } // Automatically adds createdAt and updatedAt fields
+);
 
-const SubSubject = model("SubSubject", subSubjectSchema);
-
+const SubSubject = mongoose.model("SubSubject", subSubjectSchema);
 export default SubSubject;

@@ -2,6 +2,8 @@ import {
   HomeRounded,
   LibraryBooksRounded,
   LocationCityRounded,
+  PausePresentationRounded,
+  QuestionAnswer,
   SchoolRounded,
 } from "@mui/icons-material";
 import React from "react";
@@ -60,6 +62,16 @@ export const buttons: Button[] = [
         path: "/admin/lectures",
         loginRequired: true,
       },
+      {
+        label: "Online Exams",
+        path: "/admin/exams/online",
+        loginRequired: true,
+      },
+      {
+        label: "Offline Exams",
+        path: "/admin/exams/offline",
+        loginRequired: true,
+      },
     ],
   },
   {
@@ -90,6 +102,23 @@ export const buttons: Button[] = [
     role: ["admin", "student"],
   },
   {
+    label: "Exams",
+    path: "",
+    icon: PausePresentationRounded,
+    type: "menu",
+    loginRequired: true,
+    options: [
+      {
+        label: "Online Exam",
+        path: "/exams/online",
+      },
+      {
+        label: "offline Exam",
+        path: "/exams/offline",
+      },
+    ],
+  },
+  {
     label: "JEE Main",
     icon: LocationCityRounded,
     type: "menu",
@@ -110,5 +139,12 @@ export const buttons: Button[] = [
         loginRequired: false,
       },
     ],
+  },
+  {
+    label: "Doubts",
+    path: "/doubts",
+    icon: QuestionAnswer,
+    loginRequired: false,
+    type: "button",
   },
 ];

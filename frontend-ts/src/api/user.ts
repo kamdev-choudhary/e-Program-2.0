@@ -1,6 +1,6 @@
 import axios from "../hooks/AxiosInterceptor";
 
-export const userLogin = async ({ user }) => {
+export const userLogin = async (user: []) => {
   try {
     return await axios.post("/auth/login", {
       ...user,
@@ -11,7 +11,7 @@ export const userLogin = async ({ user }) => {
 };
 
 // Register User
-export const registerUser = async ({ user }) => {
+export const registerUser = async (user: []) => {
   try {
     return await axios.post("/auth/register", {
       ...user,
@@ -22,7 +22,7 @@ export const registerUser = async ({ user }) => {
 };
 
 // Get users by role
-export const getUsersByRole = async ({ role }) => {
+export const getUsersByRole = async (role: string) => {
   try {
     const response = await axios.get(`/user/role/${role}`);
     return response;
@@ -33,11 +33,11 @@ export const getUsersByRole = async ({ role }) => {
 };
 
 // Upload profile pic
-export const uploadProfilePic = async ({ user, photo }) => {
+export const uploadProfilePic = async (user: any, photo: string) => {
   try {
-    const response = await axios.post(`${API_URL}/user/profile-pic`, {
+    const response = await axios.post(`/user/profile-pic`, {
       id: user?._id,
-      photo: newPhoto,
+      photo: photo,
     });
     return response;
   } catch (error) {
@@ -46,7 +46,7 @@ export const uploadProfilePic = async ({ user, photo }) => {
 };
 
 // Delete user
-export const deleteUser = async ({ user }) => {
+export const deleteUser = async (user: any) => {
   try {
     const response = await axios.delete(`/user/${user._id}`);
     return response;
@@ -56,7 +56,7 @@ export const deleteUser = async ({ user }) => {
 };
 
 // Add new user
-export const addNewUserAdmin = async ({ newUser }) => {
+export const addNewUserAdmin = async (newUser: any) => {
   try {
     const response = await axios.post("/auth/register", {
       ...newUser,
@@ -70,7 +70,7 @@ export const addNewUserAdmin = async ({ newUser }) => {
 };
 
 // Save Edited User
-export const saveEditUser = async ({ user }) => {
+export const saveEditUser = async (user: any) => {
   try {
     const response = await axios.patch(`/user/${user?._id}`, {
       ...user,

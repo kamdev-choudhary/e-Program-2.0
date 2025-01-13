@@ -42,7 +42,6 @@ export async function login(req, res, next) {
     return res.status(200).json({
       message: "Login Successful.",
       token,
-      userId: userExist._id.toString(),
       photo: userExist.photo || null,
       status_code: 1,
     });

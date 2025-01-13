@@ -1,13 +1,17 @@
-import mongoose, { Schema as _Schema, model } from "mongoose";
-const Schema = _Schema;
+import mongoose from "mongoose";
 
-const topicSchema = new Schema({
-  id_subject: { type: Number, required: true, unique: false },
-  id_sub_subject: { type: Number, required: true, unique: false },
-  id_topic: { type: Number, unique: true }, // Corrected typo here
-  name: { type: String, required: true },
-});
+const subtopicSchema = new mongoose.Schema(
+  {
+    name: { type: String, required: true },
+    description: { type: String },
+    topic: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Topic",
+      required: true,
+    },
+  },
+  { timestamps: true } // Automatically adds createdAt and updatedAt fields
+);
 
-const Topic = model("Topic", topicSchema);
-
-export default Topic;
+const Subtopic = mongoose.model("Subtopic", subtopicSchema);
+export default Subtopic;

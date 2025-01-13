@@ -15,13 +15,9 @@ const Profile: React.FC = () => {
   return (
     <Box
       sx={{
-        bgcolor: "#fff",
-        p: 2,
-        borderRadius: 2,
         display: "flex",
         flexDirection: { sm: "column", lg: "row" },
         alignItems: "center",
-        boxShadow: 1,
       }}
     >
       <Card

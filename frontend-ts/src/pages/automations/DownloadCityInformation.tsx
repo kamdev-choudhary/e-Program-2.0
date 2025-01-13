@@ -5,6 +5,7 @@ import {
   Typography,
   IconButton,
   CircularProgress,
+  Divider,
 } from "@mui/material";
 import React, { useMemo, useState } from "react";
 import axios from "../../hooks/AxiosInterceptor";
@@ -31,11 +32,24 @@ interface ScholarData {
   pdfUrl: string;
   city: string;
   date: string;
+  name?: string;
 }
 
 const DownloadCityInformation: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [jsonData, setJsonData] = useState<ScholarData[] | null>(null);
+  const [jsonData, setJsonData] = useState<ScholarData[] | null>([
+    {
+      name: "Example",
+      drn: "1234567890",
+      day: "01",
+      month: "05",
+      application: "250310155422",
+      year: "2000",
+      pdfUrl: "",
+      city: "",
+      date: "",
+    },
+  ]);
 
   const handleDownloadCityInfo = async (scholar: ScholarData) => {
     try {
@@ -404,111 +418,110 @@ const DownloadCityInformation: React.FC = () => {
   ];
 
   return (
-    <Box sx={{ p: 2, height: "70vh" }}>
-      <Paper>
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-          <Box
-            {...getRootProps()}
-            sx={{
-              border: "1px dashed #1976d2",
-              borderRadius: 20,
-              cursor: "pointer",
-              flexGrow: 1,
-              alignContent: "center",
-              p: 1,
-              display: "flex",
-              justifyContent: "center",
-            }}
-          >
-            <input {...getInputProps()} />
-            <CloudUploadRounded sx={{ mr: 1 }} />
-            <Typography variant="body1">
-              Drag & drop an Excel file here, or click to select a file
-            </Typography>
-          </Box>
-          <Box
-            sx={{
-              display: "flex",
-              gap: 1,
+    <Paper>
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+        <Box
+          {...getRootProps()}
+          sx={{
+            border: "1px dashed #1976d2",
+            borderRadius: 20,
+            cursor: "pointer",
+            flexGrow: 1,
+            alignContent: "center",
+            p: 1,
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <input {...getInputProps()} />
+          <CloudUploadRounded sx={{ mr: 1 }} />
+          <Typography variant="body1">
+            Drag & drop an Excel file here, or click to select a file
+          </Typography>
+        </Box>
+        <Box
+          sx={{
+            display: "flex",
+            gap: 1,
 
-              flexWrap: "wrap",
+            flexWrap: "wrap",
+          }}
+        >
+          <Button
+            sx={{ px: 3 }}
+            variant="contained"
+            onClick={handleDownloadInfo}
+            disabled={isLoading || !jsonData}
+            startIcon={<CloudDownloadRounded sx={{ color: "#fff" }} />}
+          >
+            {isLoading ? "Loading..." : "Fetch Data"} (
+            {jsonData?.filter((data) => !data.pdfUrl).length})
+          </Button>
+          <Button
+            startIcon={<TableChartRounded />}
+            sx={{ px: 3 }}
+            variant="contained"
+            disabled={!jsonData}
+            onClick={() => {
+              if (jsonData) {
+                downloadJsonToExcel({
+                  jsonData: jsonData,
+                  fileName: "JEE Main City Info",
+                });
+              }
             }}
           >
-            <Button
-              sx={{ px: 3 }}
-              variant="contained"
-              onClick={handleDownloadInfo}
-              disabled={isLoading || !jsonData}
-              startIcon={<CloudDownloadRounded sx={{ color: "#fff" }} />}
-            >
-              {isLoading ? "Loading..." : "Fetch Data"} (
-              {jsonData?.filter((data) => !data.pdfUrl).length})
-            </Button>
-            <Button
-              startIcon={<TableChartRounded />}
-              sx={{ px: 3 }}
-              variant="contained"
-              disabled={!jsonData}
-              onClick={() => {
-                if (jsonData) {
-                  downloadJsonToExcel({
-                    jsonData: jsonData,
-                    fileName: "JEE Main City Info",
-                  });
-                }
-              }}
-            >
-              Download Excel ({jsonData?.filter((data) => data.pdfUrl).length})
-            </Button>
-            <Button
-              variant="contained"
-              color="success"
-              startIcon={<PictureAsPdfRounded sx={{ color: "#fff" }} />}
-              onClick={handleDownloadAddPdf}
-              sx={{ px: 3 }}
-              disabled={
-                !jsonData ||
-                jsonData.filter((data) => data?.pdfUrl?.trim() !== "")
-                  .length === 0
-              }
-            >
-              Download PDF
-            </Button>
-            <Button
-              startIcon={<DownloadRounded />}
-              variant="contained"
-              component="a"
-              href="/sample1.xlsx"
-              download
-            >
-              Sample
-            </Button>
-          </Box>
+            Download Excel ({jsonData?.filter((data) => data.pdfUrl).length})
+          </Button>
+          <Button
+            variant="contained"
+            color="success"
+            startIcon={<PictureAsPdfRounded sx={{ color: "#fff" }} />}
+            onClick={handleDownloadAddPdf}
+            sx={{ px: 3 }}
+            disabled={
+              !jsonData ||
+              jsonData.filter((data) => data?.pdfUrl?.trim() !== "").length ===
+                0
+            }
+          >
+            Download PDF
+          </Button>
+          <Button
+            startIcon={<DownloadRounded />}
+            variant="contained"
+            component="a"
+            href="/sample1.xlsx"
+            download
+          >
+            Sample
+          </Button>
         </Box>
-        <Box sx={{ mt: 2 }}>
-          <DataGrid
-            slots={{
-              toolbar: () => <CustomToolbar showAddButton={false} />,
-            }}
-            columns={columns}
-            rows={rows}
-            loading={isLoading}
-            sx={{
-              "& .MuiDataGrid-columnHeader": {
-                bgcolor: "#28844f", // Light background color for the header
-                color: "primary.contrastText", // Text color for the header
-              },
-              "& .MuiDataGrid-columnHeaderTitle": {
-                fontWeight: "bold", // Make header text bold
-              },
-            }}
-            processRowUpdate={handleProcessRowUpdate}
-            initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
-            pageSizeOptions={[10, 30, 50, 100, 200]}
-          />
-        </Box>
-      </Paper>
-    </Box>
+      </Box>
+      <Divider sx={{ mt: 2 }} />
+      <Box sx={{ mt: 2 }}>
+        <DataGrid
+          slots={{
+            toolbar: () => <CustomToolbar showAddButton={false} />,
+          }}
+          columns={columns}
+          rows={rows}
+          loading={isLoading}
+          sx={{
+            "& .MuiDataGrid-columnHeader": {
+              bgcolor: "#28844f", // Light background color for the header
+              color: "primary.contrastText", // Text color for the header
+            },
+            "& .MuiDataGrid-columnHeaderTitle": {
+              fontWeight: "bold", // Make header text bold
+            },
+          }}
+          processRowUpdate={handleProcessRowUpdate}
+          initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
+          pageSizeOptions={[10, 30, 50, 100, 200]}
+        />
+      </Box>
+    </Paper>
   );
 };
 

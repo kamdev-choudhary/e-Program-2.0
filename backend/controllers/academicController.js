@@ -38,7 +38,7 @@ export async function addClass(req, res, next) {
     const classes = await Class.find({});
     res.status(201).json({
       classes,
-      ...response.created,
+      status_code: 1,
     });
   } catch (error) {
     logger.error(error);
@@ -83,20 +83,28 @@ export async function editClass(req, res, next) {
 export async function removeClass(req, res, next) {
   try {
     const { id } = req.params;
+
+    // Attempt to delete the class
     const deletedClass = await Class.findOneAndDelete({ _id: id });
 
     if (deletedClass) {
+      // Fetch remaining classes if deletion is successful
       const classes = await Class.find({});
-      res.status(200).json({
+      return res.status(200).json({
         classes,
         ...response.deleted,
       });
     } else {
-      res.status(200).json({ message: "Class not found.", status_code: 0 });
+      // Class not found
+      return res.status(404).json({
+        message: "Class not found.",
+        status_code: 404,
+      });
     }
   } catch (error) {
+    // Log the error and return a generic server error response
     logger.error(error.message);
-    next(error);
+    next(error); // Let the error handler middleware process it
   }
 }
 
@@ -126,8 +134,8 @@ export async function addSubject(req, res, next) {
         status_code: 0,
       });
     }
-    const { name } = req.body;
-    const newSubject = new Subject({ name });
+    const { name, description } = req.body;
+    const newSubject = new Subject({ name, description });
     await newSubject.save();
     const subjects = await Subject.find({});
     res.status(200).json({

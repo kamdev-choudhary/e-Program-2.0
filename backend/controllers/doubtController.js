@@ -9,6 +9,33 @@ export async function viewDoubts(req, res, next) {
   }
 }
 
+export async function viewDoubtsByStatus(req, res, next) {
+  try {
+    const { status, page = 1, limit = 10 } = req.body;
+
+    const pageNumber = parseInt(page, 10);
+    const limitNumber = parseInt(limit, 10);
+
+    const doubts = await Doubt.find({ status })
+      .skip((pageNumber - 1) * limitNumber)
+      .limit(limitNumber)
+      .sort({ createdAt: -1 }); // Sort by created date, newest first
+
+    const totalDoubts = await Doubt.countDocuments({ status });
+
+    res.status(200).json({
+      message: "Record Found",
+      doubts,
+      totalPages: Math.ceil(totalDoubts / limitNumber),
+      currentPage: pageNumber,
+      totalDoubts,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+// doubts
 export async function saveNewDoubt(req, res, next) {
   try {
     const doubt = new Doubt(req.body);
@@ -19,6 +46,7 @@ export async function saveNewDoubt(req, res, next) {
   }
 }
 
+// save doubts
 export async function saveSolution(req, res, next) {
   const { id } = req.params;
   const solution = req.body;
@@ -40,6 +68,26 @@ export async function deleteDoubt(req, res) {
     const { id } = req.params;
     const deletedDoubt = await Doubt.findOneAndDelete({ _id: id });
     res.status(200).json("Succefully Deleted Doubt");
+  } catch (error) {
+    next(error);
+  }
+}
+
+// get Doubt Details
+export async function getDoubtDetails(req, res, next) {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res
+        .status(200)
+        .json({ message: "Doubt ID is required", status: 0 });
+    }
+    const doubt = await Doubt.findById(id);
+    if (doubt) {
+      return res.status(200).json({ doubt });
+    } else {
+      return res.status(200).json({ message: "Doubt not Found" });
+    }
   } catch (error) {
     next(error);
   }

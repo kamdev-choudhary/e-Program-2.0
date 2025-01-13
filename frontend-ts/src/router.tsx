@@ -1,4 +1,4 @@
-import { lazy } from "react";
+import { lazy, Suspense } from "react";
 import { createBrowserRouter } from "react-router-dom";
 
 import ProtectedRoute from "./hooks/ProtectedRoute";
@@ -18,11 +18,24 @@ const AdminBatch = lazy(() => import("./pages/admin/batch/Batch"));
 const Academic = lazy(() => import("./pages/admin/academic/Academic"));
 const BatchDetails = lazy(() => import("./pages/batch/BatchDetails"));
 const Batches = lazy(() => import("./pages/batch/Batches"));
+const QuestionBankAdmin = lazy(() => import("./pages/question/QuestionBank"));
+const LecturesAdmin = lazy(() => import("./pages/admin/lectures/Lectures"));
+const ExamMasterOnline = lazy(
+  () => import("./pages/admin/exams/ExamMasterOnline")
+);
+const ExamMasterOffline = lazy(
+  () => import("./pages/admin/exams/ExamMasterOffline")
+);
+const Doubts = lazy(() => import("./pages/doubts/Doubts"));
 
 // Define Routes
 const router = createBrowserRouter([
   {
-    element: <DefaultLayout />,
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <DefaultLayout />
+      </Suspense>
+    ),
     children: [
       { path: "/", element: <HomePage /> },
       { path: "*", element: <NotFound /> },
@@ -47,6 +60,38 @@ const router = createBrowserRouter([
         element: (
           <ProtectedRoute requiredRole={["admin"]}>
             <Academic />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/admin/question-bank",
+        element: (
+          <ProtectedRoute requiredRole={["admin"]}>
+            <QuestionBankAdmin />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/admin/lectures",
+        element: (
+          <ProtectedRoute requiredRole={["admin"]}>
+            <LecturesAdmin />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/admin/exams/online",
+        element: (
+          <ProtectedRoute requiredRole={["admin"]}>
+            <ExamMasterOnline />
+          </ProtectedRoute>
+        ),
+      },
+      {
+        path: "/admin/exams/offline",
+        element: (
+          <ProtectedRoute requiredRole={["admin"]}>
+            <ExamMasterOffline />
           </ProtectedRoute>
         ),
       },
@@ -86,11 +131,19 @@ const router = createBrowserRouter([
         path: "/automation/jeemain/admitcard",
         element: <DAC />,
       },
+      {
+        path: "/doubts",
+        element: <Doubts />,
+      },
     ],
   },
   {
     path: "/auth",
-    element: <AuthPage />,
+    element: (
+      <Suspense fallback={<div>Loading...</div>}>
+        <AuthPage />
+      </Suspense>
+    ),
   },
 ]);
 

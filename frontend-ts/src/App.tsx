@@ -35,9 +35,7 @@ const App: React.FC = () => {
             py: 0.5,
           }}
         >
-          <Typography sx={{ color: "#640D5F" }}>
-            Backend not connected
-          </Typography>
+          <Typography sx={{ color: "#640D5F" }}>Backend offline</Typography>
         </Box>
       )}
       <CustomModal

@@ -72,7 +72,7 @@ const Navbar: React.FC = () => {
         px: 3,
       }}
     >
-      <Box sx={{ display: "flex", gap: 1 }}>
+      <Box sx={{ display: "flex", gap: 2 }}>
         {buttons?.map((button, index) => {
           if (button.loginRequired && !isLoggedIn) return null;
 

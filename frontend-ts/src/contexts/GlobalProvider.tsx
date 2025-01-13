@@ -5,14 +5,17 @@ import React, {
   useState,
   ReactNode,
 } from "react";
-import { jwtDecode, JwtPayload } from "jwt-decode";
+import { JwtPayload, jwtDecode } from "jwt-decode";
 import Loader from "../components/Loader";
+import { Snackbar, Alert, IconButton } from "@mui/material";
+import CancelIcon from "@mui/icons-material/Cancel";
 
 interface GlobalProviderProps {
   children: ReactNode;
 }
 
 interface User {
+  _id: string;
   name: string;
   role: string;
   email?: string;
@@ -29,7 +32,6 @@ interface Response {
   data: any;
 }
 
-// Define types for the context
 interface GlobalContextType {
   theme: string;
   toggleTheme: () => void;
@@ -39,6 +41,18 @@ interface GlobalContextType {
   handleUserLogin: (response: LoginResponse) => void;
   isValidResponse: (response: Response) => boolean;
   handleLogout: () => void;
+  showNotification: (
+    message: string,
+    type?: "success" | "error" | "warning" | "info",
+    variant?: "filled" | "outlined" | "standard"
+  ) => void;
+}
+
+interface Notification {
+  open: boolean;
+  message: string;
+  type?: "success" | "error" | "warning" | "info";
+  variant?: "filled" | "outlined" | "standard";
 }
 
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
@@ -49,63 +63,53 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
   const [token, setToken] = useState<string>("");
   const [theme, setTheme] = useState<string>("light");
   const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const [notification, setNotification] = useState<Notification>({
+    open: false,
+    message: "",
+    type: "success",
+    variant: "outlined",
+  });
 
-  // Fetch and set the theme based on device preference or localStorage
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
     const prefersDark = window.matchMedia(
       "(prefers-color-scheme: dark)"
     ).matches;
 
-    if (storedTheme) {
-      setTheme(storedTheme);
-    } else {
-      setTheme(prefersDark ? "dark" : "light");
-    }
+    setTheme(storedTheme || (prefersDark ? "dark" : "light"));
   }, []);
 
   useEffect(() => {
     const initializeAuthState = () => {
+      const storedToken = localStorage.getItem("token");
+      if (!storedToken) {
+        setIsLoaded(true);
+        return;
+      }
+
       try {
-        const storedToken = localStorage.getItem("token");
-        if (!storedToken) {
-          console.log("No token found in localStorage.");
-          return;
-        }
-
-        try {
-          // Decode the JWT token
-          const decodedToken = jwtDecode<
-            JwtPayload & { name: string; role: string; email: string }
-          >(storedToken);
-
-          if (
-            !decodedToken ||
-            !decodedToken.name ||
-            !decodedToken.role ||
-            !decodedToken.email
-          ) {
-            console.warn("Decoded token does not have all required fields.");
-            return;
+        const decodedToken = jwtDecode<
+          JwtPayload & {
+            name: string;
+            role: string;
+            email: string;
+            _id: string;
           }
+        >(storedToken);
 
-          const decodedUser: User = {
-            name: decodedToken.name,
-            role: decodedToken.role,
-            email: decodedToken.email,
-          };
+        const decodedUser: User = {
+          _id: decodedToken._id,
+          name: decodedToken.name,
+          role: decodedToken.role,
+          email: decodedToken.email,
+        };
 
-          // Update state
-          setIsLoggedIn(true);
-          setToken(storedToken);
-          setUser(decodedUser);
-        } catch (decodeError) {
-          console.error("Failed to decode token:", decodeError);
-          // Optionally: Clear invalid token from localStorage
-          localStorage.removeItem("token");
-        }
-      } catch (storageError) {
-        console.error("Error accessing localStorage:", storageError);
+        setIsLoggedIn(true);
+        setToken(storedToken);
+        setUser(decodedUser);
+      } catch (error) {
+        console.error("Invalid token:", error);
+        localStorage.removeItem("token");
       } finally {
         setIsLoaded(true);
       }
@@ -114,7 +118,6 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     initializeAuthState();
   }, []);
 
-  // Update theme in localStorage and the DOM
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
     localStorage.setItem("theme", theme);
@@ -122,32 +125,26 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
 
   const handleUserLogin = (data: LoginResponse) => {
     const { token } = data;
-    let decodedUser: User | null = null;
 
     try {
-      // Decode the JWT token
       const decodedToken = jwtDecode<
-        JwtPayload & { name: string; role: string; email: string }
+        JwtPayload & { name: string; role: string; email: string; _id: string }
       >(token);
-      if (decodedToken) {
-        decodedUser = {
-          name: decodedToken.name,
-          role: decodedToken.role,
-          email: decodedToken.email,
-        };
-      }
-    } catch (error) {
-      console.error("Failed to decode token:", error);
-    }
 
-    if (decodedUser) {
+      const decodedUser: User = {
+        _id: decodedToken._id,
+        name: decodedToken.name,
+        role: decodedToken.role,
+        email: decodedToken.email,
+      };
+
       setIsLoggedIn(true);
       setUser(decodedUser);
       setToken(token);
       localStorage.setItem("user", JSON.stringify(decodedUser));
       localStorage.setItem("token", token);
-    } else {
-      console.error("Invalid token: Unable to set user.");
+    } catch (error) {
+      console.error("Invalid token:", error);
     }
   };
 
@@ -156,7 +153,17 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
   };
 
   const isValidResponse = (response: Response): boolean => {
-    return response.status === 200;
+    const status = response.data.status_code;
+    let message = response.data.message;
+    if ([1, 2, 3].includes(status)) {
+      showNotification(message || "Record Found.", "success", "outlined");
+      return true;
+    } else if (status === 0) {
+      showNotification(message || "Deleted Succesfully.", "error");
+      return true;
+    } else {
+      return false;
+    }
   };
 
   const handleLogout = () => {
@@ -164,6 +171,19 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     setUser(null);
     setToken("");
     localStorage.clear();
+  };
+
+  const showNotification = (
+    message: string,
+    type: "success" | "error" | "warning" | "info" = "success",
+    variant: "filled" | "outlined" | "standard" = "outlined"
+  ) => {
+    setNotification({ open: true, message, type, variant });
+  };
+
+  const handleClose = (_?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === "clickaway") return;
+    setNotification({ ...notification, open: false });
   };
 
   if (!isLoaded) {
@@ -181,14 +201,37 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
         token,
         handleUserLogin,
         handleLogout,
+        showNotification,
       }}
     >
       {children}
+      <Snackbar
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        open={notification.open}
+        onClose={handleClose}
+        autoHideDuration={3000}
+      >
+        <Alert
+          severity={notification.type}
+          variant={notification.variant}
+          sx={{ width: "100%" }}
+          action={
+            <IconButton
+              size="small"
+              color="inherit"
+              onClick={() => setNotification({ ...notification, open: false })}
+            >
+              <CancelIcon />
+            </IconButton>
+          }
+        >
+          {notification.message}
+        </Alert>
+      </Snackbar>
     </GlobalContext.Provider>
   );
 };
 
-// Custom hook to use the context
 export const useGlobalContext = (): GlobalContextType => {
   const context = useContext(GlobalContext);
   if (!context) {

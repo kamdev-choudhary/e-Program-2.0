@@ -49,7 +49,7 @@ export const editClass = async (selectedClass: ClassData) => {
     if (!_id) {
       throw new Error("Class ID is required for editing.");
     }
-    return await axios.put(`/academic/class/${_id}`, data);
+    return await axios.patch(`/academic/class/${_id}`, data);
   } catch (error) {
     console.error("Error editing class:", error);
     throw error;
@@ -122,6 +122,14 @@ export const getAllSubTopics = async () => {
     return await axios.get("/academic/sub-topic");
   } catch (error) {
     console.error("Error fetching sub-topics:", error);
+    throw error;
+  }
+};
+
+export const addNewSubject = async (newSubject: any) => {
+  try {
+    return await axios.post("/academic/subject", newSubject);
+  } catch (error) {
     throw error;
   }
 };
