@@ -53,7 +53,7 @@ const DoubtCard: React.FC<{ doubt: Doubt }> = ({ doubt }) => {
       sx={{
         margin: 2,
         padding: 2,
-        boxShadow: 1,
+        boxShadow: 4,
       }}
     >
       <CardContent>
@@ -111,9 +111,13 @@ const DoubtCard: React.FC<{ doubt: Doubt }> = ({ doubt }) => {
         </Typography>
       </CardContent>
       <Divider />
-      <CardActions sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
-        <Button>Post a solution</Button>
-        <Button onClick={() => navigate(`${doubt._id}`)}>View Details</Button>
+      <CardActions
+        sx={{ display: "flex", justifyContent: "flex-end", gap: 2, mt: 1 }}
+      >
+        <Button variant="contained">Post a solution</Button>
+        <Button variant="contained" onClick={() => navigate(`${doubt._id}`)}>
+          View Details
+        </Button>
       </CardActions>
     </Card>
   );

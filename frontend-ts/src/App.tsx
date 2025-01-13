@@ -1,7 +1,7 @@
 import { Box, CssBaseline, ThemeProvider, Typography } from "@mui/material";
 import { lightTheme } from "./constant/theme.ts";
 import { RouterProvider } from "react-router-dom";
-import router from "./router.tsx";
+import routes from "./routes.tsx";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store/store.ts";
@@ -21,7 +21,7 @@ const App: React.FC = () => {
     <ThemeProvider theme={lightTheme}>
       <CssBaseline />
       <QueryClientProvider client={queryClient}>
-        <RouterProvider router={router} />
+        <RouterProvider router={routes} />
       </QueryClientProvider>
       {!online && (
         <Box

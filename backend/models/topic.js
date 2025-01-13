@@ -1,17 +1,31 @@
 import mongoose from "mongoose";
+import SubTopic from "./subTopic.js";
 
-const subtopicSchema = new mongoose.Schema(
+const topicSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
     description: { type: String },
-    topic: {
+    subjectId: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: "Topic",
+      ref: "Subject",
       required: true,
     },
+    subjectName: String,
+    subSubjectId: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "SubSubject",
+      required: true,
+    },
+    subSubjectName: String,
   },
   { timestamps: true } // Automatically adds createdAt and updatedAt fields
 );
 
-const Subtopic = mongoose.model("Subtopic", subtopicSchema);
-export default Subtopic;
+topicSchema.pre("findOneAndDelete", async function (next) {
+  const topicId = this.getQuery()._id;
+  await SubTopic.deleteMany({ topicId });
+  next();
+});
+
+const Topic = mongoose.model("Topic", topicSchema);
+export default Topic;

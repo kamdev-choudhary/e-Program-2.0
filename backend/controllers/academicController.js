@@ -39,6 +39,7 @@ export async function addClass(req, res, next) {
     res.status(201).json({
       classes,
       status_code: 1,
+      message: "description",
     });
   } catch (error) {
     logger.error(error);
@@ -218,7 +219,8 @@ export async function getSubSubjects(req, res, next) {
 
 export async function addSubSubject(req, res, next) {
   try {
-    const { name, _id_subject } = req.body;
+    const { name, description, subject: _id_subject } = req.body;
+    console.log(_id_subject);
     if (!name || !_id_subject) {
       return res
         .status(400)
@@ -233,7 +235,9 @@ export async function addSubSubject(req, res, next) {
 
     const newSubSubject = new SubSubject({
       name,
-      id_subject: subject.id_subject,
+      description,
+      subjectId: subject._id,
+      subjectName: subject.name,
     });
 
     await newSubSubject.save();
@@ -305,34 +309,30 @@ export async function getTopics(req, res, next) {
 
 export async function addTopic(req, res, next) {
   try {
-    const { name, _id_subject, _id_sub_subject } = req.body;
-    if (!name || !_id_subject || !_id_sub_subject) {
+    const { name, subjectId, subSubjectId, description } = req.body;
+    if (!name || !subjectId || !subSubjectId) {
       return res.status(400).json({
         message: "Name and subject ID and Sub Subject ID are required.",
         status_code: 0,
       });
     }
-    const sub_subject = await SubSubject.findById(_id_sub_subject);
-    if (!sub_subject) {
+    const subject = await Subject.findById(subjectId);
+    const subSubject = await SubSubject.findById(subSubjectId);
+    if (!subSubject || !subject) {
       return res
         .status(404)
         .json({ message: "Subject or Sub Subject not found.", status_code: 0 });
     }
-    // Determine the next topic ID
-    const lastTopic = await Topic.findOne({}, { id_topic: 1 }).sort({
-      id_topic: -1,
-    });
-
-    const id_topic =
-      lastTopic && lastTopic.id_topic ? lastTopic.id_topic + 1 : 1;
 
     const newTopic = new Topic({
       name,
-      id_subject: sub_subject.id_subject,
-      id_sub_subject: sub_subject.id_sub_subject,
-      id_topic,
+      description,
+      subjectId,
+      subSubjectId,
+      subjectName: subject.name,
+      subSubjectName: subSubject.name,
     });
-    newTopic.save();
+    await newTopic.save();
     const topics = await Topic.find({});
     res.status(200).json({ topics, ...response.success });
   } catch (error) {
@@ -381,31 +381,29 @@ export async function getSubTopic(req, res, next) {
 
 export async function addSubTopic(req, res, next) {
   try {
-    const { name, _id_topic } = req.body;
-    if ((!name, !_id_topic)) {
+    const { name, description, subjectId, subSubjectId, topicId } = req.body;
+    if ((!name, !description, !subSubjectId, !subjectId, !topicId)) {
       res
         .status(200)
-        .json({ message: "Name and Topic is Required", status_code: 0 });
+        .json({ message: "Name or Topic is Required", status_code: 0 });
     }
-    const topic = await Topic.findById(_id_topic);
+    const topic = await Topic.findById(topicId);
+    console.log(topic);
     if (!topic) {
       res.status(200).json({ message: "Topic not found", status_code: 0 });
     }
-    const lastSubtopic = await SubTopic.findOne({}, { id_sub_topic: 1 }).sort({
-      id_sub_topic: -1,
-    });
-
-    const id_sub_topic =
-      lastSubtopic && lastSubtopic.id_topic ? lastSubtopic.id_topic + 1 : 1;
 
     const newSubTopic = new SubTopic({
       name,
-      id_subject: topic.id_subject,
-      id_sub_subject: topic.id_sub_subject,
-      id_topic: topic.id_topic,
-      id_sub_topic,
+      description,
+      subjectId,
+      subSubjectId,
+      topicId,
+      subjectName: topic.subjectName,
+      subSubjectName: topic.subSubjectName,
+      topicName: topic.name,
     });
-    newSubTopic.save();
+    await newSubTopic.save();
     const subTopics = await SubTopic.find({});
     res.status(200).json({ subTopics, ...response.success });
   } catch (error) {

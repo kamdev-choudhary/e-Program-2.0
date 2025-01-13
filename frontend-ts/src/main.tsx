@@ -1,25 +1,23 @@
-import { StrictMode, Suspense } from "react";
+import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
 import { Provider } from "react-redux";
 import { store } from "./store/store.ts";
 import { GlobalProvider } from "./contexts/GlobalProvider.tsx";
-import Loader from "./components/Loader.tsx";
 import { WebSocketProvider } from "./contexts/WebSocket.tsx";
 import App from "./App.tsx";
+import { mode } from "./config/environment.ts";
 
-const isDevelopment = import.meta.env.MODE === "development";
+const isDevelopment = mode === "development";
 
 const AppWrapper = (
-  <Suspense fallback={<Loader />}>
-    <GlobalProvider>
-      <WebSocketProvider>
-        <Provider store={store}>
-          <App />
-        </Provider>
-      </WebSocketProvider>
-    </GlobalProvider>
-  </Suspense>
+  <GlobalProvider>
+    <WebSocketProvider>
+      <Provider store={store}>
+        <App />
+      </Provider>
+    </WebSocketProvider>
+  </GlobalProvider>
 );
 
 createRoot(document.getElementById("root")!).render(

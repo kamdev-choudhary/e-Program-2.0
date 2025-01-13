@@ -17,7 +17,24 @@ import { useGlobalContext } from "../../../contexts/GlobalProvider";
 interface Subject {
   _id: string;
   name: string;
-  value: string;
+  description: string;
+}
+
+interface SubSubject {
+  _id: string;
+  name: string;
+  description: string;
+}
+
+interface TopicsProps {
+  _id: string;
+  name: string;
+  description: string;
+}
+interface subTopicsProps {
+  _id: string;
+  name: string;
+  description: string;
 }
 
 const Subjects: React.FC = () => {
@@ -26,9 +43,12 @@ const Subjects: React.FC = () => {
 
   // State variables
   const [subjects, setSubjects] = useState<Subject[]>([]);
-  const [subSubjects, setSubSubjects] = useState<Subject[]>([]);
-  const [topics, setTopics] = useState<Subject[]>([]);
-  const [subTopics, setSubTopics] = useState<Subject[]>([]);
+  const [subSubjects, setSubSubjects] = useState<SubSubject[]>([]);
+  const [topics, setTopics] = useState<TopicsProps[]>([]);
+  const [subTopics, setSubTopics] = useState<subTopicsProps[]>([]);
+  const [selectedSubject, setSelectedSubject] = useState<string>("");
+  const [selectedSubSubject, setSelectedSubSubject] = useState<string>("");
+  const [selectedTopic, setSelectedTopic] = useState<string>("");
 
   // Fetch data
   const getData = async () => {
@@ -73,25 +93,58 @@ const Subjects: React.FC = () => {
       <Grid container>
         <Grid size={{ xs: 12, md: 4, lg: 3 }}>
           <Paper elevation={3} sx={{ m: 1 }}>
-            <SubjectsComponent subjects={subjects} setSubjects={setSubjects} />
-          </Paper>
-        </Grid>
-        <Grid size={{ xs: 12, md: 4, lg: 3 }}>
-          <Paper elevation={3} sx={{ m: 1 }}>
-            <SubSubjects
-              subSubjects={subSubjects}
-              setSubSubjects={setSubSubjects}
+            <SubjectsComponent
+              subjects={subjects}
+              setSubjects={setSubjects}
+              selectedSubject={selectedSubject}
+              setSelectedSubject={setSelectedSubject}
             />
           </Paper>
         </Grid>
         <Grid size={{ xs: 12, md: 4, lg: 3 }}>
           <Paper elevation={3} sx={{ m: 1 }}>
-            <Topics topics={topics} setTopics={setTopics} />
+            <SubSubjects
+              subjects={subjects}
+              subSubjects={subSubjects}
+              setSubSubjects={setSubSubjects}
+              selectedSubject={selectedSubject}
+              setSelectedSubject={setSelectedSubject}
+              selectedSubSubject={selectedSubSubject}
+              setSelectedSubSubject={setSelectedSubSubject}
+            />
           </Paper>
         </Grid>
         <Grid size={{ xs: 12, md: 4, lg: 3 }}>
           <Paper elevation={3} sx={{ m: 1 }}>
-            <SubTopics subTopics={subTopics} setSubTopics={setSubTopics} />
+            <Topics
+              subjects={subjects}
+              subSubjects={subSubjects}
+              selectedSubject={selectedSubject}
+              setSelectedSubject={setSelectedSubject}
+              selectedSubSubject={selectedSubSubject}
+              setSelectedSubSubject={setSelectedSubSubject}
+              topics={topics}
+              setTopics={setTopics}
+              selectedTopic={selectedTopic}
+              setSelectedTopic={setSelectedTopic}
+            />
+          </Paper>
+        </Grid>
+        <Grid size={{ xs: 12, md: 4, lg: 3 }}>
+          <Paper elevation={3} sx={{ m: 1 }}>
+            <SubTopics
+              subjects={subjects}
+              subSubjects={subSubjects}
+              selectedSubject={selectedSubject}
+              setSelectedSubject={setSelectedSubject}
+              selectedSubSubject={selectedSubSubject}
+              setSelectedSubSubject={setSelectedSubSubject}
+              topics={topics}
+              selectedTopic={selectedTopic}
+              setSelectedTopic={setSelectedTopic}
+              subTopics={subTopics}
+              setSubTopics={setSubTopics}
+            />
           </Paper>
         </Grid>
       </Grid>

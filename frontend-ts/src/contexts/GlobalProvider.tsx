@@ -155,7 +155,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
   const isValidResponse = (response: Response): boolean => {
     const status = response.data.status_code;
     let message = response.data.message;
-    if ([1, 2, 3].includes(status)) {
+    if ([1, 2, 3, 4].includes(status)) {
       showNotification(message || "Record Found.", "success", "outlined");
       return true;
     } else if (status === 0) {

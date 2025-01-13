@@ -11,11 +11,10 @@ import {
 } from "@mui/material";
 import { AddRounded, Edit, Delete, SaveRounded } from "@mui/icons-material";
 import Swal from "sweetalert2";
-import { useDispatch } from "react-redux";
-import axios from "axios";
 import { useGlobalContext } from "../../../../contexts/GlobalProvider";
 import { CustomModal } from "../../../../components/CustomModal";
 import { addNewSubject } from "../../../../api/academic";
+import axios from "../../../../hooks/AxiosInterceptor";
 
 interface Subject {
   _id: string;
@@ -31,13 +30,15 @@ interface NewSubject {
 interface SubjectComponentProps {
   subjects: Subject[];
   setSubjects: (subjects: Subject[]) => void;
+  selectedSubject: string;
+  setSelectedSubject: (value: string) => void;
 }
-
-const API_URL = ""; // Ensure you have the API URL set in your .env file
 
 const Subjects: React.FC<SubjectComponentProps> = ({
   subjects,
   setSubjects,
+  selectedSubject,
+  setSelectedSubject,
 }) => {
   const { isValidResponse } = useGlobalContext();
 
@@ -46,38 +47,33 @@ const Subjects: React.FC<SubjectComponentProps> = ({
     description: "",
   });
   const [showAddSubject, setShowAddSubject] = useState<boolean>(false);
-  const [selectedSubject, setSelectedSubject] = useState<Subject | null>(null);
-  const [error, setError] = useState<string>("");
-  const dispatch = useDispatch();
 
   const handleEditSubject = (subject: Subject) => {
-    setSelectedSubject(subject);
+    setSelectedSubject(subject._id);
     setShowAddSubject(true);
   };
 
-  const handleSaveSubjectEdit = async () => {
-    try {
-      if (!selectedSubject || !selectedSubject.name.trim()) {
-        setError("Subject name is required.");
-        return;
-      }
-      dispatch({ type: "SET_LOADING", payload: true });
-      const response = await axios.patch(
-        `${API_URL}/academic/subject/${selectedSubject._id}`,
-        selectedSubject
-      );
-      if (isValidResponse(response)) {
-        setSubjects(response.data.subjects);
-        setShowAddSubject(false);
-        setSelectedSubject(null);
-      }
-    } catch (error) {
-      console.error(error);
-      setError("Failed to update the subject.");
-    } finally {
-      dispatch({ type: "SET_LOADING", payload: false });
-    }
-  };
+  // const handleSaveSubjectEdit = async () => {
+  //   try {
+  //     if (!selectedSubject) {
+  //       return;
+  //     }
+  //     dispatch({ type: "SET_LOADING", payload: true });
+  //     const response = await axios.patch(
+  //       `/academic/subject/${selectedSubject}`,
+  //       selectedSubject
+  //     );
+  //     if (isValidResponse(response)) {
+  //       setSubjects(response.data.subjects);
+  //       setShowAddSubject(false);
+  //       setSelectedSubject("");
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //   } finally {
+  //     dispatch({ type: "SET_LOADING", payload: false });
+  //   }
+  // };
 
   const handleDeleteSubject = async (id: string) => {
     try {
@@ -92,9 +88,7 @@ const Subjects: React.FC<SubjectComponentProps> = ({
       });
 
       if (result.isConfirmed) {
-        const response = await axios.delete(
-          `${API_URL}/academic/subject/${id}`
-        );
+        const response = await axios.delete(`/academic/subject/${id}`);
         if (isValidResponse(response)) {
           setSubjects(response.data.subjects);
           Swal.fire("Deleted!", "Subject has been deleted.", "success");
@@ -109,6 +103,7 @@ const Subjects: React.FC<SubjectComponentProps> = ({
   const handleSaveNewSubject = async () => {
     try {
       const response = await addNewSubject(newSubject);
+      console.log(response);
       if (isValidResponse(response)) {
         setSubjects(response.data.subjects);
         setShowAddSubject(false);
@@ -142,16 +137,16 @@ const Subjects: React.FC<SubjectComponentProps> = ({
           <ListItem
             key={subject._id}
             sx={{
-              bgcolor: selectedSubject?._id === subject._id ? "#914D7E" : "",
+              bgcolor: selectedSubject === subject._id ? "#914D7E" : "",
               justifyContent: "space-between",
               cursor: "pointer",
               "&:hover": { bgcolor: "rgba(145, 77, 126, 0.1)" },
             }}
-            onClick={() => setSelectedSubject(subject)}
+            onClick={() => setSelectedSubject(subject._id)}
           >
             <Typography
               sx={{
-                color: selectedSubject?._id === subject._id ? "#fff" : "",
+                color: selectedSubject === subject._id ? "#fff" : "",
               }}
             >
               {subject.name}
@@ -160,14 +155,14 @@ const Subjects: React.FC<SubjectComponentProps> = ({
               <IconButton onClick={() => handleEditSubject(subject)}>
                 <Edit
                   sx={{
-                    color: selectedSubject?._id === subject._id ? "#fff" : "",
+                    color: selectedSubject === subject._id ? "#fff" : "",
                   }}
                 />
               </IconButton>
               <IconButton onClick={() => handleDeleteSubject(subject._id)}>
                 <Delete
                   sx={{
-                    color: selectedSubject?._id === subject._id ? "#fff" : "",
+                    color: selectedSubject === subject._id ? "#fff" : "",
                   }}
                 />
               </IconButton>
