@@ -144,7 +144,7 @@ export const buttons: Button[] = [
     label: "Doubts",
     path: "/doubts",
     icon: QuestionAnswer,
-    loginRequired: false,
+    loginRequired: true,
     type: "button",
   },
 ];

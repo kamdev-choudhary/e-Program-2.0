@@ -27,6 +27,7 @@ const ExamMasterOffline = lazy(
   () => import("./pages/admin/exams/ExamMasterOffline")
 );
 const Doubts = lazy(() => import("./pages/doubts/Doubts"));
+const DoubtDetails = lazy(() => import("./pages/doubts/DoubtDetails"));
 
 // Define Routes
 const router = createBrowserRouter([
@@ -134,6 +135,10 @@ const router = createBrowserRouter([
       {
         path: "/doubts",
         element: <Doubts />,
+      },
+      {
+        path: "/doubts/:id",
+        element: <DoubtDetails />,
       },
     ],
   },

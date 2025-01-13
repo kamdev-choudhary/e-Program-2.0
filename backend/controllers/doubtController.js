@@ -38,9 +38,17 @@ export async function viewDoubtsByStatus(req, res, next) {
 // doubts
 export async function saveNewDoubt(req, res, next) {
   try {
+    const { doubtQuestion, description, subject } = req.body;
+    if (!doubtQuestion || !description || !subject) {
+      return res
+        .status(200)
+        .json({ message: "Required details missing", status_code: 1 });
+    }
     const doubt = new Doubt(req.body);
-    doubt.save();
-    res.status(200).json("Successfully posted Doubt");
+    await doubt.save();
+    res
+      .status(200)
+      .json({ message: "Successfully posted Doubt", status_code: 1 });
   } catch (error) {
     next(error);
   }
@@ -84,7 +92,9 @@ export async function getDoubtDetails(req, res, next) {
     }
     const doubt = await Doubt.findById(id);
     if (doubt) {
-      return res.status(200).json({ doubt });
+      return res
+        .status(200)
+        .json({ status_code: 1, messgae: "Doubt found", doubt });
     } else {
       return res.status(200).json({ message: "Doubt not Found" });
     }

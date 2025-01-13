@@ -5,31 +5,36 @@ import {
   MenuItem,
   TextField,
   Typography,
-  Dialog,
   DialogActions,
   DialogContent,
   DialogTitle,
 } from "@mui/material";
+import axios from "../../hooks/AxiosInterceptor";
+import { useGlobalContext } from "../../contexts/GlobalProvider";
 
 interface NewDoubtInterface {
   setShowNewDoubtModal: (value: boolean) => void;
 }
 
 const NewDoubt: React.FC<NewDoubtInterface> = ({ setShowNewDoubtModal }) => {
+  const { isValidResponse } = useGlobalContext();
   const [doubtQuestion, setDoubtQuestion] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [subject, setSubject] = useState<string>("");
 
-  const handleSubmit = () => {
-    // Simulate API call to save the doubt
-    console.log({
-      doubtQuestion,
-      description,
-      subject,
-    });
-
-    // Close the modal after submitting
-    setShowNewDoubtModal(false);
+  const handleSubmit = async () => {
+    try {
+      const response = await axios.post("/doubts", {
+        doubtQuestion,
+        description,
+        subject,
+      });
+      if (isValidResponse(response)) {
+        setShowNewDoubtModal(false);
+      }
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   return (

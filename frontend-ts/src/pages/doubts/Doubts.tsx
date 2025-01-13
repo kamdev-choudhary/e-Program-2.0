@@ -2,6 +2,10 @@ import { AddRounded, SearchRounded } from "@mui/icons-material";
 import {
   Box,
   Button,
+  Card,
+  CardActions,
+  CardContent,
+  Chip,
   Divider,
   InputAdornment,
   OutlinedInput,
@@ -12,13 +16,111 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import axios from "../../hooks/AxiosInterceptor";
 import { CustomModal } from "../../components/CustomModal";
 import { useGlobalContext } from "../../contexts/GlobalProvider";
 import NewDoubt from "./NewDoubt";
+import { useNavigate } from "react-router-dom";
+
+interface DoubtSolutions {
+  postedBy: string;
+  postedById?: string;
+  solution: string;
+  solutionPostedDate: string;
+  upvotes: number;
+  downvotes: number;
+}
+
+interface Doubt {
+  _id: string;
+  doubtQuestion: string;
+  description: string;
+  subject: string;
+  tags: string[];
+  postedBy: string;
+  postedById?: string;
+  status: string;
+  upvotes: number;
+  downvotes: number;
+  doubtPostedDate: string;
+  doubtSolutions: DoubtSolutions[];
+}
+
+const DoubtCard: React.FC<{ doubt: Doubt }> = ({ doubt }) => {
+  const navigate = useNavigate();
+  return (
+    <Card
+      sx={{
+        margin: 2,
+        padding: 2,
+        boxShadow: 1,
+      }}
+    >
+      <CardContent>
+        <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
+          <Typography variant="body1">
+            <strong>Posted By:</strong> {doubt.postedBy || "Anonymous"}
+          </Typography>
+          <Typography variant="body1" gutterBottom>
+            <strong>Posted On:</strong>{" "}
+            {doubt.doubtPostedDate
+              ? new Date(doubt.doubtPostedDate).toLocaleDateString()
+              : "Unknown"}
+          </Typography>
+        </Box>
+        <Divider sx={{ marginY: 2 }} />
+
+        <Typography variant="h5" component="div" gutterBottom>
+          {doubt.doubtQuestion}
+        </Typography>
+
+        <Typography variant="body1" gutterBottom>
+          <strong>Description:</strong> {doubt.description || "N/A"}
+        </Typography>
+
+        <Typography variant="body1" color="text.secondary" gutterBottom>
+          <strong>Subject:</strong> {doubt.subject || "N/A"}
+        </Typography>
+
+        <Box sx={{ marginBottom: 2 }}>
+          <strong>Tags:</strong>{" "}
+          {doubt.tags.length > 0 ? (
+            doubt.tags.map((tag, index) => (
+              <Chip
+                key={index}
+                label={tag}
+                variant="outlined"
+                size="small"
+                sx={{ marginRight: 0.5 }}
+              />
+            ))
+          ) : (
+            <Typography variant="body2" color="text.secondary">
+              No tags available
+            </Typography>
+          )}
+        </Box>
+
+        <Typography variant="body2" color="text.secondary" gutterBottom>
+          <strong>Status:</strong> {doubt.status || "Unknown"}
+        </Typography>
+
+        <Typography variant="body2" gutterBottom>
+          <strong>Upvotes:</strong> {doubt.upvotes} |{" "}
+          <strong>Downvotes:</strong> {doubt.downvotes}
+        </Typography>
+      </CardContent>
+      <Divider />
+      <CardActions sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
+        <Button>Post a solution</Button>
+        <Button onClick={() => navigate(`${doubt._id}`)}>View Details</Button>
+      </CardActions>
+    </Card>
+  );
+};
 
 const Doubts: React.FC = () => {
-  const { user } = useGlobalContext();
+  const { isLoggedIn } = useGlobalContext();
   const [searchText, setSearchText] = useState<string>("");
   const [showNewDoubtModal, setShowNewDoubtModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<number>(0);
@@ -98,27 +200,12 @@ const Doubts: React.FC = () => {
         >
           <Tab label="Unsolved Doubts" />
           <Tab label="Solved Doubts" />
-          <Tab label="Your Doubts" />
+          {isLoggedIn && <Tab label="Your Doubts" />}
         </Tabs>
       </Box>
-      <Box sx={{ p: 2 }}>
+      <Box>
         {doubts && doubts.length > 0 ? (
-          doubts.map((doubt) => (
-            <Box key={doubt._id} sx={{ mb: 2 }}>
-              <Typography variant="h6">{doubt.doubtQuestion}</Typography>
-              <Typography variant="body2" color="textSecondary">
-                {doubt.subject} |{" "}
-                {new Date(doubt.doubtPostedDate).toLocaleDateString()}
-              </Typography>
-              <Typography variant="body1" sx={{ mt: 1 }}>
-                {doubt.description}
-              </Typography>
-              <Divider sx={{ my: 1 }} />
-              <Typography variant="subtitle2">
-                Solutions: {doubt.doubtSolutions.length}
-              </Typography>
-            </Box>
-          ))
+          doubts.map((doubt) => <DoubtCard doubt={doubt} />)
         ) : (
           <Typography>No doubts found</Typography>
         )}
