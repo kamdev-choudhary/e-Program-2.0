@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
-import { baseUrl } from "../config/environment";
+import { BASE_URL } from "../config/environment";
 
 const useOnlineStatus = () => {
   const dispatch = useDispatch();
@@ -9,7 +9,7 @@ const useOnlineStatus = () => {
   const fetchStatus = async () => {
     setLoading(true);
     try {
-      const response = await fetch(baseUrl);
+      const response = await fetch(BASE_URL);
       const status = response.ok;
       dispatch({ type: "SET_ONLINE", payload: status });
     } catch (error) {

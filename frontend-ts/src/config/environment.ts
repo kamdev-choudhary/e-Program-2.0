@@ -1,10 +1,8 @@
-export const mode = import.meta.env.MODE;
+const DEV_API = "http://10.0.12.85:5000";
+// const DEV_API = "http://10.0.3.69:5000";
+const LIVE_API = "https://expressjs-uscv.onrender.com";
 
-// const dev_api = "http://10.0.12.85:5000";
-const dev_api = "http://10.0.3.69:5000";
-const live_api = "https://expressjs-uscv.onrender.com";
+export const MODE = import.meta.env.MODE;
 
-export const baseUrl = mode === "development" ? dev_api : live_api;
-
-export const apiUrl =
-  mode === "development" ? `${baseUrl}/api/v1/` : `${baseUrl}/api/v1`;
+export const BASE_URL = MODE === "development" ? DEV_API : LIVE_API;
+export const API_URL = `${BASE_URL}/api/v1`;

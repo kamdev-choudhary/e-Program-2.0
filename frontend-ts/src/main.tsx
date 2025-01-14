@@ -6,9 +6,9 @@ import { store } from "./store/store.ts";
 import { GlobalProvider } from "./contexts/GlobalProvider.tsx";
 import { WebSocketProvider } from "./contexts/WebSocket.tsx";
 import App from "./App.tsx";
-import { mode } from "./config/environment.ts";
+import { MODE } from "./config/environment.ts";
 
-const isDevelopment = mode === "development";
+const isDevelopment = MODE === "development";
 
 const AppWrapper = (
   <GlobalProvider>

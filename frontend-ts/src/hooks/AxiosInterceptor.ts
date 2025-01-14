@@ -1,8 +1,8 @@
 import axios from "axios";
-import { apiUrl } from "../config/environment";
+import { API_URL } from "../config/environment";
 
 const instance = axios.create({
-  baseURL: apiUrl, // Replace with your backend URL
+  baseURL: API_URL, // Replace with your backend URL
   //   timeout: 10000, // Set timeout as needed
 });
 

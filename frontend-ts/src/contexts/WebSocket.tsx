@@ -6,7 +6,7 @@ import React, {
   ReactNode,
 } from "react";
 import { io, Socket } from "socket.io-client";
-import { baseUrl } from "../config/environment";
+import { BASE_URL } from "../config/environment";
 import { useGlobalContext } from "./GlobalProvider";
 
 interface WebSocketContextType {
@@ -28,7 +28,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
   const { showNotification } = useGlobalContext();
 
   useEffect(() => {
-    const newSocket = io(baseUrl);
+    const newSocket = io(BASE_URL);
     setSocket(newSocket);
     if (newSocket.connected) {
       showNotification("Web socket connected.", "success", "filled");

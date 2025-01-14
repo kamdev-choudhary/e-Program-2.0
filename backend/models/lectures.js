@@ -21,6 +21,10 @@ const lectureSchema = new Schema(
         "Other",
       ],
     },
+    title: {
+      type: String,
+      required: true,
+    },
     subject: {
       type: String,
       required: true, // Example: "Mathematics", "Physics", "History"
@@ -53,10 +57,6 @@ const lectureSchema = new Schema(
     isFree: {
       type: Boolean, // Indicates if the lecture is free to access
       default: true,
-    },
-    examSpecificDetails: {
-      type: Map,
-      of: String, // Additional key-value details (e.g., "JEE Main Weightage": "High")
     },
   },
   { timestamps: true }

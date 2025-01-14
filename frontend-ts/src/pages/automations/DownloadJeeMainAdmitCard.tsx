@@ -13,7 +13,7 @@ import {
   TableChartRounded,
 } from "@mui/icons-material";
 import { CustomToolbar } from "../../components/CustomToolbar";
-import { baseUrl } from "../../config/environment";
+import { BASE_URL } from "../../config/environment";
 import { downloadJsonToExcel } from "../../hooks/commonfs";
 import { downloadPdfFromUrl } from "../../hooks/commonfs";
 
@@ -50,7 +50,7 @@ const DownloadJeeMainAdmitCard: React.FC = () => {
             item.drn === scholar.drn
               ? {
                   ...item,
-                  pdfUrl: `${baseUrl}${response.data.pdfUrl}`,
+                  pdfUrl: `${BASE_URL}${response.data.pdfUrl}`,
                   date: response.data.date,
                   city: response.data.city,
                   error: "",
