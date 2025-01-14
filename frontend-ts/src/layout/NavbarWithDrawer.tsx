@@ -177,12 +177,58 @@ const NavbarWithDrawer: React.FC = () => {
 
       <Drawer anchor="left" open={open} onClose={handleDrawerToggle}>
         <Box sx={{ width: 250 }} role="presentation">
-          <Box>
-            <Typography>User : {user?.name}</Typography>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              flexDirection: "column",
+            }}
+          >
+            <Box
+              sx={{
+                border: `1px solid rgba(0,0,0,0.1)"
+                `,
+                height: 180,
+                width: 180,
+                borderRadius: "50%",
+                mb: 1,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                backgroundColor: "#f0f0f0",
+                position: "relative",
+                overflow: "hidden",
+                textAlign: "center",
+                fontSize: 40,
+                fontWeight: "bold",
+                color: "#28844f",
+                // backgroundImage: images[user?.email]
+                //   ? `url(${images[user.email]})`
+                //   : "none",
+                backgroundSize: "cover",
+                backgroundPosition: "top",
+              }}
+            >
+              {/* {!images[user?.email] && (
+                <span
+                  style={{
+                    position: "absolute",
+                    top: "50%",
+                    left: "50%",
+                    transform: "translate(-50%, -50%)",
+                  }}
+                >
+                  {user?.name?.[0] || ""}
+                  {user?.name?.split(" ")?.[1]?.[0] || ""}
+                </span>
+              )} */}
+            </Box>
+            <Typography variant="body1">{user?.name}</Typography>
           </Box>
           <Box sx={{ width: "100%" }}>
             <List>
-              <Divider />
+              <Divider sx={{ mb: 1 }} />
               {buttons.map(renderButton)}
             </List>
           </Box>
