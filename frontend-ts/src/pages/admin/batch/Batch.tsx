@@ -94,8 +94,13 @@ const Batch: React.FC = () => {
                   </Typography>
                 </CardContent>
                 <CardActions sx={{ display: "flex" }}>
-                  <Button sx={{ flex: 1 }} variant="contained">
-                    Join
+                  <Button
+                    color="secondary"
+                    sx={{ flex: 1 }}
+                    variant="contained"
+                    onClick={() => navigate(`edit/${batch._id}`)}
+                  >
+                    Edit
                   </Button>
                   <Button
                     onClick={() => navigate(`/batch/sdfdskjhkjhdk`)}

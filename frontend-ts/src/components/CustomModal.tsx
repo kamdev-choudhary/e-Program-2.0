@@ -64,10 +64,10 @@ export const CustomModal: React.FC<CustomModalProps> = ({
       <Box
         sx={{
           ...style,
-          width: fullScreen || isSmallScreen ? "99vw" : width,
+          width: fullScreen || isSmallScreen ? "95vw" : width,
           height: fullScreen ? "100vh" : height,
           bgcolor: "#f0f3fb",
-          p: 1,
+          p: 1.5,
         }}
       >
         {/* Header section */}

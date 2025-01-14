@@ -25,6 +25,7 @@ const LecturesAdmin = lazyLoad("./pages/admin/lectures/Lectures");
 const ExamMasterOnline = lazyLoad("./pages/admin/exams/ExamMasterOnline");
 const ExamMasterOffline = lazyLoad("./pages/admin/exams/ExamMasterOffline");
 const UserMaster = lazyLoad("./pages/admin/user/UserMaster");
+const EditBatch = lazyLoad("./pages/admin/batch/EditBatch");
 
 // User Pages
 const Lectures = lazyLoad("./pages/lectures/Lectures");
@@ -47,6 +48,7 @@ const adminRoutes = [
   { path: "/admin/exams/online", element: <ExamMasterOnline /> },
   { path: "/admin/exams/offline", element: <ExamMasterOffline /> },
   { path: "/admin/users", element: <UserMaster /> },
+  { path: "/admin/batch/edit/:id", element: <EditBatch /> },
 ];
 
 // User Route Definitions

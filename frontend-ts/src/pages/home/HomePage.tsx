@@ -1,4 +1,5 @@
 // src/components/LanguageSwitcher.tsx
+import { Paper } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -10,11 +11,11 @@ const LanguageSwitcher: React.FC = () => {
   };
 
   return (
-    <div>
+    <Paper>
       <button onClick={() => handleLanguageChange("en")}>English</button>
       <button onClick={() => handleLanguageChange("hn")}>Hindi</button>
       <p>{t("Welcome")}</p>
-    </div>
+    </Paper>
   );
 };
 

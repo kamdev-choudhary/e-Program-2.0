@@ -146,7 +146,7 @@ const AdminUser: React.FC = () => {
   }, [students]);
 
   return (
-    <Box sx={{ p: 2 }}>
+    <Box>
       <Box sx={{ mt: 2 }}>
         <DataGrid
           columns={columns}

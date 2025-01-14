@@ -12,7 +12,6 @@ import setupSocket from "./utils/socket.js";
 import connectDB from "./utils/connectDB.js";
 import errorMiddleware from "./middlewares/error-middleware.js";
 import config from "./config/config.js";
-import fs from "fs";
 
 const port = config.port || 5000;
 
@@ -21,11 +20,6 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
 const app = express();
-
-const uploadsDir = path.join(__dirname, "uploads");
-if (!fs.existsSync(uploadsDir)) {
-  fs.mkdirSync(uploadsDir, { recursive: true });
-}
 
 // Middleware setup
 app.use(helmet());
