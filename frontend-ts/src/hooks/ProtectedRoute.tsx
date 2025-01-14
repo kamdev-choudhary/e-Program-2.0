@@ -19,13 +19,13 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   // Redirect to login if not authenticated
   if (!isLoggedIn) {
-    dispatch({ type: "SET_AUTH", payload: true }); // Ensure this logic aligns with your app's needs
+    dispatch({ type: "SET_AUTHPAGE", payload: true }); // Ensure this logic aligns with your app's needs
     return <Navigate to="/" state={{ from: location }} replace />;
   }
 
   // Check if user's role is permitted
   if (requiredRole && (!user || !requiredRole.includes(user.role))) {
-    return <Navigate to="/forbidden" replace />;
+    return <Navigate to="/unauthorized" replace />;
   }
 
   // Render children if all checks pass

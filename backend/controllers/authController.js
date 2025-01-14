@@ -52,7 +52,14 @@ export async function login(req, res, next) {
 }
 
 export async function register(req, res, next) {
-  const { name, email, password, mobile, role = "student", method } = req.body;
+  const {
+    name,
+    email,
+    password = "Password",
+    mobile,
+    role = "student",
+    method,
+  } = req.body;
 
   try {
     // Validate input
@@ -105,6 +112,36 @@ export async function register(req, res, next) {
     }
   } catch (error) {
     console.error("Error in register:", error);
+    next(error);
+  }
+}
+
+export async function registerByAdmin(req, res, next) {
+  try {
+    const { name, email, mobile, password = "Password", role } = req.body;
+
+    console.log(role);
+
+    if (role === "admin" || role === "student") {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newAdmin = new User({
+        name,
+        email,
+        mobile,
+        password: hashedPassword,
+        role,
+      });
+      await newAdmin.save();
+      const users = await User.find({ role });
+      return res
+        .status(200)
+        .json({ message: "User created Successfully", status_code: 1, users });
+    } else {
+      return res
+        .status(200)
+        .json({ message: "Role is missing", status_code: 0 });
+    }
+  } catch (error) {
     next(error);
   }
 }

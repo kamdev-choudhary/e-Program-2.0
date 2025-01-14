@@ -5,17 +5,17 @@ import { CustomToolbar } from "../../../../components/CustomToolbar";
 import axios from "../../../../hooks/AxiosInterceptor";
 import { useGlobalContext } from "../../../../contexts/GlobalProvider";
 import { CustomModal } from "../../../../components/CustomModal";
-import Swal from "sweetalert2";
 import { DeleteRounded, EditRounded } from "@mui/icons-material";
+import Swal from "sweetalert2";
 
-interface Admin {
+interface Student {
   _id: string;
   email: string;
   name: string;
   mobile: string;
 }
 
-interface NewAdmin {
+interface NewStudent {
   email: string;
   name: string;
   mobile: string;
@@ -24,22 +24,22 @@ interface NewAdmin {
 
 const AdminUser: React.FC = () => {
   const { isValidResponse } = useGlobalContext();
-  const [admins, setAdmins] = useState<Admin[] | null>(null);
-  const [addAdminModal, setAddAdminModal] = useState<boolean>(false);
+  const [students, setStudents] = useState<Student[] | null>(null);
+  const [addStudentModal, setAddStudentModal] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(true);
-  const [newAdmin, setNewAdmin] = useState<NewAdmin>({
+  const [newAdmin, setNewAdmin] = useState<NewStudent>({
     email: "",
     mobile: "",
     name: "",
-    role: "admin",
+    role: "student",
   });
 
   const fetchAdmins = async () => {
     try {
-      const response = await axios.get("/user/role/admin");
+      const response = await axios.get("/user/role/student");
 
       if (isValidResponse(response)) {
-        setAdmins(response.data.users);
+        setStudents(response.data.users);
       }
     } catch (error) {
       console.error(error);
@@ -58,8 +58,8 @@ const AdminUser: React.FC = () => {
         ...newAdmin,
       });
       if (isValidResponse(response)) {
-        setAdmins(response.data.users);
-        setAddAdminModal(false);
+        setStudents(response.data.users);
+        setAddStudentModal(false);
       }
     } catch (error) {
       console.error(error);
@@ -80,7 +80,9 @@ const AdminUser: React.FC = () => {
         if (result.isConfirmed) {
           const response = await axios.delete(`/user/${id}`);
           if (isValidResponse(response)) {
-            setAdmins(admins?.filter((student) => student._id !== id) || []);
+            setStudents(
+              students?.filter((student) => student._id !== id) || []
+            );
             Swal.fire({
               title: "Deleted!",
               text: "Your file has been deleted.",
@@ -140,8 +142,8 @@ const AdminUser: React.FC = () => {
   ];
 
   const rows = useMemo(() => {
-    return admins?.map((admin, index) => ({ ...admin, id: index + 1 }));
-  }, [admins]);
+    return students?.map((admin, index) => ({ ...admin, id: index + 1 }));
+  }, [students]);
 
   return (
     <Box sx={{ p: 2 }}>
@@ -153,7 +155,7 @@ const AdminUser: React.FC = () => {
             toolbar: () => (
               <CustomToolbar
                 showAddButton={true}
-                onAddButtonClick={() => setAddAdminModal(true)}
+                onAddButtonClick={() => setAddStudentModal(true)}
               />
             ),
           }}
@@ -161,8 +163,8 @@ const AdminUser: React.FC = () => {
         />
       </Box>
       <CustomModal
-        open={addAdminModal}
-        onClose={() => setAddAdminModal(false)}
+        open={addStudentModal}
+        onClose={() => setAddStudentModal(false)}
         height="auto"
         width="auto"
       >

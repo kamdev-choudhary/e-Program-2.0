@@ -30,7 +30,7 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
   useEffect(() => {
     const newSocket = io(baseUrl);
     setSocket(newSocket);
-    if (newSocket) {
+    if (newSocket.connected) {
       showNotification("Web socket connected.", "success", "filled");
     }
     return () => {

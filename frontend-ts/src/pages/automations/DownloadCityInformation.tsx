@@ -97,6 +97,7 @@ const DownloadCityInformation: React.FC = () => {
               ? {
                   ...item,
                   error: response.data.error,
+                  status: "idle",
                 }
               : item
           );
@@ -104,7 +105,6 @@ const DownloadCityInformation: React.FC = () => {
       }
     } catch (error: any) {
       console.error("Error downloading the PDF:", error);
-
       setJsonData((prevData) => {
         if (!prevData) return null; // If jsonData is null, maintain null state
         const errorMessage = error?.response?.data?.message || "Unknown error";

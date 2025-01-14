@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import AdminUser from "./parts/AdminUser";
 import { Paper, Tabs, Tab } from "@mui/material";
+import ScholarUser from "./parts/ScholarUser";
 
 const UserMaster = () => {
   const [activeTab, setActiveTab] = useState<number>(0);
@@ -16,6 +17,7 @@ const UserMaster = () => {
         <Tab label="Scholars" />
       </Tabs>
       {activeTab === 0 && <AdminUser />}
+      {activeTab === 1 && <ScholarUser />}
     </Paper>
   );
 };

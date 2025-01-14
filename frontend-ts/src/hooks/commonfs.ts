@@ -85,3 +85,23 @@ export const downloadPdfFromUrl = async (
     }
   }
 };
+
+export const isValidEmail = (email: string): boolean => {
+  // Regular expression for validating email addresses
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
+
+export const isValidMobileNumber = (
+  mobile: string,
+  minLength: number = 10,
+  maxLength: number = 10
+): boolean => {
+  // Regular expression for validating numeric mobile numbers
+  const mobileRegex = /^[0-9]+$/;
+  return (
+    mobileRegex.test(mobile) &&
+    mobile.length >= minLength &&
+    mobile.length <= maxLength
+  );
+};

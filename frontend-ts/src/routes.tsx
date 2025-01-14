@@ -13,7 +13,8 @@ const AuthPage = lazyLoad("./pages/auth/AuthPage");
 
 // Public Pages
 const HomePage = lazyLoad("./pages/home/HomePage");
-const NotFound = lazyLoad("./pages/404/NotFound");
+const NotFound = lazyLoad("./pages/error/NotFound");
+const Unauthorized = lazyLoad("./pages/error/Unauthorized");
 
 // Admin Pages
 const Dashboard = lazyLoad("./pages/dashboard/Dashboard");
@@ -63,6 +64,7 @@ const publicRoute = [
   { path: "/", element: <HomePage /> },
   { path: "/automation/jeemain/cityinfo", element: <DCI /> },
   { path: "/automation/jeemain/admitcard", element: <DAC /> },
+  { path: "/unauthorized", element: <Unauthorized /> },
 ];
 
 // Wrap Admin Routes with ProtectedRoute

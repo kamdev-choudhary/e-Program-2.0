@@ -46,9 +46,9 @@ export const uploadProfilePic = async (user: any, photo: string) => {
 };
 
 // Delete user
-export const deleteUser = async (user: any) => {
+export const deleteUser = async (userId: string) => {
   try {
-    const response = await axios.delete(`/user/${user._id}`);
+    const response = await axios.delete(`/user/${userId}`);
     return response;
   } catch (error) {
     console.error(error);

@@ -18,6 +18,11 @@ i18n
           // Add other French translations here
         },
       },
+      hn: {
+        translation: {
+          Welcome: "स्वागत",
+        },
+      },
     },
     lng: "en", // Default language
     fallbackLng: "en", // Fallback language if the selected one doesn't exist
