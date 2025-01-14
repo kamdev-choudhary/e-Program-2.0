@@ -17,7 +17,7 @@ interface NewAdmin {
   email: string;
   name: string;
   mobile: string;
-  role: strin;
+  role: string;
 }
 
 const AdminUser: React.FC = () => {
