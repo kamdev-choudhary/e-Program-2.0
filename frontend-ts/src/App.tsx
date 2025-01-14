@@ -8,6 +8,7 @@ import { RootState } from "./store/store.ts";
 import useOnlineStatus from "./hooks/useOnlineStatus.ts";
 import { CustomModal } from "./components/CustomModal.tsx";
 import AuthPage from "./pages/auth/AuthPage.tsx";
+import "./i18";
 
 const App: React.FC = () => {
   const queryClient = new QueryClient();

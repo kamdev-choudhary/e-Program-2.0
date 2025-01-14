@@ -48,6 +48,11 @@ export const buttons: Button[] = [
     role: ["admin"],
     options: [
       {
+        label: "User Master",
+        path: "/admin/users",
+        loginRequired: true,
+      },
+      {
         label: "Academic Info",
         path: "/admin/academic",
         loginRequired: true,

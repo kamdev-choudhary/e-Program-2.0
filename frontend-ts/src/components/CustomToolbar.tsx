@@ -50,7 +50,7 @@ export const CustomToolbar: React.FC<CustomToolbarProps> = ({
         flexWrap: "wrap",
       }}
     >
-      <div>
+      <div style={{ display: "flex", gap: 2 }}>
         {showGridToolbarColumnButton && <GridToolbarColumnsButton />}
         {showExportButton && <GridToolbarExport />}
         <GridToolbarFilterButton />

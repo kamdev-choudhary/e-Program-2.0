@@ -43,9 +43,9 @@ router.route("/topic/:id").patch(editTopic).delete(editTopic);
 router.route("/sub-topic").get(getSubTopic).post(addSubTopic);
 router.route("/sub-topic/:id").patch(editSubTopic).delete(removeSubTopic);
 
-router.route("/pattern").get(getPatterns).post(addPattern);
+router.route("/question-pattern").get(getPatterns).post(addPattern);
 
-router.route("/pattern/:id").delete(deletePattern).patch(editPattern);
+router.route("/question-pattern/:id").delete(deletePattern).patch(editPattern);
 
 router.route("/metadata").get(getAllMetaData);
 

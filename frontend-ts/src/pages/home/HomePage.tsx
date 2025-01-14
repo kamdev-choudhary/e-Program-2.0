@@ -1,12 +1,20 @@
-import { Box, Typography } from "@mui/material";
+// src/components/LanguageSwitcher.tsx
 import React from "react";
+import { useTranslation } from "react-i18next";
 
-const HomePage: React.FC = () => {
+const LanguageSwitcher: React.FC = () => {
+  const { i18n } = useTranslation();
+
+  const handleLanguageChange = (lang: string) => {
+    i18n.changeLanguage(lang);
+  };
+
   return (
-    <Box sx={{ p: 2 }}>
-      <Typography>Home Page</Typography>
-    </Box>
+    <div>
+      <button onClick={() => handleLanguageChange("en")}>English</button>
+      <button onClick={() => handleLanguageChange("fr")}>Français</button>
+    </div>
   );
 };
 
-export default HomePage;
+export default LanguageSwitcher;
