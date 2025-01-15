@@ -7,11 +7,11 @@ const commonThemeOptions: ThemeOptions = {
   spacing: 8, // Default spacing unit (1 unit = 8px, can be customized)
   typography: {
     fontFamily: "'Aptos', 'Roboto', 'Arial', sans-serif", // Fonts
-    fontSize: 13, // Base font size
-    fontWeightLight: 300, // Light font weight
-    fontWeightRegular: 400, // Regular font weight
-    fontWeightMedium: 500, // Medium font weight
-    fontWeightBold: 700, // Bold font weight
+    // fontSize: 13, // Base font size
+    // fontWeightLight: 300, // Light font weight
+    // fontWeightRegular: 400, // Regular font weight
+    // fontWeightMedium: 500, // Medium font weight
+    // fontWeightBold: 700, // Bold font weight
     h1: {
       fontSize: "2.125rem", // Headline 1
       fontWeight: 700,

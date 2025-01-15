@@ -155,8 +155,11 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
   const isValidResponse = (response: Response): boolean => {
     const status = response.data.status_code;
     let message = response.data.message;
-    if ([1, 2, 3, 4].includes(status)) {
+    if ([1, 2, 4].includes(status)) {
       showNotification(message || "Record Found.", "success", "filled");
+      return true;
+    } else if ([3].includes(status)) {
+      showNotification(message || "Updated", "info", "filled");
       return true;
     } else if (status === 0) {
       showNotification(message || "Deleted Succesfully.", "error");

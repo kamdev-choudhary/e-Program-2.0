@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import { Box, useMediaQuery } from "@mui/material";
+import { Box, Paper, useMediaQuery } from "@mui/material";
 import Navbar from "./Navbar";
 import NavbarWithDrawer from "./NavbarWithDrawer";
 
@@ -14,6 +14,7 @@ const DefaultLayout: React.FC = () => {
         minHeight: "100vh",
         display: "flex",
         flexDirection: "column",
+        overflow: "hidden",
       }}
     >
       {/* Sticky Navbar */}
@@ -21,8 +22,9 @@ const DefaultLayout: React.FC = () => {
         sx={{
           position: "sticky",
           top: 0,
-          zIndex: 10, // Ensure it stays above other content
+          zIndex: 10,
           boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
+          overflow: "hidden",
         }}
       >
         {isSmallScreen ? <NavbarWithDrawer /> : <Navbar />}
@@ -30,19 +32,26 @@ const DefaultLayout: React.FC = () => {
 
       {/* Main Content Area */}
       <Box
+        component={Paper}
+        elevation={4}
         sx={{
           flexGrow: 1,
-          p: isSmallScreen ? 1 : 2,
-          pt: isSmallScreen ? 8 : 2,
+          display: "flex",
+          flexDirection: "column",
+          overflow: "hidden", // Prevent global scrolling
         }}
       >
         <Box
           sx={{
+            flexGrow: 1,
+            overflowY: "auto", // Enable scrolling here
             bgcolor: "#fff",
             borderRadius: 2,
-            p: 2,
-            boxShadow: "0px 4px 10px rgba(0, 0, 0, 0.05)",
+            p: isSmallScreen ? 1 : 2,
+            height: "calc(100vh - 800px)", // Adjust height dynamically (subtract navbar height)
           }}
+          component={Paper}
+          elevation={6}
         >
           <Outlet />
         </Box>

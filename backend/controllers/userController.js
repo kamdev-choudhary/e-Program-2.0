@@ -101,3 +101,32 @@ export async function updateProfilePic(req, res, next) {
     next(error);
   }
 }
+
+// Change user Status
+export async function updateUserStatus(req, res, next) {
+  try {
+    const { id } = req.params;
+
+    // Find the user by ID
+    const user = await User.findById(id);
+
+    // Check if the user exists
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Toggle the status field (0 to 1, or 1 to 0)
+    user.status = user.status === 1 ? 0 : 1;
+
+    // Save the updated user
+    await user.save();
+
+    return res.status(200).json({
+      message: "User status updated successfully",
+      status: user.status,
+      status_code: 3,
+    });
+  } catch (error) {
+    next(error);
+  }
+}

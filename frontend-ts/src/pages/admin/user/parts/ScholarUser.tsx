@@ -1,12 +1,13 @@
-import { Box, Button, IconButton, TextField } from "@mui/material";
+import { Box, Button, IconButton, TextField, Switch } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React, { useEffect, useMemo, useState } from "react";
 import { CustomToolbar } from "../../../../components/CustomToolbar";
 import axios from "../../../../hooks/AxiosInterceptor";
 import { useGlobalContext } from "../../../../contexts/GlobalProvider";
 import { CustomModal } from "../../../../components/CustomModal";
-import { DeleteRounded, EditRounded } from "@mui/icons-material";
+import { DeleteRounded, RemoveRedEyeRounded } from "@mui/icons-material";
 import Swal from "sweetalert2";
+import ScholarDetails from "./ScholarDetails";
 
 interface Student {
   _id: string;
@@ -26,6 +27,8 @@ const AdminUser: React.FC = () => {
   const { isValidResponse } = useGlobalContext();
   const [students, setStudents] = useState<Student[] | null>(null);
   const [addStudentModal, setAddStudentModal] = useState<boolean>(false);
+  const [showScholarDetails, setShowScholarDetails] = useState<boolean>(false);
+  const [selectedScholar, setSelectedScholar] = useState<Student | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [newAdmin, setNewAdmin] = useState<NewStudent>({
     email: "",
@@ -66,6 +69,27 @@ const AdminUser: React.FC = () => {
     }
   };
 
+  const handleStatusChange = async (user: Student) => {
+    try {
+      const response = await axios.patch(`/user/status/${user._id}`);
+      if (isValidResponse(response)) {
+        setStudents((prevData) => {
+          if (!prevData) return null;
+          return prevData.map((student) =>
+            student._id === user._id
+              ? {
+                  ...student,
+                  status: response.data.status,
+                }
+              : student
+          );
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const handleDeleteUser = (id: string) => {
     try {
       Swal.fire({
@@ -96,19 +120,89 @@ const AdminUser: React.FC = () => {
     }
   };
 
+  const handleProcessRowUpdate = async (
+    newRow: Student,
+    oldRow: Student
+  ): Promise<Student> => {
+    const hasChanges = Object.keys(newRow).some(
+      (key) => newRow[key as keyof Student] !== oldRow[key as keyof Student]
+    );
+
+    if (!hasChanges) {
+      return oldRow;
+    }
+    setStudents((prevData) => {
+      if (!prevData) return null;
+      return prevData.map((item) =>
+        item._id === oldRow._id ? { ...item, ...newRow } : item
+      );
+    });
+
+    const { _id, ...updateField } = newRow;
+
+    try {
+      const response = await axios.patch(`/user/${oldRow._id}`, updateField);
+      if (isValidResponse(response)) {
+        setStudents(response.data.users);
+      }
+      return newRow;
+    } catch (error) {
+      console.error("Failed to update the row:", error);
+      setStudents((prevData) => {
+        if (!prevData) return null;
+        return prevData.map((item) =>
+          item._id === oldRow._id ? oldRow : item
+        );
+      });
+
+      throw error;
+    }
+  };
+
   const columns: GridColDef[] = [
-    { field: "id", headerName: "SN", width: 80 },
-    { field: "name", headerName: "Name", flex: 1, minWidth: 200 },
-    { field: "email", headerName: "Email", flex: 1, minWidth: 200 },
-    { field: "mobile", headerName: "Mobile", flex: 1, minWidth: 200 },
+    {
+      field: "id",
+      headerName: "SN",
+      width: 80,
+      align: "center",
+      headerAlign: "center",
+    },
+    {
+      field: "name",
+      headerName: "Name",
+      flex: 1,
+      minWidth: 200,
+      editable: true,
+    },
+    {
+      field: "email",
+      headerName: "Email",
+      flex: 1,
+      minWidth: 200,
+      editable: true,
+    },
+    {
+      field: "mobile",
+      headerName: "Mobile",
+      flex: 1,
+      minWidth: 200,
+      align: "center",
+      headerAlign: "center",
+      editable: true,
+    },
     {
       field: "status",
       headerName: "Status",
       flex: 1,
-      minWidth: 200,
+      minWidth: 100,
       renderCell: (params) => (
-        <>{params.row.status === 1 ? "Active" : "Not Active"}</>
+        <Switch
+          onClick={() => handleStatusChange(params.row)}
+          checked={params.row.status === 1}
+        />
       ),
+      align: "center",
+      headerAlign: "center",
     },
     {
       field: "createdAt",
@@ -116,10 +210,13 @@ const AdminUser: React.FC = () => {
       flex: 1,
       minWidth: 200,
       renderCell: (params) => <>{params.row.createdAt.split("T")[0]}</>,
+      align: "center",
+      headerAlign: "center",
     },
+
     {
       field: "edit",
-      headerName: "Edit / Delete",
+      headerName: "View / Delete",
       minWidth: 200,
       flex: 1,
       align: "center",
@@ -129,8 +226,13 @@ const AdminUser: React.FC = () => {
           <Box
             sx={{ display: "flex", gap: 2, mt: 1, justifyContent: "center" }}
           >
-            <IconButton>
-              <EditRounded />
+            <IconButton
+              onClick={() => {
+                setSelectedScholar(params.row);
+                setShowScholarDetails(true);
+              }}
+            >
+              <RemoveRedEyeRounded />
             </IconButton>
             <IconButton onClick={() => handleDeleteUser(params.row._id)}>
               <DeleteRounded />
@@ -160,6 +262,7 @@ const AdminUser: React.FC = () => {
             ),
           }}
           loading={loading}
+          processRowUpdate={handleProcessRowUpdate}
         />
       </Box>
       <CustomModal
@@ -207,6 +310,14 @@ const AdminUser: React.FC = () => {
             Save
           </Button>
         </Box>
+      </CustomModal>
+
+      <CustomModal
+        open={showScholarDetails}
+        onClose={() => setShowScholarDetails(false)}
+        header="Scholar Details"
+      >
+        <ScholarDetails student={selectedScholar} />
       </CustomModal>
     </Box>
   );

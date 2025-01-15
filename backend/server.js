@@ -1,4 +1,4 @@
-import express, { static as serveStatic } from "express";
+import express from "express";
 import cors from "cors";
 import bodyparser from "body-parser";
 import compression from "compression";
@@ -34,7 +34,7 @@ app.use(errorMiddleware);
 const server = createServer(app);
 const startServer = async () => {
   try {
-    // await connectDB();
+    await connectDB();
     setupSocket(server);
     server.listen(port, () => {
       logger.info(`Server is listening on port: ${port}`);

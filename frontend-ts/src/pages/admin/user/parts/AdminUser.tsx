@@ -95,6 +95,27 @@ const AdminUser: React.FC = () => {
     }
   };
 
+  const handleStatusChange = async (user: Admin) => {
+    try {
+      const response = await axios.patch(`/user/status/${user._id}`);
+      if (isValidResponse(response)) {
+        setAdmins((prevData) => {
+          if (!prevData) return null;
+          return prevData.map((admin) =>
+            admin._id === user._id
+              ? {
+                  ...admin,
+                  status: response.data.status,
+                }
+              : admin
+          );
+        });
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   const columns: GridColDef[] = [
     {
       field: "id",
@@ -131,7 +152,12 @@ const AdminUser: React.FC = () => {
       headerName: "Status",
       flex: 1,
       minWidth: 100,
-      renderCell: (params) => <Switch checked={params.row.status === 1} />,
+      renderCell: (params) => (
+        <Switch
+          onClick={() => handleStatusChange(params.row)}
+          checked={params.row.status === 1}
+        />
+      ),
       align: "center",
       headerAlign: "center",
     },

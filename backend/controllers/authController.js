@@ -35,6 +35,10 @@ export async function login(req, res, next) {
       });
     }
 
+    if (userExist.status === 0) {
+      return res.status(400).json({ message: "Your Account is not active." });
+    }
+
     // Generate a token
     const token = await userExist.generateToken();
 

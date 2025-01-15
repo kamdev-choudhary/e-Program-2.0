@@ -6,9 +6,12 @@ import {
   updateUserData,
   getUserbyRole,
   updateProfilePic,
+  updateUserStatus,
 } from "../controllers/userController.js";
 
 router.route("/:id").get(getUserData).delete(deleteUser).patch(updateUserData);
+
+router.route("/status/:id").patch(updateUserStatus);
 
 router.route("/role/:role").get(getUserbyRole);
 
