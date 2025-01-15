@@ -43,10 +43,18 @@ interface SubMenuProps {
   isLoggedIn: boolean;
   location: any;
   icon?: React.ElementType;
+  handleDrawerToggle: () => void;
 }
 
 const SubMenu = React.memo(
-  ({ menu, isOpen, navigate, isLoggedIn, location }: SubMenuProps) => {
+  ({
+    menu,
+    isOpen,
+    navigate,
+    isLoggedIn,
+    location,
+    handleDrawerToggle,
+  }: SubMenuProps) => {
     return (
       <Collapse in={isOpen} timeout="auto" unmountOnExit>
         {menu.options
@@ -63,7 +71,10 @@ const SubMenu = React.memo(
             >
               <List component="div" disablePadding>
                 <ListItemButton
-                  onClick={() => navigate(submenu.path)}
+                  onClick={() => {
+                    navigate(submenu.path);
+                    handleDrawerToggle();
+                  }}
                   sx={{
                     ml: 1,
                     bgcolor:
@@ -75,6 +86,13 @@ const SubMenu = React.memo(
                     borderRadius: 2,
                   }}
                 >
+                  {submenu.icon && (
+                    <submenu.icon
+                      sx={{
+                        color: location.pathname === submenu.path ? "#fff" : "",
+                      }}
+                    />
+                  )}
                   <ListItemText
                     sx={{
                       color: location.pathname === submenu.path ? "white" : "", // White text for selected
@@ -122,6 +140,7 @@ const NavbarWithDrawer: React.FC = () => {
                     handleMenuClick(button.label); // Toggle menu collapse
                   } else if (button.path) {
                     navigate(button.path); // Navigate to path for button
+                    handleDrawerToggle();
                   }
                 }}
                 sx={{
@@ -159,6 +178,7 @@ const NavbarWithDrawer: React.FC = () => {
                   user={user}
                   isLoggedIn={isLoggedIn}
                   location={location}
+                  handleDrawerToggle={handleDrawerToggle}
                 />
               )}
             </>

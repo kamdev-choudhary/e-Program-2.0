@@ -39,6 +39,7 @@ const DefaultLayout: React.FC = () => {
           display: "flex",
           flexDirection: "column",
           overflow: "hidden", // Prevent global scrolling
+          mt: isSmallScreen ? 6 : 0,
         }}
       >
         <Box
@@ -48,7 +49,7 @@ const DefaultLayout: React.FC = () => {
             bgcolor: "#fff",
             borderRadius: 2,
             p: isSmallScreen ? 1 : 2,
-            height: "calc(100vh - 800px)", // Adjust height dynamically (subtract navbar height)
+            height: "calc(100vh - 88px)", // Adjust height dynamically (subtract navbar height)
           }}
           component={Paper}
           elevation={6}
