@@ -38,6 +38,7 @@ const Books = lazy(() => import("./pages/books/Books"));
 const Profile = lazy(() => import("./pages/auth/Profile"));
 const Doubts = lazy(() => import("./pages/doubts/Doubts"));
 const DoubtDetails = lazy(() => import("./pages/doubts/DoubtDetails"));
+const Chat = lazy(() => import("./pages/chat/Chat"));
 
 // Admin Route Definitions
 const adminRoutes = [
@@ -61,6 +62,7 @@ const userRoutes = [
   { path: "/profile", element: <Profile /> },
   { path: "/doubts", element: <Doubts /> },
   { path: "/doubts/:id", element: <DoubtDetails /> },
+  { path: "/chat", element: <Chat /> },
 ];
 
 const publicRoute = [

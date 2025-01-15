@@ -90,6 +90,7 @@ const Navbar: React.FC = () => {
             return (
               <React.Fragment key={index}>
                 <Button
+                  startIcon={<button.icon />}
                   endIcon={<ArrowDropDownRounded />}
                   onClick={(event) => handleMenuOpen(index, event)}
                 >
@@ -108,7 +109,13 @@ const Navbar: React.FC = () => {
                         navigate(option.path);
                       }}
                     >
-                      {option.label}
+                      <Box
+                        sx={{ display: "flex", alignItems: "center", gap: 1 }}
+                      >
+                        {/* Render the icon dynamically */}
+                        {option.icon && <option.icon />}
+                        {option.label}
+                      </Box>
                     </MenuItem>
                   ))}
                 </Menu>
