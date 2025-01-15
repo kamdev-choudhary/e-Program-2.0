@@ -10,7 +10,10 @@ const DefaultLayout: React.FC = () => {
     <Box sx={{ bgcolor: "#f1f3fb", height: "100vh" }}>
       {isSmallScreen ? <NavbarWithDrawer /> : <Navbar />}
       <Box sx={{ p: isSmallScreen ? 1 : 1, pt: isSmallScreen ? 8 : 1 }}>
-        <Container maxWidth="lg">
+        <Container
+          maxWidth="lg"
+          sx={{ bgcolor: "#fff", borderRadius: 2, p: 2 }}
+        >
           <Outlet />
         </Container>
       </Box>

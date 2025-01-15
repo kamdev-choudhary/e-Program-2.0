@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, TextField } from "@mui/material";
+import { Box, Button, IconButton, Switch, TextField } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React, { useEffect, useMemo, useState } from "react";
 import { CustomToolbar } from "../../../../components/CustomToolbar";
@@ -6,7 +6,8 @@ import axios from "../../../../hooks/AxiosInterceptor";
 import { useGlobalContext } from "../../../../contexts/GlobalProvider";
 import { CustomModal } from "../../../../components/CustomModal";
 import Swal from "sweetalert2";
-import { DeleteRounded, EditRounded } from "@mui/icons-material";
+import { DeleteRounded } from "@mui/icons-material";
+import { reverseDate } from "../../../../hooks/commonfs";
 
 interface Admin {
   _id: string;
@@ -95,25 +96,55 @@ const AdminUser: React.FC = () => {
   };
 
   const columns: GridColDef[] = [
-    { field: "id", headerName: "SN", width: 80 },
-    { field: "name", headerName: "Name", flex: 1, minWidth: 200 },
-    { field: "email", headerName: "Email", flex: 1, minWidth: 200 },
-    { field: "mobile", headerName: "Mobile", flex: 1, minWidth: 200 },
+    {
+      field: "id",
+      headerName: "SN",
+      width: 80,
+      align: "center",
+      headerAlign: "center",
+    },
+    {
+      field: "name",
+      headerName: "Name",
+      flex: 1,
+      minWidth: 200,
+      editable: true,
+    },
+    {
+      field: "email",
+      headerName: "Email",
+      flex: 1,
+      minWidth: 200,
+      editable: true,
+    },
+    {
+      field: "mobile",
+      headerName: "Mobile",
+      flex: 1,
+      minWidth: 200,
+      align: "center",
+      headerAlign: "center",
+      editable: true,
+    },
     {
       field: "status",
       headerName: "Status",
       flex: 1,
-      minWidth: 200,
-      renderCell: (params) => (
-        <>{params.row.status === 1 ? "Active" : "Not Active"}</>
-      ),
+      minWidth: 100,
+      renderCell: (params) => <Switch checked={params.row.status === 1} />,
+      align: "center",
+      headerAlign: "center",
     },
     {
       field: "createdAt",
       headerName: "Created At",
       flex: 1,
-      minWidth: 200,
-      renderCell: (params) => <>{params.row.createdAt.split("T")[0]}</>,
+      minWidth: 150,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => (
+        <>{reverseDate(params.row.createdAt.split("T")[0])}</>
+      ),
     },
     {
       field: "edit",
@@ -127,9 +158,6 @@ const AdminUser: React.FC = () => {
           <Box
             sx={{ display: "flex", gap: 2, mt: 1, justifyContent: "center" }}
           >
-            <IconButton>
-              <EditRounded />
-            </IconButton>
             <IconButton onClick={() => handleDeleteUser(params.row._id)}>
               <DeleteRounded />
             </IconButton>
@@ -142,6 +170,45 @@ const AdminUser: React.FC = () => {
   const rows = useMemo(() => {
     return admins?.map((admin, index) => ({ ...admin, id: index + 1 }));
   }, [admins]);
+
+  const handleProcessRowUpdate = async (
+    newRow: Admin,
+    oldRow: Admin
+  ): Promise<Admin> => {
+    const hasChanges = Object.keys(newRow).some(
+      (key) => newRow[key as keyof Admin] !== oldRow[key as keyof Admin]
+    );
+
+    if (!hasChanges) {
+      return oldRow;
+    }
+    setAdmins((prevData) => {
+      if (!prevData) return null;
+      return prevData.map((item) =>
+        item._id === oldRow._id ? { ...item, ...newRow } : item
+      );
+    });
+
+    const { _id, ...updateField } = newRow;
+
+    try {
+      const response = await axios.patch(`/user/${oldRow._id}`, updateField);
+      if (isValidResponse(response)) {
+        setAdmins(response.data.users);
+      }
+      return newRow;
+    } catch (error) {
+      console.error("Failed to update the row:", error);
+      setAdmins((prevData) => {
+        if (!prevData) return null;
+        return prevData.map((item) =>
+          item._id === oldRow._id ? oldRow : item
+        );
+      });
+
+      throw error;
+    }
+  };
 
   return (
     <Box>
@@ -157,6 +224,7 @@ const AdminUser: React.FC = () => {
               />
             ),
           }}
+          processRowUpdate={handleProcessRowUpdate}
           loading={loading}
         />
       </Box>
@@ -168,13 +236,15 @@ const AdminUser: React.FC = () => {
       >
         <Box
           sx={{
-            minWidth: 350,
+            minWidth: 200,
             display: "flex",
             flexDirection: "column",
             gap: 2,
+            pt: 2,
           }}
         >
           <TextField
+            size="small"
             fullWidth
             label="Name"
             value={newAdmin.name}
@@ -183,6 +253,7 @@ const AdminUser: React.FC = () => {
             }
           />
           <TextField
+            size="small"
             fullWidth
             label="Email"
             value={newAdmin.email}
@@ -191,6 +262,7 @@ const AdminUser: React.FC = () => {
             }
           />
           <TextField
+            size="small"
             fullWidth
             label="Mobile"
             value={newAdmin.mobile}

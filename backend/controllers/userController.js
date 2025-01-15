@@ -28,13 +28,15 @@ export async function updateUserData(req, res, next) {
     const updatedUser = await User.findByIdAndUpdate(id, userDataToUpdate, {
       new: true,
     });
-    updatedUser.isProfileUpdated = true;
+    // updatedUser.isProfileUpdated = true;
     updatedUser.save();
     const users = await User.find({ role: updatedUser.role });
     if (!updatedUser) {
       res.status(200).json("User not Found");
     }
-    res.status(200).json({ message: "User updated successfully", users });
+    res
+      .status(200)
+      .json({ message: "User updated successfully", users, status_code: 3 });
   } catch (error) {
     next(error);
   }

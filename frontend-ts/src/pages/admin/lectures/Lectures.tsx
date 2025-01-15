@@ -1,8 +1,12 @@
-import { Paper, Typography, Box, Divider } from "@mui/material";
+import { Typography, Box, Divider, Button } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "../../../hooks/AxiosInterceptor";
 import { useGlobalContext } from "../../../contexts/GlobalProvider";
+import { DataArrayRounded, UploadFileRounded } from "@mui/icons-material";
+import { CustomModal } from "../../../components/CustomModal";
+import UploadExcel from "./UploadExcel";
+import UploadVideo from "./UploadVideo";
 
 interface Lecture {
   _id: string;
@@ -13,6 +17,8 @@ const Lectures: React.FC = () => {
   const { isValidResponse } = useGlobalContext();
   const [lectures, setLectures] = useState<Lecture[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [showExcelUpload, setShowExcelUpload] = useState<boolean>(false);
+  const [showVideoUpload, setShowVideoUpload] = useState<boolean>(false);
 
   const getLectures = async () => {
     try {
@@ -41,16 +47,48 @@ const Lectures: React.FC = () => {
   const columns: GridColDef[] = [
     { field: "id", headerName: "SN", width: 100 },
     { field: "title", headerName: "Lecture Title", flex: 1 },
+    { field: "title", headerName: "Lecture Title", flex: 1 },
   ];
 
   return (
-    <Paper elevation={3} sx={{ padding: 2 }}>
-      <Box marginBottom={2}>
-        <Typography variant="h5" gutterBottom>
-          Lectures
-        </Typography>
-        <Divider />
+    <Box>
+      <Box
+        sx={{
+          mb: 1,
+          display: "flex",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+        }}
+      >
+        <Typography variant="h4">Lectures</Typography>
+        <Box
+          sx={{
+            display: "flex",
+            flex: 1,
+            gap: 2,
+            width: { sm: "100%" },
+            maxWidth: 350,
+          }}
+        >
+          <Button
+            sx={{ flexGrow: 1 }}
+            startIcon={<DataArrayRounded />}
+            onClick={() => setShowExcelUpload(true)}
+            variant="contained"
+          >
+            Upload Excel
+          </Button>
+          <Button
+            variant="contained"
+            sx={{ flexGrow: 1 }}
+            startIcon={<UploadFileRounded />}
+            onClick={() => setShowVideoUpload(true)}
+          >
+            Upload Lecture
+          </Button>
+        </Box>
       </Box>
+      <Divider sx={{ mb: 2 }} />
       <Box sx={{ height: 400 }}>
         <DataGrid
           columns={columns}
@@ -60,7 +98,31 @@ const Lectures: React.FC = () => {
           pageSizeOptions={[10, 30, 50]}
         />
       </Box>
-    </Paper>
+
+      {/* Upload Excel File */}
+      <CustomModal
+        open={showExcelUpload}
+        onClose={() => setShowExcelUpload(false)}
+        header="Upload Excel"
+        height="95svh"
+        width="90vw"
+        autoClose={false}
+      >
+        <UploadExcel />
+      </CustomModal>
+
+      {/* Upload Video */}
+      <CustomModal
+        open={showVideoUpload}
+        onClose={() => setShowVideoUpload(false)}
+        header="Upload Video"
+        height="95svh"
+        width="90vw"
+        autoClose={false}
+      >
+        <UploadVideo />
+      </CustomModal>
+    </Box>
   );
 };
 

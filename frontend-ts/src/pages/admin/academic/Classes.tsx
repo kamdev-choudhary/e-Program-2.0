@@ -12,6 +12,7 @@ import {
   CardContent,
   Grid2 as Grid,
   Divider,
+  Paper,
 } from "@mui/material";
 import { CustomModal } from "../../../components/CustomModal";
 import Swal from "sweetalert2";
@@ -134,55 +135,93 @@ const AcademicInfo: React.FC = () => {
   };
 
   return (
-    <>
-      <Grid container>
-        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-          <Card elevation={4} sx={{ border: "1px solid rgba(0,0,0,0.3)" }}>
-            <CardContent sx={{ p: 0, bgcolor: "background.secondary" }}>
-              <Box
+    <Paper elevation={10}>
+      <Card sx={{ maxWidth: 350 }}>
+        <CardContent sx={{ p: 1 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Typography variant="h6">Classes</Typography>
+            <IconButton onClick={() => setShowAddClass(true)}>
+              <AddRounded />
+            </IconButton>
+          </Box>
+        </CardContent>
+        <Divider />
+        <CardContent sx={{ p: 0 }}>
+          <List
+            dense
+            sx={{ minHeight: 250, maxHeight: 350, overflowY: "auto" }}
+          >
+            {classes.map((classItem) => (
+              <ListItem
+                key={classItem._id}
                 sx={{
                   display: "flex",
-                  alignItems: "center",
                   justifyContent: "space-between",
-                  p: 1,
                 }}
               >
-                <Typography variant="h6">Classes</Typography>
-                <IconButton onClick={() => setShowAddClass(true)}>
-                  <AddRounded />
-                </IconButton>
-              </Box>
-            </CardContent>
-            <Divider />
-            <CardContent sx={{ p: 0 }}>
-              <List
-                dense
-                sx={{ minHeight: 250, overflow: "auto", maxHeight: 350 }}
+                <Typography>{classItem.name}</Typography>
+                <Box>
+                  <IconButton onClick={() => handleEditClass(classItem)}>
+                    <Edit />
+                  </IconButton>
+                  <IconButton onClick={() => handleDeleteClass(classItem._id)}>
+                    <Delete />
+                  </IconButton>
+                </Box>
+              </ListItem>
+            ))}
+          </List>
+        </CardContent>
+      </Card>
+      {/* <Card>
+        <CardContent sx={{ p: 1 }}>
+          <Box
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+            }}
+          >
+            <Typography variant="h6">Classes</Typography>
+            <IconButton onClick={() => setShowAddClass(true)}>
+              <AddRounded />
+            </IconButton>
+          </Box>
+        </CardContent>
+        <Divider />
+        <CardContent sx={{ p: 0 }}>
+          <List
+            dense
+            sx={{ minHeight: 250, maxHeight: 350, overflowY: "auto" }}
+          >
+            {classes.map((classItem) => (
+              <ListItem
+                key={classItem._id}
+                sx={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                }}
               >
-                {classes &&
-                  classes?.map((classItem) => (
-                    <ListItem
-                      key={classItem._id}
-                      sx={{ justifyContent: "space-between" }}
-                    >
-                      <Typography>{classItem.name}</Typography>
-                      <Box>
-                        <IconButton onClick={() => handleEditClass(classItem)}>
-                          <Edit />
-                        </IconButton>
-                        <IconButton
-                          onClick={() => handleDeleteClass(classItem._id)}
-                        >
-                          <Delete />
-                        </IconButton>
-                      </Box>
-                    </ListItem>
-                  ))}
-              </List>
-            </CardContent>
-          </Card>
-        </Grid>
-      </Grid>
+                <Typography>{classItem.name}</Typography>
+                <Box>
+                  <IconButton onClick={() => handleEditClass(classItem)}>
+                    <Edit />
+                  </IconButton>
+                  <IconButton onClick={() => handleDeleteClass(classItem._id)}>
+                    <Delete />
+                  </IconButton>
+                </Box>
+              </ListItem>
+            ))}
+          </List>
+        </CardContent>
+      </Card> */}
 
       {/* Add Class Modal */}
       <CustomModal
@@ -191,14 +230,16 @@ const AcademicInfo: React.FC = () => {
         width="auto"
         onClose={() => setShowAddClass(false)}
       >
-        <Box sx={{ display: "grid", rowGap: 2, minWidth: 450 }}>
+        <Box sx={{ display: "grid", rowGap: 2, minWidth: 250, pt: 2 }}>
           <TextField
+            size="small"
             fullWidth
             label="Class Name"
             value={newClass.name}
             onChange={(e) => setNewClass({ ...newClass, name: e.target.value })}
           />
           <TextField
+            size="small"
             fullWidth
             label="Value"
             value={newClass.value}
@@ -219,9 +260,10 @@ const AcademicInfo: React.FC = () => {
         width="auto"
         onClose={() => setShowEditClass(false)}
       >
-        <Box sx={{ display: "grid", rowGap: 2, minWidth: 450 }}>
+        <Box sx={{ display: "grid", rowGap: 2, minWidth: 250, pt: 2 }}>
           <TextField
             fullWidth
+            size="small"
             label="Class Name"
             value={selectedClass.name}
             onChange={(e) =>
@@ -229,6 +271,7 @@ const AcademicInfo: React.FC = () => {
             }
           />
           <TextField
+            size="small"
             fullWidth
             label="Value"
             value={selectedClass.value}
@@ -241,7 +284,7 @@ const AcademicInfo: React.FC = () => {
           </Button>
         </Box>
       </CustomModal>
-    </>
+    </Paper>
   );
 };
 

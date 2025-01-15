@@ -1,16 +1,20 @@
 import { Box, Button, TextField } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 interface AddBatch {
-  setAddBatchModal?: (value: boolean) => void;
+  setAddBatchModal: (value: boolean) => void;
 }
 
 interface NewBatch {
-  name: string;
+  title: string;
 }
 
 const AddBatch: React.FC<AddBatch> = ({ setAddBatchModal }) => {
-  const [newBatch, setNewBatch] = useState<NewBatch | null>(null);
+  const [newBatch, setNewBatch] = useState<NewBatch>({ title: "", class: "" });
+
+  useEffect(() => {
+    setAddBatchModal(true);
+  }, []);
 
   return (
     <Box
@@ -24,7 +28,7 @@ const AddBatch: React.FC<AddBatch> = ({ setAddBatchModal }) => {
     >
       <TextField
         fullWidth
-        value={newBatch?.name}
+        value={newBatch?.title}
         label="Batch Name"
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setNewBatch((prev) => ({ ...prev, name: e.target.value }))

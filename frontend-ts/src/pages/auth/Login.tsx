@@ -80,6 +80,7 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setUser((prev) => ({ ...prev, id: e.target.value }))
             }
+            size="small"
           />
           <TextField
             fullWidth
@@ -92,6 +93,7 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
               setUser((prev) => ({ ...prev, password: e.target.value }))
             }
             autoComplete=""
+            size="small"
           />
           <Button
             type="submit"

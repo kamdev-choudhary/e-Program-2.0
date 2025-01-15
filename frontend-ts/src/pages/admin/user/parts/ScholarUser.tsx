@@ -170,13 +170,14 @@ const AdminUser: React.FC = () => {
       >
         <Box
           sx={{
-            minWidth: 350,
+            minWidth: 250,
             display: "flex",
             flexDirection: "column",
             gap: 2,
           }}
         >
           <TextField
+            size="small"
             fullWidth
             label="Name"
             value={newAdmin.name}
@@ -185,6 +186,7 @@ const AdminUser: React.FC = () => {
             }
           />
           <TextField
+            size="small"
             fullWidth
             label="Email"
             value={newAdmin.email}
@@ -193,6 +195,7 @@ const AdminUser: React.FC = () => {
             }
           />
           <TextField
+            size="small"
             fullWidth
             label="Mobile"
             value={newAdmin.mobile}

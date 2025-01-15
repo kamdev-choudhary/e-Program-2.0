@@ -10,7 +10,6 @@ import {
   InputAdornment,
   OutlinedInput,
   Pagination,
-  Paper,
   Tab,
   Tabs,
   Typography,
@@ -51,7 +50,7 @@ const DoubtCard: React.FC<{ doubt: Doubt }> = ({ doubt }) => {
   return (
     <Card
       sx={{
-        margin: 2,
+        margin: 1,
         padding: 2,
         boxShadow: 4,
       }}
@@ -158,7 +157,7 @@ const Doubts: React.FC = () => {
   }, [activeTab, searchText, currentPage]);
 
   return (
-    <Paper>
+    <>
       <Box sx={{ display: "flex", justifyContent: "center" }}>
         <Typography variant="h5" sx={{ p: 1, fontWeight: "bold" }}>
           Ask a Doubt
@@ -201,6 +200,11 @@ const Doubts: React.FC = () => {
           onChange={(_: React.SyntheticEvent, value: number) =>
             setActiveTab(value)
           }
+          variant="scrollable" // Change to "scrollable" for scroll behavior
+          scrollButtons="auto" // Automatically show scroll buttons when needed
+          allowScrollButtonsMobile // Enable scroll buttons for mobile screens
+          textColor="secondary"
+          indicatorColor="secondary"
         >
           <Tab label="Unsolved Doubts" />
           <Tab label="Solved Doubts" />
@@ -227,7 +231,7 @@ const Doubts: React.FC = () => {
       >
         <NewDoubt setShowNewDoubtModal={setShowNewDoubtModal} />
       </CustomModal>
-    </Paper>
+    </>
   );
 };
 

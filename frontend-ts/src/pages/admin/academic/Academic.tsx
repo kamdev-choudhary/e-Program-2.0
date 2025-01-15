@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Divider, Paper, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Divider, Tab, Tabs, Typography } from "@mui/material";
 import { motion } from "framer-motion";
 import Classes from "./Classes";
 import Syllabus from "./Syllabus";
@@ -30,12 +30,11 @@ const Academic: React.FC = () => {
   };
 
   return (
-    <Paper
+    <Box
       sx={{
         display: "flex",
         flexDirection: "column",
         flexGrow: 1,
-        p: 2,
       }}
     >
       <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
@@ -46,7 +45,9 @@ const Academic: React.FC = () => {
         <Tabs
           value={activeTab}
           onChange={handleTabChange}
-          variant="fullWidth"
+          variant="scrollable" // Change to "scrollable" for scroll behavior
+          scrollButtons="auto" // Automatically show scroll buttons when needed
+          allowScrollButtonsMobile // Enable scroll buttons for mobile screens
           textColor="secondary"
           indicatorColor="secondary"
         >
@@ -55,25 +56,25 @@ const Academic: React.FC = () => {
           <Tab label="Question Pattern" />
           <Tab label="Exam Patterns" />
         </Tabs>
-        <Box sx={{ position: "relative", overflow: "hidden", mt: 2 }}>
-          <motion.div
-            key={activeTab}
-            custom={direction}
-            initial="initial"
-            animate="animate"
-            exit="exit"
-            variants={variants}
-            transition={{ duration: 0.5 }}
-            style={{ width: "100%" }}
-          >
-            {activeTab === 0 && <Classes />}
-            {activeTab === 1 && <Syllabus />}
-            {activeTab === 3 && <ExamPatterns />}
-            {activeTab === 2 && <QuestionPatterns />}
-          </motion.div>
-        </Box>
       </Box>
-    </Paper>
+      <Box sx={{ position: "relative", overflow: "hidden", mt: 2 }}>
+        <motion.div
+          key={activeTab}
+          custom={direction}
+          initial="initial"
+          animate="animate"
+          exit="exit"
+          variants={variants}
+          transition={{ duration: 0.5 }}
+          style={{ width: "100%" }}
+        >
+          {activeTab === 0 && <Classes />}
+          {activeTab === 1 && <Syllabus />}
+          {activeTab === 3 && <ExamPatterns />}
+          {activeTab === 2 && <QuestionPatterns />}
+        </motion.div>
+      </Box>
+    </Box>
   );
 };
 

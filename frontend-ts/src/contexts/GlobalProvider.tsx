@@ -67,7 +67,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     open: false,
     message: "",
     type: "success",
-    variant: "outlined",
+    variant: "filled",
   });
 
   useEffect(() => {
@@ -156,7 +156,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     const status = response.data.status_code;
     let message = response.data.message;
     if ([1, 2, 3, 4].includes(status)) {
-      showNotification(message || "Record Found.", "success", "outlined");
+      showNotification(message || "Record Found.", "success", "filled");
       return true;
     } else if (status === 0) {
       showNotification(message || "Deleted Succesfully.", "error");
@@ -205,6 +205,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
       }}
     >
       {children}
+
       <Snackbar
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         open={notification.open}
@@ -214,7 +215,9 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
         <Alert
           severity={notification.type}
           variant={notification.variant}
-          sx={{ width: "100%" }}
+          sx={{
+            minWidth: 300,
+          }}
           action={
             <IconButton
               size="small"

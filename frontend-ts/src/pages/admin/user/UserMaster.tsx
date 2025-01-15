@@ -1,12 +1,12 @@
 import React, { useState } from "react";
 import AdminUser from "./parts/AdminUser";
-import { Paper, Tabs, Tab } from "@mui/material";
+import { Paper, Tabs, Tab, Box } from "@mui/material";
 import ScholarUser from "./parts/ScholarUser";
 
 const UserMaster = () => {
   const [activeTab, setActiveTab] = useState<number>(0);
   return (
-    <Paper>
+    <Box>
       <Tabs
         value={activeTab}
         onChange={(_: React.SyntheticEvent, value: number) =>
@@ -18,7 +18,7 @@ const UserMaster = () => {
       </Tabs>
       {activeTab === 0 && <AdminUser />}
       {activeTab === 1 && <ScholarUser />}
-    </Paper>
+    </Box>
   );
 };
 

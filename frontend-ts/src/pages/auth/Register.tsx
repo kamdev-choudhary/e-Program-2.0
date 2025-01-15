@@ -109,6 +109,7 @@ const Register: React.FC<RegisterProps> = ({ setActiveTab }) => {
         </Typography>
         <Box component="form" onSubmit={handleLogin} sx={{ width: "100%" }}>
           <TextField
+            size="small"
             fullWidth
             margin="normal"
             label="Name"
@@ -120,6 +121,7 @@ const Register: React.FC<RegisterProps> = ({ setActiveTab }) => {
             helperText={formError.name && "Name is Required"}
           />
           <TextField
+            size="small"
             fullWidth
             margin="normal"
             label="Email"
@@ -132,6 +134,7 @@ const Register: React.FC<RegisterProps> = ({ setActiveTab }) => {
             helperText={formError.email && "Email is Required"}
           />
           <TextField
+            size="small"
             fullWidth
             margin="normal"
             label="Mobile"
@@ -147,6 +150,7 @@ const Register: React.FC<RegisterProps> = ({ setActiveTab }) => {
             type="tel" // More appropriate input type for phone numbers
           />
           <TextField
+            size="small"
             fullWidth
             margin="normal"
             label="Password"

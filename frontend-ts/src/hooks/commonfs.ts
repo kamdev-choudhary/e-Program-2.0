@@ -6,13 +6,6 @@ interface DownloadJsonToExcelProps {
   fileName?: string;
 }
 
-/**
- *
- * @param jsonData
- * @param filenmae
- * @returns
- */
-
 export const downloadJsonToExcel = async ({
   jsonData,
   fileName = "data.xlsx",
@@ -21,24 +14,14 @@ export const downloadJsonToExcel = async ({
     console.error("No data to export");
     return;
   }
-
-  // Create a new workbook and add a worksheet
   const workbook = new ExcelJS.Workbook();
   const worksheet = workbook.addWorksheet("Sheet1");
-
-  // Extract headers from the first object's keys
   const headers = Object.keys(jsonData[0]);
-
-  // Add headers to the worksheet
   worksheet.addRow(headers);
-
-  // Add data rows
   jsonData.forEach((row) => {
     const rowData = headers.map((header) => row[header] ?? null); // Ensure data corresponds to headers
     worksheet.addRow(rowData);
   });
-
-  // Adjust column widths
   worksheet.columns.forEach((column) => {
     const maxLength =
       column.values?.reduce(
@@ -50,12 +33,10 @@ export const downloadJsonToExcel = async ({
   });
 
   try {
-    // Generate Excel file as a blob
     const buffer = await workbook.xlsx.writeBuffer();
     const blob = new Blob([buffer], {
       type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
     });
-
     saveAs(blob, fileName);
   } catch (error) {
     console.error("Error generating Excel file:", error);
@@ -104,4 +85,16 @@ export const isValidMobileNumber = (
     mobile.length >= minLength &&
     mobile.length <= maxLength
   );
+};
+
+export const reverseDate = (date: string): string => {
+  if (!date) {
+    throw new Error("Invalid date string");
+  }
+  const parts = date.split("-");
+  if (parts.length !== 3) {
+    throw new Error("Date format must be YYYY-MM-DD");
+  }
+  const [year, month, day] = parts;
+  return `${day}-${month}-${year}`;
 };
