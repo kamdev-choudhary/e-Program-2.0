@@ -1,6 +1,6 @@
 import React from "react";
 
-const ExamMasterOffline = () => {
+const ExamMasterOffline: React.FC = () => {
   return <div>ExamMasterOffline</div>;
 };
 

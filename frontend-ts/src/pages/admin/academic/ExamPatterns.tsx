@@ -1,6 +1,6 @@
 import React from "react";
 
-const ExamPatterns = () => {
+const ExamPatterns: React.FC = () => {
   return <div>ExamPatterns</div>;
 };
 

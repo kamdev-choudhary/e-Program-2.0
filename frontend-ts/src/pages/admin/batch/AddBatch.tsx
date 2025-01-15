@@ -7,6 +7,7 @@ interface AddBatch {
 
 interface NewBatch {
   title: string;
+  class: string;
 }
 
 const AddBatch: React.FC<AddBatch> = ({ setAddBatchModal }) => {

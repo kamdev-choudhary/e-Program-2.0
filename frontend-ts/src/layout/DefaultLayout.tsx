@@ -1,6 +1,6 @@
 import React from "react";
 import { Outlet } from "react-router-dom";
-import { Box, Container, useMediaQuery } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 import Navbar from "./Navbar";
 import NavbarWithDrawer from "./NavbarWithDrawer";
 

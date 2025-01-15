@@ -1,6 +1,6 @@
 import React from "react";
 
-const ExamMasterOnline = () => {
+const ExamMasterOnline: React.FC = () => {
   return <div>ExamMasterOnline</div>;
 };
 

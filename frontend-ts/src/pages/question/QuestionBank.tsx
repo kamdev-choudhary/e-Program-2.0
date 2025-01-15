@@ -1,6 +1,6 @@
 import React from "react";
 
-const QuestionBank = () => {
+const QuestionBank: React.FC = () => {
   return <div>QuestionBank</div>;
 };
 
