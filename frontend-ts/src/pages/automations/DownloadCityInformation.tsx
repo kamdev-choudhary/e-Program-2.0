@@ -1,6 +1,5 @@
 import {
   Box,
-  Paper,
   Button,
   Typography,
   IconButton,
@@ -33,6 +32,7 @@ interface ScholarData {
   city: string;
   date: string;
   name?: string;
+  status?: string;
 }
 
 const DownloadCityInformation: React.FC = () => {
@@ -143,7 +143,7 @@ const DownloadCityInformation: React.FC = () => {
       if (jsonData) {
         await Promise.all(
           jsonData.map(async (data) => {
-            if (!data.pdfUrl) {
+            if (!data.pdfUrl && data?.status === "idle") {
               // Fetch the missing PDF URL if not available
               await handleDownloadCityInfo(data);
             }
@@ -418,7 +418,7 @@ const DownloadCityInformation: React.FC = () => {
   ];
 
   return (
-    <Paper>
+    <Box>
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
         <Box
           {...getRootProps()}
@@ -507,21 +507,12 @@ const DownloadCityInformation: React.FC = () => {
           columns={columns}
           rows={rows}
           loading={isLoading}
-          sx={{
-            "& .MuiDataGrid-columnHeader": {
-              bgcolor: "#28844f", // Light background color for the header
-              color: "primary.contrastText", // Text color for the header
-            },
-            "& .MuiDataGrid-columnHeaderTitle": {
-              fontWeight: "bold", // Make header text bold
-            },
-          }}
           processRowUpdate={handleProcessRowUpdate}
           initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
           pageSizeOptions={[10, 30, 50, 100, 200]}
         />
       </Box>
-    </Paper>
+    </Box>
   );
 };
 

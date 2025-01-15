@@ -6,7 +6,7 @@ import config from "../config/config.js";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
-const jwtSecret = config.jwtSecret;
+const jwtSecret = config.JWT_SECRET;
 import logger from "../utils/logger.js";
 
 const userSchema = new Schema(

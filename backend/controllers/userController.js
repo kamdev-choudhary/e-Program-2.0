@@ -1,6 +1,4 @@
 import User from "../models/user.js";
-import bcrypt from "bcryptjs";
-import Batch from "../models/batch.js";
 import response from "../utils/responses.js";
 
 // GETTING USER DATA

@@ -2,21 +2,19 @@ import dotenv from "dotenv";
 dotenv.config();
 
 const config = {
-  port: process.env.PORT || 5000,
-  mongoUrl:
+  PORT: process.env.PORT || 5000,
+  MONGO_URL:
     process.env.MONGO_URL ||
     "mongodb+srv://kamdevchoudhary:mongopassword@cluster0.mrszysb.mongodb.net/eprogram?retryWrites=true&w=majority",
-  jwtSecret: process.env.JWT_SECRET || "supersecretkey",
-  nodeEnv: process.env.NODE_ENV || "development",
-  api_key: process.env.API_KEY || "kd",
-  cloudName: process.env.CLOUD_NAME || "dgwlqoijt",
-  cloudApiKey: process.env.CLOUD_API_KEY || "295749936547257",
-  cloudSecret: process.env.CLOUD_SECRET || "LKxfF4nyG0lIb1pgpHvDrfAZWmY",
-  ocrSpaceKey: process.env.OCR_SPACE_KEY || "K88503223788957",
-  Auth0Domain: process.env.AUTH0_DOMAIN || "",
-  Auth0Audience: process.env.AUTH0_AUDIENCE || "",
-  gmail: "kamdevchoudhary@gmail.com",
-  gmailAppPassword: "igvjaxopgsmixnur",
+  JWT_SECRET: process.env.JWT_SECRET || "supersecretkey",
+  NODE_ENV: process.env.NODE_ENV || "development",
+  API_KEY: process.env.API_KEY || "kd",
+  CLOUD_NAME: process.env.CLOUD_NAME || "dgwlqoijt",
+  CLOUD_API_KEY: process.env.CLOUD_API_KEY || "295749936547257",
+  CLOUD_SECRET: process.env.CLOUD_SECRET || "LKxfF4nyG0lIb1pgpHvDrfAZWmY",
+  OCR_SPACE_KEY: process.env.OCR_SPACE_KEY || "K88503223788957",
+  GMAIL_USER: process.env.GMAIL_USER || "kamdevchoudhary@gmail.com",
+  GMAIL_APP_PASSWORD: process.env.GMAIL_APP_PASSWORD || "igvjaxopgsmixnur",
 };
 
 export default config;

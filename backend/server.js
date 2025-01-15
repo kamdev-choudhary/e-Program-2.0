@@ -13,7 +13,7 @@ import connectDB from "./utils/connectDB.js";
 import errorMiddleware from "./middlewares/error-middleware.js";
 import config from "./config/config.js";
 
-const port = config.port || 5000;
+const port = config.PORT || 5000;
 
 // Resolve __dirname for ESModules
 const __filename = fileURLToPath(import.meta.url);
@@ -34,7 +34,7 @@ app.use(errorMiddleware);
 const server = createServer(app);
 const startServer = async () => {
   try {
-    await connectDB();
+    // await connectDB();
     setupSocket(server);
     server.listen(port, () => {
       logger.info(`Server is listening on port: ${port}`);

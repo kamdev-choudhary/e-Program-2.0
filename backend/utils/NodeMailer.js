@@ -6,14 +6,14 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false,
   auth: {
-    user: config.gmail,
-    pass: config.gmailAppPassword,
+    user: config.GMAIL_USER,
+    pass: config.GMAIL_APP_PASSWORD,
   },
 });
 
 export async function sendMail({ to, subject, text, html }) {
   const info = await transporter.sendMail({
-    from: config.gmail,
+    from: config.GMAIL_USER,
     to: to,
     subject: subject || "No Subject",
     text: text || "",

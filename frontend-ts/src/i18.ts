@@ -15,7 +15,6 @@ i18n
       fr: {
         translation: {
           Welcome: "Bienvenue",
-          // Add other French translations here
         },
       },
       hn: {

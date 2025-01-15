@@ -3,26 +3,26 @@ import { v4 as uuid } from "uuid";
 import { captureAndSolveCaptcha } from "../utils/captchaResolver.js";
 import logger from "../utils/logger.js";
 
-const cityInfoSite =
-  "https://examinationservices.nic.in/jeemain2025/DownloadAdmitCard/frmAuthforCity.aspx?enc=WPJ5WSCVWOMNiXoyyomJgDUffqDdG1LTsAPBKFcEC9W88CTkt2ITzilIsFR7gKxO";
-
-const SELECTORS = {
-  applicationNumber: 'input[name="ctl00$ContentPlaceHolder1$txtRegno"]',
-  day: "#ctl00_ContentPlaceHolder1_ddlday",
-  month: "#ctl00_ContentPlaceHolder1_ddlmonth",
-  year: "#ctl00_ContentPlaceHolder1_ddlyear",
-  captchaInput: 'input[name="ctl00$ContentPlaceHolder1$txtsecpin"]',
-  loginButton: '[name="ctl00$ContentPlaceHolder1$btnsignin"]',
-  captchaImage: "#ctl00_ContentPlaceHolder1_captchaimage",
-  successPanel: "#ctl00_ContentPlaceHolder1_pnlAdmitcard",
-  examDate: "#ctl00_ContentPlaceHolder1_dateofexamP1",
-  examCity: "#ctl00_ContentPlaceHolder1_cityofexamP1",
-  errorSelector: "#ctl00_ContentPlaceHolder1_lblerror1",
-};
-
 const MAX_RETRIES = 3;
 
 export async function downloadCityInformation(req, res, next) {
+  const cityInfoSite =
+    "https://examinationservices.nic.in/jeemain2025/DownloadAdmitCard/frmAuthforCity.aspx?enc=WPJ5WSCVWOMNiXoyyomJgDUffqDdG1LTsAPBKFcEC9W88CTkt2ITzilIsFR7gKxO";
+
+  const SELECTORS = {
+    applicationNumber: 'input[name="ctl00$ContentPlaceHolder1$txtRegno"]',
+    day: "#ctl00_ContentPlaceHolder1_ddlday",
+    month: "#ctl00_ContentPlaceHolder1_ddlmonth",
+    year: "#ctl00_ContentPlaceHolder1_ddlyear",
+    captchaInput: 'input[name="ctl00$ContentPlaceHolder1$txtsecpin"]',
+    loginButton: '[name="ctl00$ContentPlaceHolder1$btnsignin"]',
+    captchaImage: "#ctl00_ContentPlaceHolder1_captchaimage",
+    successPanel: "#ctl00_ContentPlaceHolder1_pnlAdmitcard",
+    examDate: "#ctl00_ContentPlaceHolder1_dateofexamP1",
+    examCity: "#ctl00_ContentPlaceHolder1_cityofexamP1",
+    errorSelector: "#ctl00_ContentPlaceHolder1_lblerror1",
+  };
+
   const { applicationNumber, day, month, year } = req.body;
 
   // Validate input
@@ -124,6 +124,23 @@ export async function downloadCityInformation(req, res, next) {
 }
 export async function downloadAdmitCard(req, res, next) {
   try {
+    res.status(200).json({ message: "Success" });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function indiaPost(req, res, next) {
+  try {
+    const { id } = req.params;
+    const SELECTORS = {
+      CONSIGMENT: "",
+    };
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+
     res.status(200).json({ message: "Success" });
   } catch (error) {
     next(error);

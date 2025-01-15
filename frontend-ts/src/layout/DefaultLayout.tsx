@@ -21,7 +21,7 @@ const DefaultLayout: React.FC = () => {
         sx={{
           position: "sticky",
           top: 0,
-          zIndex: 1100, // Ensure it stays above other content
+          zIndex: 10, // Ensure it stays above other content
           boxShadow: "0px 2px 4px rgba(0, 0, 0, 0.1)",
         }}
       >
@@ -36,8 +36,7 @@ const DefaultLayout: React.FC = () => {
           pt: isSmallScreen ? 8 : 2,
         }}
       >
-        <Container
-          maxWidth="lg"
+        <Box
           sx={{
             bgcolor: "#fff",
             borderRadius: 2,
@@ -46,7 +45,7 @@ const DefaultLayout: React.FC = () => {
           }}
         >
           <Outlet />
-        </Container>
+        </Box>
       </Box>
     </Box>
   );

@@ -2,7 +2,7 @@ import { connect } from "mongoose";
 import config from "../config/config.js";
 import logger from "../utils/logger.js";
 
-const mongoUrl = config.mongoUrl;
+const mongoUrl = config.MONGO_URL;
 
 const connectDB = async () => {
   try {

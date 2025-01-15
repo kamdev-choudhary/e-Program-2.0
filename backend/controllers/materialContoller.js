@@ -6,9 +6,9 @@ import response from "../utils/responses.js";
 import config from "../config/config.js";
 
 cloudinary.config({
-  cloud_name: config.cloudName,
-  api_key: config.cloudApiKey,
-  api_secret: config.cloudSecret,
+  cloud_name: config.CLOUD_NAME,
+  api_key: config.CLOUD_API_KEY,
+  api_secret: config.CLOUD_SECRET,
   secure: true,
 });
 

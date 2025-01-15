@@ -8,4 +8,12 @@ declare module "@mui/material/styles" {
   interface SimplePaletteColorOptions {
     extraLight?: string;
   }
+
+  interface Components {
+    MuiDataGrid?: {
+      styleOverrides?: {
+        [key: string]: any;
+      };
+    };
+  }
 }

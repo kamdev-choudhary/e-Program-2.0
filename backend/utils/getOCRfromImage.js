@@ -18,8 +18,8 @@ async function getOCRFromImageBinary(imageBinary) {
 
   // Make sure to append image as a buffer
   formData.append("file", imageBinary, { filename: "image.png" }); // Provide a filename for the buffer
-  formData.append("apikey", config.ocrSpaceKey); // Add your API key
-  formData.append("language", "eng"); // Specify the language (adjust as needed)
+  formData.append("apikey", config.OCR_SPACE_KEY);
+  formData.append("language", "eng");
 
   try {
     // Send POST request to OCR.Space API

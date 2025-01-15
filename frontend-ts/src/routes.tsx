@@ -4,39 +4,40 @@ import Loader from "./components/Loader";
 
 import ProtectedRoute from "./hooks/ProtectedRoute";
 
-// Lazy Loading Helper
-const lazyLoad = (path: string) => lazy(() => import(`${path}`));
-
 // Layout Components
-const DefaultLayout = lazyLoad("./layout/DefaultLayout");
-const AuthPage = lazyLoad("./pages/auth/AuthPage");
+const DefaultLayout = lazy(() => import("./layout/DefaultLayout"));
+const AuthPage = lazy(() => import("./pages/auth/AuthPage"));
 
 // Public Pages
-const HomePage = lazyLoad("./pages/home/HomePage");
-const NotFound = lazyLoad("./pages/error/NotFound");
-const Unauthorized = lazyLoad("./pages/error/Unauthorized");
+const HomePage = lazy(() => import("./pages/home/HomePage"));
+const NotFound = lazy(() => import("./pages/error/NotFound"));
+const Unauthorized = lazy(() => import("./pages/error/Unauthorized"));
+const DCI = lazy(() => import("./pages/automations/DownloadCityInformation"));
+const DAC = lazy(() => import("./pages/automations/DownloadJeeMainAdmitCard"));
 
 // Admin Pages
-const Dashboard = lazyLoad("./pages/dashboard/Dashboard");
-const AdminBatch = lazyLoad("./pages/admin/batch/Batch");
-const Academic = lazyLoad("./pages/admin/academic/Academic");
-const QuestionBankAdmin = lazyLoad("./pages/question/QuestionBank");
-const LecturesAdmin = lazyLoad("./pages/admin/lectures/Lectures");
-const ExamMasterOnline = lazyLoad("./pages/admin/exams/ExamMasterOnline");
-const ExamMasterOffline = lazyLoad("./pages/admin/exams/ExamMasterOffline");
-const UserMaster = lazyLoad("./pages/admin/user/UserMaster");
-const EditBatch = lazyLoad("./pages/admin/batch/EditBatch");
+const Dashboard = lazy(() => import("./pages/dashboard/Dashboard"));
+const AdminBatch = lazy(() => import("./pages/admin/batch/Batch"));
+const Academic = lazy(() => import("./pages/admin/academic/Academic"));
+const QuestionBankAdmin = lazy(() => import("./pages/question/QuestionBank"));
+const LecturesAdmin = lazy(() => import("./pages/admin/lectures/Lectures"));
+const ExamMasterOnline = lazy(
+  () => import("./pages/admin/exams/ExamMasterOnline")
+);
+const ExamMasterOffline = lazy(
+  () => import("./pages/admin/exams/ExamMasterOffline")
+);
+const UserMaster = lazy(() => import("./pages/admin/user/UserMaster"));
+const EditBatch = lazy(() => import("./pages/admin/batch/EditBatch"));
 
 // User Pages
-const Lectures = lazyLoad("./pages/lectures/Lectures");
-const Batches = lazyLoad("./pages/batch/Batches");
-const BatchDetails = lazyLoad("./pages/batch/BatchDetails");
-const Books = lazyLoad("./pages/books/Books");
-const Profile = lazyLoad("./pages/auth/Profile");
-const Doubts = lazyLoad("./pages/doubts/Doubts");
-const DoubtDetails = lazyLoad("./pages/doubts/DoubtDetails");
-const DCI = lazyLoad("./pages/automations/DownloadCityInformation");
-const DAC = lazyLoad("./pages/automations/DownloadJeeMainAdmitCard");
+const Lectures = lazy(() => import("./pages/lectures/Lectures"));
+const Batches = lazy(() => import("./pages/batch/Batches"));
+const BatchDetails = lazy(() => import("./pages/batch/BatchDetails"));
+const Books = lazy(() => import("./pages/books/Books"));
+const Profile = lazy(() => import("./pages/auth/Profile"));
+const Doubts = lazy(() => import("./pages/doubts/Doubts"));
+const DoubtDetails = lazy(() => import("./pages/doubts/DoubtDetails"));
 
 // Admin Route Definitions
 const adminRoutes = [
@@ -73,20 +74,26 @@ const publicRoute = [
 const protectedAdminRoutes = adminRoutes.map((route) => ({
   ...route,
   element: (
-    <ProtectedRoute requiredRole={["admin"]}>{route.element}</ProtectedRoute>
+    <Suspense fallback={<Loader />}>
+      <ProtectedRoute requiredRole={["admin"]}>{route.element}</ProtectedRoute>
+    </Suspense>
   ),
 }));
 
 // Wrap User Routes with ProtectedRoute if needed
 const protectedUserRoutes = userRoutes.map((route) => ({
   ...route,
-  element: <ProtectedRoute>{route.element}</ProtectedRoute>,
+  element: (
+    <Suspense fallback={<Loader />}>
+      <ProtectedRoute>{route.element}</ProtectedRoute>
+    </Suspense>
+  ),
 }));
 
 // Public available routes
 const publicRoutes = publicRoute.map((route) => ({
   ...route,
-  element: route.element,
+  element: <Suspense fallback={<Loader />}>{route.element}</Suspense>,
 }));
 
 // Router Configuration
