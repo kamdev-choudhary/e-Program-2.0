@@ -57,7 +57,7 @@ const Batch: React.FC = () => {
   }, []);
 
   return (
-    <Paper sx={{ padding: 2 }}>
+    <Box>
       <Box
         sx={{
           display: "flex",
@@ -70,21 +70,23 @@ const Batch: React.FC = () => {
         </Typography>
       </Box>
       <Divider sx={{ mb: 2, border: "1px solid rgba(0,0,0,03" }} />
-      <Box sx={{ mb: 1 }}>
+      <Box sx={{ mb: 2 }}>
         <TextField
+          size="small"
           value={searchText}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setSearchText(e.target.value)
           }
           label="Search"
           fullWidth
+          sx={{ borderRadius: 10 }}
         />
       </Box>
       {filteredBatches ? (
         <Grid container spacing={2}>
           {filteredBatches.map((batch, index) => (
-            <Grid size={{ xs: 12, sm: 6, md: 3, lg: 2 }} key={index}>
-              <Card>
+            <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }} key={index}>
+              <Card component={Paper} elevation={4}>
                 <CardMedia
                   component="img"
                   height="140"
@@ -122,7 +124,7 @@ const Batch: React.FC = () => {
           No batches available.
         </Typography>
       )}
-    </Paper>
+    </Box>
   );
 };
 

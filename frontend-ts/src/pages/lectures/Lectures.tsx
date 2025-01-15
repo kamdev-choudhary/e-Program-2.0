@@ -12,7 +12,6 @@ import {
   FormControl,
   InputAdornment,
   OutlinedInput,
-  Paper,
   Table,
   TableBody,
   TableCell,
@@ -98,7 +97,7 @@ const LecturePage: React.FC = () => {
   };
 
   return (
-    <Paper>
+    <Box>
       <Box>
         <Grid container spacing={1} sx={{ p: 1, py: 2 }}>
           <Grid size={{ xs: 6, xl: 3 }}>
@@ -139,7 +138,7 @@ const LecturePage: React.FC = () => {
             )}
           </Grid>
           <Grid size={{ xs: 12, lg: 6 }} sx={{ order: { xs: 2, lg: 1 } }}>
-            <TableContainer component={Paper} style={{ maxHeight: "70vh" }}>
+            <TableContainer component={Box} style={{ maxHeight: "70vh" }}>
               <Table stickyHeader>
                 <TableHead>
                   <TableRow>
@@ -230,7 +229,7 @@ const LecturePage: React.FC = () => {
           </Grid>
         </Grid>
       </Box>
-    </Paper>
+    </Box>
   );
 };
 

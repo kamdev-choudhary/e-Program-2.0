@@ -156,7 +156,7 @@ const UploadExcel: React.FC = () => {
         </Box>
       </Box>
 
-      <Box sx={{ height: 400, mt: 2 }}>
+      <Box sx={{ mt: 2 }}>
         <DataGrid columns={columns} rows={rows} loading={isLoading} />
       </Box>
     </Box>
