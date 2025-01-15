@@ -5,11 +5,13 @@ import {
   List,
   ListItem,
   IconButton,
-  Divider,
   TextField,
   Button,
+  ListItemButton,
+  ListItemText,
+  ListSubheader,
 } from "@mui/material";
-import { AddRounded, Edit, Delete, SaveRounded } from "@mui/icons-material";
+import { Edit, Delete, SaveRounded, AddRounded } from "@mui/icons-material";
 import Swal from "sweetalert2";
 import { useGlobalContext } from "../../../../contexts/GlobalProvider";
 import { CustomModal } from "../../../../components/CustomModal";
@@ -103,7 +105,6 @@ const Subjects: React.FC<SubjectComponentProps> = ({
   const handleSaveNewSubject = async () => {
     try {
       const response = await addNewSubject(newSubject);
-      console.log(response);
       if (isValidResponse(response)) {
         setSubjects(response.data.subjects);
         setShowAddSubject(false);
@@ -115,58 +116,46 @@ const Subjects: React.FC<SubjectComponentProps> = ({
 
   return (
     <Box>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          p: 1,
-          bgcolor: "rgba(126, 87, 194, 0.1)",
-          borderTopRightRadius: 10,
-          borderTopLeftRadius: 10,
-        }}
+      <List
+        subheader={
+          <ListSubheader
+            component="div"
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignContent: "center",
+              alignItems: "center",
+              bgcolor: "#608BC1",
+              p: 1,
+              borderRadius: 2,
+            }}
+          >
+            <Typography sx={{ color: "#fff" }}>Subjects</Typography>
+            <IconButton onClick={() => setShowAddSubject(true)}>
+              <AddRounded sx={{ color: "#fff" }} />
+            </IconButton>
+          </ListSubheader>
+        }
+        component="nav"
+        sx={{ height: 350, overflow: "auto", m: 0, pt: 1 }}
       >
-        <Typography variant="h6">Subjects</Typography>
-        <IconButton onClick={() => setShowAddSubject(true)}>
-          <AddRounded />
-        </IconButton>
-      </Box>
-      <Divider />
-      <List sx={{ height: 350, overflow: "auto" }}>
         {subjects.map((subject) => (
           <ListItem
             key={subject._id}
-            sx={{
-              bgcolor: selectedSubject === subject._id ? "#914D7E" : "",
-              justifyContent: "space-between",
-              cursor: "pointer",
-              "&:hover": { bgcolor: "rgba(145, 77, 126, 0.1)" },
-            }}
             onClick={() => setSelectedSubject(subject._id)}
+            sx={{ m: 0, p: 0 }}
           >
-            <Typography
-              sx={{
-                color: selectedSubject === subject._id ? "#fff" : "",
-              }}
-            >
-              {subject.name}
-            </Typography>
-            <Box>
-              <IconButton onClick={() => handleEditSubject(subject)}>
-                <Edit
-                  sx={{
-                    color: selectedSubject === subject._id ? "#fff" : "",
-                  }}
-                />
-              </IconButton>
-              <IconButton onClick={() => handleDeleteSubject(subject._id)}>
-                <Delete
-                  sx={{
-                    color: selectedSubject === subject._id ? "#fff" : "",
-                  }}
-                />
-              </IconButton>
-            </Box>
+            <ListItemButton selected={selectedSubject === subject._id}>
+              <ListItemText primary={subject.name} />
+              <Box>
+                <IconButton onClick={() => handleEditSubject(subject)}>
+                  <Edit />
+                </IconButton>
+                <IconButton onClick={() => handleDeleteSubject(subject._id)}>
+                  <Delete />
+                </IconButton>
+              </Box>
+            </ListItemButton>
           </ListItem>
         ))}
       </List>

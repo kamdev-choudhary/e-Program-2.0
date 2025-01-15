@@ -19,6 +19,4 @@ export async function sendMail({ to, subject, text, html }) {
     text: text || "",
     html: html || "",
   });
-
-  console.log("Message sent: %s", info.messageId);
 }

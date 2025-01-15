@@ -124,8 +124,6 @@ export async function registerByAdmin(req, res, next) {
   try {
     const { name, email, mobile, password = "Password", role } = req.body;
 
-    console.log(role);
-
     if (role === "admin" || role === "student") {
       const hashedPassword = await bcrypt.hash(password, 10);
       const newAdmin = new User({

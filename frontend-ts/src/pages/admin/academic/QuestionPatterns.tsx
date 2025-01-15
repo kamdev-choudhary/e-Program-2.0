@@ -5,9 +5,12 @@ import {
   List,
   ListItem,
   IconButton,
-  Divider,
   TextField,
   Button,
+  ListSubheader,
+  ListItemButton,
+  ListItemText,
+  Paper,
 } from "@mui/material";
 import { AddRounded, Edit, Delete, SaveRounded } from "@mui/icons-material";
 import Swal from "sweetalert2";
@@ -26,7 +29,7 @@ interface NewQuestionPatern {
   description: string;
 }
 
-const Subjects: React.FC = ({}) => {
+const QuestionPatterns: React.FC = ({}) => {
   const { isValidResponse } = useGlobalContext();
   const [quesionPatterns, setQuestionPatterns] = useState<
     QuestionPattern[] | null
@@ -55,28 +58,6 @@ const Subjects: React.FC = ({}) => {
     getQuestionPatterns();
   }, []);
 
-  // const handleSaveSubjectEdit = async () => {
-  //   try {
-  //     if (!selectedSubject) {
-  //       return;
-  //     }
-  //     dispatch({ type: "SET_LOADING", payload: true });
-  //     const response = await axios.patch(
-  //       `/academic/subject/${selectedSubject}`,
-  //       selectedSubject
-  //     );
-  //     if (isValidResponse(response)) {
-  //       setSubjects(response.data.subjects);
-  //       setShowAddSubject(false);
-  //       setSelectedSubject("");
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   } finally {
-  //     dispatch({ type: "SET_LOADING", payload: false });
-  //   }
-  // };
-
   const handleDeleteSubject = async (id: string) => {
     try {
       const result = await Swal.fire({
@@ -98,7 +79,7 @@ const Subjects: React.FC = ({}) => {
       }
     } catch (error) {
       console.error(error);
-      Swal.fire("Error!", "Failed to delete the subject.", "error");
+      Swal.fire("Error!", "Failed to delete the pattern.", "error");
     }
   };
 
@@ -108,7 +89,6 @@ const Subjects: React.FC = ({}) => {
         name: newQuestionPattern.name,
         description: newQuestionPattern.description,
       });
-      console.log(response);
       if (isValidResponse(response)) {
         setQuestionPatterns(response.data.patterns);
         setShowAQuestionPattern(false);
@@ -119,47 +99,51 @@ const Subjects: React.FC = ({}) => {
   };
 
   return (
-    <Box>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          p: 1,
-          bgcolor: "rgba(126, 87, 194, 0.1)",
-          borderTopRightRadius: 10,
-          borderTopLeftRadius: 10,
-        }}
-      >
-        <Typography variant="h6">Question Patterns</Typography>
-        <IconButton onClick={() => setShowAQuestionPattern(true)}>
-          <AddRounded />
-        </IconButton>
-      </Box>
-      <Divider />
-      <List sx={{ height: 350, overflow: "auto" }}>
-        {quesionPatterns &&
-          quesionPatterns.map((pattern) => (
-            <ListItem
-              key={pattern._id}
+    <Box sx={{ p: 1 }}>
+      <Paper elevation={3} sx={{ maxWidth: 450 }}>
+        <List
+          subheader={
+            <ListSubheader
               sx={{
+                display: "flex",
                 justifyContent: "space-between",
-                cursor: "pointer",
-                "&:hover": { bgcolor: "rgba(145, 77, 126, 0.1)" },
+                alignContent: "center",
+                alignItems: "center",
+                bgcolor: "#608BC1",
+                p: 1,
+                borderRadius: 2,
               }}
             >
-              <Typography>{pattern.name}</Typography>
-              <Box>
-                <IconButton>
-                  <Edit />
-                </IconButton>
-                <IconButton onClick={() => handleDeleteSubject(pattern._id)}>
-                  <Delete />
-                </IconButton>
-              </Box>
-            </ListItem>
-          ))}
-      </List>
+              <Typography sx={{ color: "#fff" }}>Question Patterns</Typography>
+              <IconButton onClick={() => setShowAQuestionPattern(true)}>
+                <AddRounded sx={{ color: "#fff" }} />
+              </IconButton>
+            </ListSubheader>
+          }
+          sx={{ height: 350, overflow: "auto", m: 0, pt: 1 }}
+        >
+          {quesionPatterns &&
+            quesionPatterns.map((pattern) => (
+              <ListItem
+                key={pattern._id}
+                sx={{
+                  m: 0,
+                  p: 0,
+                }}
+              >
+                <ListItemButton>
+                  <ListItemText primary={pattern.name} />
+                  <IconButton>
+                    <Edit />
+                  </IconButton>
+                  <IconButton onClick={() => handleDeleteSubject(pattern._id)}>
+                    <Delete />
+                  </IconButton>
+                </ListItemButton>
+              </ListItem>
+            ))}
+        </List>
+      </Paper>
       <CustomModal
         open={showAQuestionPattern}
         onClose={() => setShowAQuestionPattern(false)}
@@ -210,4 +194,4 @@ const Subjects: React.FC = ({}) => {
   );
 };
 
-export default Subjects;
+export default QuestionPatterns;

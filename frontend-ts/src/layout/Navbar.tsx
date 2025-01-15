@@ -1,5 +1,16 @@
 import React, { useState } from "react";
-import { Box, Button, MenuItem, Menu } from "@mui/material";
+import {
+  Box,
+  Button,
+  MenuItem,
+  Menu,
+  IconButton,
+  Avatar,
+  MenuList,
+  Divider,
+  ListItemIcon,
+  Typography,
+} from "@mui/material";
 import { buttons } from "./buttons";
 import { ArrowDropDownRounded } from "@mui/icons-material";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +19,9 @@ import { useGlobalContext } from "../contexts/GlobalProvider";
 import { RootState } from "../store/store";
 import { CustomModal } from "../components/CustomModal";
 import UpdatePassword from "./UpdatePassword";
+import PersonIcon from "@mui/icons-material/Person";
+import LockResetIcon from "@mui/icons-material/LockReset";
+import LogoutIcon from "@mui/icons-material/Logout";
 
 interface ButtonProps {
   label: string;
@@ -129,41 +143,61 @@ const Navbar: React.FC = () => {
       <Box>
         {isLoggedIn ? (
           <>
-            <Button
-              onClick={(event) => handleMenuOpen(-1, event)} // Separate menu state for user dropdown
-              variant="outlined"
-              endIcon={<ArrowDropDownRounded />}
-            >
-              {user?.name}
-            </Button>
+            <IconButton onClick={(event) => handleMenuOpen(-1, event)}>
+              <Avatar />
+            </IconButton>
             <Menu
               anchorEl={menuStates[-1] || null}
               open={Boolean(menuStates[-1])}
               onClose={() => handleMenuClose(-1)}
+              sx={{ p: 0 }}
             >
-              <MenuItem
-                onClick={() => navigate("/profile")}
-                sx={{ minWidth: 200 }}
-              >
-                Profile
-              </MenuItem>
-              <MenuItem
-                onClick={() =>
-                  dispatch({ type: "SET_FORGOTPASSWORD", payload: true })
-                }
-              >
-                Update Password
-              </MenuItem>
-              <MenuItem onClick={handleLogout}>Logout</MenuItem>
+              <MenuList sx={{ p: 0, m: 0 }}>
+                {/* User's Name Section */}
+                <Box sx={{ p: 2 }}>
+                  <Typography variant="subtitle1" fontWeight={600}>
+                    {user?.name || "User Name"}
+                  </Typography>
+                  <Typography variant="body2" color="text.secondary">
+                    {user?.email || "user@example.com"}
+                  </Typography>
+                </Box>
+
+                <Divider sx={{ mb: 1 }} />
+
+                {/* Profile Option */}
+                <MenuItem onClick={() => navigate("/profile")}>
+                  <ListItemIcon>
+                    <PersonIcon fontSize="small" />
+                  </ListItemIcon>
+                  <Typography variant="body1">Profile</Typography>
+                </MenuItem>
+
+                {/* Update Password Option */}
+                <MenuItem
+                  onClick={() =>
+                    dispatch({ type: "SET_FORGOTPASSWORD", payload: true })
+                  }
+                >
+                  <ListItemIcon>
+                    <LockResetIcon fontSize="small" />
+                  </ListItemIcon>
+                  <Typography variant="body1">Update Password</Typography>
+                </MenuItem>
+
+                {/* Logout Option */}
+                <MenuItem onClick={handleLogout}>
+                  <ListItemIcon>
+                    <LogoutIcon fontSize="small" />
+                  </ListItemIcon>
+                  <Typography variant="body1">Logout</Typography>
+                </MenuItem>
+              </MenuList>
             </Menu>
           </>
         ) : (
           <Button
-            onClick={() =>
-              isLoggedIn
-                ? handleLogout()
-                : dispatch({ type: "SET_AUTHPAGE", payload: true })
-            }
+            onClick={() => dispatch({ type: "SET_AUTHPAGE", payload: true })}
           >
             Login / Signup
           </Button>

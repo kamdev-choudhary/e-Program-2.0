@@ -2,10 +2,12 @@ import { AddRounded, Delete, Edit, SaveRounded } from "@mui/icons-material";
 import {
   Box,
   Button,
-  Divider,
   IconButton,
   List,
   ListItem,
+  ListItemButton,
+  ListItemText,
+  ListSubheader,
   SelectChangeEvent,
   TextField,
   Typography,
@@ -90,45 +92,44 @@ const Topics: React.FC<SubSubjectComponentProps> = ({
   };
   return (
     <Box>
-      <Box
-        sx={{
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "space-between",
-          p: 1,
-          bgcolor: "rgba(126, 87, 194, 0.1)",
-          borderTopRightRadius: 10,
-          borderTopLeftRadius: 10,
-        }}
+      <List
+        subheader={
+          <ListSubheader
+            component="div"
+            sx={{
+              display: "flex",
+              justifyContent: "space-between",
+              alignContent: "center",
+              alignItems: "center",
+              bgcolor: "#608BC1",
+              p: 1,
+              borderRadius: 2,
+            }}
+          >
+            <Typography sx={{ color: "#fff" }}>Topics</Typography>
+            <IconButton onClick={() => setShowAddTopic(true)}>
+              <AddRounded sx={{ color: "#fff" }} />
+            </IconButton>
+          </ListSubheader>
+        }
+        sx={{ height: 350, overflow: "auto", m: 0, pt: 1 }}
       >
-        <Typography variant="h6">Sub Subjects</Typography>
-        <IconButton onClick={() => setShowAddTopic(true)}>
-          <AddRounded />
-        </IconButton>
-      </Box>
-      <Divider />
-      <List sx={{ height: 350, overflow: "auto" }}>
         {topics &&
-          topics.map((subject) => (
+          topics.map((topic) => (
             <ListItem
-              key={subject._id}
-              sx={{
-                justifyContent: "space-between",
-                cursor: "pointer",
-                "&:hover": { bgcolor: "rgba(145, 77, 126, 0.1)" },
-                bgcolor: selectedTopic === subject._id ? "#28844f" : "",
-              }}
-              onClick={() => setSelectedTopic(subject._id)}
+              key={topic._id}
+              onClick={() => setSelectedTopic(topic._id)}
+              sx={{ m: 0, p: 0 }}
             >
-              <Typography>{subject.name}</Typography>
-              <Box>
+              <ListItemButton selected={selectedTopic === topic._id}>
+                <ListItemText primary={topic.name} />
                 <IconButton>
                   <Edit />
                 </IconButton>
                 <IconButton>
                   <Delete />
                 </IconButton>
-              </Box>
+              </ListItemButton>
             </ListItem>
           ))}
       </List>

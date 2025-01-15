@@ -49,7 +49,7 @@ const DefaultLayout: React.FC = () => {
             bgcolor: "#fff",
             borderRadius: 2,
             p: isSmallScreen ? 1 : 2,
-            height: "calc(100vh - 88px)", // Adjust height dynamically (subtract navbar height)
+            height: "calc(100vh - 900px)",
           }}
           component={Paper}
           elevation={6}

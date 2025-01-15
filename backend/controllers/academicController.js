@@ -220,7 +220,6 @@ export async function getSubSubjects(req, res, next) {
 export async function addSubSubject(req, res, next) {
   try {
     const { name, description, subject: _id_subject } = req.body;
-    console.log(_id_subject);
     if (!name || !_id_subject) {
       return res
         .status(400)
@@ -388,7 +387,6 @@ export async function addSubTopic(req, res, next) {
         .json({ message: "Name or Topic is Required", status_code: 0 });
     }
     const topic = await Topic.findById(topicId);
-    console.log(topic);
     if (!topic) {
       res.status(200).json({ message: "Topic not found", status_code: 0 });
     }
