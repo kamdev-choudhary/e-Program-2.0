@@ -1,9 +1,9 @@
 import { v2 as cloudinary } from "cloudinary";
-import multer from "multer";
 import { unlinkSync } from "fs";
 import Book from "../models/book.js"; // Assuming the Book model is in this directory
 import response from "../utils/responses.js";
 import config from "../config/config.js";
+import upload from "../utils/multerConfig.js";
 
 cloudinary.config({
   cloud_name: config.CLOUD_NAME,
@@ -13,27 +13,6 @@ cloudinary.config({
 });
 
 // Setup multer to temporarily store the file in a local folder
-const upload = multer({
-  dest: "uploads/",
-  fileFilter: (req, file, cb) => {
-    const allowedTypes = [
-      "application/pdf",
-      "image/jpeg",
-      "image/jpg",
-      "image/png",
-    ];
-    if (allowedTypes.includes(file.mimetype)) {
-      cb(null, true);
-    } else {
-      cb(
-        new Error(
-          "Invalid file type. Only PDF, JPEG, JPG, and PNG files are allowed."
-        ),
-        false
-      );
-    }
-  },
-});
 
 export const uploadPdf = [
   upload.single("pdf"), // Set multer to expect a file with the field name "pdf"

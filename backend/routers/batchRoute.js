@@ -5,11 +5,11 @@ import {
   getCurrBatch,
   AddBatch,
 } from "../controllers/batchControlller.js";
+import upload from "../utils/multerConfig.js";
 
-router.route("/").get(viewBatch);
-
-router.route("/:id").get(getCurrBatch);
-
-router.route("/addnew").post(AddBatch);
+// Define routes
+router.get("/", viewBatch); // GET all batches
+router.post("/", upload.single("photo"), AddBatch); // POST to add a new batch
+router.get("/:id", getCurrBatch); // GET a specific batch by ID
 
 export default router;

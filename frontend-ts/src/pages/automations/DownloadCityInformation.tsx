@@ -383,7 +383,6 @@ const DownloadCityInformation: React.FC = () => {
       renderCell: (params) => (
         <>
           <Button
-            size="small"
             onClick={() => handleDownloadCityInfo(params.row)}
             startIcon={
               params.row.status === "loading" ? (

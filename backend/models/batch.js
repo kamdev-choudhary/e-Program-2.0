@@ -1,35 +1,58 @@
 import { Schema as _Schema, model } from "mongoose";
 const Schema = _Schema;
 
-const batchSchema = new Schema({
-  batchName: {
-    type: String,
-    required: true,
+const batchSchema = new Schema(
+  {
+    name: {
+      type: String,
+      required: true,
+      trim: true,
+    },
+    class: {
+      type: String,
+      required: true,
+    },
+    stream: {
+      type: String,
+    },
+    session: {
+      type: String,
+    },
+    description: { type: String },
+
+    scholars: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "User",
+      },
+    ],
+    lectures: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Lecture", // Reference to the Lecture model
+      },
+    ],
+    books: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "Book", // Reference to the Book model
+      },
+    ],
+    testTemplates: [
+      {
+        type: Schema.Types.ObjectId,
+        ref: "TestTemplate", // Reference to the TestTemplate model
+      },
+    ],
+    templateImage: {
+      title: String,
+      url: String,
+    },
   },
-  batchClass: String,
-  batchStream: String,
-  batchYear: String,
-  scholars: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "User",
-    },
-  ],
-  examTemplates: [
-    {
-      type: Schema.Types.ObjectId,
-      ref: "ExamTemplate",
-    },
-  ],
-  slots: [
-    {
-      examTemplateId: String,
-      examDate: String,
-      examStartTime: String,
-      examEndTime: String,
-    },
-  ],
-});
+  {
+    timestamps: true,
+  }
+);
 
 const Batch = model("Batch", batchSchema);
 

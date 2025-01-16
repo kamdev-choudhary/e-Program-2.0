@@ -9,7 +9,7 @@ const Books: React.FC = () => {
       </Box>
       <Divider sx={{ my: 2 }} />
       <Box>
-        <TextField label="Search Book" fullWidth size="small" />
+        <TextField label="Search Book" fullWidth />
       </Box>
     </Box>
   );

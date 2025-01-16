@@ -68,6 +68,7 @@ export const CustomModal: React.FC<CustomModalProps> = ({
           height: fullScreen ? "100vh" : height,
           bgcolor: "#f0f3fb",
           p: 1.5,
+          borderRadius: 4,
         }}
       >
         {/* Header section */}

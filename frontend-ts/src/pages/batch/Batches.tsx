@@ -72,7 +72,6 @@ const Batch: React.FC = () => {
       <Divider sx={{ mb: 2, border: "1px solid rgba(0,0,0,03" }} />
       <Box sx={{ mb: 2 }}>
         <TextField
-          size="small"
           value={searchText}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setSearchText(e.target.value)

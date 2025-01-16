@@ -1,41 +1,184 @@
-import { Box, Button, TextField } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import {
+  Box,
+  Button,
+  SelectChangeEvent,
+  TextField,
+  Grid2 as Grid,
+  OutlinedInput,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
+import { Close as CloseIcon } from "@mui/icons-material";
+import axios from "../../../hooks/AxiosInterceptor";
+import React, { useEffect, useRef, useState } from "react";
+import { useGlobalContext } from "../../../contexts/GlobalProvider";
+import CustomDropDown from "../../../components/CustomDropDown";
 
 interface AddBatch {
   setAddBatchModal: (value: boolean) => void;
 }
 
 interface NewBatch {
-  title: string;
+  name: string;
   class: string;
+  description: string;
+  session: string;
+  stream: string;
 }
 
 const AddBatch: React.FC<AddBatch> = ({ setAddBatchModal }) => {
-  const [newBatch, setNewBatch] = useState<NewBatch>({ title: "", class: "" });
+  const { isValidResponse } = useGlobalContext();
+  const [newBatch, setNewBatch] = useState<NewBatch>({
+    name: "",
+    class: "",
+    description: "",
+    session: "",
+    stream: "",
+  });
+  const [classes, setClasses] = useState<any>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const getInitialData = async () => {
+    try {
+      const classResponse = await axios.get("/academic/class");
+      if (isValidResponse(classResponse)) {
+        setClasses(classResponse.data.classes);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      setSelectedFile(event.target.files[0]);
+    }
+  };
+
+  const handleRemoveFile = () => {
+    setSelectedFile(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = ""; // Reset the file input value
+    }
+  };
+
+  const handleSave = async () => {
+    const formData = new FormData();
+    formData.append("name", newBatch.name);
+    formData.append("class", newBatch.class);
+    formData.append("description", newBatch.description);
+    if (selectedFile) {
+      formData.append("photo", selectedFile);
+    }
+    for (let [key, value] of formData.entries()) {
+      console.log(`${key}: ${value}`);
+    }
+
+    try {
+      const response = await axios.post("/batch", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
+      });
+      if (isValidResponse(response)) {
+        alert("Batch added successfully!");
+        setAddBatchModal(false);
+      }
+    } catch (error) {
+      console.error("Failed to save batch:", error);
+    }
+  };
 
   useEffect(() => {
+    getInitialData();
     setAddBatchModal(true);
   }, []);
 
   return (
     <Box
       sx={{
-        maxWidth: 500,
-        minWidth: 400,
         display: "flex",
         flexDirection: "column",
         gap: 1,
       }}
     >
-      <TextField
-        fullWidth
-        value={newBatch?.title}
-        label="Batch Name"
-        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-          setNewBatch((prev) => ({ ...prev, name: e.target.value }))
-        }
-      />
-      <Button fullWidth variant="contained">
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <CustomDropDown
+            data={classes}
+            value={newBatch.class}
+            name="name"
+            dropdownValue="value"
+            onChange={(e: SelectChangeEvent) =>
+              setNewBatch((prev) => ({ ...prev, class: e.target.value }))
+            }
+            label="Batch Class"
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <TextField
+            fullWidth
+            value={newBatch?.name}
+            label="Batch Name"
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setNewBatch((prev) => ({ ...prev, name: e.target.value }))
+            }
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <TextField
+            label="Batch Description"
+            minRows={4}
+            multiline
+            fullWidth
+            value={newBatch.description}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setNewBatch((prev) => ({ ...prev, description: e.target.value }))
+            }
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <OutlinedInput
+            fullWidth
+            inputRef={fileInputRef}
+            type="file"
+            onChange={handleFileChange}
+            inputProps={{ accept: "image/*" }}
+            endAdornment={
+              selectedFile && (
+                <InputAdornment position="end">
+                  <IconButton onClick={handleRemoveFile}>
+                    <CloseIcon />
+                  </IconButton>
+                </InputAdornment>
+              )
+            }
+          />
+        </Grid>
+        <Grid size={{ xs: 6, md: 3 }}>
+          <TextField
+            value={newBatch.session}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setNewBatch((prev) => ({ ...prev, session: e.target.value }))
+            }
+            fullWidth
+            label="Batch Session"
+          />
+        </Grid>
+        <Grid size={{ xs: 6, md: 3 }}>
+          <TextField
+            value={newBatch.stream}
+            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+              setNewBatch((prev) => ({ ...prev, stream: e.target.value }))
+            }
+            fullWidth
+            label="Batch Stream"
+          />
+        </Grid>
+      </Grid>
+
+      <Button fullWidth variant="contained" onClick={handleSave}>
         Save
       </Button>
     </Box>

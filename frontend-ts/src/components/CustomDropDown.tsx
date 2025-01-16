@@ -38,10 +38,9 @@ const CustomDropDown = <T extends Record<string, any>>({
   };
 
   return (
-    <FormControl size="small" required={required} fullWidth>
+    <FormControl required={required} fullWidth>
       <InputLabel>{label}</InputLabel>
       <Select
-        size="small"
         label={label}
         value={value}
         onChange={onChange}

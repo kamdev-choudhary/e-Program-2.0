@@ -341,7 +341,6 @@ const DownloadJeeMainAdmitCard: React.FC = () => {
       renderCell: (params) => (
         <>
           <Button
-            size="small"
             onClick={() => handleDownloadCityInfo(params.row)}
             startIcon={<CloudDownloadRounded />}
             color="success"

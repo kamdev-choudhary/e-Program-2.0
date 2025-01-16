@@ -280,7 +280,6 @@ const AdminUser: React.FC = () => {
           }}
         >
           <TextField
-            size="small"
             fullWidth
             label="Name"
             value={newAdmin.name}
@@ -289,7 +288,6 @@ const AdminUser: React.FC = () => {
             }
           />
           <TextField
-            size="small"
             fullWidth
             label="Email"
             value={newAdmin.email}
@@ -298,7 +296,6 @@ const AdminUser: React.FC = () => {
             }
           />
           <TextField
-            size="small"
             fullWidth
             label="Mobile"
             value={newAdmin.mobile}

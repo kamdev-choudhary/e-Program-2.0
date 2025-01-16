@@ -189,16 +189,21 @@ const AcademicInfo: React.FC = () => {
         width="auto"
         onClose={() => setShowAddClass(false)}
       >
-        <Box sx={{ display: "grid", rowGap: 2, minWidth: 250, pt: 2 }}>
+        <Box
+          sx={{
+            display: "grid",
+            rowGap: 2,
+            minWidth: { sm: 250, md: 350 },
+            pt: 2,
+          }}
+        >
           <TextField
-            size="small"
             fullWidth
             label="Class Name"
             value={newClass.name}
             onChange={(e) => setNewClass({ ...newClass, name: e.target.value })}
           />
           <TextField
-            size="small"
             fullWidth
             label="Value"
             value={newClass.value}
@@ -219,10 +224,16 @@ const AcademicInfo: React.FC = () => {
         width="auto"
         onClose={() => setShowEditClass(false)}
       >
-        <Box sx={{ display: "grid", rowGap: 2, minWidth: 250, pt: 2 }}>
+        <Box
+          sx={{
+            display: "grid",
+            rowGap: 2,
+            minWidth: { sm: 250, md: 350 },
+            pt: 2,
+          }}
+        >
           <TextField
             fullWidth
-            size="small"
             label="Class Name"
             value={selectedClass.name}
             onChange={(e) =>
@@ -230,7 +241,6 @@ const AcademicInfo: React.FC = () => {
             }
           />
           <TextField
-            size="small"
             fullWidth
             label="Value"
             value={selectedClass.value}

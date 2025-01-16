@@ -13,7 +13,8 @@ import {
 import React, { useEffect, useState } from "react";
 import { CustomModal } from "../../../components/CustomModal";
 import AddBatch from "./AddBatch";
-import { useNavigate } from "react-router-dom";
+import EditBatch from "./EditBatch";
+import BatchDetails from "./BatchDetails";
 
 interface Batch {
   _id: string;
@@ -24,9 +25,11 @@ interface Batch {
 }
 
 const Batch: React.FC = () => {
-  const navigate = useNavigate();
   const [batches, setBatches] = useState<Batch[] | null>(null);
   const [addBatchModal, setAddBatchModal] = useState<boolean>(false);
+  const [showBatchDetails, setShowBatchDetails] = useState<boolean>(false);
+  const [showEditBatch, setShowEditBatch] = useState<boolean>(false);
+  const [selectedBatch, setSelectedBatch] = useState<Batch | null>(null);
 
   useEffect(() => {
     // Mock data for batches
@@ -95,9 +98,23 @@ const Batch: React.FC = () => {
                     Price: {batch.price}
                   </Typography>
                 </CardContent>
-                <CardActions sx={{ display: "flex" }}>
+                <CardActions sx={{ display: "flex", gap: 1, flexGrow: 1 }}>
                   <Button
-                    onClick={() => navigate(`/batch/${batch._id}`)}
+                    color="secondary"
+                    variant="contained"
+                    sx={{ flex: 1 }}
+                    onClick={() => {
+                      setSelectedBatch(batch);
+                      setShowEditBatch(true);
+                    }}
+                  >
+                    Edit
+                  </Button>
+                  <Button
+                    onClick={() => {
+                      setSelectedBatch(batch);
+                      setShowBatchDetails(true);
+                    }}
                     sx={{ flex: 1 }}
                     variant="contained"
                   >
@@ -116,12 +133,32 @@ const Batch: React.FC = () => {
 
       {/* Add Batch Modal */}
       <CustomModal
-        width="auto"
-        height="auto"
         open={addBatchModal}
         onClose={() => setAddBatchModal(false)}
+        height="95svh"
       >
         <AddBatch setAddBatchModal={setAddBatchModal} />
+      </CustomModal>
+
+      {/* Edit Batch */}
+
+      <CustomModal
+        open={showEditBatch}
+        onClose={() => setShowEditBatch(false)}
+        header="Edit Batch"
+        height="95svh"
+      >
+        <EditBatch />
+      </CustomModal>
+
+      {/* Batch Details */}
+      <CustomModal
+        open={showBatchDetails}
+        onClose={() => setShowBatchDetails(false)}
+        header="Batch Details"
+        height="95svh"
+      >
+        <BatchDetails batchId={selectedBatch?._id} />
       </CustomModal>
     </Box>
   );

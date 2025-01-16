@@ -114,7 +114,7 @@ const LecturePage: React.FC = () => {
           </Grid>
           <Grid size={{ xs: 6, md: 3 }}></Grid>
           <Grid size={{ xs: 12, xl: 6 }}>
-            <FormControl fullWidth size="small">
+            <FormControl fullWidth>
               <OutlinedInput
                 sx={{ borderRadius: 10 }}
                 onChange={handleFilterTextChange}
@@ -160,7 +160,7 @@ const LecturePage: React.FC = () => {
                           {groupedLectures[chapterName].length}
                         </TableCell>
                         <TableCell>
-                          <IconButton size="small">
+                          <IconButton>
                             {collapsedChapter === chapterName ? (
                               <KeyboardArrowUp />
                             ) : (

@@ -97,7 +97,6 @@ const DoubtDetails: React.FC = () => {
                     key={index}
                     label={tag}
                     variant="outlined"
-                    size="small"
                     sx={{ marginRight: 0.5, marginBottom: 0.5 }}
                   />
                 ))

@@ -168,7 +168,7 @@ const Navbar: React.FC = () => {
                 {/* Profile Option */}
                 <MenuItem onClick={() => navigate("/profile")}>
                   <ListItemIcon>
-                    <PersonIcon fontSize="small" />
+                    <PersonIcon font />
                   </ListItemIcon>
                   <Typography variant="body1">Profile</Typography>
                 </MenuItem>
@@ -180,7 +180,7 @@ const Navbar: React.FC = () => {
                   }
                 >
                   <ListItemIcon>
-                    <LockResetIcon fontSize="small" />
+                    <LockResetIcon font />
                   </ListItemIcon>
                   <Typography variant="body1">Update Password</Typography>
                 </MenuItem>
@@ -188,7 +188,7 @@ const Navbar: React.FC = () => {
                 {/* Logout Option */}
                 <MenuItem onClick={handleLogout}>
                   <ListItemIcon>
-                    <LogoutIcon fontSize="small" />
+                    <LogoutIcon font />
                   </ListItemIcon>
                   <Typography variant="body1">Logout</Typography>
                 </MenuItem>

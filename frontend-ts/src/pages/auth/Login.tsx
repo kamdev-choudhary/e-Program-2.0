@@ -80,7 +80,6 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setUser((prev) => ({ ...prev, id: e.target.value }))
             }
-            size="small"
           />
           <TextField
             fullWidth
@@ -93,7 +92,6 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
               setUser((prev) => ({ ...prev, password: e.target.value }))
             }
             autoComplete=""
-            size="small"
           />
           <Button
             type="submit"
@@ -113,9 +111,7 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
         </Box>
         <Box sx={{ display: "flex" }}>
           <Typography sx={{ mt: 1 }}>Don't have an account. </Typography>
-          <Button size="small" onClick={() => setActiveTab(1)}>
-            Sign up
-          </Button>
+          <Button onClick={() => setActiveTab(1)}>Sign up</Button>
         </Box>
       </Paper>
     </Box>

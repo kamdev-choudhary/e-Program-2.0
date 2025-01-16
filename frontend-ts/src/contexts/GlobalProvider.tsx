@@ -223,7 +223,6 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
           }}
           action={
             <IconButton
-              size="small"
               color="inherit"
               onClick={() => setNotification({ ...notification, open: false })}
             >
