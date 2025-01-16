@@ -20,7 +20,6 @@ const upload = multer({
     fileSize: 100 * 1024 * 1024, // Optional: Limit file size to 100 MB
   },
   fileFilter: (req, file, cb) => {
-    // Accept all file types
     cb(null, true);
   },
 });

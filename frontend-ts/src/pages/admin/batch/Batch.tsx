@@ -9,12 +9,21 @@ import {
   Grid2 as Grid,
   CardActions,
   Button,
+  Paper,
+  CircularProgress,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { CustomModal } from "../../../components/CustomModal";
 import AddBatch from "./AddBatch";
 import EditBatch from "./EditBatch";
 import BatchDetails from "./BatchDetails";
+import axios from "../../../hooks/AxiosInterceptor";
+import { useGlobalContext } from "../../../contexts/GlobalProvider";
+
+interface Image {
+  url: string;
+  title: string;
+}
 
 interface Batch {
   _id: string;
@@ -22,35 +31,32 @@ interface Batch {
   class: string;
   image: string;
   price: string;
+  templateImage: Image;
 }
 
 const Batch: React.FC = () => {
+  const { isValidResponse } = useGlobalContext();
   const [batches, setBatches] = useState<Batch[] | null>(null);
   const [addBatchModal, setAddBatchModal] = useState<boolean>(false);
   const [showBatchDetails, setShowBatchDetails] = useState<boolean>(false);
   const [showEditBatch, setShowEditBatch] = useState<boolean>(false);
   const [selectedBatch, setSelectedBatch] = useState<Batch | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
 
+  const getBatches = async () => {
+    try {
+      const response = await axios.get("/batch");
+      if (isValidResponse(response)) {
+        setBatches(response.data.batches);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    // Mock data for batches
-    setBatches([
-      {
-        _id: "efd8de48Dd78878ddwdw",
-        name: "Batch 1",
-        class: "Class A",
-        image:
-          "https://track2training.com/wp-content/uploads/2022/03/featured-importance-education.png",
-        price: "Free",
-      },
-      {
-        _id: "dewd7ed7adadae7",
-        name: "Batch 2",
-        class: "Class B",
-        image:
-          "https://www.billabonghighschool.com/wp-content/uploads/2024/02/ICSE-Board-.jpg",
-        price: "Free",
-      },
-    ]);
+    getBatches();
   }, []);
 
   return (
@@ -77,15 +83,19 @@ const Batch: React.FC = () => {
         </Button>
       </Box>
       <Divider sx={{ mb: 2 }} />
-      {batches ? (
+      {loading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+          <CircularProgress />
+        </Box>
+      ) : batches ? (
         <Grid container spacing={2}>
           {batches.map((batch, index) => (
-            <Grid size={{ xs: 12, sm: 6, md: 3 }} key={index}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }} key={index}>
               <Card>
                 <CardMedia
                   component="img"
                   height="140"
-                  image={batch.image}
+                  image={batch.templateImage.url}
                   alt={batch.name}
                   sx={{ borderRadius: 2 }}
                 />
@@ -135,9 +145,12 @@ const Batch: React.FC = () => {
       <CustomModal
         open={addBatchModal}
         onClose={() => setAddBatchModal(false)}
-        height="95svh"
+        height="auto"
+        header="Add New Batch"
       >
-        <AddBatch setAddBatchModal={setAddBatchModal} />
+        <Paper>
+          <AddBatch setAddBatchModal={setAddBatchModal} />
+        </Paper>
       </CustomModal>
 
       {/* Edit Batch */}

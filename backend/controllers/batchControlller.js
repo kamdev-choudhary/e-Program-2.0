@@ -1,9 +1,16 @@
 import Batch from "../models/batch.js";
+import cloudinary from "../utils/cloudinaryConfig.js";
+import { promisify } from "util";
+import fs from "fs";
+
+const unlinkAsync = promisify(fs.unlink);
 
 export async function viewBatch(req, res, next) {
   try {
-    const batches = await Batch.find({});
-    res.status(200).json({ batches });
+    const batches = await Batch.find({}).select(
+      "name, description class templateImage"
+    );
+    res.status(200).json({ batches, status_code: 1, message: "Batch Found." });
   } catch (error) {
     next(error);
   }
@@ -12,13 +19,19 @@ export async function viewBatch(req, res, next) {
 export async function AddBatch(req, res, next) {
   try {
     const { name, class: className, description } = req.body;
+    const filePath = req.file.path;
 
-    // Handle file upload if present
+    const uploadResult = await cloudinary.uploader.upload(filePath, {
+      folder: "Batch Template",
+      resource_type: "image",
+    });
+    await unlinkAsync(filePath);
+
     let templateImage = {};
     if (req.file) {
       templateImage = {
         title: req.file.originalname,
-        url: `/uploads/${req.file.filename}`, // Path where file is stored locally
+        url: uploadResult.secure_url, // Path where file is stored locally
       };
     }
 
@@ -37,6 +50,7 @@ export async function AddBatch(req, res, next) {
     res.status(201).json({
       message: "Batch created successfully",
       batch: savedBatch,
+      status_code: 1,
     });
   } catch (error) {
     // Handle errors and pass them to the next middleware
