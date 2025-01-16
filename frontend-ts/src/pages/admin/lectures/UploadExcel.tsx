@@ -115,7 +115,7 @@ const UploadExcel: React.FC = () => {
   ];
 
   return (
-    <Box sx={{ bgcolor: "#fff", borderRadius: 2, p: 2 }}>
+    <Box sx={{ bgcolor: "background.paper", borderRadius: 2, p: 2 }}>
       <Box
         sx={{
           display: "flex",
@@ -149,6 +149,7 @@ const UploadExcel: React.FC = () => {
           startIcon={<CloudUploadRounded />}
           fullWidth
           variant="contained"
+          disabled={!jsonData}
         >
           Upload
         </Button>

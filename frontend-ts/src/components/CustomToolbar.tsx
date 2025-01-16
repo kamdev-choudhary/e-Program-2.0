@@ -82,7 +82,7 @@ export const CustomToolbar: React.FC<CustomToolbarProps> = ({
         sx={{
           borderRadius: 1,
           p: 1,
-          backgroundColor: "#f1f3fb",
+          backgroundColor: "background.paper",
           px: 2,
         }}
       />

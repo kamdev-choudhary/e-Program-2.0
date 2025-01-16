@@ -1,4 +1,4 @@
-import { Box, Paper, Button, Typography, IconButton } from "@mui/material";
+import { Box, Button, Typography, IconButton } from "@mui/material";
 import React, { useMemo, useState } from "react";
 import axios from "../../hooks/AxiosInterceptor";
 import { useDropzone } from "react-dropzone";
@@ -365,7 +365,7 @@ const DownloadJeeMainAdmitCard: React.FC = () => {
   ];
 
   return (
-    <Paper>
+    <Box>
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
         <Box
           {...getRootProps()}
@@ -463,7 +463,7 @@ const DownloadJeeMainAdmitCard: React.FC = () => {
           pageSizeOptions={[10, 30, 50, 100, 200]}
         />
       </Box>
-    </Paper>
+    </Box>
   );
 };
 

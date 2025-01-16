@@ -57,6 +57,12 @@ export const buttons: Button[] = [
         icon: "https://img.icons8.com/3d-fluency/94/teacher-giving-lecture-in-classroom.png",
       },
       {
+        label: "Books",
+        path: "/admin/books",
+        icon: "https://img.icons8.com/3d-fluency/94/books.png",
+        loginRequired: true,
+      },
+      {
         label: "Online Exams",
         path: "/admin/exams/online",
         loginRequired: true,
@@ -118,13 +124,13 @@ export const buttons: Button[] = [
     loginRequired: false,
     options: [
       {
-        label: "JEE City Info Download",
+        label: "JEE City Info",
         path: "/automation/jeemain/cityinfo",
         icon: "https://img.icons8.com/3d-fluency/94/city.png",
         loginRequired: false,
       },
       {
-        label: "JEE Admit Card Download",
+        label: "JEE Admit Card",
         path: "/automation/jeemain/admitcard",
         icon: "https://img.icons8.com/3d-fluency/94/pdf.png",
         loginRequired: false,
@@ -134,7 +140,7 @@ export const buttons: Button[] = [
   {
     label: "Question Bank",
     path: "/question-bank",
-    icon: "",
+    icon: "https://img.icons8.com/3d-fluency/50/help.png",
     loginRequired: true,
     type: "button",
   },

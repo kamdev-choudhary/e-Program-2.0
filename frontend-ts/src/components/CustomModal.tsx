@@ -66,7 +66,7 @@ export const CustomModal: React.FC<CustomModalProps> = ({
           ...style,
           width: fullScreen || isSmallScreen ? "95vw" : width,
           height: fullScreen ? "100vh" : height,
-          bgcolor: "#f0f3fb",
+          bgcolor: "background.paper",
           p: 1.5,
           borderRadius: 4,
         }}

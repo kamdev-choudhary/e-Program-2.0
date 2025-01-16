@@ -13,7 +13,7 @@ import { useNavigate, useLocation, NavigateFunction } from "react-router-dom";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import { useGlobalContext } from "../contexts/GlobalProvider";
-import DummyUserImage from "../assets/images/user.jpg";
+import DummyUserImage from "../assets/user.jpg";
 
 interface Option {
   label: string;
@@ -27,7 +27,6 @@ interface SubMenuProps {
   menu: Option[];
   isOpen: boolean;
   navigate: NavigateFunction;
-  isDarkMode: boolean;
   expanded: boolean;
   location: ReturnType<typeof useLocation>; // Added location as a prop
   isLoggedIn: boolean;
@@ -37,7 +36,6 @@ const SubMenu: React.FC<SubMenuProps> = ({
   menu,
   isOpen,
   navigate,
-  isDarkMode,
   expanded = true,
   location,
   isLoggedIn,
@@ -55,23 +53,10 @@ const SubMenu: React.FC<SubMenuProps> = ({
           >
             <List component="div" disablePadding>
               <ListItemButton
+                selected={location.pathname === submenu.path}
                 sx={{
                   pl: expanded ? 5 : 1.6,
                   borderRadius: 1,
-                  backgroundColor:
-                    location.pathname === submenu.path
-                      ? expanded
-                        ? "rgba(40,132,79,1)"
-                        : "background.primary"
-                      : "transparent",
-                  "&:hover": {
-                    backgroundColor:
-                      location.pathname === submenu.path
-                        ? "rgba(40,132,79,0.6)"
-                        : isDarkMode
-                        ? "rgba(0,0,0,0.6)"
-                        : "#f1f1f1",
-                  },
                 }}
                 onClick={() => {
                   navigate(submenu.path);
@@ -88,7 +73,6 @@ const SubMenu: React.FC<SubMenuProps> = ({
                 {expanded && (
                   <ListItemText
                     sx={{
-                      color: location.pathname === submenu.path ? "white" : "",
                       ml: 1,
                     }}
                     primary={submenu.label}
@@ -109,11 +93,10 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ expanded = true }) => {
-  const { user, deviceTheme, isLoggedIn, profilePicUrl } = useGlobalContext();
+  const { user, isLoggedIn, profilePicUrl } = useGlobalContext();
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
   const location = useLocation();
-  const isDarkMode = deviceTheme === "dark";
 
   const handleMenuClick = (menuName: string) => {
     setOpenMenus((prev) => ({
@@ -131,6 +114,7 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded = true }) => {
           alignItems: "center",
           justifyContent: "center",
           m: 1,
+          gap: 2,
         }}
       >
         <motion.div
@@ -143,45 +127,34 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded = true }) => {
         >
           <Box
             sx={{
-              border: `1px solid ${
-                isDarkMode ? "rgba(255,255,255,0.1)" : "rgba(0,0,0,0.1)"
-              }`,
               height: "100%",
               width: "100%",
               borderRadius: "50%",
-              mb: 1,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              position: "relative",
-              overflow: "hidden",
-              textAlign: "center",
-              fontSize: 40,
-              fontWeight: "bold",
-              color: "#28844f",
               backgroundImage: `url(${profilePicUrl || DummyUserImage})`,
               backgroundSize: "cover", // Ensures the image covers the box
               backgroundPosition: "center", // Centers the image within the box
               backgroundRepeat: "no-repeat", // Prevents tiling of the image
+              mb: 4,
             }}
-          >
-            {/* User initials or other fallback content */}
-          </Box>
+          />
         </motion.div>
 
         {isLoggedIn && expanded && (
-          <>
-            <Typography sx={{ color: isDarkMode ? "#fff" : "#000" }}>
-              {user?.name}
-            </Typography>
-            <Typography sx={{ color: isDarkMode ? "#fff" : "#000" }}>
-              ({user?.role})
-            </Typography>
-          </>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              flexDirection: "column",
+              alignItems: "center",
+            }}
+          >
+            <Typography>{user?.name}</Typography>
+            <Typography>({user?.role})</Typography>
+          </Box>
         )}
       </Box>
       <List>
-        <Divider />
+        <Divider sx={{ mb: 1 }} />
         {buttons.map((page, index) => {
           if (page.loginRequired && !isLoggedIn) return;
 
@@ -195,31 +168,8 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded = true }) => {
                     page.path && navigate(page.path);
                   }
                 }}
-                sx={{
-                  backgroundColor:
-                    location.pathname === page.path
-                      ? expanded
-                        ? "rgba(40,132,79,0.9)"
-                        : isDarkMode
-                        ? "#000"
-                        : "rgba(40,132,79,0.3)"
-                      : "transparent",
-                  "&:hover": {
-                    backgroundColor:
-                      location.pathname === page.path
-                        ? expanded
-                          ? "rgba(40,132,79,0.8)"
-                          : isDarkMode
-                          ? "rgba(0, 0, 0, 0.8)"
-                          : "rgba(40,132,79,0.5)"
-                        : isDarkMode
-                        ? "rgba(255, 255, 255, 0.1)"
-                        : "#f1f1f1",
-                  },
-                  p: 1,
-                  pr: expanded ? 2 : 1,
-                  borderRadius: 1,
-                }}
+                selected={location.pathname === page.path}
+                sx={{ borderRadius: 2 }}
               >
                 {page.icon && (
                   <img src={page.icon} height={25} alt={`${page.label} icon`} />
@@ -229,12 +179,6 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded = true }) => {
                   <>
                     <ListItemText
                       sx={{
-                        color:
-                          location.pathname === page.path
-                            ? "#fff"
-                            : isDarkMode
-                            ? "#fff"
-                            : "#000",
                         ml: 1,
                       }}
                       primary={page.label}
@@ -250,7 +194,6 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded = true }) => {
                   menu={page.options}
                   isOpen={openMenus[page.label]}
                   navigate={navigate}
-                  isDarkMode={isDarkMode}
                   expanded={expanded}
                   location={location}
                   isLoggedIn={isLoggedIn}

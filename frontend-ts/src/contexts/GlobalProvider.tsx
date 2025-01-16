@@ -3,12 +3,15 @@ import React, {
   useContext,
   useEffect,
   useState,
+  useMemo,
   ReactNode,
 } from "react";
 import { JwtPayload, jwtDecode } from "jwt-decode";
 import Loader from "../components/Loader";
 import { Snackbar, Alert, IconButton } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
+import { debounce } from "lodash";
+import { LOCAL_STORAGE_KEYS } from "../constant/constants";
 
 interface GlobalProviderProps {
   children: ReactNode;
@@ -34,7 +37,7 @@ interface Response {
 
 interface GlobalContextType {
   theme: string;
-  toggleTheme: () => void;
+  toggleTheme: (value: string) => void;
   isLoggedIn: boolean;
   user: User | null;
   token: string;
@@ -46,7 +49,6 @@ interface GlobalContextType {
     type?: "success" | "error" | "warning" | "info",
     variant?: "filled" | "outlined" | "standard"
   ) => void;
-  deviceTheme: string;
   profilePicUrl: string;
   setProfilePicUrl: (value: string) => void;
 }
@@ -61,33 +63,32 @@ interface Notification {
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
 
 export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
-  const [user, setUser] = useState<User | null>(null);
-  const [token, setToken] = useState<string>("");
-  const [theme, setTheme] = useState<string>("light");
-  const [isLoaded, setIsLoaded] = useState<boolean>(false);
+  const [authState, setAuthState] = useState({
+    isLoggedIn: false,
+    user: null as User | null,
+    token: "",
+  });
+  const [theme, setTheme] = useState("");
+  const [isLoaded, setIsLoaded] = useState(false);
   const [notification, setNotification] = useState<Notification>({
     open: false,
     message: "",
     type: "success",
     variant: "filled",
   });
-  const [profilePicUrl, setProfilePicUrl] = useState<string>("");
-
-  const deviceTheme = "light";
+  const [profilePicUrl, setProfilePicUrl] = useState("");
 
   useEffect(() => {
-    const storedTheme = localStorage.getItem("theme");
+    const storedTheme = localStorage.getItem(LOCAL_STORAGE_KEYS.THEME);
     const prefersDark = window.matchMedia(
       "(prefers-color-scheme: dark)"
     ).matches;
-
     setTheme(storedTheme || (prefersDark ? "dark" : "light"));
   }, []);
 
   useEffect(() => {
     const initializeAuthState = () => {
-      const storedToken = localStorage.getItem("token");
+      const storedToken = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
       if (!storedToken) {
         setIsLoaded(true);
         return;
@@ -96,26 +97,26 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
       try {
         const decodedToken = jwtDecode<
           JwtPayload & {
+            _id: string;
             name: string;
             role: string;
             email: string;
-            _id: string;
           }
         >(storedToken);
 
-        const decodedUser: User = {
-          _id: decodedToken._id,
-          name: decodedToken.name,
-          role: decodedToken.role,
-          email: decodedToken.email,
-        };
-
-        setIsLoggedIn(true);
-        setToken(storedToken);
-        setUser(decodedUser);
+        setAuthState({
+          isLoggedIn: true,
+          user: {
+            _id: decodedToken._id,
+            name: decodedToken.name,
+            role: decodedToken.role,
+            email: decodedToken.email,
+          },
+          token: storedToken,
+        });
       } catch (error) {
         console.error("Invalid token:", error);
-        localStorage.removeItem("token");
+        localStorage.removeItem(LOCAL_STORAGE_KEYS.TOKEN);
       } finally {
         setIsLoaded(true);
       }
@@ -125,113 +126,146 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
   }, []);
 
   useEffect(() => {
-    document.documentElement.setAttribute("data-theme", theme);
-    localStorage.setItem("theme", theme);
+    const storedTheme = localStorage.getItem(LOCAL_STORAGE_KEYS.THEME);
+    if (storedTheme) {
+      setTheme(storedTheme);
+    } else {
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      setTheme(prefersDark ? "dark" : "light");
+    }
+  }, []);
+
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEYS.THEME, theme);
   }, [theme]);
 
   const handleUserLogin = (data: LoginResponse) => {
     const { token } = data;
 
     try {
-      const decodedToken = jwtDecode<
-        JwtPayload & { name: string; role: string; email: string; _id: string }
-      >(token);
+      const decodedToken = jwtDecode<JwtPayload & User>(token);
+      setAuthState({
+        isLoggedIn: true,
+        user: {
+          _id: decodedToken._id,
+          name: decodedToken.name,
+          role: decodedToken.role,
+          email: decodedToken.email,
+        },
+        token,
+      });
 
-      const decodedUser: User = {
-        _id: decodedToken._id,
-        name: decodedToken.name,
-        role: decodedToken.role,
-        email: decodedToken.email,
-      };
-
-      setIsLoggedIn(true);
-      setUser(decodedUser);
-      setToken(token);
-      localStorage.setItem("user", JSON.stringify(decodedUser));
-      localStorage.setItem("token", token);
+      localStorage.setItem(
+        LOCAL_STORAGE_KEYS.USER,
+        JSON.stringify(decodedToken)
+      );
+      localStorage.setItem(LOCAL_STORAGE_KEYS.TOKEN, token);
     } catch (error) {
       console.error("Invalid token:", error);
     }
   };
 
-  const toggleTheme = () => {
-    setTheme((currentTheme) => (currentTheme === "light" ? "dark" : "light"));
+  const handleLogout = () => {
+    setAuthState({
+      isLoggedIn: false,
+      user: null,
+      token: "",
+    });
+    localStorage.clear();
+  };
+
+  const statusMessages: Record<
+    number,
+    { message: string; type: "success" | "error" | "warning" | "info" }
+  > = {
+    1: { message: "Record Found.", type: "success" },
+    2: { message: "Record Found.", type: "success" },
+    3: { message: "Updated", type: "info" },
+    4: { message: "Record Found.", type: "success" },
+    0: { message: "Deleted Successfully.", type: "error" },
   };
 
   const isValidResponse = (response: Response): boolean => {
-    const status = response.data.status_code;
-    let message = response.data.message;
-    if ([1, 2, 4].includes(status)) {
-      showNotification(message || "Record Found.", "success", "filled");
+    const { status_code } = response.data;
+    const statusConfig = statusMessages[status_code];
+
+    if (statusConfig) {
+      showNotification(
+        response.data.message || statusConfig.message,
+        statusConfig.type
+      );
       return true;
-    } else if ([3].includes(status)) {
-      showNotification(message || "Updated", "info", "filled");
-      return true;
-    } else if (status === 0) {
-      showNotification(message || "Deleted Succesfully.", "error");
-      return true;
-    } else {
-      return false;
     }
+
+    return false;
   };
 
-  const handleLogout = () => {
-    setIsLoggedIn(false);
-    setUser(null);
-    setToken("");
-    localStorage.clear();
-  };
+  const debouncedShowNotification = debounce(
+    (
+      message: string,
+      type: "success" | "error" | "warning" | "info",
+      variant: "filled" | "outlined" | "standard"
+    ) => {
+      setNotification({ open: true, message, type, variant });
+    },
+    300
+  );
 
   const showNotification = (
     message: string,
     type: "success" | "error" | "warning" | "info" = "success",
-    variant: "filled" | "outlined" | "standard" = "outlined"
+    variant: "filled" | "outlined" | "standard" = "filled"
   ) => {
-    setNotification({ open: true, message, type, variant });
+    debouncedShowNotification(message, type, variant);
   };
 
-  const handleClose = (_?: React.SyntheticEvent | Event, reason?: string) => {
+  const handleCloseSnackbar = (
+    _?: React.SyntheticEvent | Event,
+    reason?: string
+  ) => {
     if (reason === "clickaway") return;
     setNotification({ ...notification, open: false });
   };
 
-  if (!isLoaded) {
-    return <Loader />;
-  }
+  const toggleTheme = (value: string) => setTheme(value);
+
+  const contextValue = useMemo(
+    () => ({
+      isValidResponse,
+      theme,
+      toggleTheme,
+      isLoggedIn: authState.isLoggedIn,
+      user: authState.user,
+      token: authState.token,
+      handleUserLogin,
+      handleLogout,
+      showNotification,
+      setProfilePicUrl,
+      profilePicUrl,
+    }),
+    [isValidResponse, theme, authState, profilePicUrl]
+  );
+
+  if (!isLoaded) return <Loader />;
 
   return (
-    <GlobalContext.Provider
-      value={{
-        isValidResponse,
-        theme,
-        toggleTheme,
-        isLoggedIn,
-        user,
-        token,
-        handleUserLogin,
-        handleLogout,
-        showNotification,
-        deviceTheme,
-        setProfilePicUrl,
-        profilePicUrl,
-      }}
-    >
+    <GlobalContext.Provider value={contextValue}>
       {children}
-
       <Snackbar
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         open={notification.open}
-        onClose={handleClose}
+        onClose={handleCloseSnackbar}
         autoHideDuration={3000}
       >
         <Alert
           severity={notification.type}
           variant={notification.variant}
-          sx={{
-            minWidth: 300,
-          }}
+          sx={{ minWidth: 300 }}
           action={
             <IconButton
+              size="small"
               color="inherit"
               onClick={() => setNotification({ ...notification, open: false })}
             >

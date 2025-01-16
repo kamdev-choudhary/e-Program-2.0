@@ -5,7 +5,6 @@ import {
   Card,
   CardActions,
   CardContent,
-  Chip,
   Divider,
   InputAdornment,
   OutlinedInput,
@@ -51,7 +50,7 @@ const DoubtCard: React.FC<{ doubt: Doubt }> = ({ doubt }) => {
     <Card
       sx={{
         margin: 1,
-        padding: 2,
+        padding: 1,
         boxShadow: 4,
       }}
     >
@@ -80,24 +79,6 @@ const DoubtCard: React.FC<{ doubt: Doubt }> = ({ doubt }) => {
         <Typography variant="body1" color="text.secondary" gutterBottom>
           <strong>Subject:</strong> {doubt.subject || "N/A"}
         </Typography>
-
-        <Box sx={{ marginBottom: 2 }}>
-          <strong>Tags:</strong>{" "}
-          {doubt.tags.length > 0 ? (
-            doubt.tags.map((tag, index) => (
-              <Chip
-                key={index}
-                label={tag}
-                variant="outlined"
-                sx={{ marginRight: 0.5 }}
-              />
-            ))
-          ) : (
-            <Typography variant="body2" color="text.secondary">
-              No tags available
-            </Typography>
-          )}
-        </Box>
 
         <Typography variant="body2" color="text.secondary" gutterBottom>
           <strong>Status:</strong> {doubt.status || "Unknown"}
@@ -193,7 +174,7 @@ const Doubts: React.FC = () => {
           Post a new Doubt
         </Button>
       </Box>
-      <Box sx={{ my: 1 }}>
+      <Box sx={{ my: 2 }}>
         <Tabs
           value={activeTab}
           onChange={(_: React.SyntheticEvent, value: number) =>
@@ -227,6 +208,8 @@ const Doubts: React.FC = () => {
       <CustomModal
         open={showNewDoubtModal}
         onClose={() => setShowNewDoubtModal(false)}
+        height="auto"
+        header="New Doubt"
       >
         <NewDoubt setShowNewDoubtModal={setShowNewDoubtModal} />
       </CustomModal>

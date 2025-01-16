@@ -25,8 +25,8 @@ const MasterLayout: React.FC = () => {
           position: "fixed",
           top: 0,
           left: 0,
-          background: "background.paper",
           zIndex: 1,
+          bgcolor: "background.paper",
         }}
       >
         <Header

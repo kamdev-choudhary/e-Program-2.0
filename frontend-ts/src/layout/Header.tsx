@@ -17,6 +17,7 @@ import {
 import { useGlobalContext } from "../contexts/GlobalProvider";
 import { useDispatch } from "react-redux";
 import SiteSetting from "./SiteSetting";
+import { useNavigate } from "react-router-dom";
 
 interface HeaderProps {
   handleButtonClick: () => void;
@@ -31,6 +32,7 @@ const Header: React.FC<HeaderProps> = ({ handleButtonClick, expanded }) => {
   const [themeMenuEl, setThemeMenuEl] = useState<any>(null);
   const openThemeMenu = Boolean(themeMenuEl);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
 
   const toggleFullscreen = () => {
     if (!isFullscreen) {
@@ -55,16 +57,16 @@ const Header: React.FC<HeaderProps> = ({ handleButtonClick, expanded }) => {
   };
 
   return (
-    <Toolbar>
+    <Toolbar sx={{ alignItems: "center", height: "100%" }}>
       <IconButton
         aria-label="open drawer"
         onClick={handleButtonClick}
         edge="start"
-        sx={{ mr: 1, bgcolor: "background.hover" }}
+        sx={{ mr: 1 }}
       >
         {expanded ? <MenuOpenRounded /> : <MenuRounded />}
       </IconButton>
-      <Typography variant="h5">e-Program 2.0</Typography>
+      <Typography variant="h5">e-Program</Typography>
       <Box sx={{ flexGrow: 1 }} />
       <IconButton aria-label="change theme" onClick={handleThemeMenuClick}>
         <SettingsRounded />
@@ -80,8 +82,7 @@ const Header: React.FC<HeaderProps> = ({ handleButtonClick, expanded }) => {
             display: "flex",
             justifyContent: "space-around",
             padding: 2,
-            width: 350,
-            flexDirection: "column",
+            maxWidth: 350,
           }}
         >
           <SiteSetting />
@@ -109,7 +110,7 @@ const Header: React.FC<HeaderProps> = ({ handleButtonClick, expanded }) => {
             onClick={() => dispatch({ type: "SET_AUTHPAGE", payload: true })}
             variant="outlined"
           >
-            Login / Signup
+            Login
           </Button>
         </>
       )}
@@ -137,6 +138,15 @@ const Header: React.FC<HeaderProps> = ({ handleButtonClick, expanded }) => {
             rowGap: 1,
           }}
         >
+          <Button
+            variant="contained"
+            onClick={() => {
+              handleMenuClose();
+              navigate("/profile");
+            }}
+          >
+            Profile
+          </Button>
           <Button
             onClick={() => {
               handleMenuClose();

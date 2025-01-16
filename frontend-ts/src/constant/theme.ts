@@ -2,11 +2,11 @@ import { createTheme, ThemeOptions } from "@mui/material/styles";
 
 const commonThemeOptions: ThemeOptions = {
   shape: {
-    borderRadius: 2, // Default border radius
+    borderRadius: 4, // Standardized border radius
   },
-  spacing: 8, // Default spacing unit (1 unit = 8px, can be customized)
+  spacing: 8, // Default spacing unit (1 unit = 8px)
   typography: {
-    fontFamily: "'Aptos', 'Roboto', 'Arial', sans-serif", // Fonts
+    fontFamily: "'Aptos', 'Roboto', 'Arial', sans-serif",
     fontSize: 13, // Base font size
   },
   components: {
@@ -15,8 +15,7 @@ const commonThemeOptions: ThemeOptions = {
         root: {
           textTransform: "none",
           borderRadius: 4,
-          paddingLeft: 16,
-          paddingRight: 16,
+          padding: "8px 16px", // Standard padding for buttons
         },
       },
     },
@@ -28,19 +27,50 @@ const commonThemeOptions: ThemeOptions = {
         },
       },
     },
-    MuiAppBar: {
+    MuiCard: {
       styleOverrides: {
         root: {
-          backgroundColor: "#f1f3fb", // Example customization
+          borderRadius: 8,
+          padding: 8,
         },
       },
     },
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#f1f3fb", // Default app bar color for light theme
+        },
+      },
+    },
+  },
+};
 
+// Light theme-specific options
+const lightThemeOptions: ThemeOptions = {
+  ...commonThemeOptions,
+  palette: {
+    mode: "light",
+    background: {
+      default: "#f1f3fb",
+      paper: "#ffffff",
+    },
+    text: {
+      primary: "#000",
+      secondary: "#555",
+    },
+    primary: {
+      main: "#1976d2",
+    },
+    secondary: {
+      main: "#dc004e",
+    },
+  },
+  components: {
     MuiDataGrid: {
       styleOverrides: {
         root: {
           borderRadius: 8,
-          border: "1px solid rgba(0, 0, 0,0.3)",
+          border: "1px solid rgba(0, 0, 0, 0.12)",
         },
         columnHeader: {
           backgroundColor: "#608BC1",
@@ -62,62 +92,63 @@ const commonThemeOptions: ThemeOptions = {
   },
 };
 
-const lightThemeOptions: ThemeOptions = {
+// Dark theme-specific options
+const darkThemeOptions: ThemeOptions = {
   ...commonThemeOptions,
   palette: {
-    mode: "light",
-    //   primary: {
-    //     light: "#757de8",
-    //     main: "#344CB7", // Primary color
-    //     dark: "#002984",
-    //     contrastText: "#ffffff", // Text color for contrast
-    //   },
-    //   secondary: {
-    //     light: "#ff7961",
-    //     main: "#f44336", // Secondary color
-    //     dark: "#ba000d",
-    //     contrastText: "#ffffff",
-    //   },
-    //   error: {
-    //     light: "#fddede",
-    //     main: "#f44336",
-    //     dark: "#d32f2f",
-    //     contrastText: "#ffffff",
-    //     extraLight: "#fef4f4", // Additional tone
-    //   },
-    //   warning: {
-    //     light: "#fff8d8",
-    //     main: "#ff9800",
-    //     dark: "#f57c00",
-    //     contrastText: "#000000",
-    //     extraLight: "#fffef4",
-    //   },
-    //   info: {
-    //     light: "#e0f7fa",
-    //     main: "#03a9f4",
-    //     dark: "#0288d1",
-    //     contrastText: "#ffffff",
-    //     extraLight: "#f0fcfd",
-    //   },
-    //   success: {
-    //     light: "#dff5e0",
-    //     main: "#4caf50",
-    //     dark: "#388e3c",
-    //     contrastText: "#ffffff",
-    //     extraLight: "#f4fcf7",
-    //   },
-    //   background: {
-    //     default: "#f5f5f5", // Default background color
-    //     paper: "#ffffff", // Paper background color
-    //   },
-    //   text: {
-    //     primary: "#000000", // Primary text color
-    //     secondary: "#757575", // Secondary text color
-    //     disabled: "#bdbdbd", // Disabled text color
-    //   },
-    //   divider: "#e0e0e0", // Divider color
+    mode: "dark",
+    background: {
+      default: "#121212",
+      paper: "#1d1d1d",
+    },
+    text: {
+      primary: "#fff",
+      secondary: "#bbb",
+    },
+    primary: {
+      main: "#bb86fc",
+    },
+    secondary: {
+      main: "#03dac6",
+    },
+    error: {
+      main: "#cf6679",
+    },
+  },
+  components: {
+    MuiAppBar: {
+      styleOverrides: {
+        root: {
+          backgroundColor: "#1d1d1d", // Dark app bar color
+        },
+      },
+    },
+    MuiDataGrid: {
+      styleOverrides: {
+        root: {
+          borderRadius: 8,
+          border: "1px solid rgba(255, 255, 255, 0.12)",
+        },
+        columnHeader: {
+          backgroundColor: "#3b3b3b",
+          color: "#fff",
+        },
+        columnHeaderTitle: {
+          fontWeight: "bold",
+        },
+        row: {
+          "&:nth-of-type(even)": {
+            backgroundColor: "#1c1c1c", // Zebra striping for dark theme rows
+          },
+        },
+        footerContainer: {
+          backgroundColor: "#222222",
+        },
+      },
+    },
   },
 };
 
 // Create themes
 export const lightTheme = createTheme(lightThemeOptions);
+export const darkTheme = createTheme(darkThemeOptions);

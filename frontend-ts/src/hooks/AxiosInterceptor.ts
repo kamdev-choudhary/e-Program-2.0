@@ -2,8 +2,8 @@ import axios from "axios";
 import { API_URL } from "../config/environment";
 
 const instance = axios.create({
-  baseURL: API_URL, // Replace with your backend URL
-  //   timeout: 10000, // Set timeout as needed
+  baseURL: API_URL,
+  //timeout: 10000,
 });
 
 instance.interceptors.request.use(

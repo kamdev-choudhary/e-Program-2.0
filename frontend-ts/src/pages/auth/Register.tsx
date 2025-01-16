@@ -1,6 +1,5 @@
 import {
   Box,
-  Paper,
   Typography,
   TextField,
   Button,
@@ -90,101 +89,98 @@ const Register: React.FC<RegisterProps> = ({ setActiveTab }) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#f5f5f5",
+        flexDirection: "column",
+        p: 1,
+        maxWidth: 350,
       }}
     >
-      <Paper
-        sx={{
-          p: 4,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          width: "100%",
-          maxWidth: 400,
-          boxShadow: 3,
-        }}
-      >
-        <Typography variant="h5" gutterBottom>
-          Register
-        </Typography>
-        <Box component="form" onSubmit={handleLogin} sx={{ width: "100%" }}>
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Name"
-            value={user.name}
-            onChange={(e) =>
-              setUser((prev) => ({ ...prev, name: e.target.value }))
-            }
-            error={formError.name}
-            helperText={formError.name && "Name is Required"}
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Email"
-            variant="outlined"
-            value={user.email}
-            onChange={(e) =>
-              setUser((prev) => ({ ...prev, email: e.target.value }))
-            }
-            error={formError.email}
-            helperText={formError.email && "Email is Required"}
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Mobile"
-            variant="outlined"
-            value={user.mobile}
-            onChange={(e) => {
-              setUser((prev) => ({ ...prev, mobile: e.target.value }));
-              if (formError.mobile)
-                setFormError((prev) => ({ ...prev, mobile: false }));
-            }}
-            error={formError.mobile}
-            helperText={formError.mobile && "Mobile is Required"}
-            type="tel" // More appropriate input type for phone numbers
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Password"
-            type="password"
-            variant="outlined"
-            value={user.password}
-            onChange={(e) =>
-              setUser((prev) => ({ ...prev, password: e.target.value }))
-            }
-            autoComplete="new-password"
-            error={formError.password}
-            helperText={formError.password && "Password is Required"}
-          />
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            sx={{ mt: 2 }}
-            disabled={loading}
-          >
-            {loading ? (
-              <CircularProgress size={24} color="inherit" />
-            ) : (
-              "Register"
-            )}
-          </Button>
-          {error && (
-            <Typography color="error" variant="body2" sx={{ mt: 2 }}>
-              {error}
-            </Typography>
+      <Typography variant="h5" gutterBottom>
+        Register
+      </Typography>
+      <Box component="form" onSubmit={handleLogin} sx={{ width: "100%" }}>
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Name"
+          value={user.name}
+          onChange={(e) =>
+            setUser((prev) => ({ ...prev, name: e.target.value }))
+          }
+          error={formError.name}
+          helperText={formError.name && "Name is Required"}
+        />
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Email"
+          variant="outlined"
+          value={user.email}
+          onChange={(e) =>
+            setUser((prev) => ({ ...prev, email: e.target.value }))
+          }
+          error={formError.email}
+          helperText={formError.email && "Email is Required"}
+        />
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Mobile"
+          variant="outlined"
+          value={user.mobile}
+          onChange={(e) => {
+            setUser((prev) => ({ ...prev, mobile: e.target.value }));
+            if (formError.mobile)
+              setFormError((prev) => ({ ...prev, mobile: false }));
+          }}
+          error={formError.mobile}
+          helperText={formError.mobile && "Mobile is Required"}
+          type="tel" // More appropriate input type for phone numbers
+        />
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Password"
+          type="password"
+          variant="outlined"
+          value={user.password}
+          onChange={(e) =>
+            setUser((prev) => ({ ...prev, password: e.target.value }))
+          }
+          autoComplete="new-password"
+          error={formError.password}
+          helperText={formError.password && "Password is Required"}
+        />
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          sx={{ mt: 2 }}
+          disabled={loading}
+        >
+          {loading ? (
+            <CircularProgress size={24} color="inherit" />
+          ) : (
+            "Register"
           )}
-        </Box>
-        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-          <Typography sx={{ mr: 1 }}>Already have an account? </Typography>
-          <Button onClick={() => setActiveTab(0)}>Log in</Button>
-        </Box>
-      </Paper>
+        </Button>
+        {error && (
+          <Typography color="error" variant="body2" sx={{ mt: 2 }}>
+            {error}
+          </Typography>
+        )}
+      </Box>
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+        <Typography sx={{ mr: 1 }}>
+          Already have an account?{" "}
+          <span
+            style={{ color: "#914D7E", marginLeft: "10px" }}
+            onClick={() => setActiveTab(0)}
+          >
+            Login
+          </span>
+        </Typography>
+      </Box>
     </Box>
   );
 };

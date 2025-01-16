@@ -1,5 +1,5 @@
-import { Box, CssBaseline, ThemeProvider, Typography } from "@mui/material";
-import { lightTheme } from "./constant/theme.ts";
+import { Box, CssBaseline, LinearProgress, ThemeProvider } from "@mui/material";
+import { darkTheme, lightTheme } from "./constant/theme.ts";
 import { RouterProvider } from "react-router-dom";
 import routes from "./routes.tsx";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
@@ -9,36 +9,38 @@ import useOnlineStatus from "./hooks/useOnlineStatus.ts";
 import { CustomModal } from "./components/CustomModal.tsx";
 import AuthPage from "./pages/auth/AuthPage.tsx";
 import "./i18";
+import { useGlobalContext } from "./contexts/GlobalProvider.tsx";
 
 const App: React.FC = () => {
   const queryClient = new QueryClient();
+  const { theme } = useGlobalContext();
   const online = useSelector((state: RootState) => state.online);
   const showAuth = useSelector((state: RootState) => state.showAuth);
   const dispatch = useDispatch();
 
-  useOnlineStatus();
+  const { loading } = useOnlineStatus();
 
   return (
-    <ThemeProvider theme={lightTheme}>
+    <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>
       <CssBaseline />
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={routes} />
       </QueryClientProvider>
-      {!online && (
-        <Box
-          sx={{
-            position: "fixed",
-            bottom: 0,
-            display: "flex",
-            justifyContent: "center",
-            width: "100vW",
-            bgcolor: "#FF8383",
-            py: 0.5,
-          }}
-        >
-          <Typography sx={{ color: "#640D5F" }}>Backend offline</Typography>
-        </Box>
-      )}
+      <Box
+        sx={{
+          position: "fixed",
+          top: 0,
+          right: 0,
+          zIndex: 100,
+          width: "100vw",
+        }}
+      >
+        <LinearProgress
+          color={online ? "success" : "error"}
+          value={loading ? undefined : 100}
+          variant={loading ? "indeterminate" : "determinate"}
+        />
+      </Box>
       <CustomModal
         open={showAuth}
         header=""

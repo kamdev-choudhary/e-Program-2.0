@@ -1,6 +1,5 @@
 import {
   Box,
-  Paper,
   Typography,
   TextField,
   Button,
@@ -53,67 +52,64 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        backgroundColor: "#f5f5f5",
+        flexDirection: "column",
+        p: 1,
+        maxWidth: 350,
       }}
     >
-      <Paper
-        sx={{
-          p: 4,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          width: "100%",
-          maxWidth: 400,
-          boxShadow: 3,
-        }}
-      >
-        <Typography variant="h5" gutterBottom>
-          Login
-        </Typography>
-        <Box component="form" onSubmit={handleLogin}>
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Email"
-            variant="outlined"
-            value={user.id}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setUser((prev) => ({ ...prev, id: e.target.value }))
-            }
-          />
-          <TextField
-            fullWidth
-            margin="normal"
-            label="Password"
-            type="password"
-            variant="outlined"
-            value={user.password}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setUser((prev) => ({ ...prev, password: e.target.value }))
-            }
-            autoComplete=""
-          />
-          <Button
-            type="submit"
-            variant="contained"
-            color="primary"
-            fullWidth
-            sx={{ mt: 2 }}
-            disabled={loading}
+      <Typography variant="h5" gutterBottom>
+        Login
+      </Typography>
+      <Box component="form" onSubmit={handleLogin}>
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Email"
+          variant="outlined"
+          value={user.id}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setUser((prev) => ({ ...prev, id: e.target.value }))
+          }
+        />
+        <TextField
+          fullWidth
+          margin="normal"
+          label="Password"
+          type="password"
+          variant="outlined"
+          value={user.password}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setUser((prev) => ({ ...prev, password: e.target.value }))
+          }
+          autoComplete=""
+        />
+        <Button
+          type="submit"
+          variant="contained"
+          color="primary"
+          fullWidth
+          sx={{ mt: 2 }}
+          disabled={loading}
+        >
+          {loading ? <CircularProgress size={24} color="inherit" /> : "Login"}
+        </Button>
+        {error && (
+          <Typography color="error" variant="body2" sx={{ mt: 2 }}>
+            {error}
+          </Typography>
+        )}
+      </Box>
+      <Box>
+        <Typography sx={{ mt: 2 }}>
+          Don't have an account.{" "}
+          <span
+            style={{ color: "#914D7E", marginLeft: "10px" }}
+            onClick={() => setActiveTab(1)}
           >
-            {loading ? <CircularProgress size={24} color="inherit" /> : "Login"}
-          </Button>
-          {error && (
-            <Typography color="error" variant="body2" sx={{ mt: 2 }}>
-              {error}
-            </Typography>
-          )}
-        </Box>
-        <Box sx={{ display: "flex" }}>
-          <Typography sx={{ mt: 1 }}>Don't have an account. </Typography>
-          <Button onClick={() => setActiveTab(1)}>Sign up</Button>
-        </Box>
-      </Paper>
+            Login
+          </span>
+        </Typography>
+      </Box>
     </Box>
   );
 };
