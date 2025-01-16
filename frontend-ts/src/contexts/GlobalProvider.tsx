@@ -47,6 +47,8 @@ interface GlobalContextType {
     variant?: "filled" | "outlined" | "standard"
   ) => void;
   deviceTheme: string;
+  profilePicUrl: string;
+  setProfilePicUrl: (value: string) => void;
 }
 
 interface Notification {
@@ -70,6 +72,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     type: "success",
     variant: "filled",
   });
+  const [profilePicUrl, setProfilePicUrl] = useState<string>("");
 
   const deviceTheme = "light";
 
@@ -209,6 +212,8 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
         handleLogout,
         showNotification,
         deviceTheme,
+        setProfilePicUrl,
+        profilePicUrl,
       }}
     >
       {children}

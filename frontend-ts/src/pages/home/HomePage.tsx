@@ -30,7 +30,48 @@ const LanguageSwitcher: React.FC = () => {
       voluptate nesciunt sequi reiciendis harum. Soluta, quas consectetur unde
       laudantium rerum facere assumenda vel, alias magnam earum voluptates
       ipsam. Veniam error, possimus molestias soluta ad, quisquam alias, neque
-      iste vel atque culpa expedita doloribus repudiandae.
+      iste vel atque culpa expedita doloribus repudiandae. Lorem, ipsum dolor
+      sit amet consectetur adipisicing elit. Nesciunt, ipsum reprehenderit fuga,
+      voluptate dolores deserunt aspernatur dicta reiciendis in maxime, corporis
+      repudiandae illo consectetur optio iure repellendus adipisci asperiores
+      nostrum. Cupiditate quisquam rem ducimus sit alias modi quaerat unde.
+      Consectetur ea cumque non nisi iste expedita? Amet molestias aspernatur
+      perferendis error vitae esse velit animi quia, facilis pariatur officiis
+      voluptates. Officiis similique deleniti, nesciunt nostrum provident et
+      laudantium quibusdam, architecto temporibus harum maiores dolorem ea esse
+      beatae asperiores iste sint facilis aut veritatis reprehenderit repellat
+      quam repudiandae. Eligendi, quasi tempore! Quis, incidunt pariatur saepe
+      sequi dolorum fugit soluta autem reprehenderit consequatur ullam porro
+      facilis commodi tempora labore optio, debitis odio voluptatibus cum
+      expedita ea totam. Numquam voluptate rerum maxime sed. Praesentium,
+      perferendis dolores magnam nihil quisquam, iste nemo similique voluptates
+      alias minus libero est quia error blanditiis eaque inventore corporis
+      odit, aspernatur explicabo impedit! Alias explicabo dolores dignissimos id
+      voluptates. Voluptatem natus, numquam, ea labore reiciendis error sequi
+      aperiam assumenda, illum maxime nemo. Optio, quidem. Reiciendis odio harum
+      laboriosam, ut id repudiandae voluptas corrupti suscipit inventore enim ab
+      accusantium est? Fugiat distinctio, dolorem, debitis provident et
+      recusandae, sint unde illum tempora minima minus officiis quasi impedit
+      sapiente placeat enim tenetur facilis sit! Eius tenetur veritatis
+      doloribus pariatur, omnis tempora aliquam. Adipisci, voluptas inventore!
+      Quos cumque nihil dignissimos sit esse tenetur numquam fuga libero magni
+      veritatis! Magnam velit perspiciatis, vel pariatur quos, eum natus in
+      aperiam laboriosam tempora sit, similique corporis? Illum doloremque dicta
+      commodi sunt voluptatum ipsam sit tempora consequuntur quas doloribus
+      repudiandae, exercitationem error repellat quasi recusandae deserunt sed
+      dolorem incidunt natus fuga dignissimos? Nesciunt consequatur a tempore
+      voluptates! At blanditiis corrupti libero vero aperiam, aliquam porro, ad
+      commodi a nemo rem magnam fugiat. Sunt amet perspiciatis consectetur
+      blanditiis aliquam, veniam ullam aut, quidem eveniet hic quibusdam. Dolor,
+      odio. Lorem ipsum dolor sit amet, consectetur adipisicing elit. Unde ipsum
+      minus, amet sit libero optio aut harum rem. Rerum velit natus possimus
+      unde saepe commodi maxime consectetur dignissimos? Sequi, molestias.
+      Tempore numquam, architecto, qui dolore delectus quia debitis, eaque
+      deleniti aliquam laborum dolorum magnam provident! Aspernatur, ea tempore
+      aut maxime recusandae quidem ratione sapiente autem quae nulla qui magni
+      id? Nulla vero cupiditate ullam maiores placeat repellat cum voluptatem id
+      explicabo ipsam repellendus aspernatur, quae dolores error culpa saepe
+      neque.
     </Box>
   );
 };

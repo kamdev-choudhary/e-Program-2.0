@@ -5,7 +5,6 @@ import Loader from "./components/Loader";
 import ProtectedRoute from "./hooks/ProtectedRoute";
 
 // Layout Components
-// const DefaultLayout = lazy(() => import("./layout/DefaultLayout"));
 const AuthPage = lazy(() => import("./pages/auth/AuthPage"));
 import MasterLayout from "./layout/MasterLayout";
 
@@ -40,40 +39,46 @@ const Profile = lazy(() => import("./pages/auth/Profile"));
 const Doubts = lazy(() => import("./pages/doubts/Doubts"));
 const DoubtDetails = lazy(() => import("./pages/doubts/DoubtDetails"));
 const Chat = lazy(() => import("./pages/chat/Chat"));
+const QuestionBank = lazy(() => import("./pages/question/QuestionBank"));
 
-// Admin Route Definitions
+// Common Suspense Wrapper
+const withSuspense = (Component: React.ComponentType) => (
+  <Suspense fallback={<Loader />}>{<Component />}</Suspense>
+);
+
+// Route Definitions
 const adminRoutes = [
-  { path: "/admin/dashboard", element: <Dashboard /> },
-  { path: "/admin/batch", element: <AdminBatch /> },
-  { path: "/admin/academic", element: <Academic /> },
-  { path: "/admin/question-bank", element: <QuestionBankAdmin /> },
-  { path: "/admin/lectures", element: <LecturesAdmin /> },
-  { path: "/admin/exams/online", element: <ExamMasterOnline /> },
-  { path: "/admin/exams/offline", element: <ExamMasterOffline /> },
-  { path: "/admin/users", element: <UserMaster /> },
-  { path: "/admin/batch/edit/:id", element: <EditBatch /> },
+  { path: "/admin/dashboard", element: withSuspense(Dashboard) },
+  { path: "/admin/batch", element: withSuspense(AdminBatch) },
+  { path: "/admin/academic", element: withSuspense(Academic) },
+  { path: "/admin/question-bank", element: withSuspense(QuestionBankAdmin) },
+  { path: "/admin/lectures", element: withSuspense(LecturesAdmin) },
+  { path: "/admin/exams/online", element: withSuspense(ExamMasterOnline) },
+  { path: "/admin/exams/offline", element: withSuspense(ExamMasterOffline) },
+  { path: "/admin/users", element: withSuspense(UserMaster) },
+  { path: "/admin/batch/edit/:id", element: withSuspense(EditBatch) },
 ];
 
-// User Route Definitions
 const userRoutes = [
-  { path: "/lectures", element: <Lectures /> },
-  { path: "/batch", element: <Batches /> },
-  { path: "/batch/:id", element: <BatchDetails /> },
-  { path: "/books", element: <Books /> },
-  { path: "/profile", element: <Profile /> },
-  { path: "/doubts", element: <Doubts /> },
-  { path: "/doubts/:id", element: <DoubtDetails /> },
-  { path: "/chat", element: <Chat /> },
+  { path: "/lectures", element: withSuspense(Lectures) },
+  { path: "/batch", element: withSuspense(Batches) },
+  { path: "/batch/:id", element: withSuspense(BatchDetails) },
+  { path: "/books", element: withSuspense(Books) },
+  { path: "/profile", element: withSuspense(Profile) },
+  { path: "/doubts", element: withSuspense(Doubts) },
+  { path: "/doubts/:id", element: withSuspense(DoubtDetails) },
+  { path: "/chat", element: withSuspense(Chat) },
+  { path: "/question-bank", element: withSuspense(QuestionBank) },
 ];
 
-const publicRoute = [
-  { path: "/", element: <HomePage /> },
-  { path: "/automation/jeemain/cityinfo", element: <DCI /> },
-  { path: "/automation/jeemain/admitcard", element: <DAC /> },
-  { path: "/unauthorized", element: <Unauthorized /> },
+const publicRoutes = [
+  { path: "/", element: withSuspense(HomePage) },
+  { path: "/automation/jeemain/cityinfo", element: withSuspense(DCI) },
+  { path: "/automation/jeemain/admitcard", element: withSuspense(DAC) },
+  { path: "/unauthorized", element: withSuspense(Unauthorized) },
 ];
 
-// Wrap Admin Routes with ProtectedRoute
+// Wrapping Admin Routes with ProtectedRoute
 const protectedAdminRoutes = adminRoutes.map((route) => ({
   ...route,
   element: (
@@ -83,7 +88,7 @@ const protectedAdminRoutes = adminRoutes.map((route) => ({
   ),
 }));
 
-// Wrap User Routes with ProtectedRoute if needed
+// Wrapping User Routes with ProtectedRoute if needed
 const protectedUserRoutes = userRoutes.map((route) => ({
   ...route,
   element: (
@@ -93,30 +98,16 @@ const protectedUserRoutes = userRoutes.map((route) => ({
   ),
 }));
 
-// Public available routes
-const publicRoutes = publicRoute.map((route) => ({
-  ...route,
-  element: <Suspense fallback={<Loader />}>{route.element}</Suspense>,
-}));
-
 // Router Configuration
 const router = createBrowserRouter([
   {
     path: "/auth",
-    element: (
-      <Suspense fallback={<Loader />}>
-        <AuthPage />
-      </Suspense>
-    ),
+    element: withSuspense(AuthPage),
   },
   {
-    element: (
-      <Suspense fallback={<Loader />}>
-        <MasterLayout />
-      </Suspense>
-    ),
+    element: withSuspense(MasterLayout),
     children: [
-      { path: "*", element: <NotFound /> },
+      { path: "*", element: withSuspense(NotFound) },
       ...protectedAdminRoutes,
       ...protectedUserRoutes,
       ...publicRoutes,

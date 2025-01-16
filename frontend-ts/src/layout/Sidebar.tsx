@@ -13,6 +13,7 @@ import { useNavigate, useLocation, NavigateFunction } from "react-router-dom";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import { useGlobalContext } from "../contexts/GlobalProvider";
+import DummyUserImage from "../assets/images/user.jpg";
 
 interface Option {
   label: string;
@@ -108,7 +109,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ expanded = true }) => {
-  const { user, deviceTheme, isLoggedIn } = useGlobalContext();
+  const { user, deviceTheme, isLoggedIn, profilePicUrl } = useGlobalContext();
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
   const location = useLocation();
@@ -152,18 +153,19 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded = true }) => {
               display: "flex",
               alignItems: "center",
               justifyContent: "center",
-              backgroundColor: isDarkMode ? "#424242" : "#f0f0f0",
               position: "relative",
               overflow: "hidden",
               textAlign: "center",
               fontSize: 40,
               fontWeight: "bold",
               color: "#28844f",
-              backgroundSize: "cover",
-              backgroundPosition: "top",
+              backgroundImage: `url(${profilePicUrl || DummyUserImage})`,
+              backgroundSize: "cover", // Ensures the image covers the box
+              backgroundPosition: "center", // Centers the image within the box
+              backgroundRepeat: "no-repeat", // Prevents tiling of the image
             }}
           >
-            {/* User initials or image can go here */}
+            {/* User initials or other fallback content */}
           </Box>
         </motion.div>
 

@@ -10,21 +10,33 @@ import {
   CardActions,
   Button,
   TextField,
+  CircularProgress,
 } from "@mui/material";
 import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
+import { useGlobalContext } from "../../contexts/GlobalProvider";
+import axios from "../../hooks/AxiosInterceptor";
+
+interface Image {
+  url: string;
+  title: string;
+}
 
 interface Batch {
+  _id: string;
   name: string;
   class: string;
   image: string;
   price: string;
+  templateImage: Image;
 }
 
 const Batch: React.FC = () => {
+  const { isValidResponse } = useGlobalContext();
   const navigate = useNavigate();
   const [batches, setBatches] = useState<Batch[] | null>(null);
   const [searchText, setSearchText] = useState<string>("");
+  const [loading, setLoading] = useState<boolean>(true);
 
   const filteredBatches = useMemo(() => {
     if (!batches) return []; // Return an empty array if batches is undefined or null
@@ -36,24 +48,20 @@ const Batch: React.FC = () => {
     });
   }, [searchText, batches]);
 
+  const getBatches = async () => {
+    try {
+      const response = await axios.get("/batch");
+      if (isValidResponse(response)) {
+        setBatches(response.data.batches);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    // Mock data for batches
-    setBatches([
-      {
-        name: "Batch 1",
-        class: "Class A",
-        image:
-          "https://img.freepik.com/free-photo/books-with-graduation-cap-digital-art-style-education-day_23-2151164325.jpg",
-        price: "Free",
-      },
-      {
-        name: "Batch 2",
-        class: "Class B",
-        image:
-          "https://images.shiksha.com/mediadata/shikshaOnline/mailers/2021/naukri-learning/oct/27oct-v3/education.jpg",
-        price: "Free",
-      },
-    ]);
+    getBatches();
   }, []);
 
   return (
@@ -81,7 +89,11 @@ const Batch: React.FC = () => {
           sx={{ borderRadius: 10 }}
         />
       </Box>
-      {filteredBatches ? (
+      {loading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
+          <CircularProgress />
+        </Box>
+      ) : filteredBatches ? (
         <Grid container spacing={2}>
           {filteredBatches.map((batch, index) => (
             <Grid size={{ xs: 12, sm: 6, md: 4, lg: 4 }} key={index}>
@@ -89,8 +101,8 @@ const Batch: React.FC = () => {
                 <CardMedia
                   component="img"
                   height="140"
-                  image={batch.image}
-                  alt={batch.name}
+                  image={batch.templateImage.url}
+                  alt={batch.templateImage.title}
                   sx={{ borderRadius: 2 }}
                 />
                 <CardContent>
@@ -107,7 +119,7 @@ const Batch: React.FC = () => {
                     Join
                   </Button>
                   <Button
-                    onClick={() => navigate(`/batch/sdfdskjhkjhdk`)}
+                    onClick={() => navigate(batch._id)}
                     sx={{ flex: 1 }}
                     variant="contained"
                   >

@@ -132,6 +132,13 @@ export const buttons: Button[] = [
     ],
   },
   {
+    label: "Question Bank",
+    path: "/question-bank",
+    icon: "",
+    loginRequired: true,
+    type: "button",
+  },
+  {
     label: "Doubts",
     path: "/doubts",
     icon: "https://img.icons8.com/3d-fluency/94/view-more.png",
