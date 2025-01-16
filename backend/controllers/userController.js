@@ -45,7 +45,7 @@ export async function updateUserData(req, res, next) {
 export async function getUserbyRole(req, res, next) {
   try {
     const { role } = req.params;
-    const users = await User.find({ role: role });
+    const users = await User.find({ role: role }, { password: 0 });
     res.status(200).json({ status_code: 1, message: "Record Found.", users });
   } catch (error) {
     next(error);

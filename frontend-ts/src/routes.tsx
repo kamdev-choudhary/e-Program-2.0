@@ -5,8 +5,9 @@ import Loader from "./components/Loader";
 import ProtectedRoute from "./hooks/ProtectedRoute";
 
 // Layout Components
-const DefaultLayout = lazy(() => import("./layout/DefaultLayout"));
+// const DefaultLayout = lazy(() => import("./layout/DefaultLayout"));
 const AuthPage = lazy(() => import("./pages/auth/AuthPage"));
+import MasterLayout from "./layout/MasterLayout";
 
 // Public Pages
 const HomePage = lazy(() => import("./pages/home/HomePage"));
@@ -111,7 +112,7 @@ const router = createBrowserRouter([
   {
     element: (
       <Suspense fallback={<Loader />}>
-        <DefaultLayout />
+        <MasterLayout />
       </Suspense>
     ),
     children: [

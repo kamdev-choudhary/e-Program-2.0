@@ -46,6 +46,7 @@ interface GlobalContextType {
     type?: "success" | "error" | "warning" | "info",
     variant?: "filled" | "outlined" | "standard"
   ) => void;
+  deviceTheme: string;
 }
 
 interface Notification {
@@ -69,6 +70,8 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     type: "success",
     variant: "filled",
   });
+
+  const deviceTheme = "light";
 
   useEffect(() => {
     const storedTheme = localStorage.getItem("theme");
@@ -205,6 +208,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
         handleUserLogin,
         handleLogout,
         showNotification,
+        deviceTheme,
       }}
     >
       {children}

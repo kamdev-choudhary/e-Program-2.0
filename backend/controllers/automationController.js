@@ -1,6 +1,9 @@
 import puppeteer from "puppeteer";
 import { v4 as uuid } from "uuid";
-import { captureAndSolveCaptcha } from "../utils/captchaResolver.js";
+import {
+  captureAndSolveCaptcha,
+  captureAnsSolveWithPython,
+} from "../utils/captchaResolver.js";
 import logger from "../utils/logger.js";
 
 const MAX_RETRIES = 3;
@@ -35,7 +38,7 @@ export async function downloadCityInformation(req, res, next) {
   const uniqueId = uuid();
 
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: false,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
@@ -57,11 +60,11 @@ export async function downloadCityInformation(req, res, next) {
     for (let i = 0; i < MAX_RETRIES; i++) {
       try {
         await page.waitForSelector(SELECTORS.captchaImage, { timeout: 5000 });
-        const captchaText = await captureAndSolveCaptcha(
+        const captchaText = await captureAnsSolveWithPython(
           page,
           SELECTORS.captchaImage
         );
-
+        console.log(captchaText);
         await page.type(SELECTORS.captchaInput, captchaText);
         await page.click(SELECTORS.loginButton);
         const error = await page.$eval(
@@ -119,7 +122,7 @@ export async function downloadCityInformation(req, res, next) {
   } catch (error) {
     next(error);
   } finally {
-    await browser.close();
+    // await browser.close();
   }
 }
 export async function downloadAdmitCard(req, res, next) {

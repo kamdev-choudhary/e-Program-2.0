@@ -1,27 +1,7 @@
-import {
-  AdminPanelSettingsRounded,
-  BookOnline,
-  ClassRounded,
-  GroupRounded,
-  HomeRounded,
-  InfoRounded,
-  InsertDriveFileRounded,
-  LibraryBooksRounded,
-  LocationCityRounded,
-  MessageRounded,
-  OnlinePrediction,
-  PausePresentation,
-  PausePresentationRounded,
-  PersonRounded,
-  QuestionAnswer,
-  SchoolRounded,
-} from "@mui/icons-material";
-import React from "react";
-
 interface Option {
   label: string;
   path: string;
-  icon?: React.ElementType;
+  icon?: string;
   role?: string[];
   loginRequired?: boolean;
 }
@@ -29,11 +9,9 @@ interface Option {
 interface Button {
   label: string;
   path?: string;
-  icon: React.ElementType;
+  icon: string;
   type: "button" | "menu";
   options?: Option[];
-  color?: string;
-  size?: number;
   role?: string[];
   loginRequired?: boolean;
 }
@@ -42,18 +20,14 @@ export const buttons: Button[] = [
   {
     label: "Home",
     path: "/",
-    icon: HomeRounded,
-    color: "#28844f",
+    icon: "https://img.icons8.com/3d-fluency/94/home.png",
     type: "button",
-    size: 20,
     loginRequired: false,
   },
   {
     label: "Admin",
-    icon: AdminPanelSettingsRounded,
+    icon: "https://img.icons8.com/3d-fluency/94/user-shield.png",
     type: "menu",
-    color: "#fff",
-    size: 20,
     loginRequired: true,
     role: ["admin"],
 
@@ -62,104 +36,97 @@ export const buttons: Button[] = [
         label: "User Master",
         path: "/admin/users",
         loginRequired: true,
-        icon: PersonRounded,
+        icon: "https://img.icons8.com/3d-fluency/94/manager--v1.png",
       },
       {
         label: "Academic Info",
         path: "/admin/academic",
         loginRequired: true,
-        icon: InfoRounded,
+        icon: "https://img.icons8.com/3d-fluency/94/physics.png",
       },
       {
         label: "Batch",
         path: "/admin/batch",
         loginRequired: true,
-        icon: GroupRounded,
+        icon: "https://img.icons8.com/3d-fluency/94/layers.png",
       },
       {
         label: "Lectures",
         path: "/admin/lectures",
         loginRequired: true,
-        icon: ClassRounded,
+        icon: "https://img.icons8.com/3d-fluency/94/teacher-giving-lecture-in-classroom.png",
       },
       {
         label: "Online Exams",
         path: "/admin/exams/online",
         loginRequired: true,
-        icon: PausePresentation,
+        icon: "https://img.icons8.com/3d-fluency/94/domain.png",
       },
       {
         label: "Offline Exams",
         path: "/admin/exams/offline",
         loginRequired: true,
-        icon: BookOnline,
+        icon: "https://img.icons8.com/3d-fluency/94/document.png",
       },
     ],
   },
   {
     label: "Lectures",
     path: "/lectures",
-    icon: SchoolRounded,
-    color: "#28844f",
+    icon: "https://img.icons8.com/3d-fluency/94/teacher-giving-lecture-in-classroom.png",
     type: "button",
-    size: 20,
     loginRequired: true,
     role: ["admin", "student"],
   },
   {
     label: "Batch",
     path: "/batch",
-    icon: SchoolRounded,
+    icon: "https://img.icons8.com/3d-fluency/94/layers.png",
     type: "button",
     loginRequired: true,
   },
   {
     label: "Books",
     path: "/books",
-    icon: LibraryBooksRounded,
+    icon: "https://img.icons8.com/3d-fluency/94/books.png",
     type: "button",
-    color: "#28844f",
-    size: 20,
     loginRequired: true,
     role: ["admin", "student"],
   },
   {
     label: "Exams",
-    path: "",
-    icon: PausePresentationRounded,
+    icon: "https://img.icons8.com/3d-fluency/94/documents.png",
     type: "menu",
     loginRequired: true,
     options: [
       {
         label: "Online Exam",
         path: "/exams/online",
-        icon: OnlinePrediction,
+        icon: "https://img.icons8.com/3d-fluency/94/domain.png",
       },
       {
         label: "offline Exam",
         path: "/exams/offline",
-        icon: BookOnline,
+        icon: "https://img.icons8.com/3d-fluency/94/document.png",
       },
     ],
   },
   {
     label: "JEE Main",
-    icon: LocationCityRounded,
+    icon: "https://img.icons8.com/3d-fluency/94/signing-a-document.png",
     type: "menu",
-    color: "#fff",
-    size: 20,
     loginRequired: false,
     options: [
       {
         label: "JEE City Info Download",
         path: "/automation/jeemain/cityinfo",
-        icon: LocationCityRounded,
+        icon: "https://img.icons8.com/3d-fluency/94/city.png",
         loginRequired: false,
       },
       {
         label: "JEE Admit Card Download",
         path: "/automation/jeemain/admitcard",
-        icon: InsertDriveFileRounded,
+        icon: "https://img.icons8.com/3d-fluency/94/pdf.png",
         loginRequired: false,
       },
     ],
@@ -167,14 +134,14 @@ export const buttons: Button[] = [
   {
     label: "Doubts",
     path: "/doubts",
-    icon: QuestionAnswer,
+    icon: "https://img.icons8.com/3d-fluency/94/view-more.png",
     loginRequired: true,
     type: "button",
   },
   {
     label: "Chat",
     path: "/chat",
-    icon: MessageRounded,
+    icon: "https://img.icons8.com/isometric/50/chat.png",
     loginRequired: true,
     type: "button",
   },
