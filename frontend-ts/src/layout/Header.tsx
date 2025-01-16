@@ -16,6 +16,7 @@ import {
 } from "@mui/icons-material";
 import { useGlobalContext } from "../contexts/GlobalProvider";
 import { useDispatch } from "react-redux";
+import SiteSetting from "./SiteSetting";
 
 interface HeaderProps {
   handleButtonClick: () => void;
@@ -63,7 +64,7 @@ const Header: React.FC<HeaderProps> = ({ handleButtonClick, expanded }) => {
       >
         {expanded ? <MenuOpenRounded /> : <MenuRounded />}
       </IconButton>
-      {/* <img src={BrandName} alt="Brand Logo" height={25} /> */}
+      <Typography variant="h5">e-Program 2.0</Typography>
       <Box sx={{ flexGrow: 1 }} />
       <IconButton aria-label="change theme" onClick={handleThemeMenuClick}>
         <SettingsRounded />
@@ -83,7 +84,7 @@ const Header: React.FC<HeaderProps> = ({ handleButtonClick, expanded }) => {
             flexDirection: "column",
           }}
         >
-          {/* <SiteSetting /> */}
+          <SiteSetting />
         </Box>
       </Menu>
       <IconButton

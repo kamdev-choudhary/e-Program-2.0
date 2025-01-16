@@ -135,6 +135,7 @@ const UploadExcel: React.FC = () => {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
+            borderRadius: 4,
           }}
         >
           <input {...getInputProps()} />
@@ -143,17 +144,14 @@ const UploadExcel: React.FC = () => {
             Drag & drop an Excel file here, or click to select a file
           </Typography>
         </Box>
-        <Box
-          sx={{ display: "flex", alignItems: "center", flex: 1, maxWidth: 350 }}
+
+        <Button
+          startIcon={<CloudUploadRounded />}
+          fullWidth
+          variant="contained"
         >
-          <Button
-            startIcon={<CloudUploadRounded />}
-            fullWidth
-            variant="contained"
-          >
-            Upload
-          </Button>
-        </Box>
+          Upload
+        </Button>
       </Box>
 
       <Box sx={{ mt: 2 }}>

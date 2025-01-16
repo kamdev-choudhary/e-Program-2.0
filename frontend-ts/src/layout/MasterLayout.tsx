@@ -5,9 +5,9 @@ import { Box, useMediaQuery, Drawer } from "@mui/material";
 import { Outlet } from "react-router-dom";
 
 const MasterLayout: React.FC = () => {
-  const [expanded, setExpanded] = useState(false);
+  const [expanded, setExpanded] = useState<boolean>(true);
   const isSmallScreen = useMediaQuery("(max-width:500px)");
-  const [openDrawer, setOpenDrawer] = useState(false);
+  const [openDrawer, setOpenDrawer] = useState<boolean>(false);
 
   return (
     <Box
@@ -31,11 +31,9 @@ const MasterLayout: React.FC = () => {
       >
         <Header
           handleButtonClick={() => {
-            if (isSmallScreen) {
-              setOpenDrawer((prev) => !prev);
-            } else {
-              setExpanded((prev) => !prev);
-            }
+            isSmallScreen
+              ? setOpenDrawer((prev) => !prev)
+              : setExpanded((prev) => !prev);
           }}
           expanded={expanded}
         />

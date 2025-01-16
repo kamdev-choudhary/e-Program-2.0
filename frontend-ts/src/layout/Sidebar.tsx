@@ -29,6 +29,7 @@ interface SubMenuProps {
   isDarkMode: boolean;
   expanded: boolean;
   location: ReturnType<typeof useLocation>; // Added location as a prop
+  isLoggedIn: boolean;
 }
 
 const SubMenu: React.FC<SubMenuProps> = ({
@@ -38,61 +39,65 @@ const SubMenu: React.FC<SubMenuProps> = ({
   isDarkMode,
   expanded = true,
   location,
+  isLoggedIn,
 }) => {
   return (
     <Collapse in={isOpen} timeout="auto" unmountOnExit>
-      {menu.map((submenu, index) => (
-        <motion.span
-          key={`${submenu.label}-${index}`}
-          whileInView={{ opacity: 1, y: 0 }}
-          initial={{ opacity: 0, y: 40 }}
-          transition={{ duration: 0.2 * index }}
-        >
-          <List component="div" disablePadding>
-            <ListItemButton
-              sx={{
-                pl: expanded ? 5 : 1.6,
-                borderRadius: 1,
-                backgroundColor:
-                  location.pathname === submenu.path
-                    ? expanded
-                      ? "rgba(40,132,79,1)"
-                      : "background.primary"
-                    : "transparent",
-                "&:hover": {
+      {menu.map((submenu, index) => {
+        if (submenu.loginRequired && !isLoggedIn) return;
+        return (
+          <motion.span
+            key={`${submenu.label}-${index}`}
+            whileInView={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: 40 }}
+            transition={{ duration: 0.2 * index }}
+          >
+            <List component="div" disablePadding>
+              <ListItemButton
+                sx={{
+                  pl: expanded ? 5 : 1.6,
+                  borderRadius: 1,
                   backgroundColor:
                     location.pathname === submenu.path
-                      ? "rgba(40,132,79,0.6)"
-                      : isDarkMode
-                      ? "rgba(0,0,0,0.6)"
-                      : "#f1f1f1",
-                },
-              }}
-              onClick={() => {
-                navigate(submenu.path);
-              }}
-            >
-              {submenu.icon && (
-                <img
-                  src={submenu.icon}
-                  height={25}
-                  alt={`${submenu.label} icon`}
-                />
-              )}
+                      ? expanded
+                        ? "rgba(40,132,79,1)"
+                        : "background.primary"
+                      : "transparent",
+                  "&:hover": {
+                    backgroundColor:
+                      location.pathname === submenu.path
+                        ? "rgba(40,132,79,0.6)"
+                        : isDarkMode
+                        ? "rgba(0,0,0,0.6)"
+                        : "#f1f1f1",
+                  },
+                }}
+                onClick={() => {
+                  navigate(submenu.path);
+                }}
+              >
+                {submenu.icon && (
+                  <img
+                    src={submenu.icon}
+                    height={25}
+                    alt={`${submenu.label} icon`}
+                  />
+                )}
 
-              {expanded && (
-                <ListItemText
-                  sx={{
-                    color: location.pathname === submenu.path ? "white" : "",
-                    ml: 1,
-                  }}
-                  primary={submenu.label}
-                />
-              )}
-            </ListItemButton>
-          </List>
-        </motion.span>
-      ))}
+                {expanded && (
+                  <ListItemText
+                    sx={{
+                      color: location.pathname === submenu.path ? "white" : "",
+                      ml: 1,
+                    }}
+                    primary={submenu.label}
+                  />
+                )}
+              </ListItemButton>
+            </List>
+          </motion.span>
+        );
+      })}
     </Collapse>
   );
 };
@@ -103,7 +108,7 @@ interface SidebarProps {
 }
 
 const Sidebar: React.FC<SidebarProps> = ({ expanded = true }) => {
-  const { user, deviceTheme } = useGlobalContext();
+  const { user, deviceTheme, isLoggedIn } = useGlobalContext();
   const [openMenus, setOpenMenus] = useState<Record<string, boolean>>({});
   const navigate = useNavigate();
   const location = useLocation();
@@ -162,7 +167,7 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded = true }) => {
           </Box>
         </motion.div>
 
-        {expanded && (
+        {isLoggedIn && expanded && (
           <>
             <Typography sx={{ color: isDarkMode ? "#fff" : "#000" }}>
               {user?.name}
@@ -175,78 +180,83 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded = true }) => {
       </Box>
       <List>
         <Divider />
-        {buttons.map((page, index) => (
-          <React.Fragment key={index}>
-            <ListItemButton
-              onClick={() => {
-                if (page.options) {
-                  handleMenuClick(page.label);
-                } else {
-                  page.path && navigate(page.path);
-                }
-              }}
-              sx={{
-                backgroundColor:
-                  location.pathname === page.path
-                    ? expanded
-                      ? "rgba(40,132,79,0.9)"
-                      : isDarkMode
-                      ? "#000"
-                      : "rgba(40,132,79,0.3)"
-                    : "transparent",
-                "&:hover": {
+        {buttons.map((page, index) => {
+          if (page.loginRequired && !isLoggedIn) return;
+
+          return (
+            <React.Fragment key={index}>
+              <ListItemButton
+                onClick={() => {
+                  if (page.options) {
+                    handleMenuClick(page.label);
+                  } else {
+                    page.path && navigate(page.path);
+                  }
+                }}
+                sx={{
                   backgroundColor:
                     location.pathname === page.path
                       ? expanded
-                        ? "rgba(40,132,79,0.8)"
+                        ? "rgba(40,132,79,0.9)"
                         : isDarkMode
-                        ? "rgba(0, 0, 0, 0.8)"
-                        : "rgba(40,132,79,0.5)"
-                      : isDarkMode
-                      ? "rgba(255, 255, 255, 0.1)"
-                      : "#f1f1f1",
-                },
-                p: 1,
-                pr: expanded ? 2 : 1,
-                borderRadius: 1,
-              }}
-            >
-              {page.icon && (
-                <img src={page.icon} height={25} alt={`${page.label} icon`} />
-              )}
-
-              {expanded && (
-                <>
-                  <ListItemText
-                    sx={{
-                      color:
-                        location.pathname === page.path
-                          ? "#fff"
+                        ? "#000"
+                        : "rgba(40,132,79,0.3)"
+                      : "transparent",
+                  "&:hover": {
+                    backgroundColor:
+                      location.pathname === page.path
+                        ? expanded
+                          ? "rgba(40,132,79,0.8)"
                           : isDarkMode
-                          ? "#fff"
-                          : "#000",
-                      ml: 1,
-                    }}
-                    primary={page.label}
-                  />
-                  {page.options &&
-                    (openMenus[page.label] ? <ExpandLess /> : <ExpandMore />)}
-                </>
-              )}
-            </ListItemButton>
+                          ? "rgba(0, 0, 0, 0.8)"
+                          : "rgba(40,132,79,0.5)"
+                        : isDarkMode
+                        ? "rgba(255, 255, 255, 0.1)"
+                        : "#f1f1f1",
+                  },
+                  p: 1,
+                  pr: expanded ? 2 : 1,
+                  borderRadius: 1,
+                }}
+              >
+                {page.icon && (
+                  <img src={page.icon} height={25} alt={`${page.label} icon`} />
+                )}
 
-            {page.options && (
-              <SubMenu
-                menu={page.options}
-                isOpen={openMenus[page.label]}
-                navigate={navigate}
-                isDarkMode={isDarkMode}
-                expanded={expanded}
-                location={location}
-              />
-            )}
-          </React.Fragment>
-        ))}
+                {expanded && (
+                  <>
+                    <ListItemText
+                      sx={{
+                        color:
+                          location.pathname === page.path
+                            ? "#fff"
+                            : isDarkMode
+                            ? "#fff"
+                            : "#000",
+                        ml: 1,
+                      }}
+                      primary={page.label}
+                    />
+                    {page.options &&
+                      (openMenus[page.label] ? <ExpandLess /> : <ExpandMore />)}
+                  </>
+                )}
+              </ListItemButton>
+
+              {page.options && (
+                <SubMenu
+                  menu={page.options}
+                  isOpen={openMenus[page.label]}
+                  navigate={navigate}
+                  isDarkMode={isDarkMode}
+                  expanded={expanded}
+                  location={location}
+                  isLoggedIn={isLoggedIn}
+                />
+              )}
+            </React.Fragment>
+          );
+        })}
       </List>
     </Box>
   );

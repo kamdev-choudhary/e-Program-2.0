@@ -11,7 +11,7 @@ const Loader: React.FC<LoaderProps> = ({ open }) => {
     <Backdrop
       open={open || true}
       sx={{
-        zIndex: 1500,
+        zIndex: 15000,
         backdropFilter: "blur(5px)", // Adjust the blur level here
         backgroundColor: "rgba(0, 0, 0, 0.5)", // Optional: Add some transparency to the background
       }}
