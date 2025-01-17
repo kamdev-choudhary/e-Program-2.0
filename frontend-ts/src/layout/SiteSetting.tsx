@@ -11,10 +11,6 @@ const SiteSetting: React.FC = () => {
     <Box>
       <Box
         sx={{
-          p: 1,
-          border: "1px dotted rgba(0,0,0,0.3)",
-          mt: 2,
-          borderRadius: 2,
           width: "100%",
         }}
       >

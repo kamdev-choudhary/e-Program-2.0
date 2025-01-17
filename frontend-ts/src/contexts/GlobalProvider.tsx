@@ -12,6 +12,7 @@ import { Snackbar, Alert, IconButton } from "@mui/material";
 import CancelIcon from "@mui/icons-material/Cancel";
 import { debounce } from "lodash";
 import { LOCAL_STORAGE_KEYS } from "../constant/constants";
+import axios from "../hooks/AxiosInterceptor";
 
 interface GlobalProviderProps {
   children: ReactNode;
@@ -86,6 +87,17 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     setTheme(storedTheme || (prefersDark ? "dark" : "light"));
   }, []);
 
+  const getProfilePic = async (id: string) => {
+    try {
+      const response = await axios.get(`/user/profile-pic/${id}`);
+      if (isValidResponse(response)) {
+        setProfilePicUrl(response.data.profilePicUrl);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     const initializeAuthState = () => {
       const storedToken = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
@@ -101,6 +113,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
             name: string;
             role: string;
             email: string;
+            mobile: string;
           }
         >(storedToken);
 
@@ -111,9 +124,13 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
             name: decodedToken.name,
             role: decodedToken.role,
             email: decodedToken.email,
+            mobile: decodedToken.mobile,
           },
           token: storedToken,
         });
+        if (decodedToken._id) {
+          getProfilePic(decodedToken._id);
+        }
       } catch (error) {
         console.error("Invalid token:", error);
         localStorage.removeItem(LOCAL_STORAGE_KEYS.TOKEN);
@@ -153,6 +170,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
           name: decodedToken.name,
           role: decodedToken.role,
           email: decodedToken.email,
+          mobile: decodedToken.mobile,
         },
         token,
       });

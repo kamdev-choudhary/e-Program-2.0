@@ -1,5 +1,4 @@
-import express, { Router } from "express";
-const router = express(Router);
+import express from "express";
 import {
   getUserData,
   deleteUser,
@@ -7,14 +6,27 @@ import {
   getUserbyRole,
   updateProfilePic,
   updateUserStatus,
+  getProfilePic,
 } from "../controllers/userController.js";
+import upload from "../utils/multerConfig.js";
 
-router.route("/:id").get(getUserData).delete(deleteUser).patch(updateUserData);
+const router = express.Router(); // Correct instantiation of the Router
 
+// User-specific routes
+router
+  .route("/:id")
+  .get(getUserData) // Get user data by ID
+  .delete(deleteUser) // Delete user by ID
+  .patch(updateUserData); // Update user data by ID
+
+// Update user status route
 router.route("/status/:id").patch(updateUserStatus);
 
+// Get users by role route
 router.route("/role/:role").get(getUserbyRole);
 
-router.route("/profile-pic").post(updateProfilePic);
+// Profile picture upload route
+router.post("/profile-pic", upload.single("photo"), updateProfilePic);
+router.route("/profile-pic/:id").get(getProfilePic);
 
 export default router;

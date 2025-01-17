@@ -138,6 +138,27 @@ export const buttons: Button[] = [
     ],
   },
   {
+    label: "Analysis",
+    icon: "https://img.icons8.com/3d-fluency/50/statistics.png",
+    path: "",
+    loginRequired: false,
+    type: "menu",
+    options: [
+      {
+        label: "JEE Main",
+        path: "/analysis/jeemain",
+        icon: "https://img.icons8.com/3d-fluency/50/chart.png",
+        loginRequired: false,
+      },
+      {
+        label: "JEE Advanced",
+        path: "/analysis/jeeadvanced",
+        icon: "https://img.icons8.com/3d-fluency/50/pie-chart.png",
+        loginRequired: false,
+      },
+    ],
+  },
+  {
     label: "Question Bank",
     path: "/question-bank",
     icon: "https://img.icons8.com/3d-fluency/50/help.png",

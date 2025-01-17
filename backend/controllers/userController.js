@@ -1,5 +1,10 @@
 import User from "../models/user.js";
+import cloudinary from "../utils/cloudinaryConfig.js";
 import response from "../utils/responses.js";
+import { promisify } from "util";
+import fs from "fs";
+
+const unlinkAsync = promisify(fs.unlink);
 
 // GETTING USER DATA
 
@@ -76,29 +81,59 @@ export async function deleteUser(req, res, next) {
 // Update Profile Pics
 export async function updateProfilePic(req, res, next) {
   try {
-    const { id, photo } = req.body; // Assuming 'photo' is Base64 or a URL
-    if (!id || !photo) {
-      return res.status(400).json({ message: "Missing id or photo" });
+    const { id } = req.body;
+
+    // Validate ID
+    if (!id) {
+      return res
+        .status(400)
+        .json({ message: "User ID is required", status_code: 0 });
     }
 
-    // Find the user by their ID
-    const user = await User.findById(id);
-    if (!user) {
-      return res.status(404).json({ message: "User not found" });
+    // Validate file
+    if (!req.file) {
+      return res
+        .status(400)
+        .json({ message: "File is required", status_code: 0 });
     }
 
-    // Update the user's profile picture
-    user.photo = photo; // Assuming 'photo' is the field where profile pic is stored
-    await user.save();
+    const filePath = req.file.path;
 
-    return res.status(200).json({
-      message: "Profile picture updated successfully",
-      user,
-      status_code: 1,
+    // Upload file to Cloudinary
+    const response = await cloudinary.uploader.upload(filePath, {
+      folder: "Profile Pics",
+      resource_type: "image",
     });
+
+    // Delete local file after upload
+    await unlinkAsync(filePath);
+
+    if (response) {
+      // Find and update the user
+      const user = await User.findById(id);
+      if (!user) {
+        return res
+          .status(404)
+          .json({ message: "User not found", status_code: 0 });
+      }
+
+      user.photo = response.secure_url;
+      await user.save();
+
+      // Return success response
+      return res.status(200).json({
+        message: "Profile picture updated successfully",
+        status_code: 1,
+        profilePicUrl: response.secure_url,
+      });
+    } else {
+      return res
+        .status(500)
+        .json({ message: "Failed to upload image", status_code: 0 });
+    }
   } catch (error) {
-    console.error(error);
-    next(error);
+    console.error("Error updating profile picture:", error);
+    next(error); // Pass error to the global error handler
   }
 }
 
@@ -126,6 +161,28 @@ export async function updateUserStatus(req, res, next) {
       status: user.status,
       status_code: 3,
     });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getProfilePic(req, res, next) {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: "Id is missing" });
+    }
+    const user = await User.findById(id);
+    console.log(user);
+    if (user) {
+      return res.status(200).json({
+        profilePicUrl: user.photo,
+        message: "Profile Picture found",
+        status_code: 1,
+      });
+    } else {
+      return res.status(200).json({ messgae: "User not found" });
+    }
   } catch (error) {
     next(error);
   }

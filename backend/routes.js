@@ -9,6 +9,7 @@ import doubtRoute from "./routers/doubtRoute.js";
 import userRoute from "./routers/userRouter.js";
 import chatRoute from "./routers/chatRoute.js";
 import automationRoute from "./routers/automationRouter.js";
+import analysisROute from "./routers/analysisRoute.js";
 
 const routes = (app) => {
   app.get("/", (req, res) =>
@@ -25,6 +26,7 @@ const routes = (app) => {
   app.use("/api/v1/doubts", doubtRoute);
   app.use("/api/v1/chat", chatRoute);
   app.use("/api/v1/automation", automationRoute);
+  app.use("/api/v1/analysis", analysisROute);
   app.use("/*", (req, res) =>
     res.status(404).json({ message: "Route not available" })
   );

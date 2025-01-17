@@ -6,3 +6,5 @@ export const MODE = import.meta.env.MODE;
 
 export const BASE_URL = MODE === "development" ? DEV_API : LIVE_API;
 export const API_URL = `${BASE_URL}/api/v1`;
+
+export const TINY_API_KEY = "";

@@ -13,6 +13,9 @@ import {
   MenuOpenRounded,
   MenuRounded,
   SettingsRounded,
+  LogoutRounded,
+  PinRounded,
+  AccountBoxRounded,
 } from "@mui/icons-material";
 import { useGlobalContext } from "../contexts/GlobalProvider";
 import { useDispatch } from "react-redux";
@@ -144,10 +147,12 @@ const Header: React.FC<HeaderProps> = ({ handleButtonClick, expanded }) => {
               handleMenuClose();
               navigate("/profile");
             }}
+            startIcon={<AccountBoxRounded />}
           >
             Profile
           </Button>
           <Button
+            startIcon={<PinRounded />}
             onClick={() => {
               handleMenuClose();
             }}
@@ -157,6 +162,7 @@ const Header: React.FC<HeaderProps> = ({ handleButtonClick, expanded }) => {
             Update Password
           </Button>
           <Button
+            startIcon={<LogoutRounded />}
             fullWidth
             variant="outlined"
             onClick={() => {
