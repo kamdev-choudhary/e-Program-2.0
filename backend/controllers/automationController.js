@@ -38,7 +38,7 @@ export async function downloadCityInformation(req, res, next) {
   const uniqueId = uuid();
 
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
@@ -60,7 +60,7 @@ export async function downloadCityInformation(req, res, next) {
     for (let i = 0; i < MAX_RETRIES; i++) {
       try {
         await page.waitForSelector(SELECTORS.captchaImage, { timeout: 5000 });
-        const captchaText = await captureAnsSolveWithPython(
+        const captchaText = await captureAndSolveCaptcha(
           page,
           SELECTORS.captchaImage
         );
@@ -127,24 +127,8 @@ export async function downloadCityInformation(req, res, next) {
 }
 export async function downloadAdmitCard(req, res, next) {
   try {
-    res.status(200).json({ message: "Success" });
-  } catch (error) {
-    next(error);
-  }
-}
-
-export async function indiaPost(req, res, next) {
-  try {
-    const { id } = req.params;
-    const SELECTORS = {
-      CONSIGMENT: "",
-    };
-    const browser = await puppeteer.launch({
-      headless: true,
-      args: ["--no-sandbox", "--disable-setuid-sandbox"],
-    });
-
-    res.status(200).json({ message: "Success" });
+    console.log(req.body);
+    res.status(200).json({ message: "Success", error: "not found" });
   } catch (error) {
     next(error);
   }

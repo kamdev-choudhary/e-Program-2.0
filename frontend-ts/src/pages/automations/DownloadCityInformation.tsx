@@ -65,7 +65,7 @@ const DownloadCityInformation: React.FC = () => {
         );
       });
       // Request to get the PDF file path
-      const response = await axios.post("/automation/jee", {
+      const response = await axios.post("/automation/jee/cityinfo", {
         drn: scholar.drn,
         day: scholar.day,
         month: scholar.month,

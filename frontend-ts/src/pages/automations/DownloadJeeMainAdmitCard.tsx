@@ -1,4 +1,11 @@
-import { Box, Button, Typography, IconButton } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  IconButton,
+  CircularProgress,
+  Divider,
+} from "@mui/material";
 import React, { useMemo, useState } from "react";
 import axios from "../../hooks/AxiosInterceptor";
 import { useDropzone } from "react-dropzone";
@@ -13,29 +20,56 @@ import {
   TableChartRounded,
 } from "@mui/icons-material";
 import { CustomToolbar } from "../../components/CustomToolbar";
-import { BASE_URL } from "../../config/environment";
-import { downloadJsonToExcel } from "../../hooks/commonfs";
-import { downloadPdfFromUrl } from "../../hooks/commonfs";
+import { downloadJsonToExcel, downloadPdfFromUrl } from "../../hooks/commonfs";
 
 interface ScholarData {
   drn: string;
+  name?: string;
   day: string;
   month: string;
-  application: string;
   year: string;
+  application: string;
+  password?: string;
+  time?: string;
+  shift?: string;
   pdfUrl: string;
   city: string;
   date: string;
+  status?: string;
 }
 
-const DownloadJeeMainAdmitCard: React.FC = () => {
+const DownloadAdmitCard: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [jsonData, setJsonData] = useState<ScholarData[] | null>(null);
+  const [jsonData, setJsonData] = useState<ScholarData[] | null>([
+    {
+      name: "Example",
+      drn: "1234567890",
+      day: "01",
+      month: "05",
+      application: "250310155422",
+      year: "2000",
+      pdfUrl: "",
+      city: "",
+      date: "",
+      password: "Dakshana 123",
+    },
+  ]);
 
   const handleDownloadCityInfo = async (scholar: ScholarData) => {
     try {
+      setJsonData((prevData) => {
+        if (!prevData) return null; // If jsonData is null, maintain null state
+        return prevData.map((item) =>
+          item.drn === scholar.drn
+            ? {
+                ...item,
+                status: "loading",
+              }
+            : item
+        );
+      });
       // Request to get the PDF file path
-      const response = await axios.post("/automation/jee", {
+      const response = await axios.post("/automation/jee/admitcard", {
         drn: scholar.drn,
         day: scholar.day,
         month: scholar.month,
@@ -50,10 +84,11 @@ const DownloadJeeMainAdmitCard: React.FC = () => {
             item.drn === scholar.drn
               ? {
                   ...item,
-                  pdfUrl: `${BASE_URL}${response.data.pdfUrl}`,
+                  pdfUrl: response.data.pdfUrl,
                   date: response.data.date,
                   city: response.data.city,
                   error: "",
+                  status: "fetched",
                 }
               : item
           );
@@ -66,17 +101,27 @@ const DownloadJeeMainAdmitCard: React.FC = () => {
               ? {
                   ...item,
                   error: response.data.error,
+                  status: "idle",
                 }
               : item
           );
         });
-      } else {
-        console.error(
-          "PDF URL or data fields are not available in the response."
-        );
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error downloading the PDF:", error);
+      setJsonData((prevData) => {
+        if (!prevData) return null; // If jsonData is null, maintain null state
+        const errorMessage = error?.response?.data?.message || "Unknown error";
+        return prevData.map((item) =>
+          item.drn === scholar.drn
+            ? {
+                ...item,
+                error: errorMessage,
+                status: "idle",
+              }
+            : item
+        );
+      });
     }
   };
 
@@ -102,7 +147,7 @@ const DownloadJeeMainAdmitCard: React.FC = () => {
       if (jsonData) {
         await Promise.all(
           jsonData.map(async (data) => {
-            if (!data.pdfUrl) {
+            if (!data.pdfUrl && data?.status === "idle") {
               // Fetch the missing PDF URL if not available
               await handleDownloadCityInfo(data);
             }
@@ -157,14 +202,19 @@ const DownloadJeeMainAdmitCard: React.FC = () => {
 
           return {
             drn: rowData.drn || "",
+            name: rowData.name || "",
             day: rowData.day || "",
             month: rowData.month || "",
             year: rowData.year || "",
             application: rowData.application || "",
+            password: rowData.password || "",
             pdfUrl: rowData.pdfUrl || "",
             city: rowData.city || "",
             date: rowData.date || "",
             error: "",
+            status: "idle",
+            time: "",
+            shift: "",
           };
         });
 
@@ -233,6 +283,15 @@ const DownloadJeeMainAdmitCard: React.FC = () => {
     {
       field: "application",
       headerName: "Application #",
+      minWidth: 150,
+      align: "center",
+      headerAlign: "center",
+      editable: true,
+      flex: 1,
+    },
+    {
+      field: "password",
+      headerName: "Password",
       minWidth: 150,
       align: "center",
       headerAlign: "center",
@@ -319,7 +378,7 @@ const DownloadJeeMainAdmitCard: React.FC = () => {
               onClick={() =>
                 downloadPdfFromUrl(
                   params.row.pdfUrl,
-                  `${params.row.drn}_${params.row.application}`
+                  `${params.row.application}`
                 )
               }
             >
@@ -342,10 +401,20 @@ const DownloadJeeMainAdmitCard: React.FC = () => {
         <>
           <Button
             onClick={() => handleDownloadCityInfo(params.row)}
-            startIcon={<CloudDownloadRounded />}
+            startIcon={
+              params.row.status === "loading" ? (
+                <CircularProgress size={20} />
+              ) : (
+                <CloudDownloadRounded />
+              )
+            }
             color="success"
+            disabled={
+              params.row.status === "fetched" || params.row.status === "loading"
+            }
+            variant="outlined"
           >
-            Fetch Data
+            {params.row.status === "loading" ? "loading" : "Fetch Data"}
           </Button>
         </>
       ),
@@ -426,7 +495,11 @@ const DownloadJeeMainAdmitCard: React.FC = () => {
             startIcon={<PictureAsPdfRounded sx={{ color: "#fff" }} />}
             onClick={handleDownloadAddPdf}
             sx={{ px: 3 }}
-            disabled={jsonData?.filter((data) => data.pdfUrl).length === 0}
+            disabled={
+              !jsonData ||
+              jsonData.filter((data) => data?.pdfUrl?.trim() !== "").length ===
+                0
+            }
           >
             Download PDF
           </Button>
@@ -434,13 +507,14 @@ const DownloadJeeMainAdmitCard: React.FC = () => {
             startIcon={<DownloadRounded />}
             variant="contained"
             component="a"
-            href="/sample.xlsx" // Path to the file in the public folder
-            download // Enables direct download
+            href="/jee_main_admit_card_sample.xlsx"
+            download
           >
             Sample
           </Button>
         </Box>
       </Box>
+      <Divider sx={{ mt: 2 }} />
       <Box sx={{ mt: 2 }}>
         <DataGrid
           slots={{
@@ -449,15 +523,6 @@ const DownloadJeeMainAdmitCard: React.FC = () => {
           columns={columns}
           rows={rows}
           loading={isLoading}
-          sx={{
-            "& .MuiDataGrid-columnHeader": {
-              bgcolor: "#28844f", // Light background color for the header
-              color: "primary.contrastText", // Text color for the header
-            },
-            "& .MuiDataGrid-columnHeaderTitle": {
-              fontWeight: "bold", // Make header text bold
-            },
-          }}
           processRowUpdate={handleProcessRowUpdate}
           initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
           pageSizeOptions={[10, 30, 50, 100, 200]}
@@ -467,4 +532,4 @@ const DownloadJeeMainAdmitCard: React.FC = () => {
   );
 };
 
-export default DownloadJeeMainAdmitCard;
+export default DownloadAdmitCard;
