@@ -86,20 +86,14 @@ const publicRoutes = [
 const protectedAdminRoutes = adminRoutes.map((route) => ({
   ...route,
   element: (
-    <Suspense fallback={<Loader />}>
-      <ProtectedRoute requiredRole={["admin"]}>{route.element}</ProtectedRoute>
-    </Suspense>
+    <ProtectedRoute requiredRole={["admin"]}>{route.element}</ProtectedRoute>
   ),
 }));
 
 // Wrapping User Routes with ProtectedRoute if needed
 const protectedUserRoutes = userRoutes.map((route) => ({
   ...route,
-  element: (
-    <Suspense fallback={<Loader />}>
-      <ProtectedRoute>{route.element}</ProtectedRoute>
-    </Suspense>
-  ),
+  element: <ProtectedRoute>{route.element}</ProtectedRoute>,
 }));
 
 // Router Configuration

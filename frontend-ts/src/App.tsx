@@ -1,5 +1,4 @@
 import { Box, CssBaseline, LinearProgress, ThemeProvider } from "@mui/material";
-import { darkTheme, lightTheme } from "./constant/theme.ts";
 import { RouterProvider } from "react-router-dom";
 import routes from "./routes.tsx";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
@@ -10,6 +9,7 @@ import { CustomModal } from "./components/CustomModal.tsx";
 import AuthPage from "./pages/auth/AuthPage.tsx";
 import "./i18";
 import { useGlobalContext } from "./contexts/GlobalProvider.tsx";
+import getTheme from "./constant/customTheme.ts";
 
 const App: React.FC = () => {
   const queryClient = new QueryClient();
@@ -21,7 +21,7 @@ const App: React.FC = () => {
   const { loading } = useOnlineStatus();
 
   return (
-    <ThemeProvider theme={theme === "light" ? lightTheme : darkTheme}>
+    <ThemeProvider theme={getTheme(theme)}>
       <CssBaseline />
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={routes} />

@@ -37,8 +37,8 @@ interface Response {
 }
 
 interface GlobalContextType {
-  theme: string;
-  toggleTheme: (value: string) => void;
+  theme: "light" | "dark";
+  toggleTheme: (value: "light" | "dark") => void;
   isLoggedIn: boolean;
   user: User | null;
   token: string;
@@ -69,7 +69,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     user: null as User | null,
     token: "",
   });
-  const [theme, setTheme] = useState("");
+  const [theme, setTheme] = useState<"light" | "dark">("light");
   const [isLoaded, setIsLoaded] = useState(false);
   const [notification, setNotification] = useState<Notification>({
     open: false,
@@ -80,11 +80,20 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
   const [profilePicUrl, setProfilePicUrl] = useState("");
 
   useEffect(() => {
+    // Check local storage first
     const storedTheme = localStorage.getItem(LOCAL_STORAGE_KEYS.THEME);
-    const prefersDark = window.matchMedia(
-      "(prefers-color-scheme: dark)"
-    ).matches;
-    setTheme(storedTheme || (prefersDark ? "dark" : "light"));
+
+    if (storedTheme) {
+      setTheme(storedTheme as "light" | "dark");
+    } else {
+      // Fallback to system preference if no stored theme
+      const prefersDark = window.matchMedia(
+        "(prefers-color-scheme: dark)"
+      ).matches;
+      const initialTheme = prefersDark ? "dark" : "light";
+      setTheme(initialTheme);
+      localStorage.setItem(LOCAL_STORAGE_KEYS.THEME, initialTheme); // Save initial theme to local storage
+    }
   }, []);
 
   const getProfilePic = async (id: string) => {
@@ -107,15 +116,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
       }
 
       try {
-        const decodedToken = jwtDecode<
-          JwtPayload & {
-            _id: string;
-            name: string;
-            role: string;
-            email: string;
-            mobile: string;
-          }
-        >(storedToken);
+        const decodedToken = jwtDecode<JwtPayload & User>(storedToken);
 
         setAuthState({
           isLoggedIn: true,
@@ -128,6 +129,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
           },
           token: storedToken,
         });
+
         if (decodedToken._id) {
           getProfilePic(decodedToken._id);
         }
@@ -141,22 +143,6 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
 
     initializeAuthState();
   }, []);
-
-  useEffect(() => {
-    const storedTheme = localStorage.getItem(LOCAL_STORAGE_KEYS.THEME);
-    if (storedTheme) {
-      setTheme(storedTheme);
-    } else {
-      const prefersDark = window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      ).matches;
-      setTheme(prefersDark ? "dark" : "light");
-    }
-  }, []);
-
-  useEffect(() => {
-    localStorage.setItem(LOCAL_STORAGE_KEYS.THEME, theme);
-  }, [theme]);
 
   const handleUserLogin = (data: LoginResponse) => {
     const { token } = data;
@@ -247,7 +233,10 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     setNotification({ ...notification, open: false });
   };
 
-  const toggleTheme = (value: string) => setTheme(value);
+  const toggleTheme = (value: "light" | "dark") => {
+    setTheme(value);
+    localStorage.setItem(LOCAL_STORAGE_KEYS.THEME, value);
+  };
 
   const contextValue = useMemo(
     () => ({
