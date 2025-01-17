@@ -1,8 +1,9 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 
-const JEEMainocSchema = new Schema({
+const JeeorcrSchema = new Schema({
   year: { type: String },
+  jee: { type: String },
   institute: { type: String },
   programName: { type: String },
   quota: { type: String },
@@ -12,6 +13,6 @@ const JEEMainocSchema = new Schema({
   closingRank: { type: String },
 });
 
-const JEEMainOC = mongoose.model("JEEMainOC", JEEMainocSchema);
+const Jeeorcr = mongoose.model("Jeeorcr", JeeorcrSchema);
 
-export default JEEMainOC;
+export default Jeeorcr;

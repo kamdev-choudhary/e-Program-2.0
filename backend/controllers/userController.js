@@ -173,7 +173,6 @@ export async function getProfilePic(req, res, next) {
       return res.status(400).json({ message: "Id is missing" });
     }
     const user = await User.findById(id);
-    console.log(user);
     if (user) {
       return res.status(200).json({
         profilePicUrl: user.photo,

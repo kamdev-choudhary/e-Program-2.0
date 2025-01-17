@@ -14,6 +14,7 @@ const NotFound = lazy(() => import("./pages/error/NotFound"));
 const Unauthorized = lazy(() => import("./pages/error/Unauthorized"));
 const DCI = lazy(() => import("./pages/automations/DownloadCityInformation"));
 const DAC = lazy(() => import("./pages/automations/DownloadJeeMainAdmitCard"));
+const JEEMainAnalysis = lazy(() => import("./pages/analysis/JEEmainAnalysis"));
 
 // Admin Pages
 const Dashboard = lazy(() => import("./pages/dashboard/Dashboard"));
@@ -29,6 +30,7 @@ const ExamMasterOffline = lazy(
 );
 const UserMaster = lazy(() => import("./pages/admin/user/UserMaster"));
 const EditBatch = lazy(() => import("./pages/admin/batch/EditBatch"));
+const JEEORCR = lazy(() => import("./pages/admin/analysis/JEEORCR"));
 
 // User Pages
 const Lectures = lazy(() => import("./pages/lectures/Lectures"));
@@ -57,6 +59,7 @@ const adminRoutes = [
   { path: "/admin/exams/offline", element: withSuspense(ExamMasterOffline) },
   { path: "/admin/users", element: withSuspense(UserMaster) },
   { path: "/admin/batch/edit/:id", element: withSuspense(EditBatch) },
+  { path: "/admin/jeeorcr", element: withSuspense(JEEORCR) },
 ];
 
 const userRoutes = [
@@ -75,6 +78,7 @@ const publicRoutes = [
   { path: "/", element: withSuspense(HomePage) },
   { path: "/automation/jeemain/cityinfo", element: withSuspense(DCI) },
   { path: "/automation/jeemain/admitcard", element: withSuspense(DAC) },
+  { path: "/analysis/jeemain", element: withSuspense(JEEMainAnalysis) },
   { path: "/unauthorized", element: withSuspense(Unauthorized) },
 ];
 

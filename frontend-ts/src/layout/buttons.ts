@@ -74,6 +74,12 @@ export const buttons: Button[] = [
         loginRequired: true,
         icon: "https://img.icons8.com/3d-fluency/94/document.png",
       },
+      {
+        label: "JEE OR CR",
+        path: "/admin/jeeorcr",
+        loginRequired: true,
+        icon: "https://img.icons8.com/3d-fluency/50/statistics.png",
+      },
     ],
   },
   {
