@@ -148,33 +148,25 @@ export async function downloadAdmitCard(req, res, next) {
     timing: "#lblTimeofTest",
     centerName: "#lblCentName",
     centerAddress: "#lblCentAdd",
+    downloadPdf: "#i-downloadbtn",
   };
 
   const MAX_RETRIES = 10; // Define a maximum number of retries for captcha attempts.
 
   try {
     const { applicationNumber, password } = req.body;
-    const uniqueId = uuid();
-
     const browser = await puppeteer.launch({
-      headless: true,
+      headless: false,
       args: ["--no-sandbox", "--disable-setuid-sandbox"],
     });
-
     const page = await browser.newPage();
     await page.setViewport({ width: 1920, height: 1080 });
-
-    // Navigate to the website
     await page.goto(website);
-
-    // Input Application Number
     await page.type(SELECTORS.applicationNumber, String(applicationNumber));
-
     let success = false;
-
-    // Attempt to log in with retries for CAPTCHA
     for (let i = 0; i < MAX_RETRIES; i++) {
       try {
+        await page.type(SELECTORS.password, "");
         await page.type(SELECTORS.password, String(password));
         await page.waitForSelector(SELECTORS.captchaImage, { timeout: 10000 });
 
@@ -274,23 +266,6 @@ export async function downloadAdmitCard(req, res, next) {
       }
     }
 
-    // Set up request interception to capture PDF
-    await page.setRequestInterception(true);
-    page.on("response", async (response) => {
-      const url = response.url();
-      if (url.endsWith(".pdf")) {
-        const pdfBuffer = await response.buffer();
-        const pdfPath = `./uploads/${applicationNumber}_${uniqueId}.pdf`;
-        fs.writeFileSync(pdfPath, pdfBuffer);
-
-        console.log("PDF saved successfully:", pdfPath);
-        res.status(200).json({
-          message: "PDF downloaded successfully",
-          filePath: pdfPath,
-        });
-      }
-    });
-
     // Extract additional information
     const date = await page.$eval(SELECTORS.examDate, (el) => el.innerText);
     const shift = await page.$eval(SELECTORS.shift, (el) => el.innerText);
@@ -310,6 +285,10 @@ export async function downloadAdmitCard(req, res, next) {
       center,
       address,
     });
+
+    await page.click(SELECTORS.downloadPdf);
+
+    await new Promise((resolve) => setTimeout(resolve, 10000));
 
     await browser.close();
   } catch (error) {

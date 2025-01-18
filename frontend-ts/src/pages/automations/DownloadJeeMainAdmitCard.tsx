@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   Typography,
-  IconButton,
   CircularProgress,
   Divider,
 } from "@mui/material";
@@ -15,26 +14,17 @@ import {
   CloudDownloadRounded,
   CloudUploadRounded,
   DownloadRounded,
-  LaunchRounded,
-  PictureAsPdfRounded,
   TableChartRounded,
 } from "@mui/icons-material";
 import { CustomToolbar } from "../../components/CustomToolbar";
-import { downloadJsonToExcel, downloadPdfFromUrl } from "../../hooks/commonfs";
+import { downloadJsonToExcel } from "../../hooks/commonfs";
 
 interface ScholarData {
   drn: string;
-  name?: string;
-  day: string;
-  month: string;
-  year: string;
   application: string;
   password?: string;
   time?: string;
-
-  pdfUrl: string;
   city: string;
-
   status?: string;
   date?: string;
   shift?: string;
@@ -45,20 +35,7 @@ interface ScholarData {
 
 const DownloadAdmitCard: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [jsonData, setJsonData] = useState<ScholarData[] | null>([
-    {
-      name: "Example",
-      drn: "1234567890",
-      day: "01",
-      month: "05",
-      application: "250310155422",
-      year: "2000",
-      pdfUrl: "",
-      city: "",
-      date: "",
-      password: "Dakshana 123",
-    },
-  ]);
+  const [jsonData, setJsonData] = useState<ScholarData[] | null>(null);
 
   const handleDownloadCityInfo = async (scholar: ScholarData) => {
     try {
@@ -87,9 +64,7 @@ const DownloadAdmitCard: React.FC = () => {
             item.drn === scholar.drn
               ? {
                   ...item,
-                  pdfUrl: response.data.pdfUrl,
                   date: response.data.date,
-                  city: response.data.city,
                   error: "",
                   status: "fetched",
                   shift: response.data.shift,
@@ -132,29 +107,12 @@ const DownloadAdmitCard: React.FC = () => {
     }
   };
 
-  const handleDownloadAddPdf = async () => {
-    try {
-      if (jsonData) {
-        // Use Promise.all to wait for all promises to resolve
-        await Promise.all(
-          jsonData.map(async (data) => {
-            if (data.pdfUrl) {
-              await handleDownloadCityInfo(data);
-            }
-          })
-        );
-      }
-    } catch (error) {
-      console.error("Error handling download info:", error);
-    }
-  };
-
   const handleDownloadInfo = async () => {
     try {
       if (jsonData) {
         await Promise.all(
           jsonData.map(async (data) => {
-            if (!data.pdfUrl && data?.status === "idle") {
+            if (!data.center && data?.status === "idle") {
               // Fetch the missing PDF URL if not available
               await handleDownloadCityInfo(data);
             }
@@ -209,13 +167,8 @@ const DownloadAdmitCard: React.FC = () => {
 
           return {
             drn: rowData.drn || "",
-            name: rowData.name || "",
-            day: rowData.day || "",
-            month: rowData.month || "",
-            year: rowData.year || "",
             application: rowData.application || "",
             password: rowData.password || "",
-            pdfUrl: rowData.pdfUrl || "",
             city: rowData.city || "",
             date: rowData.date || "",
             error: "",
@@ -335,62 +288,7 @@ const DownloadAdmitCard: React.FC = () => {
       editable: true,
       flex: 1,
     },
-    {
-      field: "city",
-      headerName: "City",
-      minWidth: 150,
-      align: "center",
-      headerAlign: "center",
-      flex: 1,
-    },
-    {
-      field: "date",
-      headerName: "Exam Date",
-      flex: 1,
-      minWidth: 150,
-      align: "center",
-      headerAlign: "center",
-    },
-    {
-      field: "d",
-      headerName: "PDF",
-      align: "center",
-      headerAlign: "center",
-      minWidth: 200,
-      flex: 1,
-      renderCell: (params) => (
-        <>
-          <Box
-            sx={{ display: "flex", gap: 1, justifyContent: "center", mt: 0.5 }}
-          >
-            {/* Open PDF Button */}
-            <IconButton
-              component="a"
-              href={params.row.pdfUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              disabled={!params.row.pdfUrl}
-            >
-              <LaunchRounded sx={{ color: params.row.pdfUrl ? "blue" : "" }} />
-            </IconButton>
-            {/* Download PDF Button */}
-            <IconButton
-              disabled={!params.row.pdfUrl}
-              onClick={() =>
-                downloadPdfFromUrl(
-                  params.row.pdfUrl,
-                  `${params.row.application}`
-                )
-              }
-            >
-              <DownloadRounded
-                sx={{ color: params.row.pdfUrl ? "green" : "" }}
-              />
-            </IconButton>
-          </Box>
-        </>
-      ),
-    },
+
     {
       field: "pdfDownload",
       headerName: "Data",
@@ -472,7 +370,7 @@ const DownloadAdmitCard: React.FC = () => {
             startIcon={<CloudDownloadRounded sx={{ color: "#fff" }} />}
           >
             {isLoading ? "Loading..." : "Fetch Data"} (
-            {jsonData?.filter((data) => !data.pdfUrl).length})
+            {jsonData?.filter((data) => !data.center).length})
           </Button>
           <Button
             startIcon={<TableChartRounded />}
@@ -488,22 +386,9 @@ const DownloadAdmitCard: React.FC = () => {
               }
             }}
           >
-            Download Excel ({jsonData?.filter((data) => data.pdfUrl).length})
+            Download Excel ({jsonData?.filter((data) => data.center).length})
           </Button>
-          <Button
-            variant="contained"
-            color="success"
-            startIcon={<PictureAsPdfRounded sx={{ color: "#fff" }} />}
-            onClick={handleDownloadAddPdf}
-            sx={{ px: 3 }}
-            disabled={
-              !jsonData ||
-              jsonData.filter((data) => data?.pdfUrl?.trim() !== "").length ===
-                0
-            }
-          >
-            Download PDF
-          </Button>
+
           <Button
             startIcon={<DownloadRounded />}
             variant="contained"
