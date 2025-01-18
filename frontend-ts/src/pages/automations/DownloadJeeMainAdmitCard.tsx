@@ -31,11 +31,16 @@ interface ScholarData {
   application: string;
   password?: string;
   time?: string;
-  shift?: string;
+
   pdfUrl: string;
   city: string;
-  date: string;
+
   status?: string;
+  date?: string;
+  shift?: string;
+  timing?: string;
+  center?: string;
+  address?: string;
 }
 
 const DownloadAdmitCard: React.FC = () => {
@@ -71,13 +76,11 @@ const DownloadAdmitCard: React.FC = () => {
       // Request to get the PDF file path
       const response = await axios.post("/automation/jee/admitcard", {
         drn: scholar.drn,
-        day: scholar.day,
-        month: scholar.month,
-        year: scholar.year,
         applicationNumber: scholar.application,
+        password: scholar.password,
       });
 
-      if (response.data?.pdfUrl) {
+      if (response.data.success) {
         setJsonData((prevData) => {
           if (!prevData) return null; // If jsonData is null, maintain null state
           return prevData.map((item) =>
@@ -89,6 +92,10 @@ const DownloadAdmitCard: React.FC = () => {
                   city: response.data.city,
                   error: "",
                   status: "fetched",
+                  shift: response.data.shift,
+                  timing: response.data.timing,
+                  center: response.data.center,
+                  address: response.data.address,
                 }
               : item
           );
@@ -215,6 +222,9 @@ const DownloadAdmitCard: React.FC = () => {
             status: "idle",
             time: "",
             shift: "",
+            timing: "",
+            center: "",
+            address: "",
           };
         });
 
@@ -290,8 +300,8 @@ const DownloadAdmitCard: React.FC = () => {
       flex: 1,
     },
     {
-      field: "name",
-      headerName: "Name",
+      field: "timing",
+      headerName: "Timimg",
       minWidth: 200,
       align: "center",
       headerAlign: "center",
@@ -299,8 +309,8 @@ const DownloadAdmitCard: React.FC = () => {
       flex: 1,
     },
     {
-      field: "day",
-      headerName: "Day",
+      field: "date",
+      headerName: "Date",
       minWidth: 80,
       align: "center",
       headerAlign: "center",
@@ -308,8 +318,8 @@ const DownloadAdmitCard: React.FC = () => {
       flex: 1,
     },
     {
-      field: "month",
-      headerName: "Month",
+      field: "shift",
+      headerName: "Shift",
       minWidth: 80,
       align: "center",
       headerAlign: "center",
@@ -317,8 +327,8 @@ const DownloadAdmitCard: React.FC = () => {
       flex: 1,
     },
     {
-      field: "year",
-      headerName: "Year",
+      field: "address",
+      headerName: "Address",
       minWidth: 100,
       align: "center",
       headerAlign: "center",

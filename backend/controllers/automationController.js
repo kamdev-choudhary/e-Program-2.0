@@ -5,8 +5,10 @@ import {
   captureAnsSolveWithPython,
 } from "../utils/captchaResolver.js";
 import logger from "../utils/logger.js";
+import fs from "fs";
+import path from "path";
 
-const MAX_RETRIES = 3;
+const MAX_RETRIES = 10;
 
 export async function downloadCityInformation(req, res, next) {
   const cityInfoSite =
@@ -64,7 +66,6 @@ export async function downloadCityInformation(req, res, next) {
           page,
           SELECTORS.captchaImage
         );
-        console.log(captchaText);
         await page.type(SELECTORS.captchaInput, captchaText);
         await page.click(SELECTORS.loginButton);
         const error = await page.$eval(
@@ -125,10 +126,192 @@ export async function downloadCityInformation(req, res, next) {
     // await browser.close();
   }
 }
+
 export async function downloadAdmitCard(req, res, next) {
+  // const website =
+  //   "https://cnr.nic.in/emsadmitcard/downloadadmitcard/LoginPWD.aspx?enc=Ei4cajBkK1gZSfgr53ImFVj34FesvYg1WX45sPjGXBpvTjwcqEoJcZ5VnHgmpgmK";
+
+  const website =
+    "https://examinationservices.nic.in/JEEMain2025/downloadadmitcard/LoginPWD.aspx?enc=Ei4cajBkK1gZSfgr53ImFVj34FesvYg1WX45sPjGXBpvTjwcqEoJcZ5VnHgmpgmK";
+
+  const SELECTORS = {
+    applicationNumber: 'input[name="ctl00$ContentPlaceHolder1$txtRegno"]',
+    password: 'input[name="ctl00$ContentPlaceHolder1$txtPassword"]',
+    captchaInput: 'input[name="ctl00$ContentPlaceHolder1$txtsecpin"]',
+    captchaImage: "#ctl00_ContentPlaceHolder1_captchaimage",
+    loginButton: '[name="ctl00$ContentPlaceHolder1$btnsignin"]',
+    errorSelector: "#ctl00_ContentPlaceHolder1_lblerror1",
+    paperSelector: '[name="ctl00$ContentPlaceHolder1$ddlExamSession"]',
+    loginButton2: '[name="ctl00$ContentPlaceHolder1$btnDownloadAdmitCard"]',
+    examDate: "#lblExamDate",
+    shift: "#lblShift",
+    timing: "#lblTimeofTest",
+    centerName: "#lblCentName",
+    centerAddress: "#lblCentAdd",
+  };
+
+  const MAX_RETRIES = 10; // Define a maximum number of retries for captcha attempts.
+
   try {
-    console.log(req.body);
-    res.status(200).json({ message: "Success", error: "not found" });
+    const { applicationNumber, password } = req.body;
+    const uniqueId = uuid();
+
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    });
+
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1920, height: 1080 });
+
+    // Navigate to the website
+    await page.goto(website);
+
+    // Input Application Number
+    await page.type(SELECTORS.applicationNumber, String(applicationNumber));
+
+    let success = false;
+
+    // Attempt to log in with retries for CAPTCHA
+    for (let i = 0; i < MAX_RETRIES; i++) {
+      try {
+        await page.type(SELECTORS.password, String(password));
+        await page.waitForSelector(SELECTORS.captchaImage, { timeout: 10000 });
+
+        // Capture and solve CAPTCHA
+        const captchaText = await captureAndSolveCaptcha(
+          page,
+          SELECTORS.captchaImage
+        );
+
+        // Enter CAPTCHA
+        await page.type(SELECTORS.captchaInput, captchaText);
+
+        // Click Login
+        await page.click(SELECTORS.loginButton);
+        await page.waitForNetworkIdle({
+          idleTime: 500,
+          timeout: 10000,
+        });
+
+        // Check for error
+        const error = await page.$eval(
+          SELECTORS.errorSelector,
+          (el) => el.innerText
+        );
+
+        if (
+          error &&
+          error.includes("CAPTCHA did not match. Please enter correct CAPTCHA.")
+        ) {
+          console.log(`Attempt ${i + 1}: CAPTCHA did not match. Retrying...`);
+          continue;
+        }
+
+        // Wait for the success panel
+        const successSelector = await page.waitForSelector(
+          SELECTORS.paperSelector,
+          { timeout: 4000 }
+        );
+
+        if (successSelector) {
+          success = true;
+          break;
+        }
+      } catch (error) {
+        console.log(`Attempt ${i + 1} failed: ${error.message}`);
+      }
+    }
+
+    if (!success) {
+      await browser.close();
+      return res.status(200).json({ error: "CAPTCHA verification failed" });
+    }
+
+    // Select Paper
+    await page.select(SELECTORS.paperSelector, "P1");
+
+    success = false;
+
+    // Retry CAPTCHA for downloading admit card
+    for (let j = 0; j < MAX_RETRIES; j++) {
+      try {
+        const captchaText = await captureAndSolveCaptcha(
+          page,
+          SELECTORS.captchaImage
+        );
+        await page.type(SELECTORS.captchaInput, captchaText);
+
+        await page.click(SELECTORS.loginButton2);
+        await page.waitForNetworkIdle({
+          idleTime: 500,
+          timeout: 10000,
+        });
+
+        // Check for errors
+        const error = await page.$eval(
+          SELECTORS.errorSelector,
+          (el) => el.innerText
+        );
+
+        if (
+          error &&
+          error.includes("CAPTCHA did not match. Please enter correct CAPTCHA.")
+        ) {
+          console.log(`Attempt ${j + 1}: CAPTCHA did not match. Retrying...`);
+          continue;
+        }
+
+        const successSelector = await page.waitForSelector(SELECTORS.shift, {
+          timeout: 3000,
+        });
+        if (successSelector) {
+          success = true;
+          break;
+        }
+      } catch (error) {
+        console.log(`Attempt ${j + 1} failed: ${error.message}`);
+      }
+    }
+
+    // Set up request interception to capture PDF
+    await page.setRequestInterception(true);
+    page.on("response", async (response) => {
+      const url = response.url();
+      if (url.endsWith(".pdf")) {
+        const pdfBuffer = await response.buffer();
+        const pdfPath = `./uploads/${applicationNumber}_${uniqueId}.pdf`;
+        fs.writeFileSync(pdfPath, pdfBuffer);
+
+        console.log("PDF saved successfully:", pdfPath);
+        res.status(200).json({
+          message: "PDF downloaded successfully",
+          filePath: pdfPath,
+        });
+      }
+    });
+
+    // Extract additional information
+    const date = await page.$eval(SELECTORS.examDate, (el) => el.innerText);
+    const shift = await page.$eval(SELECTORS.shift, (el) => el.innerText);
+    const timing = await page.$eval(SELECTORS.timing, (el) => el.innerText);
+    const center = await page.$eval(SELECTORS.centerName, (el) => el.innerText);
+    const address = await page.$eval(
+      SELECTORS.centerAddress,
+      (el) => el.innerText
+    );
+
+    // Return extracted information
+    res.status(200).json({
+      success: "Success",
+      date,
+      shift,
+      timing,
+      center,
+      address,
+    });
+
+    await browser.close();
   } catch (error) {
     next(error);
   }
