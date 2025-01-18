@@ -3,47 +3,34 @@ const Schema = _Schema;
 
 const lectureSchema = new Schema(
   {
-    classLevel: {
+    className: {
       type: String,
       required: true, // Example: "06", "07", "12", "UPSC", "JEE"
-      enum: [
-        "06",
-        "07",
-        "08",
-        "09",
-        "10",
-        "11",
-        "12",
-        "JEE",
-        "NEET",
-        "UPSC",
-        "SSC",
-        "Other",
-      ],
     },
     title: {
       type: String,
-      required: true,
     },
     subject: {
       type: String,
-      required: true, // Example: "Mathematics", "Physics", "History"
     },
-    chapterName: {
+    chapter: {
       type: String,
-      required: true, // Example: "Algebra", "World War II"
+    },
+    topic: {
+      type: String,
     },
     lectureNumber: {
       type: Number,
-      required: true, // Lecture sequence in the chapter
     },
-    videoId: {
+    link: {
       type: String,
-      required: true, // Video identifier (e.g., YouTube video ID)
+      required: true,
+    },
+    linkType: {
+      type: String,
     },
     facultyName: {
       type: String,
-      required: false, // Example: "Dr. John Doe", "Prof. Jane Smith"
     },
     description: {
       type: String, // Additional details about the lecture

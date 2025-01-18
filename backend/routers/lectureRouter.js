@@ -7,15 +7,20 @@ import {
   viewLecturesByClass,
   deleteLecture,
   getLecturesWithPagination,
+  updateLectureData,
 } from "../controllers/lectureController.js";
 import multer from "multer";
 const upload = multer({ dest: "uploads/" });
 
 router.route("/").get(viewLectures).post(addNewLectureSingle);
 
-router.route("/upload").post(upload.single("file"), uploadLectureInfo);
+router.route("/upload").post(uploadLectureInfo);
 
-router.route("/:id").get(viewLecturesByClass).delete(deleteLecture);
+router
+  .route("/:id")
+  .get(viewLecturesByClass)
+  .delete(deleteLecture)
+  .patch(updateLectureData);
 
 router
   .route("/getlectureswithpagination/:limit/:page")

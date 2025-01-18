@@ -18,8 +18,8 @@ const batchSchema = new Schema(
     session: {
       type: String,
     },
+    status: { type: Number, enum: [0, 1] },
     description: { type: String },
-
     scholars: [
       {
         type: Schema.Types.ObjectId,
@@ -41,7 +41,7 @@ const batchSchema = new Schema(
     testTemplates: [
       {
         type: Schema.Types.ObjectId,
-        ref: "TestTemplate", // Reference to the TestTemplate model
+        ref: "TestTemplate",
       },
     ],
     templateImage: {

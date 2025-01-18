@@ -2,8 +2,6 @@ import Class from "../models/class.js";
 import Lecture from "../models/lectures.js";
 import Subject from "../models/subject.js";
 import response from "../utils/responses.js";
-import ExcelJS from "exceljs";
-import { unlinkSync } from "fs";
 
 export async function viewLectures(req, res, next) {
   try {
@@ -44,7 +42,7 @@ export async function viewLecturesByClass(req, res, next) {
       const lectures = await Lecture.find({});
       res.status(200).json({ ...response.success, lectures });
     }
-    const lectures = await Lecture.find({ class: id });
+    const lectures = await Lecture.find({ className: id });
     if (lectures) {
       res.status(200).json({ lectures, ...response.success });
     } else {
@@ -105,63 +103,109 @@ export async function addNewLecturesMultiple(req, res, next) {
 
 export async function uploadLectureInfo(req, res, next) {
   try {
-    // Ensure a file was uploaded
-    if (!req.file) {
-      return res.status(400).json({ message: "No file uploaded" });
+    const { data, linkType = "youtube" } = req.body;
+
+    // Parse the incoming data
+    const parsedData = JSON.parse(data);
+
+    // Validate the parsed data
+    if (!Array.isArray(parsedData) || parsedData.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Invalid or empty data provided." });
     }
 
-    const { path, originalname } = req.file; // File info from multer
-    const workbook = new ExcelJS.Workbook();
+    // Prepare the data for bulk insert
+    const preparedData = parsedData.map((entry) => ({
+      className: entry.className,
+      title: entry.title || "",
+      subject: entry.subject,
+      chapter: entry.chapter || "",
+      topic: entry.topic || "",
+      link: entry.link,
+      lectureNumber: entry.lectureNumber,
+      linkType,
+    }));
 
-    // Load the uploaded file
-    await workbook.xlsx.readFile(path);
+    console.log("Prepared Data:", preparedData);
 
-    const worksheet = workbook.worksheets[0]; // Process the first worksheet
-    const lectures = [];
-
-    // Extract data row by row
-    worksheet.eachRow((row, rowNumber) => {
-      // Skip header row (assuming the first row contains headers)
-      if (rowNumber === 1) return;
-
-      const lectureData = {
-        classLevel: row.getCell(1).value, // Adjust column indices as per your Excel file
-        subject: row.getCell(2).value,
-        chapterName: row.getCell(3).value,
-        lectureNumber: row.getCell(4).value,
-        videoId: row.getCell(5).value,
-        facultyName: row.getCell(6).value,
-        description: row.getCell(7).value || "",
-        tags: row.getCell(8).value?.split(",") || [],
-      };
-
-      lectures.push(lectureData);
+    // Validate the prepared data
+    let isValid = true;
+    preparedData.forEach((entry, index) => {
+      const validationResult = new Lecture(entry).validateSync();
+      if (validationResult) {
+        console.error(
+          `Validation error for entry at index ${index}:`,
+          validationResult.errors
+        );
+        isValid = false;
+      }
     });
 
-    // Save lecture info to the database
-    // Assuming you have a `Lecture` model
-    const savedLectures = await Lecture.insertMany(lectures);
+    if (!isValid) {
+      return res.status(400).json({
+        message: "Validation errors found in the provided data.",
+      });
+    }
 
-    // Delete the uploaded file after processing
-    unlinkSync(path);
+    // Insert data into the database
+    const insertedRecords = await Lecture.insertMany(preparedData, {
+      ordered: false, // Allows inserting valid records while skipping invalid ones
+    });
 
-    res.status(200).json({
-      message: "Lecture information uploaded successfully",
-      data: savedLectures,
-      ...response.success,
+    // Respond with success
+    res.status(201).json({
+      message: `${insertedRecords.length} records successfully inserted.`,
+      insertedRecords,
+      status_code: 1,
     });
   } catch (error) {
     console.error("Error uploading lecture info:", error);
+
+    // Handle duplicate key errors specifically
+    if (error.code === 11000) {
+      return res.status(409).json({
+        message: "Duplicate key error.",
+        error: error.keyValue,
+      });
+    }
+
+    // Pass other errors to the error handler middleware
     next(error);
   }
 }
 
 // get Lectures with pagination
-
 export async function getLecturesWithPagination(req, res, next) {
   try {
     const { limit, page } = req.params;
     res.status(200).json({ ...response.success, page, limit });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function updateLectureData(req, res, next) {
+  try {
+    const { id } = req.params;
+    const { lectureDataToUpdate } = req.body;
+    const updatedLecture = await Lecture.findByIdAndUpdate(
+      id,
+      lectureDataToUpdate,
+      {
+        new: true,
+      }
+    );
+    await updatedLecture.save();
+    if (!updatedLecture) {
+      return res.status(200).json({ message: "Lecture data not found." });
+    } else {
+      return res.status(200).json({
+        message: "Lecture data is updated successfully.",
+        status_code: 1,
+        updatedLecture,
+      });
+    }
   } catch (error) {
     next(error);
   }

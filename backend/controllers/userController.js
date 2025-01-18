@@ -29,7 +29,7 @@ export async function updateUserData(req, res, next) {
   const userDataToUpdate = req.body;
   try {
     const updatedUser = await User.findByIdAndUpdate(id, userDataToUpdate, {
-      new: true,
+      new: false,
     });
     // updatedUser.isProfileUpdated = true;
     updatedUser.save();
