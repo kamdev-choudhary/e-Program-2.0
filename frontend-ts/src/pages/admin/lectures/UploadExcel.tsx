@@ -1,23 +1,31 @@
 import { CloudUploadRounded } from "@mui/icons-material";
 import { Box, Button, Typography } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import React, { useState, useMemo } from "react";
-import { useDropzone } from "react-dropzone";
 import * as ExcelJS from "exceljs";
+import React, { useMemo, useState } from "react";
+import { useDropzone } from "react-dropzone";
+import axios from "../../../hooks/AxiosInterceptor";
+import { useGlobalContext } from "../../../contexts/GlobalProvider";
 
 interface LectureData {
-  drn: string;
-  day: string;
-  month: string;
-  application: string;
-  year: string;
-  pdfUrl: string;
-  city: string;
-  date: string;
-  name?: string;
+  className: string;
+  subject: string;
+  chapter: string;
+  topic: string;
+  lectureNumber: string;
+  link: string;
 }
 
-const UploadExcel: React.FC = () => {
+interface UploadExcelProps {
+  setShowExcelUpload: (value: boolean) => void;
+  setLectures: (value: any) => void;
+}
+
+const UploadExcel: React.FC<UploadExcelProps> = ({
+  setShowExcelUpload,
+  setLectures,
+}) => {
+  const { isValidResponse } = useGlobalContext();
   const [jsonData, setJsonData] = useState<LectureData[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -63,15 +71,12 @@ const UploadExcel: React.FC = () => {
           }, {} as Partial<LectureData>);
 
           return {
-            drn: rowData.drn || "",
-            day: rowData.day || "",
-            month: rowData.month || "",
-            year: rowData.year || "",
-            application: rowData.application || "",
-            pdfUrl: rowData.pdfUrl || "",
-            city: rowData.city || "",
-            date: rowData.date || "",
-            name: rowData.name || "",
+            className: rowData.className || "",
+            subject: rowData.subject || "",
+            chapter: rowData.chapter || "",
+            topic: rowData.topic || "",
+            lectureNumber: rowData.lectureNumber || "",
+            link: rowData.link || "",
           };
         });
 
@@ -98,21 +103,33 @@ const UploadExcel: React.FC = () => {
   });
 
   const rows = useMemo(() => {
-    return jsonData?.map((json, index) => ({ ...json, id: index + 1 })) || [];
+    if (!jsonData) return [];
+    return jsonData.map((d, index) => ({ ...d, id: index + 1 }));
   }, [jsonData]);
 
   const columns: GridColDef[] = [
     { field: "id", headerName: "SN", width: 50 },
-    { field: "drn", headerName: "DRN", width: 150 },
-    { field: "day", headerName: "Day", width: 100 },
-    { field: "month", headerName: "Month", width: 100 },
-    { field: "year", headerName: "Year", width: 100 },
-    { field: "application", headerName: "Application", width: 150 },
-    { field: "pdfUrl", headerName: "PDF URL", width: 200 },
-    { field: "city", headerName: "City", width: 150 },
-    { field: "date", headerName: "Date", width: 150 },
-    { field: "name", headerName: "Name", width: 150 },
+    { field: "className", headerName: "Class", width: 150, flex: 1 },
+    { field: "chapter", headerName: "Chapter Name", width: 100, flex: 1 },
+    { field: "topic", headerName: "Topic Name", width: 100, flex: 1 },
+    { field: "lectureNumber", headerName: "Lecture #", width: 100, flex: 1 },
+    { field: "link", headerName: "Application", width: 150, flex: 1 },
   ];
+
+  const handleUploadLectures = async () => {
+    try {
+      const response = await axios.post("/lectures/upload", {
+        data: JSON.stringify(jsonData),
+        linkType: "youtube",
+      });
+      if (isValidResponse(response)) {
+        setShowExcelUpload(false);
+        setLectures(response.data.insertedRecords);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   return (
     <Box sx={{ bgcolor: "background.paper", borderRadius: 2, p: 2 }}>
@@ -150,6 +167,7 @@ const UploadExcel: React.FC = () => {
           fullWidth
           variant="contained"
           disabled={!jsonData}
+          onClick={handleUploadLectures}
         >
           Upload
         </Button>

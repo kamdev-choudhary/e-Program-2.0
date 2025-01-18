@@ -37,6 +37,7 @@ export const style = {
   boxShadow: 24,
   display: "flex",
   flexDirection: "column",
+  maxHeight: "98vh",
 };
 
 export const CustomModal: React.FC<CustomModalProps> = ({

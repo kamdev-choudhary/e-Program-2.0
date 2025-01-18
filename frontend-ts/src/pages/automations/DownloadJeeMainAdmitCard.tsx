@@ -6,7 +6,7 @@ import {
   CircularProgress,
   Divider,
 } from "@mui/material";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
 import axios from "../../hooks/AxiosInterceptor";
 import { useDropzone } from "react-dropzone";
 import ExcelJS from "exceljs";
@@ -239,15 +239,6 @@ const DownloadAdmitCard: React.FC = () => {
     },
     multiple: false,
   });
-
-  const rows = useMemo(
-    () =>
-      jsonData?.map((data, index) => ({
-        ...data,
-        id: index + 1,
-      })) || [],
-    [jsonData]
-  );
 
   const handleProcessRowUpdate = (
     newRow: ScholarData,
@@ -521,11 +512,12 @@ const DownloadAdmitCard: React.FC = () => {
             toolbar: () => <CustomToolbar showAddButton={false} />,
           }}
           columns={columns}
-          rows={rows}
+          rows={jsonData || []}
           loading={isLoading}
           processRowUpdate={handleProcessRowUpdate}
           initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
           pageSizeOptions={[10, 30, 50, 100, 200]}
+          getRowId={(row) => row.drn}
         />
       </Box>
     </Box>

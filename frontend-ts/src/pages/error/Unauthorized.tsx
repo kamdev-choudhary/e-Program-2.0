@@ -16,10 +16,11 @@ const Unauthorized: React.FC = () => {
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        height: "100vh",
         textAlign: "center",
-        backgroundColor: "#f5f5f5", // Optional background color
+        backgroundColor: "background.paper", // Optional background color
         padding: 2,
+        flexGrow: 1,
+        height: "100%",
       }}
     >
       <Typography variant="h1" color="error" gutterBottom>

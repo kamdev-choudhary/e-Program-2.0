@@ -1,14 +1,14 @@
 import React from "react";
 
 interface Youtube {
-  videoId: string;
+  url: string;
 }
 
-const YouTubeVideoPlayer: React.FC<Youtube> = ({ videoId }) => {
+const YouTubeVideoPlayer: React.FC<Youtube> = ({ url }) => {
   return (
     <div style={{ position: "relative", width: "100%", paddingTop: "56.25%" }}>
       <iframe
-        src={`https://www.youtube.com/embed/${videoId}`}
+        src={url}
         style={{
           position: "absolute",
           top: "0",

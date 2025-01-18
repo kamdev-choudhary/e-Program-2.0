@@ -9,7 +9,7 @@ import { CustomModal } from "./components/CustomModal.tsx";
 import AuthPage from "./pages/auth/AuthPage.tsx";
 import "./i18";
 import { useGlobalContext } from "./contexts/GlobalProvider.tsx";
-import getTheme from "./constant/customTheme.ts";
+import getTheme from "./constant/theme.ts";
 
 const App: React.FC = () => {
   const queryClient = new QueryClient();

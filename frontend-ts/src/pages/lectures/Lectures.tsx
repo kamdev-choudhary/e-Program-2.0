@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import YouTubeVideo from "../../components/YoutTubeVideoPlayer";
+import YouTubeVideo from "../../components/YoutubePlayer";
 import CustomDropDown from "../../components/CustomDropDown";
 import {
   Search as SearchIcon,
@@ -133,7 +133,7 @@ const LecturePage: React.FC = () => {
           <Grid size={{ xs: 12, lg: 6 }} sx={{ order: { xs: 1, lg: 2 } }}>
             {showVideoPopup && (
               <Box sx={{ padding: 1 }}>
-                <YouTubeVideo videoId={currVID!} />
+                <YouTubeVideo url={currVID!} />
               </Box>
             )}
           </Grid>
