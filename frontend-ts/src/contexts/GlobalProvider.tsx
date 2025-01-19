@@ -1,5 +1,4 @@
-import CancelIcon from "@mui/icons-material/Cancel";
-import { Alert, IconButton, Snackbar } from "@mui/material";
+import { Snackbar } from "@mui/material";
 import { JwtPayload, jwtDecode } from "jwt-decode";
 import { debounce } from "lodash";
 import React, {
@@ -13,7 +12,7 @@ import React, {
 import Loader from "../components/Loader";
 import { LOCAL_STORAGE_KEYS } from "../constant/constants";
 import axios from "../hooks/AxiosInterceptor";
-import { blue, green, red, yellow } from "@mui/material/colors";
+import NotificationAlert from "../components/NotificationAlert";
 
 interface GlobalProviderProps {
   children: ReactNode;
@@ -265,42 +264,12 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
         open={notification.open}
         onClose={handleCloseSnackbar}
-        autoHideDuration={3000}
+        autoHideDuration={2000}
       >
-        <Alert
-          severity={notification.type}
-          variant="filled" // Light filled variant
-          sx={{
-            minWidth: 300,
-            backgroundColor: (theme) => {
-              switch (notification.type) {
-                case "success":
-                  return green[50]; // Light success color
-                case "error":
-                  return red[50]; // Light error color
-                case "warning":
-                  return yellow[50]; // Light warning color
-                case "info":
-                  return blue[50]; // Light info color
-                default:
-                  return theme.palette.background.paper; // Default background
-              }
-            },
-            color: (theme) =>
-              theme.palette.getContrastText(theme.palette.background.paper), // Ensure text contrast
-          }}
-          action={
-            <IconButton
-              size="small"
-              color="inherit"
-              onClick={() => setNotification({ ...notification, open: false })}
-            >
-              <CancelIcon />
-            </IconButton>
-          }
-        >
-          {notification.message}
-        </Alert>
+        <NotificationAlert
+          notification={notification}
+          setNotification={setNotification}
+        />
       </Snackbar>
     </GlobalContext.Provider>
   );

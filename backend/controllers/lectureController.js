@@ -179,7 +179,7 @@ export async function updateLectureData(req, res, next) {
     } else {
       return res.status(200).json({
         message: "Lecture data is updated successfully.",
-        status_code: 1,
+        status_code: 3,
         updatedLecture,
       });
     }

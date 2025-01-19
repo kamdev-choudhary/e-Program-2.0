@@ -1,4 +1,4 @@
-import { Box, SelectChangeEvent } from "@mui/material";
+import { Box, SelectChangeEvent, Grid2 as Grid } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import UploadJEEMainData from "./part/UploadJEEMainData";
 import { CustomModal } from "../../../components/CustomModal";
@@ -20,8 +20,8 @@ interface DataProps {
   quota: string;
   seatType: string;
   gender: string;
-  openingRank: string;
-  closingRank: string;
+  openingRank: number;
+  closingRank: number;
 }
 
 const JEEORCR: React.FC = () => {
@@ -31,6 +31,17 @@ const JEEORCR: React.FC = () => {
   const [data, setData] = useState<DataProps | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
   const [selectedStream, setSelecttedStream] = useState<string>("");
+  const [selectedQuota, setSelectedQuota] = useState<string>("");
+  const [selectedSeatType, setSelectedSeatType] = useState<string>("");
+  const [selectedGender, setSelectedGender] = useState<string>("");
+  const [institutes, setInstitutes] = useState<
+    { name: string; value: string }[]
+  >([]);
+  const [selectedInstitute, setSelectedInstitute] = useState<string>("");
+  const [programs, setPrograms] = useState<{ name: string; value: string }[]>(
+    []
+  );
+  const [selectedProgram, setSelectedProgram] = useState<string>("");
 
   const getAnalysisData = async () => {
     setLoading(true);
@@ -39,7 +50,32 @@ const JEEORCR: React.FC = () => {
         `/analysis/jee${selectedStream}/${selectedYear}`
       );
       if (isValidResponse(response)) {
-        setData(response.data.data);
+        const fetchedData = response.data.data;
+        setData(fetchedData);
+        // Extract unique institute names
+        const instituteNames = [
+          ...new Set(fetchedData.map((item: any) => item.institute)),
+        ];
+
+        const programNames = [
+          ...new Set(fetchedData.map((item: any) => item.programName)),
+        ];
+        // Map the unique names into objects with 'name' and 'value' properties
+        const instituteObjects: { name: string; value: string }[] =
+          instituteNames.map((name: any) => ({
+            name,
+            value: name, // You can use a different value if needed (e.g., an ID)
+          }));
+
+        const programObjects: { name: string; value: string }[] =
+          programNames.map((name: any) => ({
+            name,
+            value: name,
+          }));
+
+        // Store the institutes in the state
+        setInstitutes(instituteObjects);
+        setPrograms(programObjects);
       }
     } catch (error) {
       console.error(error);
@@ -47,15 +83,44 @@ const JEEORCR: React.FC = () => {
       setLoading(false);
     }
   };
+
   const rows = useMemo(() => {
     if (!Array.isArray(data)) return [];
-    return data.map((d, index) => ({
-      ...d,
-      id: index + 1,
-      openingRank: parseInt(d.openingRank, 10) || 0, // Parse to integer or default to 0
-      closingRank: parseInt(d.closingRank, 10) || 0, // Parse to integer or default to 0
-    }));
-  }, [data, selectedStream]);
+    return data
+      .filter((d) => {
+        const quotaMatch = selectedQuota ? d.quota === selectedQuota : true;
+        const seatTypeMatch = selectedSeatType
+          ? d.seatType === selectedSeatType
+          : true;
+        const genderMatch = selectedGender ? d.gender === selectedGender : true;
+        const instituteMatch = selectedInstitute
+          ? d.institute === selectedInstitute
+          : true;
+        const programMatch = selectedProgram
+          ? d.programName === selectedProgram
+          : true;
+        return (
+          quotaMatch &&
+          seatTypeMatch &&
+          genderMatch &&
+          instituteMatch &&
+          programMatch
+        );
+      })
+      .map((d, index) => ({
+        ...d,
+        id: index + 1,
+        openingRank: parseInt(d.openingRank, 10) || 0,
+        closingRank: parseInt(d.closingRank, 10) || 0,
+      }));
+  }, [
+    data,
+    selectedQuota,
+    selectedSeatType,
+    selectedGender,
+    selectedInstitute,
+    selectedProgram,
+  ]);
 
   useEffect(() => {
     if (!selectedYear || !selectedStream) return;
@@ -138,33 +203,118 @@ const JEEORCR: React.FC = () => {
   ];
 
   return (
-    <Box>
-      <Box sx={{ display: "flex", gap: 2, flex: 1, my: 2 }}>
-        <Box sx={{ flexGrow: 1 }}>
-          <CustomDropDown
-            value={selectedStream}
-            onChange={(e: SelectChangeEvent) =>
-              setSelecttedStream(e.target.value)
-            }
-            data={[
-              { name: "JEE Main", value: "main" },
-              { name: "JEE Advanced", value: "advanced" },
-            ]}
-            label="Stream"
-            dropdownValue="value"
-            name="name"
-          />
-        </Box>
-        <Box sx={{ flexGrow: 1 }}>
-          <CustomDropDown
-            data={years}
-            value={selectedYear}
-            onChange={(e: SelectChangeEvent) => setSelectedYear(e.target.value)}
-            name="name"
-            dropdownValue="value"
-            label="Year"
-          />
-        </Box>
+    <Box sx={{ bgcolor: "#fff", p: 1 }}>
+      <Box sx={{ mb: 1 }}>
+        <Grid container spacing={2}>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+            <CustomDropDown
+              value={selectedStream}
+              onChange={(e: SelectChangeEvent) =>
+                setSelecttedStream(e.target.value)
+              }
+              data={[
+                { name: "JEE Main", value: "main" },
+                { name: "JEE Advanced", value: "advanced" },
+              ]}
+              label="Stream"
+              dropdownValue="value"
+              name="name"
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+            <CustomDropDown
+              data={years}
+              value={selectedYear}
+              onChange={(e: SelectChangeEvent) =>
+                setSelectedYear(e.target.value)
+              }
+              name="name"
+              dropdownValue="value"
+              label="Year"
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+            <CustomDropDown
+              data={[
+                { name: "Gender Neutral", value: "Gender-Neutral" },
+                {
+                  name: "Female Only",
+                  value: "Female-only (including Supernumerary)",
+                },
+              ]}
+              value={selectedGender}
+              onChange={(e: SelectChangeEvent) =>
+                setSelectedGender(e.target.value)
+              }
+              label="Gender"
+              name="name"
+              dropdownValue="value"
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+            <CustomDropDown
+              data={[
+                { name: "Home State", value: "HS" },
+                { name: "Other State", value: "OS" },
+              ]}
+              value={selectedQuota}
+              onChange={(e: SelectChangeEvent) =>
+                setSelectedQuota(e.target.value)
+              }
+              label="Quota"
+              name="name"
+              dropdownValue="value"
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+            <CustomDropDown
+              data={[
+                { name: "GENERAL", value: "OPEN" },
+                { name: "GENERAL PwD", value: "OPEN (PwD)" },
+                { name: "OBC-NCL", value: "OBC-NCL" },
+                { name: "OBC-NCL PwD", value: "OBC-NCL (PwD)" },
+                { name: "ST", value: "ST" },
+                { name: "ST PwD", value: "ST (PwD)" },
+                { name: "SC PwD", value: "SC (PwD)" },
+              ]}
+              value={selectedSeatType}
+              onChange={(e: SelectChangeEvent) =>
+                setSelectedSeatType(e.target.value)
+              }
+              label="Seat Type"
+              name="name"
+              dropdownValue="value"
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+            <CustomDropDown
+              data={
+                institutes.length > 0
+                  ? institutes
+                  : [{ name: "No Institutes Available", value: "" }]
+              }
+              value={selectedInstitute}
+              onChange={(e: SelectChangeEvent) =>
+                setSelectedInstitute(e.target.value)
+              }
+              label="Institute"
+              name="name"
+              dropdownValue="value"
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+            <CustomDropDown
+              data={programs || []}
+              value={selectedProgram}
+              onChange={(e: SelectChangeEvent) =>
+                setSelectedProgram(e.target.value)
+              }
+              label="Program"
+              name="name"
+              dropdownValue="value"
+            />
+          </Grid>
+        </Grid>
       </Box>
 
       {/* Data Grid */}
@@ -180,6 +330,11 @@ const JEEORCR: React.FC = () => {
           ),
         }}
         loading={loading}
+        initialState={{
+          pagination: { paginationModel: { pageSize: 20 } },
+        }}
+        pageSizeOptions={[20, 50, 100, 200]}
+        disableRowSelectionOnClick
       />
 
       {/* Upload Data */}

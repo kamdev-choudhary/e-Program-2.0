@@ -150,7 +150,7 @@ export async function downloadAdmitCard(req, res, next) {
 
   const MAX_RETRIES = 10; // Define a maximum number of retries for captcha attempts.
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: false,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
   try {

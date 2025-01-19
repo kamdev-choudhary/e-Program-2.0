@@ -1,29 +1,21 @@
-import {
-  Box,
-  Button,
-  Typography,
-  CircularProgress,
-  Divider,
-} from "@mui/material";
+import { Box, Button, CircularProgress, Divider } from "@mui/material";
 import React, { useState } from "react";
 import axios from "../../hooks/AxiosInterceptor";
-import { useDropzone } from "react-dropzone";
 import ExcelJS from "exceljs";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import {
   CloudDownloadRounded,
-  CloudUploadRounded,
   DownloadRounded,
   TableChartRounded,
 } from "@mui/icons-material";
 import { CustomToolbar } from "../../components/CustomToolbar";
 import { downloadJsonToExcel } from "../../hooks/commonfs";
+import FileDropZone from "../../components/FileDropZone";
 
 interface ScholarData {
   drn: string;
   application: string;
   password?: string;
-  time?: string;
   city: string;
   status?: string;
   date?: string;
@@ -37,7 +29,7 @@ const DownloadAdmitCard: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [jsonData, setJsonData] = useState<ScholarData[] | null>(null);
 
-  const handleDownloadCityInfo = async (scholar: ScholarData) => {
+  const handleDownloadAdmitCard = async (scholar: ScholarData) => {
     try {
       setJsonData((prevData) => {
         if (!prevData) return null; // If jsonData is null, maintain null state
@@ -113,8 +105,7 @@ const DownloadAdmitCard: React.FC = () => {
         await Promise.all(
           jsonData.map(async (data) => {
             if (!data.center && data?.status === "idle") {
-              // Fetch the missing PDF URL if not available
-              await handleDownloadCityInfo(data);
+              await handleDownloadAdmitCard(data);
             }
           })
         );
@@ -173,7 +164,6 @@ const DownloadAdmitCard: React.FC = () => {
             date: rowData.date || "",
             error: "",
             status: "idle",
-            time: "",
             shift: "",
             timing: "",
             center: "",
@@ -192,17 +182,6 @@ const DownloadAdmitCard: React.FC = () => {
     reader.readAsArrayBuffer(file);
   };
 
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    accept: {
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
-        ".xlsx",
-      ],
-      "application/vnd.ms-excel": [".xls"],
-    },
-    multiple: false,
-  });
-
   const handleProcessRowUpdate = (
     newRow: ScholarData,
     oldRow: ScholarData
@@ -220,13 +199,6 @@ const DownloadAdmitCard: React.FC = () => {
   };
 
   const columns: GridColDef[] = [
-    {
-      field: "id",
-      headerName: "SN",
-      width: 80,
-      align: "center",
-      headerAlign: "center",
-    },
     {
       field: "drn",
       headerName: "Dakshana Roll #",
@@ -299,7 +271,7 @@ const DownloadAdmitCard: React.FC = () => {
       renderCell: (params) => (
         <>
           <Button
-            onClick={() => handleDownloadCityInfo(params.row)}
+            onClick={() => handleDownloadAdmitCard(params.row)}
             startIcon={
               params.row.status === "loading" ? (
                 <CircularProgress size={20} />
@@ -335,25 +307,7 @@ const DownloadAdmitCard: React.FC = () => {
   return (
     <Box>
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-        <Box
-          {...getRootProps()}
-          sx={{
-            border: "1px dashed #1976d2",
-            borderRadius: 20,
-            cursor: "pointer",
-            flexGrow: 1,
-            alignContent: "center",
-            p: 1,
-            display: "flex",
-            justifyContent: "center",
-          }}
-        >
-          <input {...getInputProps()} />
-          <CloudUploadRounded sx={{ mr: 1 }} />
-          <Typography variant="body1">
-            Drag & drop an Excel file here, or click to select a file
-          </Typography>
-        </Box>
+        <FileDropZone onDrop={onDrop} acceptedExtensions={[".xlsx", "xls"]} />
         <Box
           sx={{
             display: "flex",
