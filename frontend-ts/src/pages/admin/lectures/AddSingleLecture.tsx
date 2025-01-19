@@ -1,5 +1,12 @@
 import React, { useState } from "react";
-import { Box, TextField, Button, MenuItem, Typography } from "@mui/material";
+import {
+  Box,
+  TextField,
+  Button,
+  MenuItem,
+  Typography,
+  Grid2 as Grid,
+} from "@mui/material";
 import { useGlobalContext } from "../../../contexts/GlobalProvider";
 
 interface Lecture {
@@ -86,92 +93,111 @@ const AddSingleLecture: React.FC<AddSingleLectureProp> = ({
   return (
     <Box
       sx={{
-        width: 400,
         padding: 2,
         borderRadius: 1,
         boxShadow: 2,
       }}
     >
-      <Typography variant="h6" gutterBottom>
-        Add New Lecture
-      </Typography>
       {error && (
         <Typography color="error" variant="body2" gutterBottom>
           {error}
         </Typography>
       )}
-      <TextField
-        fullWidth
-        value={newLecture.title}
-        onChange={(e) => handleInputChange("title", e.target.value)}
-        label="Lecture Title"
-        margin="normal"
-        required
-      />
-      <TextField
-        fullWidth
-        value={newLecture.subject}
-        onChange={(e) => handleInputChange("subject", e.target.value)}
-        label="Subject"
-        margin="normal"
-        required
-      />
-      <TextField
-        fullWidth
-        value={newLecture.className}
-        onChange={(e) => handleInputChange("className", e.target.value)}
-        label="Class Name"
-        margin="normal"
-      />
-      <TextField
-        fullWidth
-        value={newLecture.chapter}
-        onChange={(e) => handleInputChange("chapter", e.target.value)}
-        label="Chapter"
-        margin="normal"
-      />
-      <TextField
-        fullWidth
-        value={newLecture.topic}
-        onChange={(e) => handleInputChange("topic", e.target.value)}
-        label="Topic"
-        margin="normal"
-      />
-      <TextField
-        fullWidth
-        value={newLecture.link}
-        onChange={(e) => handleInputChange("link", e.target.value)}
-        label="Lecture Link"
-        margin="normal"
-        required
-      />
-      <TextField
-        select
-        fullWidth
-        value={newLecture.linkType}
-        onChange={(e) => handleInputChange("linkType", e.target.value)}
-        label="Link Type"
-        margin="normal"
-      >
-        <MenuItem value="youtube">YouTube</MenuItem>
-        <MenuItem value="vimeo">Vimeo</MenuItem>
-        <MenuItem value="other">Other</MenuItem>
-      </TextField>
-      <TextField
-        fullWidth
-        value={newLecture.facultyName}
-        onChange={(e) => handleInputChange("facultyName", e.target.value)}
-        label="Faculty Name"
-        margin="normal"
-      />
-      <TextField
-        fullWidth
-        value={newLecture.lectureNumber}
-        onChange={(e) => handleInputChange("lectureNumber", e.target.value)}
-        label="Lecture Number"
-        margin="normal"
-        required
-      />
+
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <TextField
+            fullWidth
+            value={newLecture.title}
+            onChange={(e) => handleInputChange("title", e.target.value)}
+            label="Lecture Title"
+            // margin="normal"
+            required
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <TextField
+            fullWidth
+            value={newLecture.subject}
+            onChange={(e) => handleInputChange("subject", e.target.value)}
+            label="Subject"
+            // margin="normal"
+            required
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <TextField
+            fullWidth
+            value={newLecture.className}
+            onChange={(e) => handleInputChange("className", e.target.value)}
+            label="Class Name"
+            // margin="normal"
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <TextField
+            fullWidth
+            value={newLecture.chapter}
+            onChange={(e) => handleInputChange("chapter", e.target.value)}
+            label="Chapter"
+            // margin="normal"
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <TextField
+            fullWidth
+            value={newLecture.topic}
+            onChange={(e) => handleInputChange("topic", e.target.value)}
+            label="Topic"
+            // margin="normal"
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <TextField
+            fullWidth
+            value={newLecture.link}
+            onChange={(e) => handleInputChange("link", e.target.value)}
+            label="Lecture Link"
+            // margin="normal"
+            required
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <TextField
+            select
+            fullWidth
+            value={newLecture.linkType}
+            onChange={(e) => handleInputChange("linkType", e.target.value)}
+            label="Link Type"
+            // margin="normal"
+          >
+            <MenuItem value="youtube">YouTube</MenuItem>
+            <MenuItem value="vimeo">Vimeo</MenuItem>
+            <MenuItem value="other">Other</MenuItem>
+          </TextField>
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <TextField
+            fullWidth
+            value={newLecture.facultyName}
+            onChange={(e) => handleInputChange("facultyName", e.target.value)}
+            label="Faculty Name"
+            // margin="normal"
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <TextField
+            fullWidth
+            value={newLecture.lectureNumber}
+            onChange={(e) => handleInputChange("lectureNumber", e.target.value)}
+            label="Lecture Number"
+            // margin="normal"
+            required
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}></Grid>
+      </Grid>
+
       <Box mt={2} display="flex" justifyContent="space-between">
         <Button
           fullWidth

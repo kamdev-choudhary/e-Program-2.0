@@ -25,6 +25,7 @@ import { CustomToolbar } from "../../../components/CustomToolbar";
 import AddSingleLecture from "./AddSingleLecture";
 import Swal from "sweetalert2";
 import CustomDropDown from "../../../components/CustomDropDown";
+import { getClasses } from "../../../api/academic";
 
 interface Lecture {
   _id: string;
@@ -37,6 +38,12 @@ interface Lecture {
   linkType: string;
   facultyName: string;
   lectureNumber: string;
+}
+
+interface ClassItem {
+  _id?: string;
+  name: string;
+  value: string;
 }
 
 const Lectures: React.FC = () => {
@@ -56,6 +63,23 @@ const Lectures: React.FC = () => {
   });
   const [totalLectures, setTotalLectures] = useState<number>(0); // Total count from backend
   const [selectedFaculty, setSelectedFaculty] = useState<string>("");
+  const [classes, setClasses] = useState<ClassItem[] | null>(null);
+  const [selectedClass, setSelectedClass] = useState<string>("");
+
+  const fetchClasses = async () => {
+    try {
+      const response = await getClasses();
+      if (isValidResponse(response)) {
+        setClasses(response.data.classes);
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchClasses();
+  }, []);
 
   const getLectures = async (page: number, pageSize: number) => {
     try {
@@ -65,6 +89,7 @@ const Lectures: React.FC = () => {
           page: page + 1,
           limit: pageSize,
           facultyName: selectedFaculty || undefined,
+          className: selectedClass || undefined,
         },
       });
       if (isValidResponse(response)) {
@@ -83,7 +108,7 @@ const Lectures: React.FC = () => {
   useEffect(() => {
     const { page, pageSize } = paginationModel;
     getLectures(page, pageSize);
-  }, [paginationModel]);
+  }, [paginationModel, selectedClass, selectedFaculty]);
 
   const rows = useMemo(() => {
     if (!lectures) return [];
@@ -357,7 +382,18 @@ const Lectures: React.FC = () => {
               }
             />
           </Grid>
-          <Grid size={{ xs: 12, md: 6, lg: 3 }}></Grid>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+            <CustomDropDown
+              data={classes || []}
+              value={selectedClass}
+              onChange={(e: SelectChangeEvent) =>
+                setSelectedClass(e.target.value)
+              }
+              label="Classes"
+              name="name"
+              dropdownValue="value"
+            />
+          </Grid>
           <Grid size={{ xs: 12, md: 6, lg: 3 }}></Grid>
         </Grid>
       </Box>
@@ -435,7 +471,7 @@ const Lectures: React.FC = () => {
         open={showAddSingleLecture}
         onClose={() => setShowAddSingleLecture(false)}
         height="auto"
-        width="auto"
+        header="Add New Lecture"
       >
         <AddSingleLecture
           lectures={lectures}
