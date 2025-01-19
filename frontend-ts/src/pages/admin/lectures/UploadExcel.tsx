@@ -7,6 +7,19 @@ import { useDropzone } from "react-dropzone";
 import axios from "../../../hooks/AxiosInterceptor";
 import { useGlobalContext } from "../../../contexts/GlobalProvider";
 
+interface Lecture {
+  _id: string;
+  title: string;
+  subject: string;
+  className: string;
+  chapter: string;
+  topic: string;
+  link: string;
+  linkType: string;
+  facultyName: string;
+  lectureNumber: string;
+}
+
 interface LectureData {
   className: string;
   subject: string;
@@ -19,11 +32,13 @@ interface LectureData {
 interface UploadExcelProps {
   setShowExcelUpload: (value: boolean) => void;
   setLectures: (value: any) => void;
+  lectures: Lecture[] | null;
 }
 
 const UploadExcel: React.FC<UploadExcelProps> = ({
   setShowExcelUpload,
   setLectures,
+  lectures,
 }) => {
   const { isValidResponse } = useGlobalContext();
   const [jsonData, setJsonData] = useState<LectureData[] | null>(null);
@@ -118,13 +133,14 @@ const UploadExcel: React.FC<UploadExcelProps> = ({
 
   const handleUploadLectures = async () => {
     try {
-      const response = await axios.post("/lectures/upload", {
+      const response = await axios.post("/lectures", {
         data: JSON.stringify(jsonData),
         linkType: "youtube",
+        mode: "multiple",
       });
       if (isValidResponse(response)) {
         setShowExcelUpload(false);
-        setLectures(response.data.insertedRecords);
+        setLectures([lectures, response.data.insertedRecords]);
       }
     } catch (error) {
       console.error(error);

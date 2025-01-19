@@ -128,9 +128,6 @@ export async function downloadCityInformation(req, res, next) {
 }
 
 export async function downloadAdmitCard(req, res, next) {
-  // const website =
-  //   "https://cnr.nic.in/emsadmitcard/downloadadmitcard/LoginPWD.aspx?enc=Ei4cajBkK1gZSfgr53ImFVj34FesvYg1WX45sPjGXBpvTjwcqEoJcZ5VnHgmpgmK";
-
   const website =
     "https://examinationservices.nic.in/JEEMain2025/downloadadmitcard/LoginPWD.aspx?enc=Ei4cajBkK1gZSfgr53ImFVj34FesvYg1WX45sPjGXBpvTjwcqEoJcZ5VnHgmpgmK";
 

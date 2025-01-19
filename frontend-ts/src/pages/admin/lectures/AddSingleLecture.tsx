@@ -17,10 +17,14 @@ interface Lecture {
 
 interface AddSingleLectureProp {
   setShowAddSingleLecture: (value: boolean) => void;
+  lectures: Lecture[] | null;
+  setLectures: (value: any) => void;
 }
 
 const AddSingleLecture: React.FC<AddSingleLectureProp> = ({
   setShowAddSingleLecture,
+  lectures,
+  setLectures,
 }) => {
   const { isValidResponse } = useGlobalContext();
   const [newLecture, setNewLecture] = useState<Lecture>({
@@ -68,8 +72,8 @@ const AddSingleLecture: React.FC<AddSingleLectureProp> = ({
       const result = await response.json();
 
       if (isValidResponse(result)) {
-        alert("Lecture added successfully!");
         setShowAddSingleLecture(false);
+        setLectures([lectures, result.data.newLecture]);
       } else {
         setError(result.message || "Failed to add lecture.");
       }

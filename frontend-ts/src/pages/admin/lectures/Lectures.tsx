@@ -1,5 +1,5 @@
 import { Typography, Box, Divider, Button, IconButton } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "../../../hooks/AxiosInterceptor";
 import { useGlobalContext } from "../../../contexts/GlobalProvider";
@@ -40,12 +40,24 @@ const Lectures: React.FC = () => {
   const [showYoutubePlayer, setShowYoutubePlayer] = useState<boolean>(false);
   const [showAddSingleLecture, setShowAddSingleLecture] =
     useState<boolean>(false);
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
+    page: 0,
+    pageSize: 10,
+  });
+  const [totalLectures, setTotalLectures] = useState<number>(0); // Total count from backend
 
-  const getLectures = async () => {
+  const getLectures = async (page: number, pageSize: number) => {
     try {
-      const response = await axios.get("/lectures");
+      setLoading(true);
+      const response = await axios.get("/lectures", {
+        params: {
+          page: page + 1,
+          limit: pageSize,
+        },
+      });
       if (isValidResponse(response)) {
         setLectures(response.data.lectures || []);
+        setTotalLectures(response.data.totalCount || 0);
       }
     } catch (error) {
       console.error("Failed to fetch lectures:", error);
@@ -54,9 +66,11 @@ const Lectures: React.FC = () => {
     }
   };
 
+  // Fetch data whenever pagination changes
   useEffect(() => {
-    getLectures();
-  }, []);
+    const { page, pageSize } = paginationModel;
+    getLectures(page, pageSize);
+  }, [paginationModel]);
 
   const rows = useMemo(() => {
     if (!lectures) return [];
@@ -324,7 +338,6 @@ const Lectures: React.FC = () => {
           initialState={{
             pagination: { paginationModel: { pageSize: 10 } },
           }}
-          pageSizeOptions={[10, 30, 50]}
           processRowUpdate={handleProcessRowUpdate}
           disableRowSelectionOnClick
           slots={{
@@ -332,13 +345,17 @@ const Lectures: React.FC = () => {
               <CustomToolbar
                 showAddButton={true}
                 showRefreshButton={true}
-                onRefreshButtonClick={getLectures}
                 onAddButtonClick={() => setShowAddSingleLecture(true)}
               />
             ),
           }}
-          rowBufferPx={5}
+          paginationModel={paginationModel} // Controlled pagination
+          onPaginationModelChange={(newModel) => setPaginationModel(newModel)} // Handle page changes
+          pageSizeOptions={[10, 20, 50]} // Options for page size
+          rowCount={totalLectures} // Total count from backend
+          paginationMode="server" // Server-side pagination
           disableColumnMenu
+          rowBufferPx={5}
         />
       </Box>
 
@@ -354,6 +371,7 @@ const Lectures: React.FC = () => {
         <UploadExcel
           setShowExcelUpload={setShowExcelUpload}
           setLectures={setLectures}
+          lectures={lectures}
         />
       </CustomModal>
 
@@ -388,7 +406,11 @@ const Lectures: React.FC = () => {
         height="auto"
         width="auto"
       >
-        <AddSingleLecture setShowAddSingleLecture={setShowAddSingleLecture} />
+        <AddSingleLecture
+          lectures={lectures}
+          setShowAddSingleLecture={setShowAddSingleLecture}
+          setLectures={setLectures}
+        />
       </CustomModal>
     </Box>
   );

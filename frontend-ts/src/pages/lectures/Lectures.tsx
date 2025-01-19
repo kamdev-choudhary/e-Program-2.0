@@ -1,236 +1,190 @@
 import React, { useEffect, useState } from "react";
-import YouTubeVideo from "../../components/YoutubePlayer";
-import CustomDropDown from "../../components/CustomDropDown";
-import {
-  Search as SearchIcon,
-  KeyboardArrowDown,
-  KeyboardArrowUp,
-} from "@mui/icons-material";
-import {
-  Box,
-  Collapse,
-  FormControl,
-  InputAdornment,
-  OutlinedInput,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Typography,
-  IconButton,
-  Grid2 as Grid,
-} from "@mui/material";
-import { useDispatch } from "react-redux";
-import _ from "lodash";
-import { getAllAcademicData } from "../../api/academic";
+import { Typography, Box, Divider, IconButton } from "@mui/material";
+import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
+import axios from "../../hooks/AxiosInterceptor";
+import { YouTube } from "@mui/icons-material";
+import { CustomModal } from "../../components/CustomModal";
+import YouTubeVideoPlayer from "../../components/YoutubePlayer";
 import { useGlobalContext } from "../../contexts/GlobalProvider";
 
 interface Lecture {
-  lectureNumber: number;
-  lectureTitle: string;
-  chapterName: string;
+  _id: string;
+  title: string;
   subject: string;
-  videoId: string;
+  className: string;
+  chapter: string;
+  topic: string;
+  link: string;
+  linkType: string;
+  facultyName: string;
+  lectureNumber: string;
 }
 
-interface AcademicClass {
-  name: string;
-  value: string;
-}
-
-const LecturePage: React.FC = () => {
+const Lectures: React.FC = () => {
   const { isValidResponse } = useGlobalContext();
-  const dispatch = useDispatch();
   const [lectures, setLectures] = useState<Lecture[]>([]);
-  const [collapsedChapter, setCollapsedChapter] = useState<string | null>(null);
-  const [currVID, setCurrVID] = useState<string | null>(null);
-  const [filterText, setFilterText] = useState<string>("");
-  const [showVideoPopup, setShowVideoPopup] = useState<boolean>(false);
-  const [selectedClass, setSelectedClass] = useState<string>("");
-  const [classes, setClasses] = useState<AcademicClass[]>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
+    page: 0,
+    pageSize: 10,
+  });
+  const [totalLectures, setTotalLectures] = useState<number>(0); // Total count from backend
+  const [selectedLecture, setSelectedLecture] = useState<Lecture | null>(null);
+  const [showYoutubePlayer, setShowYoutubePlayer] = useState<boolean>(false);
 
-  const handleFilterTextChange = (e: React.ChangeEvent<HTMLInputElement>) =>
-    setFilterText(e.target.value);
-
-  console.log(filterText);
-  const getAcademicData = async () => {
+  // Fetch lectures from backend
+  const fetchLectures = async (page: number, pageSize: number) => {
+    setLoading(true);
     try {
-      const response = await getAllAcademicData();
-      if (response && isValidResponse(response)) {
-        setClasses(response.data.classes);
+      const response = await axios.get(`/lectures`, {
+        params: {
+          page: page + 1, // Backend might use 1-based indexing
+          limit: pageSize,
+        },
+      });
+
+      if (isValidResponse(response)) {
+        setLectures(response.data.lectures);
+        setTotalLectures(response.data.totalCount || 0); // Ensure backend sends total count
       }
     } catch (error) {
-      console.error(error);
-      setLectures([]);
-    }
-  };
-
-  const getLectures = async () => {
-    dispatch({ type: "SET_LOADING", payload: true });
-    try {
-      // const response = await getLecturesByClass({ classLevel: selectedClass });
-      // if (response?.data?.lectures) {
-      //   setLectures(response.data.lectures);
-      // }
-    } catch (error) {
-      console.error(error);
+      console.error("Error fetching lectures:", error);
     } finally {
-      dispatch({ type: "SET_LOADING", payload: false });
+      setLoading(false);
     }
   };
 
+  // Fetch data whenever pagination changes
   useEffect(() => {
-    getAcademicData();
-    getLectures();
-  }, [selectedClass]);
+    const { page, pageSize } = paginationModel;
+    fetchLectures(page, pageSize);
+  }, [paginationModel]);
 
-  const groupedLectures = _.groupBy(lectures, "chapterName");
-
-  const toggleChapter = (chapterName: string) =>
-    setCollapsedChapter(collapsedChapter === chapterName ? null : chapterName);
-
-  const playLecture = (videoId: string) => {
-    setCurrVID(videoId);
-    setShowVideoPopup(true);
-  };
+  const columns: GridColDef[] = [
+    {
+      field: "id",
+      headerName: "SN",
+      width: 100,
+      align: "center",
+      headerAlign: "center",
+    },
+    {
+      field: "title",
+      headerName: "Lecture Title",
+      flex: 1,
+      minWidth: 120,
+      editable: false,
+    },
+    {
+      field: "className",
+      headerName: "Class",
+      flex: 1,
+      minWidth: 50,
+      editable: false,
+    },
+    {
+      field: "subject",
+      headerName: "Subject",
+      flex: 1,
+      minWidth: 80,
+      editable: false,
+    },
+    {
+      field: "chapter",
+      headerName: "Chapter",
+      flex: 1,
+      minWidth: 200,
+      editable: false,
+    },
+    {
+      field: "topic",
+      headerName: "Topic",
+      flex: 1,
+      minWidth: 200,
+      editable: false,
+    },
+    {
+      field: "lectureNumber",
+      headerName: "Lecture #",
+      flex: 1,
+      minWidth: 50,
+      editable: false,
+    },
+    {
+      field: "facultyName",
+      headerName: "Faculty Name",
+      flex: 1,
+      minWidth: 200,
+      editable: false,
+    },
+    {
+      field: "Actions",
+      headerName: "Play",
+      flex: 1,
+      minWidth: 100,
+      renderCell: (params) => (
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
+          <IconButton
+            onClick={() => {
+              setSelectedLecture(params.row);
+              setShowYoutubePlayer(true);
+            }}
+          >
+            <YouTube sx={{ color: "red" }} />
+          </IconButton>
+        </Box>
+      ),
+    },
+  ];
 
   return (
     <Box>
-      <Box>
-        <Grid container spacing={1} sx={{ p: 1, py: 2 }}>
-          <Grid size={{ xs: 6, xl: 3 }}>
-            <CustomDropDown
-              data={classes}
-              value={selectedClass}
-              dropdownValue="value"
-              label="Select Class"
-              name="name"
-              onChange={(e) =>
-                setSelectedClass((e.target as HTMLInputElement).value)
-              }
-            />
-          </Grid>
-          <Grid size={{ xs: 6, md: 3 }}></Grid>
-          <Grid size={{ xs: 12, xl: 6 }}>
-            <FormControl fullWidth>
-              <OutlinedInput
-                sx={{ borderRadius: 10 }}
-                onChange={handleFilterTextChange}
-                startAdornment={
-                  <InputAdornment position="start">
-                    <SearchIcon />
-                  </InputAdornment>
-                }
-              />
-            </FormControl>
-          </Grid>
-        </Grid>
+      <Box
+        sx={{
+          mb: 1,
+          display: "flex",
+          justifyContent: "space-between",
+          flexWrap: "wrap",
+        }}
+      >
+        <Typography variant="h4">Lectures</Typography>
       </Box>
-      <Box sx={{ marginTop: 1 }}>
-        <Grid container spacing={1}>
-          <Grid size={{ xs: 12, lg: 6 }} sx={{ order: { xs: 1, lg: 2 } }}>
-            {showVideoPopup && (
-              <Box sx={{ padding: 1 }}>
-                <YouTubeVideo url={currVID!} />
-              </Box>
-            )}
-          </Grid>
-          <Grid size={{ xs: 12, lg: 6 }} sx={{ order: { xs: 2, lg: 1 } }}>
-            <TableContainer component={Box} style={{ maxHeight: "70vh" }}>
-              <Table stickyHeader>
-                <TableHead>
-                  <TableRow>
-                    <TableCell align="center">Chapter Name</TableCell>
-                    <TableCell align="center">Subject</TableCell>
-                    <TableCell align="center"># of Lectures</TableCell>
-                    <TableCell />
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {Object.keys(groupedLectures).map((chapterName, index) => (
-                    <React.Fragment key={index}>
-                      <TableRow onClick={() => toggleChapter(chapterName)}>
-                        <TableCell align="center">{chapterName}</TableCell>
-                        <TableCell align="center">
-                          {groupedLectures[chapterName][0]?.subject}
-                        </TableCell>
-                        <TableCell align="center">
-                          {groupedLectures[chapterName].length}
-                        </TableCell>
-                        <TableCell>
-                          <IconButton>
-                            {collapsedChapter === chapterName ? (
-                              <KeyboardArrowUp />
-                            ) : (
-                              <KeyboardArrowDown />
-                            )}
-                          </IconButton>
-                        </TableCell>
-                      </TableRow>
-                      <TableRow>
-                        <TableCell
-                          style={{ paddingBottom: 0, paddingTop: 0 }}
-                          colSpan={4}
-                        >
-                          <Collapse
-                            in={collapsedChapter === chapterName}
-                            timeout="auto"
-                            unmountOnExit
-                            sx={{ px: 2 }}
-                          >
-                            <Box sx={{ margin: 1 }}>
-                              {groupedLectures[chapterName].map(
-                                (lecture, idx) => (
-                                  <Box
-                                    key={idx}
-                                    sx={{
-                                      display: "flex",
-                                      justifyContent: "space-between",
-                                      alignItems: "center",
-                                      paddingY: 1,
-                                    }}
-                                  >
-                                    <Typography>
-                                      Lecture #{lecture.lectureNumber}:{" "}
-                                      {lecture.lectureTitle}
-                                    </Typography>
-                                    <Box
-                                      onClick={() =>
-                                        playLecture(lecture.videoId)
-                                      }
-                                      sx={{
-                                        display: "flex",
-                                        alignItems: "center",
-                                        cursor: "pointer",
-                                      }}
-                                    >
-                                      <Typography
-                                        sx={{ ml: 1 }}
-                                        variant="body2"
-                                        color="error"
-                                      >
-                                        Play
-                                      </Typography>
-                                    </Box>
-                                  </Box>
-                                )
-                              )}
-                            </Box>
-                          </Collapse>
-                        </TableCell>
-                      </TableRow>
-                    </React.Fragment>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Grid>
-        </Grid>
-      </Box>
+      <Divider sx={{ mb: 2 }} />
+      <DataGrid
+        columns={columns}
+        rows={lectures.map((lecture, index) => ({
+          id: index + 1 + paginationModel.page * paginationModel.pageSize, // Calculate row index
+          ...lecture,
+        }))}
+        loading={loading}
+        paginationModel={paginationModel} // Controlled pagination
+        onPaginationModelChange={(newModel) => setPaginationModel(newModel)} // Handle page changes
+        pageSizeOptions={[10, 20, 50]} // Options for page size
+        rowCount={totalLectures} // Total count from backend
+        paginationMode="server" // Server-side pagination
+        disableRowSelectionOnClick
+        disableColumnMenu
+      />
+
+      <CustomModal
+        open={showYoutubePlayer}
+        onClose={() => {
+          setShowYoutubePlayer(false);
+          setSelectedLecture(null);
+        }}
+        showHeader={false}
+        height="auto"
+      >
+        <YouTubeVideoPlayer url={selectedLecture?.link || ""} />
+      </CustomModal>
     </Box>
   );
 };
 
-export default LecturePage;
+export default Lectures;

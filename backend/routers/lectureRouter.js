@@ -2,7 +2,6 @@ import express, { Router } from "express";
 const router = express(Router);
 import {
   viewLectures,
-  addNewLectureSingle,
   uploadLectureInfo,
   viewLecturesByClass,
   deleteLecture,
@@ -12,9 +11,7 @@ import {
 import multer from "multer";
 const upload = multer({ dest: "uploads/" });
 
-router.route("/").get(viewLectures).post(addNewLectureSingle);
-
-router.route("/upload").post(uploadLectureInfo);
+router.route("/").get(viewLectures).post(uploadLectureInfo);
 
 router
   .route("/:id")

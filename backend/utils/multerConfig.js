@@ -13,7 +13,6 @@ const storage = multer.diskStorage({
   },
 });
 
-// Configure multer with the custom storage
 const upload = multer({
   storage,
   limits: {
