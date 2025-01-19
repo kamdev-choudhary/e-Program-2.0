@@ -1,4 +1,12 @@
-import { Typography, Box, Divider, Button, IconButton } from "@mui/material";
+import {
+  Typography,
+  Box,
+  Divider,
+  Button,
+  IconButton,
+  SelectChangeEvent,
+  Grid2 as Grid,
+} from "@mui/material";
 import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import React, { useEffect, useMemo, useState } from "react";
 import axios from "../../../hooks/AxiosInterceptor";
@@ -16,6 +24,7 @@ import YouTubeVideoPlayer from "../../../components/YoutubePlayer";
 import { CustomToolbar } from "../../../components/CustomToolbar";
 import AddSingleLecture from "./AddSingleLecture";
 import Swal from "sweetalert2";
+import CustomDropDown from "../../../components/CustomDropDown";
 
 interface Lecture {
   _id: string;
@@ -33,6 +42,7 @@ interface Lecture {
 const Lectures: React.FC = () => {
   const { isValidResponse } = useGlobalContext();
   const [lectures, setLectures] = useState<Lecture[] | null>(null);
+  const [faculties, setFaculties] = useState(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [showExcelUpload, setShowExcelUpload] = useState<boolean>(false);
   const [showVideoUpload, setShowVideoUpload] = useState<boolean>(false);
@@ -45,6 +55,7 @@ const Lectures: React.FC = () => {
     pageSize: 10,
   });
   const [totalLectures, setTotalLectures] = useState<number>(0); // Total count from backend
+  const [selectedFaculty, setSelectedFaculty] = useState<string>("");
 
   const getLectures = async (page: number, pageSize: number) => {
     try {
@@ -53,11 +64,13 @@ const Lectures: React.FC = () => {
         params: {
           page: page + 1,
           limit: pageSize,
+          facultyName: selectedFaculty || undefined,
         },
       });
       if (isValidResponse(response)) {
         setLectures(response.data.lectures || []);
         setTotalLectures(response.data.totalCount || 0);
+        setFaculties(response.data.faculties);
       }
     } catch (error) {
       console.error("Failed to fetch lectures:", error);
@@ -330,6 +343,24 @@ const Lectures: React.FC = () => {
         </Box>
       </Box>
       <Divider sx={{ mb: 2 }} />
+      <Box sx={{ mb: 2 }}>
+        <Grid container spacing={2}>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+            <CustomDropDown
+              data={faculties || []}
+              value={selectedFaculty || ""}
+              label="Faculty"
+              name="facultyName"
+              dropdownValue="facultyName"
+              onChange={(e: SelectChangeEvent) =>
+                setSelectedFaculty(e.target.value)
+              }
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}></Grid>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}></Grid>
+        </Grid>
+      </Box>
       <Box>
         <DataGrid
           columns={columns}

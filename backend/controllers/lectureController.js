@@ -25,11 +25,18 @@ export async function viewLectures(req, res, next) {
       .skip((pageNumber - 1) * pageSize) // Skip documents for previous pages
       .limit(pageSize); // Limit to the specified number per page
 
+    const faculties = await Lecture.aggregate([
+      { $group: { _id: "$facultyName" } }, // Group by facultyName
+      { $project: { _id: 0, facultyName: "$_id" } }, // Format as { facultyName: "name" }
+      { $sort: { facultyName: 1 } }, // Optional: Sort alphabetically
+    ]);
+
     if (lectures && lectures.length > 0) {
       res.status(200).json({
         lectures,
         totalCount, // Include the total number of lectures for client-side pagination
         ...response.success,
+        faculties,
       });
     } else {
       res.status(200).json({ ...response.notFound });
