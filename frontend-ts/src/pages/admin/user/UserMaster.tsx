@@ -8,7 +8,7 @@ import {
   Tabs,
   Tab,
 } from "@mui/material";
-import { DataGrid, GridColDef } from "@mui/x-data-grid";
+import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
 import { CustomToolbar } from "../../../components/CustomToolbar";
 import axios from "../../../hooks/AxiosInterceptor";
@@ -54,11 +54,24 @@ const UserMaster: React.FC = () => {
     role: "admin",
   });
 
-  const fetchUsers = async () => {
+  const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
+    page: 0,
+    pageSize: 10,
+  });
+  const [totalUsers, setTotalUsers] = useState<number>(0);
+
+  const fetchUsers = async (page: number, pageSize: number) => {
     try {
-      const response = await axios.get(`/user/role/${activeTab}`);
+      const response = await axios.get(`/user`, {
+        params: {
+          role: activeTab,
+          page: page + 1,
+          limit: pageSize,
+        },
+      });
       if (isValidResponse(response)) {
         setUsers(response.data.users);
+        setTotalUsers(response.data.usersCount);
         setAdminCount(response.data.adminCount);
         setStudentCount(response.data.studentCount);
       }
@@ -70,8 +83,13 @@ const UserMaster: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchUsers();
+    setPaginationModel({ page: 0, pageSize: paginationModel.pageSize });
   }, [activeTab]);
+
+  useEffect(() => {
+    const { page, pageSize } = paginationModel;
+    fetchUsers(page, pageSize);
+  }, [paginationModel]);
 
   const handleSaveNewUser = async () => {
     try {
@@ -239,32 +257,18 @@ const UserMaster: React.FC = () => {
     if (!hasChanges) {
       return oldRow;
     }
-    setUsers((prevData) => {
-      if (!prevData) return null;
-      return prevData.map((item) =>
-        item._id === oldRow._id ? { ...item, ...newRow } : item
-      );
-    });
-
-    const { _id, ...updateField } = newRow;
 
     try {
+      const { _id, ...updateField } = newRow;
       const response = await axios.patch(`/user/${oldRow._id}`, updateField);
       if (isValidResponse(response)) {
-        setUsers(response.data.users);
+        return newRow;
       }
-      return newRow;
     } catch (error) {
       console.error("Failed to update the row:", error);
-      setUsers((prevData) => {
-        if (!prevData) return null;
-        return prevData.map((item) =>
-          item._id === oldRow._id ? oldRow : item
-        );
-      });
-
-      throw error;
+      Swal.fire("Error", "Row update failed. Please try again.", "error");
     }
+    return oldRow; // Safely revert to old row if the update fails
   };
 
   return (
@@ -281,7 +285,15 @@ const UserMaster: React.FC = () => {
       <Box sx={{ mt: 2 }}>
         <DataGrid
           columns={columns}
-          rows={users || []}
+          rows={
+            users
+              ? users.map((user, index) => ({
+                  id:
+                    index + 1 + paginationModel.page * paginationModel.pageSize,
+                  ...user,
+                }))
+              : []
+          }
           slots={{
             toolbar: () => (
               <CustomToolbar
@@ -290,8 +302,15 @@ const UserMaster: React.FC = () => {
               />
             ),
           }}
+          onPaginationModelChange={(newModel) => setPaginationModel(newModel)}
           processRowUpdate={handleProcessRowUpdate}
+          paginationModel={paginationModel}
+          pageSizeOptions={[10, 30, 50]}
           loading={loading}
+          rowCount={totalUsers}
+          paginationMode="server"
+          disableRowSelectionOnClick
+          disableColumnMenu
           getRowId={(row) => row._id}
         />
       </Box>
@@ -324,6 +343,7 @@ const UserMaster: React.FC = () => {
             label="Account Type"
           />
           <TextField
+            size="small"
             fullWidth
             label="Name"
             value={newUser.name}
@@ -332,6 +352,7 @@ const UserMaster: React.FC = () => {
             }
           />
           <TextField
+            size="small"
             fullWidth
             label="Email"
             value={newUser.email}
@@ -340,6 +361,7 @@ const UserMaster: React.FC = () => {
             }
           />
           <TextField
+            size="small"
             fullWidth
             label="Mobile"
             value={newUser.mobile}

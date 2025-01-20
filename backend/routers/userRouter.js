@@ -3,7 +3,7 @@ import {
   getUserData,
   deleteUser,
   updateUserData,
-  getUserbyRole,
+  getUsersWithPagination,
   updateProfilePic,
   updateUserStatus,
   getProfilePic,
@@ -11,6 +11,9 @@ import {
 import upload from "../utils/multerConfig.js";
 
 const router = express.Router(); // Correct instantiation of the Router
+
+// Get users by role route
+router.route("/").get(getUsersWithPagination);
 
 // User-specific routes
 router
@@ -21,9 +24,6 @@ router
 
 // Update user status route
 router.route("/status/:id").patch(updateUserStatus);
-
-// Get users by role route
-router.route("/role/:role").get(getUserbyRole);
 
 // Profile picture upload route
 router.post("/profile-pic", upload.single("photo"), updateProfilePic);

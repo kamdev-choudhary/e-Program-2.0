@@ -141,7 +141,7 @@ export async function getJeeMainRankVsMarks(req, res, next) {
     );
 
     const data = await JEEMainMarksVsRank.find(filter);
-    if (data) {
+    if (data.length > 0) {
       return res
         .status(200)
         .json({ data, status_code: 1, message: "Record Found." });

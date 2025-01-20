@@ -47,18 +47,25 @@ export async function updateUserData(req, res, next) {
 
 // Get user by roles
 
-export async function getUserbyRole(req, res, next) {
+export async function getUsersWithPagination(req, res, next) {
   try {
-    const { role } = req.params;
-    const users = await User.find({ role: role }, { password: 0 });
+    const { role, page = 1, limit = 10 } = req.query;
+    const pageNumber = parseInt(page, 10); // Convert `page` to integer
+    const pageSize = parseInt(limit, 10); // Convert `limit` to integer
+    const users = await User.find({ role: role }, { password: 0 })
+      .skip((pageNumber - 1) * pageSize) // Skip documents for previous pages
+      .limit(pageSize) // Limit to the specified number per page
+      .lean(); // Convert Mongoose documents to plain objects for better performance
     const adminCount = await User.countDocuments({ role: "admin" });
     const studentCount = await User.countDocuments({ role: "student" });
+    const usersCount = await User.countDocuments({ role });
     res.status(200).json({
       status_code: 1,
       message: "Record Found.",
       users,
       adminCount,
       studentCount,
+      usersCount,
     });
   } catch (error) {
     next(error);

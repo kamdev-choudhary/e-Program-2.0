@@ -1,4 +1,9 @@
-import { Box, IconButton } from "@mui/material";
+import {
+  Box,
+  IconButton,
+  Grid2 as Grid,
+  SelectChangeEvent,
+} from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React, { useEffect, useMemo, useState } from "react";
 import { CustomToolbar } from "../../../components/CustomToolbar";
@@ -8,6 +13,7 @@ import axios from "../../../hooks/AxiosInterceptor";
 import { useGlobalContext } from "../../../contexts/GlobalProvider";
 import { DeleteRounded } from "@mui/icons-material";
 import Swal from "sweetalert2";
+import CustomDropDown from "../../../components/CustomDropDown";
 
 interface JEEMainMarksVsRankProps {
   _id?: string; // Optional field for MongoDB document ID
@@ -28,21 +34,31 @@ const JEEMainMarksVsRank: React.FC = () => {
   const { isValidResponse } = useGlobalContext();
   const [data, setData] = useState<JEEMainMarksVsRankProps[]>([]);
   const [showUploadData, setShowUploadData] = useState<boolean>(false);
+  const [selectedYear, setSelectedYear] = useState<string>("");
+  const [isLoading, setIsLoading] = useState<boolean>(false);
 
   const fetchData = async () => {
     try {
-      const response = await axios.get("/analysis/jeemainmarksvsrank");
+      setIsLoading(true);
+      const response = await axios.get("/analysis/jeemainmarksvsrank", {
+        params: {
+          examYear: selectedYear || undefined,
+        },
+      });
       if (isValidResponse(response)) {
         setData(response.data.data);
       }
     } catch (error) {
       console.error(error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
   useEffect(() => {
+    if (!selectedYear) return;
     fetchData();
-  }, []);
+  }, [selectedYear]);
 
   const handleDeleteItem = async (item: JEEMainMarksVsRankProps) => {
     if (!item?._id) return;
@@ -79,19 +95,15 @@ const JEEMainMarksVsRank: React.FC = () => {
     newRow: JEEMainMarksVsRankProps,
     oldRow: JEEMainMarksVsRankProps
   ): Promise<JEEMainMarksVsRankProps> => {
-    // Check if there are any changes between the new and old rows
     const hasChanges = Object.keys(newRow).some(
       (key) =>
         newRow[key as keyof JEEMainMarksVsRankProps] !==
         oldRow[key as keyof JEEMainMarksVsRankProps]
     );
 
-    // If no changes, return the old row
     if (!hasChanges) {
       return oldRow;
     }
-
-    // Optimistically update the row locally
     setData((prevData) => {
       if (!prevData) return [];
       return prevData.map((item) =>
@@ -99,29 +111,23 @@ const JEEMainMarksVsRank: React.FC = () => {
       );
     });
 
-    const { _id, ...updateField } = newRow; // Extract the `_id` and the fields to be updated
+    const { _id, ...updateField } = newRow;
 
     try {
-      // Send the update request to the backend
       await axios.patch(
         `/analysis/jeemainmarksvsrank/${oldRow._id}`,
         updateField
       );
 
-      // If successful, return the new row
       return newRow;
     } catch (error) {
       console.error("Failed to update the row:", error);
-
-      // Revert the local state to the old row if the update fails
       setData((prevData) => {
         if (!prevData) return [];
         return prevData.map((item) =>
           item._id === oldRow._id ? oldRow : item
         );
       });
-
-      // Re-throw the error to notify the caller of the failure
       throw error;
     }
   };
@@ -252,8 +258,28 @@ const JEEMainMarksVsRank: React.FC = () => {
   ];
 
   return (
-    <Box>
-      <Box></Box>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+      <Box>
+        <Grid container spacing={2}>
+          <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+            <CustomDropDown
+              data={[
+                { name: 2023, value: 2023 },
+                { name: 2024, value: 2024 },
+              ]}
+              value={selectedYear}
+              label="Year"
+              onChange={(e: SelectChangeEvent) =>
+                setSelectedYear(e.target.value)
+              }
+              name="name"
+              dropdownValue="value"
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6, lg: 4 }}></Grid>
+          <Grid size={{ xs: 12, md: 6, lg: 4 }}></Grid>
+        </Grid>
+      </Box>
       <DataGrid
         rows={rows} // Ensure data is not null
         columns={columns}
@@ -265,6 +291,7 @@ const JEEMainMarksVsRank: React.FC = () => {
             />
           ),
         }}
+        loading={isLoading}
         initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
         pageSizeOptions={[10, 30, 50]}
         processRowUpdate={handleProcessRowUpdate}

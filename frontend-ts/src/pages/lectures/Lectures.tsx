@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import {
-  Typography,
   Box,
-  Divider,
   IconButton,
   SelectChangeEvent,
   Grid2 as Grid,
@@ -153,7 +151,7 @@ const Lectures: React.FC = () => {
       field: "chapter",
       headerName: "Chapter",
       flex: 1,
-      minWidth: 200,
+      minWidth: 250,
       editable: false,
     },
     {
@@ -218,10 +216,6 @@ const Lectures: React.FC = () => {
         gap: 1,
       }}
     >
-      <Box>
-        <Typography variant="h4">Lectures</Typography>
-      </Box>
-      <Divider />
       <Box>
         <Grid container spacing={2}>
           <Grid size={{ xs: 12, md: 6, lg: 4 }}>
