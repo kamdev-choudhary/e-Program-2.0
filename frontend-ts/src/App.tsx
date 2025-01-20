@@ -1,24 +1,23 @@
-import { Box, CssBaseline, LinearProgress, ThemeProvider } from "@mui/material";
+import { CssBaseline, ThemeProvider } from "@mui/material";
 import { RouterProvider } from "react-router-dom";
 import routes from "./routes.tsx";
 import { QueryClientProvider, QueryClient } from "@tanstack/react-query";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "./store/store.ts";
-import useOnlineStatus from "./hooks/useOnlineStatus.ts";
 import { CustomModal } from "./components/CustomModal.tsx";
 import AuthPage from "./pages/auth/AuthPage.tsx";
 import "./i18";
 import { useGlobalContext } from "./contexts/GlobalProvider.tsx";
 import getTheme from "./constant/theme.ts";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import OnlineStatusIndicator from "./hooks/OnlineStatusIndicator.tsx";
 
 const App: React.FC = () => {
   const queryClient = new QueryClient();
   const { theme } = useGlobalContext();
-  const online = useSelector((state: RootState) => state.online);
   const showAuth = useSelector((state: RootState) => state.showAuth);
   const dispatch = useDispatch();
-
-  const { loading } = useOnlineStatus();
 
   return (
     <ThemeProvider theme={getTheme(theme)}>
@@ -26,21 +25,20 @@ const App: React.FC = () => {
       <QueryClientProvider client={queryClient}>
         <RouterProvider router={routes} />
       </QueryClientProvider>
-      <Box
-        sx={{
-          position: "fixed",
-          top: 0,
-          right: 0,
-          zIndex: 100,
-          width: "100vw",
-        }}
-      >
-        <LinearProgress
-          color={online ? "success" : "error"}
-          value={loading ? undefined : 100}
-          variant={loading ? "indeterminate" : "determinate"}
-        />
-      </Box>
+      <OnlineStatusIndicator />
+      <ToastContainer
+        position="top-right"
+        autoClose={2500}
+        hideProgressBar={false}
+        closeOnClick
+        pauseOnHover
+        draggable
+        pauseOnFocusLoss
+        theme="light"
+        limit={2}
+        style={{ padding: 0 }}
+      />
+
       <CustomModal
         open={showAuth}
         header=""

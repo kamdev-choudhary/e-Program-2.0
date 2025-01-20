@@ -6,6 +6,7 @@ import {
   IconButton,
   SelectChangeEvent,
   Grid2 as Grid,
+  Avatar,
 } from "@mui/material";
 import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import React, { useEffect, useMemo, useState } from "react";
@@ -26,6 +27,7 @@ import AddSingleLecture from "./AddSingleLecture";
 import Swal from "sweetalert2";
 import CustomDropDown from "../../../components/CustomDropDown";
 import { getClasses } from "../../../api/academic";
+import { getYouTubeThumbnail, getYouTubeId } from "../../../utils/commonfs";
 
 interface Lecture {
   _id: string;
@@ -295,6 +297,18 @@ const Lectures: React.FC = () => {
       editable: true,
     },
     {
+      field: "thumbnail",
+      headerName: "Thumbnail",
+      width: 80,
+      headerAlign: "center",
+      align: "center",
+      renderCell: (params) => (
+        <Box sx={{ display: "flex", alignItems: "center", height: "100%" }}>
+          <Avatar src={getYouTubeThumbnail(params.row.link)} />
+        </Box>
+      ),
+    },
+    {
       field: "Actions",
       headerName: "Play",
       flex: 1,
@@ -372,18 +386,6 @@ const Lectures: React.FC = () => {
         <Grid container spacing={2}>
           <Grid size={{ xs: 12, md: 6, lg: 3 }}>
             <CustomDropDown
-              data={faculties || []}
-              value={selectedFaculty || ""}
-              label="Faculty"
-              name="facultyName"
-              dropdownValue="facultyName"
-              onChange={(e: SelectChangeEvent) =>
-                setSelectedFaculty(e.target.value)
-              }
-            />
-          </Grid>
-          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
-            <CustomDropDown
               data={classes || []}
               value={selectedClass}
               onChange={(e: SelectChangeEvent) =>
@@ -392,6 +394,18 @@ const Lectures: React.FC = () => {
               label="Classes"
               name="name"
               dropdownValue="value"
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+            <CustomDropDown
+              data={faculties || []}
+              value={selectedFaculty || ""}
+              label="Faculty"
+              name="facultyName"
+              dropdownValue="facultyName"
+              onChange={(e: SelectChangeEvent) =>
+                setSelectedFaculty(e.target.value)
+              }
             />
           </Grid>
           <Grid size={{ xs: 12, md: 6, lg: 3 }}></Grid>
@@ -463,7 +477,9 @@ const Lectures: React.FC = () => {
         showHeader={false}
         height="auto"
       >
-        <YouTubeVideoPlayer url={selectedLecture?.link || ""} />
+        <YouTubeVideoPlayer
+          videoId={getYouTubeId(selectedLecture?.link || "") || ""}
+        />
       </CustomModal>
 
       {/* Add Single Lecture */}

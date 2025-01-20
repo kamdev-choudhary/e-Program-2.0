@@ -43,7 +43,6 @@ const Subjects: React.FC<SubjectComponentProps> = ({
   setSelectedSubject,
 }) => {
   const { isValidResponse } = useGlobalContext();
-
   const [newSubject, setNewSubject] = useState<NewSubject>({
     name: "",
     description: "",
@@ -54,28 +53,6 @@ const Subjects: React.FC<SubjectComponentProps> = ({
     setSelectedSubject(subject._id);
     setShowAddSubject(true);
   };
-
-  // const handleSaveSubjectEdit = async () => {
-  //   try {
-  //     if (!selectedSubject) {
-  //       return;
-  //     }
-  //     dispatch({ type: "SET_LOADING", payload: true });
-  //     const response = await axios.patch(
-  //       `/academic/subject/${selectedSubject}`,
-  //       selectedSubject
-  //     );
-  //     if (isValidResponse(response)) {
-  //       setSubjects(response.data.subjects);
-  //       setShowAddSubject(false);
-  //       setSelectedSubject("");
-  //     }
-  //   } catch (error) {
-  //     console.error(error);
-  //   } finally {
-  //     dispatch({ type: "SET_LOADING", payload: false });
-  //   }
-  // };
 
   const handleDeleteSubject = async (id: string) => {
     try {
@@ -108,6 +85,10 @@ const Subjects: React.FC<SubjectComponentProps> = ({
       if (isValidResponse(response)) {
         setSubjects(response.data.subjects);
         setShowAddSubject(false);
+        setNewSubject({
+          name: "",
+          description: "",
+        });
       }
     } catch (error) {
       console.error(error);
@@ -174,6 +155,7 @@ const Subjects: React.FC<SubjectComponentProps> = ({
           }}
         >
           <TextField
+            size="small"
             value={newSubject.name}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setNewSubject((prev) => ({ ...prev, name: e.target.value }))
@@ -182,6 +164,7 @@ const Subjects: React.FC<SubjectComponentProps> = ({
             label="Name"
           />
           <TextField
+            size="small"
             value={newSubject.description}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setNewSubject((prev) => ({

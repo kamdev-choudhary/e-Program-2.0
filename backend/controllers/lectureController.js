@@ -3,11 +3,11 @@ import response from "../utils/responses.js";
 
 export async function viewLectures(req, res, next) {
   try {
-    const { page = 1, limit = 10, ...filters } = req.query; // Extract page, limit, and other filter conditions
-    const pageNumber = parseInt(page, 10); // Ensure `page` is an integer
-    const pageSize = parseInt(limit, 10); // Ensure `limit` is an integer
+    const { page = 1, limit = 10, ...filters } = req.query; // Extract pagination and filters
+    const pageNumber = parseInt(page, 10); // Convert `page` to integer
+    const pageSize = parseInt(limit, 10); // Convert `limit` to integer
 
-    // Build the filter object dynamically from query parameters
+    // Process filters for regex-based search or exact match
     const filter = Object.fromEntries(
       Object.entries(filters).map(([key, value]) => {
         if (["facultyName", "title", "topic"].includes(key)) {
@@ -17,31 +17,64 @@ export async function viewLectures(req, res, next) {
       })
     );
 
-    // Calculate the total count of lectures based on the filter
+    // Get the total count of lectures matching the filter
     const totalCount = await Lecture.countDocuments(filter);
 
-    // Fetch lectures with pagination and filter
+    // Fetch paginated lectures
     const lectures = await Lecture.find(filter)
       .skip((pageNumber - 1) * pageSize) // Skip documents for previous pages
-      .limit(pageSize); // Limit to the specified number per page
+      .limit(pageSize) // Limit to the specified number per page
+      .lean(); // Convert Mongoose documents to plain objects for better performance
 
+    // Fetch unique faculties
     const faculties = await Lecture.aggregate([
       { $group: { _id: "$facultyName" } }, // Group by facultyName
-      { $project: { _id: 0, facultyName: "$_id" } }, // Format as { facultyName: "name" }
-      { $sort: { facultyName: 1 } }, // Optional: Sort alphabetically
+      { $project: { _id: 0, facultyName: "$_id" } }, // Transform output to { facultyName: "name" }
+      { $sort: { facultyName: 1 } }, // Sort alphabetically
     ]);
 
+    const chapters = await Lecture.aggregate([
+      {
+        $group: {
+          _id: "$chapter", // Group by chapter
+          subject: { $first: "$subject" }, // Take the first subject for the chapter
+          className: { $first: "$className" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          chapter: "$_id", // Rename _id to chapter
+          subject: 1, // Include a single subject
+          className: 1,
+        },
+      },
+      { $sort: { chapter: 1 } }, // Sort chapters alphabetically
+    ]);
+
+    // Fetch unique subjects
+    const subjects = await Lecture.aggregate([
+      { $group: { _id: "$subject" } }, // Group by subject
+      { $project: { _id: 0, subject: "$_id" } }, // Transform output to { subject: "name" }
+      { $sort: { subject: 1 } }, // Sort alphabetically
+    ]);
+
+    // Check if lectures are found and return the response
     if (lectures && lectures.length > 0) {
       res.status(200).json({
         lectures,
-        totalCount, // Include the total number of lectures for client-side pagination
-        ...response.success,
+        totalCount, // Include total number of lectures for pagination
         faculties,
+        chapters,
+        subjects,
+        ...response.success, // Assuming `response.success` contains generic success information
       });
     } else {
-      res.status(200).json({ ...response.notFound });
+      // No lectures found response
+      res.status(200).json({ ...response.notFound }); // Assuming `response.notFound` contains generic not-found information
     }
   } catch (error) {
+    // Pass the error to the global error handler
     next(error);
   }
 }
@@ -60,24 +93,6 @@ export async function deleteLecture(req, res, next) {
       ...response.deleted,
       deletedLecture: deletedLecture._id,
     });
-  } catch (error) {
-    next(error);
-  }
-}
-
-export async function viewLecturesByClass(req, res, next) {
-  try {
-    const { id } = req.params;
-    if (!id) {
-      const lectures = await Lecture.find({});
-      res.status(200).json({ ...response.success, lectures });
-    }
-    const lectures = await Lecture.find({ className: id });
-    if (lectures) {
-      res.status(200).json({ lectures, ...response.success });
-    } else {
-      res.status(200).json({ ...response.notFound });
-    }
   } catch (error) {
     next(error);
   }

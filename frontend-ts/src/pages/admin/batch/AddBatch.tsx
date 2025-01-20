@@ -3,7 +3,6 @@ import {
   Button,
   SelectChangeEvent,
   TextField,
-  Grid2 as Grid,
   OutlinedInput,
   InputAdornment,
   IconButton,
@@ -100,83 +99,74 @@ const AddBatch: React.FC<AddBatch> = ({ setAddBatchModal }) => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        gap: 1,
+        gap: 2,
+        width: 350,
       }}
     >
-      <Grid container spacing={2}>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <CustomDropDown
-            data={classes}
-            value={newBatch.class}
-            name="name"
-            dropdownValue="value"
-            onChange={(e: SelectChangeEvent) =>
-              setNewBatch((prev) => ({ ...prev, class: e.target.value }))
-            }
-            label="Batch Class"
-          />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <TextField
-            fullWidth
-            value={newBatch?.name}
-            label="Batch Name"
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setNewBatch((prev) => ({ ...prev, name: e.target.value }))
-            }
-          />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <TextField
-            label="Batch Description"
-            minRows={4}
-            multiline
-            fullWidth
-            value={newBatch.description}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setNewBatch((prev) => ({ ...prev, description: e.target.value }))
-            }
-          />
-        </Grid>
-        <Grid size={{ xs: 12, md: 6 }}>
-          <OutlinedInput
-            fullWidth
-            inputRef={fileInputRef}
-            type="file"
-            onChange={handleFileChange}
-            inputProps={{ accept: "image/*" }}
-            endAdornment={
-              selectedFile && (
-                <InputAdornment position="end">
-                  <IconButton onClick={handleRemoveFile}>
-                    <CloseIcon />
-                  </IconButton>
-                </InputAdornment>
-              )
-            }
-          />
-        </Grid>
-        <Grid size={{ xs: 6, md: 3 }}>
-          <TextField
-            value={newBatch.session}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setNewBatch((prev) => ({ ...prev, session: e.target.value }))
-            }
-            fullWidth
-            label="Batch Session"
-          />
-        </Grid>
-        <Grid size={{ xs: 6, md: 3 }}>
-          <TextField
-            value={newBatch.stream}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setNewBatch((prev) => ({ ...prev, stream: e.target.value }))
-            }
-            fullWidth
-            label="Batch Stream"
-          />
-        </Grid>
-      </Grid>
+      <CustomDropDown
+        data={classes}
+        value={newBatch.class}
+        name="name"
+        dropdownValue="value"
+        onChange={(e: SelectChangeEvent) =>
+          setNewBatch((prev) => ({ ...prev, class: e.target.value }))
+        }
+        label="Batch Class"
+      />
+      <TextField
+        size="small"
+        fullWidth
+        value={newBatch?.name}
+        label="Batch Name"
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setNewBatch((prev) => ({ ...prev, name: e.target.value }))
+        }
+      />
+      <TextField
+        label="Batch Description"
+        minRows={4}
+        multiline
+        fullWidth
+        value={newBatch.description}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setNewBatch((prev) => ({ ...prev, description: e.target.value }))
+        }
+      />
+      <OutlinedInput
+        size="small"
+        fullWidth
+        inputRef={fileInputRef}
+        type="file"
+        onChange={handleFileChange}
+        inputProps={{ accept: "image/*" }}
+        endAdornment={
+          selectedFile && (
+            <InputAdornment position="end">
+              <IconButton onClick={handleRemoveFile}>
+                <CloseIcon />
+              </IconButton>
+            </InputAdornment>
+          )
+        }
+      />
+      <TextField
+        value={newBatch.session}
+        size="small"
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setNewBatch((prev) => ({ ...prev, session: e.target.value }))
+        }
+        fullWidth
+        label="Batch Session"
+      />
+      <TextField
+        size="small"
+        value={newBatch.stream}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setNewBatch((prev) => ({ ...prev, stream: e.target.value }))
+        }
+        fullWidth
+        label="Batch Stream"
+      />
 
       <Button fullWidth variant="contained" onClick={handleSave}>
         Save

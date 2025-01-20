@@ -15,12 +15,13 @@ const MasterLayout: React.FC = () => {
         height: "100vh",
         display: "flex",
         flexDirection: "column",
+        backgroundColor: "background.bg",
       }}
     >
       <Box
         sx={{
           height: "67px",
-          borderBottom: "1px solid rgba(0,0,0,0.1)",
+          borderBottom: "1px solid rgba(0,0,0,0.2)",
           width: "100%",
           position: "fixed",
           top: 0,
@@ -66,7 +67,7 @@ const MasterLayout: React.FC = () => {
             sx={{
               width: expanded ? "285px" : "inherit",
               transition: "width 0.3s ease",
-              borderRight: "1px solid rgba(0,0,0,0.1)",
+              borderRight: "1px solid rgba(0,0,0,0.2)",
               overflowY: "auto",
               bgcolor: "background.paper",
               p: 1,
@@ -83,11 +84,10 @@ const MasterLayout: React.FC = () => {
         <Box
           sx={{
             flex: 1, // This will take the remaining space
-            padding: 1.5,
-            backgroundColor: "background.bg",
             overflowY: "auto",
             height: "100%", // Ensure it takes full height
             pb: 2,
+            p: 1.5,
           }}
         >
           <Outlet />

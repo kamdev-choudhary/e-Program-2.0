@@ -9,7 +9,7 @@ import {
   TableChartRounded,
 } from "@mui/icons-material";
 import { CustomToolbar } from "../../components/CustomToolbar";
-import { downloadJsonToExcel } from "../../hooks/commonfs";
+import { downloadJsonToExcel } from "../../utils/commonfs";
 import FileDropZone from "../../components/FileDropZone";
 
 interface ScholarData {

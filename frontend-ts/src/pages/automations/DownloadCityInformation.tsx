@@ -20,7 +20,7 @@ import {
   TableChartRounded,
 } from "@mui/icons-material";
 import { CustomToolbar } from "../../components/CustomToolbar";
-import { downloadJsonToExcel, downloadPdfFromUrl } from "../../hooks/commonfs";
+import { downloadJsonToExcel, downloadPdfFromUrl } from "../../utils/commonfs";
 
 interface ScholarData {
   drn: string;

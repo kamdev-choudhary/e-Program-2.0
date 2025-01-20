@@ -1,6 +1,6 @@
 import { Box, SelectChangeEvent, Grid2 as Grid } from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
-import UploadJEEMainData from "./part/UploadJEEMainData";
+import UploadJEEMainData from "./part/UploadJeeORCR";
 import { CustomModal } from "../../../components/CustomModal";
 import CustomDropDown from "../../../components/CustomDropDown";
 import { useGlobalContext } from "../../../contexts/GlobalProvider";
@@ -129,13 +129,6 @@ const JEEORCR: React.FC = () => {
 
   const columns: GridColDef[] = [
     {
-      field: "id",
-      headerName: "SN",
-      width: 90,
-      align: "center",
-      headerAlign: "center",
-    },
-    {
       field: "year",
       headerName: "Year",
       maxWidth: 80,
@@ -203,9 +196,9 @@ const JEEORCR: React.FC = () => {
   ];
 
   return (
-    <Box sx={{ bgcolor: "#fff", p: 1 }}>
+    <Box>
       <Box sx={{ mb: 1 }}>
-        <Grid container spacing={2}>
+        <Grid container spacing={1}>
           <Grid size={{ xs: 12, md: 6, lg: 3 }}>
             <CustomDropDown
               value={selectedStream}
@@ -256,6 +249,8 @@ const JEEORCR: React.FC = () => {
               data={[
                 { name: "Home State", value: "HS" },
                 { name: "Other State", value: "OS" },
+                { name: "Goa", value: "GO" },
+                { name: "Jammu & Kashmir", value: "JK" },
               ]}
               value={selectedQuota}
               onChange={(e: SelectChangeEvent) =>

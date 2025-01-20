@@ -9,7 +9,7 @@ const getTheme = (mode: "light" | "dark") => {
       primary: { main: isLight ? "#1976d2" : "#90caf9" },
       secondary: { main: isLight ? "#dc004e" : "#03dac6" },
       background: {
-        default: isLight ? "#f1f3fb" : "#121212",
+        default: isLight ? "#F3E5F5" : "#121212",
         paper: isLight ? "#ffffff" : "#1d1d1d",
       },
       text: {
@@ -34,12 +34,17 @@ const getTheme = (mode: "light" | "dark") => {
       MuiButton: {
         styleOverrides: {
           root: {
-            textTransform: "none",
-            borderRadius: 4,
-            padding: "8px 16px",
+            textTransform: "none", // Prevents uppercase text
+            borderRadius: 4, // Slightly rounded corners
+            padding: "8px 16px", // Padding inside the button
+            display: "flex", // Ensures proper alignment of content
+            alignItems: "center", // Centers content vertically
+            justifyContent: "center", // Centers content horizontally
+            gap: "4px", // Adds spacing between text and icon (adjust as needed)
           },
         },
       },
+
       MuiPaper: {
         styleOverrides: {
           root: {
@@ -52,7 +57,6 @@ const getTheme = (mode: "light" | "dark") => {
         styleOverrides: {
           root: {
             borderRadius: 8,
-            padding: 8,
           },
         },
       },
@@ -70,6 +74,7 @@ const getTheme = (mode: "light" | "dark") => {
             border: `1px solid ${
               isLight ? "rgba(0, 0, 0, 0.12)" : "rgba(255, 255, 255, 0.12)"
             }`,
+            backgroundColor: isLight ? "#fff" : "rgb(63, 61, 61)",
           },
           columnHeader: {
             backgroundColor: isLight ? "#608BC1" : "#3b3b3b",
@@ -85,6 +90,23 @@ const getTheme = (mode: "light" | "dark") => {
           },
           footerContainer: {
             backgroundColor: isLight ? "#f3f3f3" : "#222222",
+          },
+        },
+      },
+      MuiListItemButton: {
+        styleOverrides: {
+          root: {
+            ":hover": {
+              backgroundColor: isLight ? "#E8F5E9" : "#2E7D32",
+            },
+            "&.Mui-selected": {
+              backgroundColor: isLight ? "#C8E6C9" : "#1B5E20",
+              color: isLight ? "#2E7D32" : "#A5D6A7",
+              border: `1px solid ${isLight ? "#81C784" : "#66BB6A"}`,
+              "&:hover": {
+                backgroundColor: isLight ? "#A5D6A7" : "#388E3C",
+              },
+            },
           },
         },
       },

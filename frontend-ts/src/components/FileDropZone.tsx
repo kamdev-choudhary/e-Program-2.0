@@ -2,6 +2,7 @@ import React from "react";
 import { useDropzone } from "react-dropzone";
 import { CloudUploadRounded } from "@mui/icons-material";
 import { Typography, Box } from "@mui/material";
+import { useGlobalContext } from "../contexts/GlobalProvider";
 
 interface FileDropZoneProps {
   onDrop: (files: File[]) => void;
@@ -16,6 +17,7 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({
   acceptedExtensions = [], // Default to empty array for no restrictions
   multiple = false, // Allow multiple files by default
 }) => {
+  const { theme } = useGlobalContext();
   // Convert the array of extensions to the accept object
   const getAcceptObject = (extensions: string[]) => {
     const mimeTypes: { [key: string]: string[] } = {};
@@ -65,7 +67,9 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({
     <Box
       {...getRootProps()}
       sx={{
-        border: "1px dashed rgba(0,0,0,0.3)",
+        border: `1px dashed ${
+          theme === "dark" ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.3)"
+        }`,
         borderRadius: 4,
         cursor: "pointer",
         flexGrow: 1,

@@ -8,6 +8,9 @@ import ProtectedRoute from "./hooks/ProtectedRoute";
 const AuthPage = lazy(() => import("./pages/auth/AuthPage"));
 import MasterLayout from "./layout/MasterLayout";
 
+// Test Page
+const TestPage = lazy(() => import("./pages/test/Test"));
+
 // Public Pages
 const HomePage = lazy(() => import("./pages/home/HomePage"));
 const NotFound = lazy(() => import("./pages/error/NotFound"));
@@ -30,7 +33,7 @@ const ExamMasterOffline = lazy(
 );
 const UserMaster = lazy(() => import("./pages/admin/user/UserMaster"));
 const EditBatch = lazy(() => import("./pages/admin/batch/EditBatch"));
-const JEEORCR = lazy(() => import("./pages/admin/analysis/JEEORCR"));
+const JEEData = lazy(() => import("./pages/admin/analysis/JEEData"));
 
 // User Pages
 const Lectures = lazy(() => import("./pages/lectures/Lectures"));
@@ -59,11 +62,10 @@ const adminRoutes = [
   { path: "/admin/exams/offline", element: withSuspense(ExamMasterOffline) },
   { path: "/admin/users", element: withSuspense(UserMaster) },
   { path: "/admin/batch/edit/:id", element: withSuspense(EditBatch) },
-  { path: "/admin/jeeorcr", element: withSuspense(JEEORCR) },
+  { path: "/admin/jee-data", element: withSuspense(JEEData) },
 ];
 
 const userRoutes = [
-  { path: "/lectures", element: withSuspense(Lectures) },
   { path: "/batch", element: withSuspense(Batches) },
   { path: "/batch/:id", element: withSuspense(BatchDetails) },
   { path: "/books", element: withSuspense(Books) },
@@ -79,6 +81,8 @@ const publicRoutes = [
   { path: "/automation/jeemain/cityinfo", element: withSuspense(DCI) },
   { path: "/automation/jeemain/admitcard", element: withSuspense(DAC) },
   { path: "/analysis/jeemain", element: withSuspense(JEEMainAnalysis) },
+  { path: "/lectures", element: withSuspense(Lectures) },
+  { path: "/test", element: withSuspense(TestPage) },
   { path: "/unauthorized", element: withSuspense(Unauthorized) },
 ];
 

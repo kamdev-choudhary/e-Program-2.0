@@ -38,9 +38,10 @@ const CustomDropDown = <T extends Record<string, any>>({
   };
 
   return (
-    <FormControl required={required} fullWidth>
+    <FormControl size="small" required={required} fullWidth>
       <InputLabel>{label}</InputLabel>
       <Select
+        size="small"
         label={label}
         value={value}
         onChange={onChange}
@@ -60,9 +61,11 @@ const CustomDropDown = <T extends Record<string, any>>({
           data.map((item, index) => (
             <MenuItem
               key={index}
-              value={String(item[dropdownValue])} // Ensure value is a string
+              value={
+                typeof item === "string" ? item : String(item[dropdownValue])
+              } // Ensure value is a string
             >
-              {String(item[name])}
+              {typeof item === "string" ? item : String(item[name])}
             </MenuItem>
           ))}
       </Select>

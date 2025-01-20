@@ -1,4 +1,5 @@
 import JEEMainOC from "../models/jeemainoc.js";
+import JEEMainMarksVsRank from "../models/jeemainMarksvsRank.js";
 
 export async function getORCRbyYear(req, res, next) {
   try {
@@ -86,5 +87,108 @@ export async function addNewOROC(req, res, next) {
     } else {
       next(error);
     }
+  }
+}
+
+export async function addJeeMainMarksVsRank(req, res, next) {
+  try {
+    const { data } = req.body;
+    const parsedData = JSON.parse(data);
+    console.log(parsedData);
+
+    // Validate the parsed data
+    if (!Array.isArray(parsedData) || parsedData.length === 0) {
+      return res
+        .status(400)
+        .json({ message: "Invalid or empty data provided." });
+    }
+    // Prepare the data for bulk insert
+    const preparedData = parsedData.map((entry) => ({
+      examYear: entry.examYear,
+      examSession: entry.examSession,
+      marks: entry.marks,
+      percentile: entry.percentile,
+      rank: entry.rank,
+      generalRank: entry.generalRank,
+      obcRank: entry.obcRank,
+      scRank: entry.scRank,
+      stRank: entry.stRank,
+      ewsRank: entry.ewsRank,
+      pwdRank: entry.pwdRank,
+    }));
+    // Use your database model to perform a batch insert
+    const insertedRecords = await JEEMainMarksVsRank.insertMany(preparedData, {
+      ordered: false,
+    });
+    res.status(201).json({
+      message: `${insertedRecords.length} records successfully inserted.`,
+      insertedRecords,
+      status_code: 1,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getJeeMainRankVsMarks(req, res, next) {
+  try {
+    const { ...filters } = req.query;
+
+    const filter = Object.fromEntries(
+      Object.entries(filters).map(([key, value]) => {
+        return [key, value];
+      })
+    );
+
+    const data = await JEEMainMarksVsRank.find(filter);
+    if (data) {
+      return res
+        .status(200)
+        .json({ data, status_code: 1, message: "Record Found." });
+    } else {
+      res.status(200).json({ status_code: 0, message: "Record not found" });
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function deleteJeeMainMarksVsRank(req, res, next) {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).json({ message: "id missing" });
+    }
+    const deletedData = await JEEMainMarksVsRank.findOneAndDelete({ _id: id });
+    if (deletedData) {
+      res
+        .status(200)
+        .json({ message: "Item deleted", status_code: 4, deletedData });
+    } else {
+      res.status(200).json({ message: "Item not found" });
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function updateJeeMainMarksVsRank(req, res, next) {
+  try {
+    const { id } = req.params;
+    const dataToUpdate = req.body;
+    const updatedData = await JEEMainMarksVsRank.findByIdAndUpdate(
+      id,
+      dataToUpdate,
+      { new: false }
+    );
+    updatedData.save();
+    if (!updatedData) {
+      return res.status(200).json("Data not Found");
+    }
+    res
+      .status(200)
+      .json({ message: "Data updated successfully", status_code: 3 });
+  } catch (error) {
+    next(error);
   }
 }

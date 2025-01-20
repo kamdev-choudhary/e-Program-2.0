@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { BASE_URL } from "../config/environment";
+import { RootState } from "../store/store";
 
 const useOnlineStatus = () => {
   const dispatch = useDispatch();
   const [loading, setLoading] = useState(true);
+  const online = useSelector((state: RootState) => state.online);
 
   const fetchStatus = async () => {
     setLoading(true);
@@ -26,7 +28,7 @@ const useOnlineStatus = () => {
     return () => clearInterval(intervalId);
   }, [dispatch]);
 
-  return { loading };
+  return { loading, online };
 };
 
 export default useOnlineStatus;

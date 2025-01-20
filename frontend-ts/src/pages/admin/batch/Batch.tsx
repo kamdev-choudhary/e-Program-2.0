@@ -1,4 +1,4 @@
-import { AddRounded } from "@mui/icons-material";
+import { AddRounded, SearchRounded } from "@mui/icons-material";
 import {
   Box,
   Typography,
@@ -9,10 +9,11 @@ import {
   Grid2 as Grid,
   CardActions,
   Button,
-  Paper,
   CircularProgress,
+  OutlinedInput,
+  InputAdornment,
 } from "@mui/material";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { CustomModal } from "../../../components/CustomModal";
 import AddBatch from "./AddBatch";
 import EditBatch from "./EditBatch";
@@ -42,6 +43,7 @@ const Batch: React.FC = () => {
   const [showEditBatch, setShowEditBatch] = useState<boolean>(false);
   const [selectedBatch, setSelectedBatch] = useState<Batch | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
+  const [searchText, setSearchText] = useState<string>("");
 
   const getBatches = async () => {
     try {
@@ -59,6 +61,16 @@ const Batch: React.FC = () => {
     getBatches();
   }, []);
 
+  const filteredBatches = useMemo(() => {
+    if (!batches) return []; // Return an empty array if batches is undefined or null
+    const trimmedSearchText = searchText.toLowerCase().trim();
+    return batches.filter((batch) => {
+      return Object.values(batch).some((value) =>
+        String(value).toLowerCase().includes(trimmedSearchText)
+      );
+    });
+  }, [searchText, batches]);
+
   return (
     <Box sx={{ padding: 2 }}>
       <Box
@@ -72,24 +84,40 @@ const Batch: React.FC = () => {
         <Typography variant="h5" component="h1">
           Manage Batches
         </Typography>
+      </Box>
+      <Divider />
+      <Box sx={{ display: "flex", my: 2, width: "100%", gap: 2 }}>
+        <OutlinedInput
+          placeholder="Search batches"
+          sx={{ flexGrow: 1 }}
+          size="small"
+          startAdornment={
+            <InputAdornment position="start">
+              <SearchRounded />
+            </InputAdornment>
+          }
+          value={searchText}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setSearchText(e.target.value)
+          }
+        />
         <Button
           onClick={() => setAddBatchModal(true)}
-          sx={{ position: "absolute", right: 4 }}
           startIcon={<AddRounded />}
           variant="contained"
           color="success"
+          sx={{ minWidth: 150 }}
         >
           Add Batch
         </Button>
       </Box>
-      <Divider sx={{ mb: 2 }} />
       {loading ? (
         <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
           <CircularProgress />
         </Box>
-      ) : batches ? (
+      ) : filteredBatches.length > 0 ? (
         <Grid container spacing={2}>
-          {batches.map((batch, index) => (
+          {filteredBatches.map((batch, index) => (
             <Grid size={{ xs: 12, sm: 6, md: 4 }} key={index}>
               <Card>
                 <CardMedia
@@ -147,10 +175,9 @@ const Batch: React.FC = () => {
         onClose={() => setAddBatchModal(false)}
         height="auto"
         header="Add New Batch"
+        width="auto"
       >
-        <Paper>
-          <AddBatch setAddBatchModal={setAddBatchModal} />
-        </Paper>
+        <AddBatch setAddBatchModal={setAddBatchModal} />
       </CustomModal>
 
       {/* Edit Batch */}

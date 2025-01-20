@@ -11,7 +11,7 @@ const unlinkAsync = promisify(fs.unlink);
 export async function getUserData(req, res, next) {
   const { id } = req.params;
   try {
-    const user = await User.findOne({ _id: id }, { password: 0 }); // Exclude password field
+    const user = await User.findById(id, { password: 0 }); // Exclude password field
     if (user) {
       res.status(200).json({ user, ...response.success });
     } else {
@@ -35,7 +35,7 @@ export async function updateUserData(req, res, next) {
     updatedUser.save();
     const users = await User.find({ role: updatedUser.role });
     if (!updatedUser) {
-      res.status(200).json("User not Found");
+      return res.status(200).json("User not Found");
     }
     res
       .status(200)
@@ -51,7 +51,15 @@ export async function getUserbyRole(req, res, next) {
   try {
     const { role } = req.params;
     const users = await User.find({ role: role }, { password: 0 });
-    res.status(200).json({ status_code: 1, message: "Record Found.", users });
+    const adminCount = await User.countDocuments({ role: "admin" });
+    const studentCount = await User.countDocuments({ role: "student" });
+    res.status(200).json({
+      status_code: 1,
+      message: "Record Found.",
+      users,
+      adminCount,
+      studentCount,
+    });
   } catch (error) {
     next(error);
   }

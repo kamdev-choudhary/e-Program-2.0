@@ -6,6 +6,7 @@ import {
   Toolbar,
   Typography,
   Button,
+  Avatar,
 } from "@mui/material";
 import {
   Fullscreen as FullscreenIcon,
@@ -21,6 +22,7 @@ import { useGlobalContext } from "../contexts/GlobalProvider";
 import { useDispatch } from "react-redux";
 import SiteSetting from "./SiteSetting";
 import { useNavigate } from "react-router-dom";
+import DummyImageUrl from "../assets/user.jpg";
 
 interface HeaderProps {
   handleButtonClick: () => void;
@@ -28,7 +30,7 @@ interface HeaderProps {
 }
 
 const Header: React.FC<HeaderProps> = ({ handleButtonClick, expanded }) => {
-  const { user, handleLogout, isLoggedIn } = useGlobalContext();
+  const { user, handleLogout, isLoggedIn, profilePicUrl } = useGlobalContext();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<any>(null);
   const openMenu = Boolean(anchorEl);
@@ -100,12 +102,7 @@ const Header: React.FC<HeaderProps> = ({ handleButtonClick, expanded }) => {
       </IconButton>
       {isLoggedIn ? (
         <IconButton aria-label="user menu" onClick={handleMenuClick}>
-          <img
-            width="32"
-            height="32"
-            src="https://img.icons8.com/3d-fluency/94/user-male-circle.png"
-            alt="User Avatar"
-          />
+          <Avatar src={profilePicUrl || DummyImageUrl} />
         </IconButton>
       ) : (
         <>

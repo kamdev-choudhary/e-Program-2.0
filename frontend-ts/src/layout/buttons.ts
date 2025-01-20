@@ -75,8 +75,8 @@ export const buttons: Button[] = [
         icon: "https://img.icons8.com/3d-fluency/94/document.png",
       },
       {
-        label: "JEE OR CR",
-        path: "/admin/jeeorcr",
+        label: "JEE Data",
+        path: "/admin/jee-data",
         loginRequired: true,
         icon: "https://img.icons8.com/3d-fluency/50/statistics.png",
       },
@@ -87,7 +87,7 @@ export const buttons: Button[] = [
     path: "/lectures",
     icon: "https://img.icons8.com/3d-fluency/94/teacher-giving-lecture-in-classroom.png",
     type: "button",
-    loginRequired: true,
+    loginRequired: false,
     role: ["admin", "student"],
   },
   {

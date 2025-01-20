@@ -1,6 +1,3 @@
-import { Snackbar } from "@mui/material";
-import { JwtPayload, jwtDecode } from "jwt-decode";
-import { debounce } from "lodash";
 import React, {
   ReactNode,
   createContext,
@@ -9,10 +6,11 @@ import React, {
   useMemo,
   useState,
 } from "react";
+import { JwtPayload, jwtDecode } from "jwt-decode";
 import Loader from "../components/Loader";
 import { LOCAL_STORAGE_KEYS } from "../constant/constants";
 import axios from "../hooks/AxiosInterceptor";
-import NotificationAlert from "../components/NotificationAlert";
+import toastService from "../utils/toastService";
 
 interface GlobalProviderProps {
   children: ReactNode;
@@ -33,7 +31,11 @@ interface LoginResponse {
 
 interface Response {
   status: number;
-  data: any;
+  data: {
+    message?: string;
+    status_code: number;
+    [key: string]: any; // Allow additional properties
+  };
 }
 
 interface GlobalContextType {
@@ -45,68 +47,55 @@ interface GlobalContextType {
   handleUserLogin: (response: LoginResponse) => void;
   isValidResponse: (response: Response) => boolean;
   handleLogout: () => void;
-  showNotification: (
-    message: string,
-    type?: "success" | "error" | "warning" | "info",
-    variant?: "filled" | "outlined" | "standard"
-  ) => void;
   profilePicUrl: string;
   setProfilePicUrl: (value: string) => void;
 }
 
-interface Notification {
-  open: boolean;
-  message: string;
-  type?: "success" | "error" | "warning" | "info";
-  variant?: "filled" | "outlined" | "standard";
-}
-
+// Create GlobalContext
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
 
 export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
-  const [authState, setAuthState] = useState({
+  const [authState, setAuthState] = useState<{
+    isLoggedIn: boolean;
+    user: User | null;
+    token: string;
+  }>({
     isLoggedIn: false,
-    user: null as User | null,
+    user: null,
     token: "",
   });
   const [theme, setTheme] = useState<"light" | "dark">("light");
   const [isLoaded, setIsLoaded] = useState(false);
-  const [notification, setNotification] = useState<Notification>({
-    open: false,
-    message: "",
-    type: "success",
-    variant: "outlined",
-  });
   const [profilePicUrl, setProfilePicUrl] = useState("");
 
+  // Load theme preference
   useEffect(() => {
-    // Check local storage first
     const storedTheme = localStorage.getItem(LOCAL_STORAGE_KEYS.THEME);
-
     if (storedTheme) {
       setTheme(storedTheme as "light" | "dark");
     } else {
-      // Fallback to system preference if no stored theme
       const prefersDark = window.matchMedia(
         "(prefers-color-scheme: dark)"
       ).matches;
       const initialTheme = prefersDark ? "dark" : "light";
       setTheme(initialTheme);
-      localStorage.setItem(LOCAL_STORAGE_KEYS.THEME, initialTheme); // Save initial theme to local storage
+      localStorage.setItem(LOCAL_STORAGE_KEYS.THEME, initialTheme);
     }
   }, []);
 
+  // Fetch user profile picture
   const getProfilePic = async (id: string) => {
     try {
       const response = await axios.get(`/user/profile-pic/${id}`);
-      if (isValidResponse(response)) {
+      if (isValidResponse(response, false)) {
         setProfilePicUrl(response.data.profilePicUrl);
       }
     } catch (error) {
-      console.error(error);
+      console.error("Failed to fetch profile picture:", error);
     }
   };
 
+  // Initialize authentication state
   useEffect(() => {
     const initializeAuthState = () => {
       const storedToken = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
@@ -117,7 +106,6 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
 
       try {
         const decodedToken = jwtDecode<JwtPayload & User>(storedToken);
-
         setAuthState({
           isLoggedIn: true,
           user: {
@@ -144,6 +132,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     initializeAuthState();
   }, []);
 
+  // Handle user login
   const handleUserLogin = (data: LoginResponse) => {
     const { token } = data;
 
@@ -171,6 +160,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     }
   };
 
+  // Handle user logout
   const handleLogout = () => {
     setAuthState({
       isLoggedIn: false,
@@ -180,9 +170,10 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     localStorage.clear();
   };
 
+  // Status messages for API responses
   const statusMessages: Record<
     number,
-    { message: string; type: "success" | "error" | "warning" | "info" }
+    { message: string; type: "success" | "error" | "info" }
   > = {
     1: { message: "Record Found.", type: "success" },
     2: { message: "Record Found.", type: "success" },
@@ -191,53 +182,34 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     0: { message: "Deleted Successfully.", type: "error" },
   };
 
-  const isValidResponse = (response: Response): boolean => {
+  // Validate API responses
+  const isValidResponse = (
+    response: Response,
+    notification?: boolean
+  ): boolean => {
     const { status_code } = response.data;
     const statusConfig = statusMessages[status_code];
 
     if (statusConfig) {
-      showNotification(
-        response.data.message || statusConfig.message,
-        statusConfig.type
-      );
+      if (notification !== false) {
+        toastService({
+          message: response.data.message || statusConfig.message,
+          type: statusConfig.type,
+        });
+      }
       return true;
     }
 
     return false;
   };
 
-  const debouncedShowNotification = debounce(
-    (
-      message: string,
-      type: "success" | "error" | "warning" | "info",
-      variant: "filled" | "outlined" | "standard"
-    ) => {
-      setNotification({ open: true, message, type, variant });
-    },
-    300
-  );
-
-  const showNotification = (
-    message: string,
-    type: "success" | "error" | "warning" | "info" = "success",
-    variant: "filled" | "outlined" | "standard" = "outlined"
-  ) => {
-    debouncedShowNotification(message, type, variant);
-  };
-
-  const handleCloseSnackbar = (
-    _?: React.SyntheticEvent | Event,
-    reason?: string
-  ) => {
-    if (reason === "clickaway") return;
-    setNotification({ ...notification, open: false });
-  };
-
+  // Toggle theme
   const toggleTheme = (value: "light" | "dark") => {
     setTheme(value);
     localStorage.setItem(LOCAL_STORAGE_KEYS.THEME, value);
   };
 
+  // Memoize context value
   const contextValue = useMemo(
     () => ({
       isValidResponse,
@@ -248,33 +220,23 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
       token: authState.token,
       handleUserLogin,
       handleLogout,
-      showNotification,
       setProfilePicUrl,
       profilePicUrl,
     }),
     [isValidResponse, theme, authState, profilePicUrl]
   );
 
+  // Show loader while initializing
   if (!isLoaded) return <Loader />;
 
   return (
     <GlobalContext.Provider value={contextValue}>
       {children}
-      <Snackbar
-        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
-        open={notification.open}
-        onClose={handleCloseSnackbar}
-        autoHideDuration={2000}
-      >
-        <NotificationAlert
-          notification={notification}
-          setNotification={setNotification}
-        />
-      </Snackbar>
     </GlobalContext.Provider>
   );
 };
 
+// Custom hook to use the GlobalContext
 export const useGlobalContext = (): GlobalContextType => {
   const context = useContext(GlobalContext);
   if (!context) {

@@ -1,15 +1,56 @@
 import { saveAs } from "file-saver";
 import ExcelJS from "exceljs";
+import CryptoJS from "crypto-js";
+import { SECRET } from "../config/environment";
 
-interface DownloadJsonToExcelProps {
-  jsonData: Record<string, any>[];
-  fileName?: string;
+interface EncryptedObject {
+  iv: string;
+  data: string;
+}
+
+export function encryptJson(json: object): EncryptedObject {
+  const iv = CryptoJS.lib.WordArray.random(16);
+  const jsonString = JSON.stringify(json);
+
+  const encrypted = CryptoJS.AES.encrypt(
+    jsonString,
+    CryptoJS.enc.Utf8.parse(SECRET),
+    {
+      iv: iv,
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    }
+  );
+
+  return {
+    iv: iv.toString(CryptoJS.enc.Base64),
+    data: encrypted.toString(),
+  };
+}
+
+export function decryptJson(encryptedObject: EncryptedObject): object {
+  const { iv, data } = encryptedObject;
+
+  const decrypted = CryptoJS.AES.decrypt(
+    data,
+    CryptoJS.enc.Utf8.parse(SECRET),
+    {
+      iv: CryptoJS.enc.Base64.parse(iv),
+      mode: CryptoJS.mode.CBC,
+      padding: CryptoJS.pad.Pkcs7,
+    }
+  );
+
+  return JSON.parse(decrypted.toString(CryptoJS.enc.Utf8));
 }
 
 export const downloadJsonToExcel = async ({
   jsonData,
   fileName = "data.xlsx",
-}: DownloadJsonToExcelProps) => {
+}: {
+  jsonData: Record<string, any>[];
+  fileName?: string;
+}) => {
   if (!jsonData || jsonData.length === 0) {
     console.error("No data to export");
     return;
@@ -43,9 +84,6 @@ export const downloadJsonToExcel = async ({
   }
 };
 
-/**
- * Download PDF from link
- */
 export const downloadPdfFromUrl = async (
   path: string,
   name: string
@@ -97,4 +135,25 @@ export const reverseDate = (date: string): string => {
   }
   const [year, month, day] = parts;
   return `${day}-${month}-${year}`;
+};
+
+export function getYouTubeId(url: string): string | null {
+  const regex =
+    /(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/)|youtu\.be\/)([\w-]{11})/;
+  const match = url.match(regex);
+  return match ? match[1] : null;
+}
+
+// Youtube Thumbnail
+export const getYouTubeThumbnail = (url: string) => {
+  const regex =
+    /(?:youtube\.com\/(?:[^\/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*\?v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+  const match = url.match(regex);
+
+  if (match && match[1]) {
+    const videoId = match[1];
+    return `https://img.youtube.com/vi/${videoId}/default.jpg`;
+  }
+
+  return "https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png";
 };

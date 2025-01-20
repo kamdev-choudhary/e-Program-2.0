@@ -7,7 +7,7 @@ import React, {
 } from "react";
 import { io, Socket } from "socket.io-client";
 import { BASE_URL } from "../config/environment";
-import { useGlobalContext } from "./GlobalProvider";
+import toastService from "../utils/toastService";
 
 interface WebSocketContextType {
   socket: Socket | null;
@@ -25,15 +25,41 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
   children,
 }) => {
   const [socket, setSocket] = useState<Socket | null>(null);
-  const { showNotification } = useGlobalContext();
 
   useEffect(() => {
-    const newSocket = io(BASE_URL);
+    const newSocket = io(BASE_URL, {
+      transports: ["websocket"], // Ensure WebSocket is prioritized
+      reconnection: true, // Enable automatic reconnection
+      reconnectionAttempts: 5, // Limit reconnection attempts
+      reconnectionDelay: 1000, // Delay between reconnection attempts
+    });
+
     setSocket(newSocket);
-    if (newSocket.connected) {
-      showNotification("Web socket connected.", "success", "filled");
-    }
+
+    // Add event listeners
+    newSocket.on("connect", () => {
+      toastService({ message: "WebSocket Connected", type: "success" });
+      console.log("WebSocket Connected");
+    });
+
+    newSocket.on("disconnect", () => {
+      toastService({ message: "WebSocket Disconnected", type: "info" });
+      console.log("WebSocket Disconnected");
+    });
+
+    newSocket.on("connect_error", (error) => {
+      toastService({
+        message: `Connection Error: ${error.message}`,
+        type: "error",
+      });
+      console.error("WebSocket Connection Error:", error);
+    });
+
+    // Cleanup on unmount
     return () => {
+      newSocket.off("connect");
+      newSocket.off("disconnect");
+      newSocket.off("connect_error");
       newSocket.disconnect();
     };
   }, []);

@@ -3,7 +3,6 @@ const router = express(Router);
 import {
   viewLectures,
   uploadLectureInfo,
-  viewLecturesByClass,
   deleteLecture,
   getLecturesWithPagination,
   updateLectureData,
@@ -13,11 +12,7 @@ const upload = multer({ dest: "uploads/" });
 
 router.route("/").get(viewLectures).post(uploadLectureInfo);
 
-router
-  .route("/:id")
-  .get(viewLecturesByClass)
-  .delete(deleteLecture)
-  .patch(updateLectureData);
+router.route("/:id").delete(deleteLecture).patch(updateLectureData);
 
 router
   .route("/getlectureswithpagination/:limit/:page")

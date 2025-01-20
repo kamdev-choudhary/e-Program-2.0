@@ -41,6 +41,8 @@ const UserMaster: React.FC = () => {
   const [users, setUsers] = useState<UserProps[] | null>(null);
   const [addAdminModal, setAddAdminModal] = useState<boolean>(false);
   const [showScholarDetails, setShowScholarDetails] = useState<boolean>(false);
+  const [adminCount, setAdminCount] = useState<number | null>(0);
+  const [studentCount, setStudentCount] = useState<number | null>(0);
   const [selectedScholar, setSelectedScholar] = useState<UserProps | null>(
     null
   );
@@ -57,6 +59,8 @@ const UserMaster: React.FC = () => {
       const response = await axios.get(`/user/role/${activeTab}`);
       if (isValidResponse(response)) {
         setUsers(response.data.users);
+        setAdminCount(response.data.adminCount);
+        setStudentCount(response.data.studentCount);
       }
     } catch (error) {
       console.error(error);
@@ -271,8 +275,8 @@ const UserMaster: React.FC = () => {
           setActiveTab(value)
         }
       >
-        <Tab label="Admin" value="admin" />
-        <Tab label="Scholars" value="student" />
+        <Tab label={`Admin (${adminCount})`} value="admin" />
+        <Tab label={`Students (${studentCount})`} value="student" />
       </Tabs>
       <Box sx={{ mt: 2 }}>
         <DataGrid
