@@ -6,6 +6,7 @@ import React, { useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import axios from "../../../hooks/AxiosInterceptor";
 import { useGlobalContext } from "../../../contexts/GlobalProvider";
+import FileDropZone from "../../../components/FileDropZone";
 
 interface Lecture {
   _id: string;
@@ -106,17 +107,6 @@ const UploadExcel: React.FC<UploadExcelProps> = ({
     reader.readAsArrayBuffer(file);
   };
 
-  const { getRootProps, getInputProps } = useDropzone({
-    onDrop,
-    accept: {
-      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
-        ".xlsx",
-      ],
-      "application/vnd.ms-excel": [".xls"],
-    },
-    multiple: false,
-  });
-
   const rows = useMemo(() => {
     if (!jsonData) return [];
     return jsonData.map((d, index) => ({ ...d, id: index + 1 }));
@@ -157,36 +147,20 @@ const UploadExcel: React.FC<UploadExcelProps> = ({
           flexWrap: "wrap",
         }}
       >
-        <Box
-          {...getRootProps()}
-          sx={{
-            border: "1px dashed #1976d2",
-            cursor: "pointer",
-            flexGrow: 1,
-            alignContent: "center",
-            p: { xs: 2, md: 1 },
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            borderRadius: 4,
-          }}
-        >
-          <input {...getInputProps()} />
-          <CloudUploadRounded sx={{ mr: 1 }} />
-          <Typography variant="body1">
-            Drag & drop an Excel file here, or click to select a file
-          </Typography>
+        <Box sx={{ display: "flex", gap: 2, flex: 1 }}>
+          <FileDropZone
+            onDrop={onDrop}
+            acceptedExtensions={[".xlsx", ".xls"]}
+          />
+          <Button
+            startIcon={<CloudUploadRounded />}
+            variant="contained"
+            disabled={!jsonData}
+            onClick={handleUploadLectures}
+          >
+            Upload
+          </Button>
         </Box>
-
-        <Button
-          startIcon={<CloudUploadRounded />}
-          fullWidth
-          variant="contained"
-          disabled={!jsonData}
-          onClick={handleUploadLectures}
-        >
-          Upload
-        </Button>
       </Box>
 
       <Box sx={{ mt: 2 }}>
