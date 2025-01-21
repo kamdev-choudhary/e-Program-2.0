@@ -195,8 +195,52 @@ export async function updateJeeMainMarksVsRank(req, res, next) {
 
 export async function calculateJeeMainRank(req, res, next) {
   try {
-    const { year, session } = req.query;
-    console.log(year, session);
+    const { year, session, mark } = req.query;
+
+    if (!year || !session || !mark) {
+      return res
+        .status(400)
+        .json({ message: "Year, session, and mark are required." });
+    }
+
+    const parsedMark = parseFloat(mark);
+    if (isNaN(parsedMark)) {
+      return res.status(400).json({ message: "Invalid mark value." });
+    }
+
+    // Find the exact match
+    const exactMatch = await JEEMainMarksVsRank.findOne({
+      examYear: parseInt(year, 10),
+      examSession: session,
+      marks: parsedMark,
+    });
+
+    // If an exact match is found, return it
+    if (exactMatch) {
+      return res.status(200).json({ prediction: exactMatch });
+    }
+
+    // Find the nearest matches above and below the mark
+    const lowerMatch = await JEEMainMarksVsRank.findOne({
+      examYear: parseInt(year, 10),
+      examSession: session,
+      marks: { $lte: parsedMark },
+    }).sort({ marks: -1 });
+
+    const upperMatch = await JEEMainMarksVsRank.findOne({
+      examYear: parseInt(year, 10),
+      examSession: session,
+      marks: { $gte: parsedMark },
+    }).sort({ marks: 1 });
+
+    // Return the results
+    return res.status(200).json({
+      prediction: {
+        exactMatch: null,
+        lowerMatch,
+        upperMatch,
+      },
+    });
   } catch (error) {
     next(error);
   }

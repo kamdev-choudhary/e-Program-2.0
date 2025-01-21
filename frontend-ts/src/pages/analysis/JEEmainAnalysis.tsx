@@ -38,6 +38,7 @@ const JEEmainAnalysis: React.FC = () => {
         params: {
           year: selectedYear,
           session: selectedSession,
+          mark: 110,
         },
       });
       console.log(response);
