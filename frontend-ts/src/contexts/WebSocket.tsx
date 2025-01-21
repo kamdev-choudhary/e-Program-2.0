@@ -7,7 +7,6 @@ import React, {
 } from "react";
 import { io, Socket } from "socket.io-client";
 import { BASE_URL } from "../config/environment";
-import toastService from "../utils/toastService";
 
 interface WebSocketContextType {
   socket: Socket | null;
@@ -38,20 +37,14 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
 
     // Add event listeners
     newSocket.on("connect", () => {
-      toastService({ message: "WebSocket Connected", type: "success" });
       console.log("WebSocket Connected");
     });
 
     newSocket.on("disconnect", () => {
-      toastService({ message: "WebSocket Disconnected", type: "info" });
       console.log("WebSocket Disconnected");
     });
 
     newSocket.on("connect_error", (error) => {
-      toastService({
-        message: `Connection Error: ${error.message}`,
-        type: "error",
-      });
       console.error("WebSocket Connection Error:", error);
     });
 

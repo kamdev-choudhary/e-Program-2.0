@@ -67,11 +67,12 @@ const JEEORCR: React.FC = () => {
             value: name, // You can use a different value if needed (e.g., an ID)
           }));
 
-        const programObjects: { name: string; value: string }[] =
-          programNames.map((name: any) => ({
+        const programObjects: { name: string; value: string }[] = programNames
+          .map((name: any) => ({
             name,
             value: name,
-          }));
+          }))
+          .sort((a, b) => a.name.localeCompare(b.name));
 
         // Store the institutes in the state
         setInstitutes(instituteObjects);

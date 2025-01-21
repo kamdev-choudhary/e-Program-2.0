@@ -9,6 +9,8 @@ import axios from "../../hooks/AxiosInterceptor";
 interface DataProps {
   drn: string;
   name: string;
+  category: string;
+  pwd: string;
   physics_positive: number;
   physics_negative: number;
   physics: number;
@@ -31,19 +33,38 @@ const JEEmainAnalysis: React.FC = () => {
   const [selectedYear, setSelectedYear] = useState<string>("");
   const [selectedSession, setSelectedSession] = useState<string>("");
 
-  const calculatePridication = async () => {
-    if (!selectedSession || !selectedYear) return;
+  const calculatePrediction = async (data: DataProps) => {
+    if (!selectedSession || !selectedYear) {
+      console.error("Session or year is not selected.");
+      return;
+    }
     try {
       const response = await axios.get("/analysis/jeemainrank", {
         params: {
           year: selectedYear,
           session: selectedSession,
-          mark: 110,
+          mark: 110, // You can make this dynamic if needed
+          scholarData: data,
         },
       });
-      console.log(response);
+      console.log("Prediction response:", response.data);
     } catch (error) {
-      console.error(error);
+      console.error("Error in calculatePrediction:", error);
+    }
+  };
+
+  const handleReadyForPrediction = async () => {
+    if (!jsonData) {
+      console.error("No JSON data available for prediction.");
+      return;
+    }
+    try {
+      await Promise.all(
+        jsonData.map((data) => calculatePrediction(data)) // No `await` here; return the promise
+      );
+      console.log("All predictions processed successfully.");
+    } catch (error) {
+      console.error("Error during batch prediction:", error);
     }
   };
 
@@ -98,6 +119,8 @@ const JEEmainAnalysis: React.FC = () => {
             id: rowIndex + 1 || "",
             drn: rowData.drn,
             name: rowData.name,
+            category: rowData.category,
+            pwd: rowData.pwd,
             physics_positive: rowData.physics_postive,
             physics_negative: rowData.physics_positive,
             physics: rowData.physics,
@@ -150,88 +173,129 @@ const JEEmainAnalysis: React.FC = () => {
       minWidth: 120,
     },
     {
+      field: "category",
+      headerName: "Category",
+      align: "center",
+      headerAlign: "center",
+    },
+    {
+      field: "pwd",
+      headerName: "PWD",
+      align: "center",
+      headerAlign: "center",
+    },
+
+    {
       field: "physics_positive",
       headerName: "Physics +ve",
       flex: 1,
       minWidth: 120,
+      align: "center",
+      headerAlign: "center",
     },
     {
       field: "physics_negative",
       headerName: "Physics -ve",
       flex: 1,
       minWidth: 120,
+      align: "center",
+      headerAlign: "center",
     },
     {
       field: "physics",
       headerName: "Physics ",
       flex: 1,
       minWidth: 120,
+      align: "center",
+      headerAlign: "center",
     },
     {
       field: "chemistry_positive",
       headerName: "chemistry +ve",
       flex: 1,
       minWidth: 120,
+      align: "center",
+      headerAlign: "center",
     },
     {
       field: "chemistry_negative",
       headerName: "chemistry -ve",
       flex: 1,
       minWidth: 120,
+      align: "center",
+      headerAlign: "center",
     },
     {
       field: "chemistry",
       headerName: "chemistry ",
       flex: 1,
       minWidth: 120,
+      align: "center",
+      headerAlign: "center",
     },
     {
       field: "maths_positive",
       headerName: "maths +ve",
       flex: 1,
       minWidth: 120,
+      align: "center",
+      headerAlign: "center",
     },
     {
       field: "maths_negative",
       headerName: "maths -ve",
       flex: 1,
       minWidth: 120,
+      align: "center",
+      headerAlign: "center",
     },
     {
       field: "maths",
       headerName: "maths ",
       flex: 1,
       minWidth: 120,
+      align: "center",
+      headerAlign: "center",
     },
     {
       field: "total_positive",
       headerName: "total +ve",
       flex: 1,
       minWidth: 120,
+      align: "center",
+      headerAlign: "center",
     },
     {
       field: "total_negative",
       headerName: "total -ve",
       flex: 1,
       minWidth: 120,
+      align: "center",
+      headerAlign: "center",
     },
     {
       field: "total",
       headerName: "total ",
       flex: 1,
       minWidth: 120,
+      align: "center",
+      headerAlign: "center",
     },
     {
       field: "percentile",
       headerName: "Percentile",
       flex: 1,
       minWidth: 120,
+      align: "center",
+      headerAlign: "center",
     },
     {
       field: "rank",
       headerName: "Rank",
       flex: 1,
       minWidth: 120,
+      align: "center",
+      headerAlign: "center",
     },
   ];
 
@@ -267,7 +331,7 @@ const JEEmainAnalysis: React.FC = () => {
             />
           </Grid>
           <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-            <Button onClick={calculatePridication}>Calculate</Button>
+            <Button onClick={handleReadyForPrediction}>Calculate</Button>
           </Grid>
         </Grid>
       </Box>

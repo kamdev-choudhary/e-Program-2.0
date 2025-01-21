@@ -195,8 +195,9 @@ export async function updateJeeMainMarksVsRank(req, res, next) {
 
 export async function calculateJeeMainRank(req, res, next) {
   try {
-    const { year, session, mark } = req.query;
+    const { year, session, mark, scholarData } = req.query;
 
+    console.log("data", scholarData);
     if (!year || !session || !mark) {
       return res
         .status(400)

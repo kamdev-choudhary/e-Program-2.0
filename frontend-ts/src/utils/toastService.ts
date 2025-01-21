@@ -18,7 +18,7 @@ interface ToastProps {
 const toastService = ({
   message,
   type = "default",
-  duration = 3000,
+  duration = 2000,
   position = "top-right",
 }: ToastProps) => {
   const toastOptions = {

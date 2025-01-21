@@ -9,7 +9,7 @@ const getTheme = (mode: "light" | "dark") => {
       primary: { main: isLight ? "#1976d2" : "#90caf9" },
       secondary: { main: isLight ? "#dc004e" : "#03dac6" },
       background: {
-        default: isLight ? "#F3E5F5" : "#121212",
+        default: isLight ? "#fff" : "#121212",
         paper: isLight ? "#ffffff" : "#1d1d1d",
       },
       text: {

@@ -17,6 +17,11 @@ const Test: React.FC = () => {
     });
   };
 
+  const asbinary = BigInt(7279193285783441408).toString(2);
+  const first41Char = asbinary.slice(0, 41);
+  const timeStamp = parseInt(first41Char, 2);
+  console.log(new Date(timeStamp));
+
   return (
     <div>
       <button onClick={handleShowSuccess}>Show Success Toast</button>

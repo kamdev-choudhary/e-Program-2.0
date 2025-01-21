@@ -15,7 +15,6 @@ const YouTubeVideoPlayer: React.FC<YouTubeVideoPlayerProps> = ({
   const [videoTitle, setVideoTitle] = useState<string | null>(null);
   const [videoDuration, setVideoDuration] = useState<number | null>(null);
 
-  // YouTube player state constants
   const PLAYER_STATES = {
     UNSTARTED: -1,
     ENDED: 0,
@@ -27,19 +26,14 @@ const YouTubeVideoPlayer: React.FC<YouTubeVideoPlayerProps> = ({
 
   const handleStateChange = (event: any) => {
     const playerState = event.data;
-    if (playerState === PLAYER_STATES.PLAYING) {
-      setIsPlaying(true);
-    } else {
-      setIsPlaying(false);
-    }
+    setIsPlaying(playerState === PLAYER_STATES.PLAYING);
   };
 
   const handleOnReady = (event: any) => {
     const player = event.target;
 
-    // Fetch video details
-    const title = player.getVideoData().title; // Get video title
-    const duration = player.getDuration(); // Get video duration in seconds
+    const title = player.getVideoData().title;
+    const duration = player.getDuration();
 
     setVideoTitle(title);
     setVideoDuration(duration);
@@ -54,19 +48,28 @@ const YouTubeVideoPlayer: React.FC<YouTubeVideoPlayerProps> = ({
 
   return (
     <Box>
-      <YouTube
-        videoId={videoId}
-        onStateChange={handleStateChange}
-        onReady={handleOnReady}
-        opts={{
+      <Box
+        sx={{
           width: "100%",
-          height: "390",
-          playerVars: {
-            autoplay: 0,
-            controls: 1,
-          },
+          height: "390px",
+          borderRadius: "12px", // Rounded corners
+          overflow: "hidden", // Ensures rounded corners are applied to iframe
         }}
-      />
+      >
+        <YouTube
+          videoId={videoId}
+          onStateChange={handleStateChange}
+          onReady={handleOnReady}
+          opts={{
+            width: "100%",
+            height: "390",
+            playerVars: {
+              autoplay: 0,
+              controls: 1,
+            },
+          }}
+        />
+      </Box>
       <Card sx={{ mt: 1, p: 2, pb: 0 }}>
         <CardContent sx={{ m: 0, p: 0 }}>
           <Typography variant="h6">{videoTitle || "Loading..."}</Typography>

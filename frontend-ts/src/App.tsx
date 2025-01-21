@@ -35,7 +35,7 @@ const App: React.FC = () => {
         draggable
         pauseOnFocusLoss
         theme="light"
-        limit={2}
+        limit={1}
         style={{ padding: 0 }}
       />
 
