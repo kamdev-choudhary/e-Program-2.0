@@ -192,3 +192,12 @@ export async function updateJeeMainMarksVsRank(req, res, next) {
     next(error);
   }
 }
+
+export async function calculateJeeMainRank(req, res, next) {
+  try {
+    const { year, session } = req.query;
+    console.log(year, session);
+  } catch (error) {
+    next(error);
+  }
+}

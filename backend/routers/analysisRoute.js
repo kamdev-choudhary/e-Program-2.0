@@ -9,12 +9,15 @@ import {
   getJeeMainRankVsMarks,
   deleteJeeMainMarksVsRank,
   updateJeeMainMarksVsRank,
+  calculateJeeMainRank,
 } from "../controllers/AnalysisController.js";
 
 router.route("/jeemain/:year").get(getORCRbyYear);
 router.route("/jeeadvanced/:year").get(getJEEAdvancedORCRbyYear);
 
 router.route("/jeemain").post(addNewOROC);
+
+router.route("/jeemainrank").get(calculateJeeMainRank);
 
 router
   .route("/jeemainmarksvsrank")
