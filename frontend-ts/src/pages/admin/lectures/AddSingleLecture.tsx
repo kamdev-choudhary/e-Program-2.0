@@ -65,8 +65,6 @@ const AddSingleLecture: React.FC<AddSingleLectureProp> = ({
 
     setError(null);
 
-    console.log(newLecture);
-
     try {
       const response = await fetch("/api/lectures", {
         method: "POST",

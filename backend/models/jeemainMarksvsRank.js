@@ -1,30 +1,13 @@
 import mongoose from "mongoose";
 
 const marksSchema = new mongoose.Schema({
-  examYear: {
-    type: Number,
-    required: true, // e.g., 2024, 2025
-  },
-  examSession: {
-    type: String,
-    required: true, // e.g., "January", "April"
-  },
-  marks: {
-    type: Number,
-    required: true, // Specific marks (e.g., 200)
-  },
-  percentile: {
-    type: Number,
-    required: true, // Specific percentile (e.g., 99.5)
-  },
-  rank: {
-    type: Number,
-    required: true, // Overall rank for the specific marks
-  },
-  generalRank: {
-    type: Number,
-    required: true, // Rank for General category
-  },
+  year: { type: Number },
+  session: { type: String },
+  date: { type: String },
+  marks: { type: Number },
+  percentile: { type: Number },
+  rank: { type: Number },
+  generalRank: { type: Number },
   obcRank: { type: Number },
   scRank: { type: Number },
   stRank: { type: Number },

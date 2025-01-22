@@ -193,7 +193,7 @@ export async function downloadAdmitCard(req, res, next) {
           error &&
           error.includes("CAPTCHA did not match. Please enter correct CAPTCHA.")
         ) {
-          console.log(`Attempt ${i + 1}: CAPTCHA did not match. Retrying...`);
+          logger.info(`Attempt ${i + 1}: CAPTCHA did not match. Retrying...`);
           continue;
         }
 
@@ -208,7 +208,7 @@ export async function downloadAdmitCard(req, res, next) {
           break;
         }
       } catch (error) {
-        console.log(`Attempt ${i + 1} failed: ${error.message}`);
+        logger.info(`Attempt ${i + 1} failed: ${error.message}`);
       }
     }
 
@@ -247,7 +247,7 @@ export async function downloadAdmitCard(req, res, next) {
           error &&
           error.includes("CAPTCHA did not match. Please enter correct CAPTCHA.")
         ) {
-          console.log(`Attempt ${j + 1}: CAPTCHA did not match. Retrying...`);
+          logger.info(`Attempt ${j + 1}: CAPTCHA did not match. Retrying...`);
           continue;
         }
 
@@ -259,7 +259,7 @@ export async function downloadAdmitCard(req, res, next) {
           break;
         }
       } catch (error) {
-        console.log(`Attempt ${j + 1} failed: ${error.message}`);
+        logger.info(`Attempt ${j + 1} failed: ${error.message}`);
       }
     }
 

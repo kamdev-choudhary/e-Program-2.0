@@ -17,8 +17,8 @@ import CustomDropDown from "../../../components/CustomDropDown";
 
 interface JEEMainMarksVsRankProps {
   _id?: string; // Optional field for MongoDB document ID
-  examYear: number; // Exam year, e.g., 2024
-  examSession: string; // Session, e.g., "January", "April"
+  year: number; // Exam year, e.g., 2024
+  session: string; // Session, e.g., "January", "April"
   marks: number; // Specific marks (e.g., 200)
   percentile: number; // Percentile corresponding to the marks (e.g., 99.5)
   rank: number; // Overall rank for the specific marks
@@ -42,7 +42,7 @@ const JEEMainMarksVsRank: React.FC = () => {
       setIsLoading(true);
       const response = await axios.get("/analysis/jeemainmarksvsrank", {
         params: {
-          examYear: selectedYear || undefined,
+          year: selectedYear || undefined,
         },
       });
       if (isValidResponse(response)) {
@@ -146,7 +146,7 @@ const JEEMainMarksVsRank: React.FC = () => {
       editable: false, // Serial number shouldn't be editable
     },
     {
-      field: "examYear",
+      field: "year",
       headerName: "Exam Year",
       flex: 1,
       headerAlign: "center",
@@ -154,7 +154,7 @@ const JEEMainMarksVsRank: React.FC = () => {
       editable: true,
     },
     {
-      field: "examSession",
+      field: "session",
       headerName: "Session",
       flex: 1,
       headerAlign: "center",

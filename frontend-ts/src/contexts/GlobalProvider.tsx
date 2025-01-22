@@ -139,6 +139,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
       user: null,
       token: "",
     });
+    setProfilePicUrl("");
     localStorage.clear();
   };
 

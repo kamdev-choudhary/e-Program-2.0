@@ -94,7 +94,6 @@ export async function addJeeMainMarksVsRank(req, res, next) {
   try {
     const { data } = req.body;
     const parsedData = JSON.parse(data);
-    console.log(parsedData);
 
     // Validate the parsed data
     if (!Array.isArray(parsedData) || parsedData.length === 0) {
@@ -102,10 +101,11 @@ export async function addJeeMainMarksVsRank(req, res, next) {
         .status(400)
         .json({ message: "Invalid or empty data provided." });
     }
-    // Prepare the data for bulk insert
+
+    // Prepare the data for insertion or update
     const preparedData = parsedData.map((entry) => ({
-      examYear: entry.examYear,
-      examSession: entry.examSession,
+      year: entry.year,
+      session: entry.session,
       marks: entry.marks,
       percentile: entry.percentile,
       rank: entry.rank,
@@ -116,13 +116,37 @@ export async function addJeeMainMarksVsRank(req, res, next) {
       ewsRank: entry.ewsRank,
       pwdRank: entry.pwdRank,
     }));
-    // Use your database model to perform a batch insert
-    const insertedRecords = await JEEMainMarksVsRank.insertMany(preparedData, {
-      ordered: false,
+
+    // Iterate over prepared data and handle insert or update for each record
+    const insertPromises = preparedData.map(async (entry) => {
+      // Try to find an existing record with the same year, session, and marks
+      const existingRecord = await JEEMainMarksVsRank.findOne({
+        year: entry.year,
+        session: entry.session,
+        marks: entry.marks,
+      });
+
+      if (existingRecord) {
+        // If the record exists, update it with the new values
+        await JEEMainMarksVsRank.updateOne(
+          { _id: existingRecord._id },
+          { $set: { ...entry } }
+        );
+        return { message: "Record updated", entry };
+      } else {
+        // If no record is found, insert the new record
+        const newRecord = new JEEMainMarksVsRank(entry);
+        await newRecord.save();
+        return { message: "Record inserted", entry };
+      }
     });
+
+    // Wait for all insert/update promises to complete
+    const results = await Promise.all(insertPromises);
+
     res.status(201).json({
-      message: `${insertedRecords.length} records successfully inserted.`,
-      insertedRecords,
+      message: `${results.length} records processed.`,
+      results,
       status_code: 1,
     });
   } catch (error) {
@@ -197,7 +221,6 @@ export async function calculateJeeMainRank(req, res, next) {
   try {
     const { year, session, mark, scholarData } = req.query;
 
-    console.log("data", scholarData);
     if (!year || !session || !mark) {
       return res
         .status(400)

@@ -9,8 +9,8 @@ import { useGlobalContext } from "../../../../contexts/GlobalProvider";
 
 interface DataProps {
   _id?: string; // Optional field for MongoDB document ID
-  examYear: number; // Exam year, e.g., 2024
-  examSession: string; // Session, e.g., "January", "April"
+  year: number; // Exam year, e.g., 2024
+  session: string; // Session, e.g., "January", "April"
   marks: number; // Specific marks (e.g., 200)
   percentile: number; // Percentile corresponding to the marks (e.g., 99.5)
   rank: number; // Overall rank for the specific marks
@@ -75,8 +75,8 @@ const UploadJeeMainMarksVsRank: React.FC<UploadJeeMainMarksVsRankProps> = ({
           }, {} as Partial<DataProps>);
           return {
             id: index + 1, // Add an ID field for the DataGrid
-            examYear: rowData.examYear,
-            examSession: rowData.examSession,
+            year: rowData.year,
+            session: rowData.session,
             marks: rowData.marks,
             percentile: rowData.percentile,
             rank: rowData.rank,
@@ -116,8 +116,8 @@ const UploadJeeMainMarksVsRank: React.FC<UploadJeeMainMarksVsRankProps> = ({
 
   const columns: GridColDef[] = [
     { field: "id", headerName: "SN", width: 70 },
-    { field: "examYear", headerName: "Exam Year", flex: 1, align: "center" },
-    { field: "examSession", headerName: "Session", flex: 1, align: "center" },
+    { field: "year", headerName: "Exam Year", flex: 1, align: "center" },
+    { field: "session", headerName: "Session", flex: 1, align: "center" },
     { field: "marks", headerName: "Marks", flex: 1, align: "center" },
     { field: "percentile", headerName: "Percentile", flex: 1, align: "center" },
     { field: "rank", headerName: "Overall Rank", flex: 1, align: "center" },

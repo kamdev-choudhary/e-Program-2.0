@@ -43,7 +43,6 @@ const useSessionDetails = () => {
 
   const getDeviceDetails = () => {
     const parser = UAParser(); // No `new` required, just call it as a function
-    console.log(parser);
     return {
       platform: parser.os.name || "unknown",
       browser: parser.browser.name || "unknown",

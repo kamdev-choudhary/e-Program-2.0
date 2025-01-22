@@ -70,10 +70,6 @@ const AddBatch: React.FC<AddBatch> = ({ setAddBatchModal }) => {
     if (selectedFile) {
       formData.append("photo", selectedFile);
     }
-    for (let [key, value] of formData.entries()) {
-      console.log(`${key}: ${value}`);
-    }
-
     try {
       const response = await axios.post("/batch", formData, {
         headers: {

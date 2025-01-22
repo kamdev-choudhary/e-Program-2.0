@@ -174,7 +174,7 @@ const Register: React.FC<RegisterProps> = ({ setActiveTab }) => {
         <Typography sx={{ mr: 1 }}>
           Already have an account?{" "}
           <span
-            style={{ color: "#914D7E", marginLeft: "10px" }}
+            style={{ color: "#914D7E", cursor: "pointer" }}
             onClick={() => setActiveTab(0)}
           >
             Login
