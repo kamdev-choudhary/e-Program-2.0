@@ -6,7 +6,6 @@ import {
   IconButton,
   SelectChangeEvent,
   Grid2 as Grid,
-  Avatar,
 } from "@mui/material";
 import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import React, { useEffect, useMemo, useState } from "react";
@@ -27,7 +26,7 @@ import AddSingleLecture from "./AddSingleLecture";
 import Swal from "sweetalert2";
 import CustomDropDown from "../../../components/CustomDropDown";
 import { getClasses } from "../../../api/academic";
-import { getYouTubeThumbnail, getYouTubeId } from "../../../utils/commonfs";
+import { getYouTubeId } from "../../../utils/commonfs";
 
 interface Lecture {
   _id: string;
@@ -295,18 +294,6 @@ const Lectures: React.FC = () => {
       align: "center",
       minWidth: 200,
       editable: true,
-    },
-    {
-      field: "thumbnail",
-      headerName: "Thumbnail",
-      width: 80,
-      headerAlign: "center",
-      align: "center",
-      renderCell: (params) => (
-        <Box sx={{ display: "flex", alignItems: "center", height: "100%" }}>
-          <Avatar src={getYouTubeThumbnail(params.row.link)} />
-        </Box>
-      ),
     },
     {
       field: "Actions",

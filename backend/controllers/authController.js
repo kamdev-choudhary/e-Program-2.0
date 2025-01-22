@@ -1,9 +1,12 @@
 import User from "../models/user.js";
 import bcrypt from "bcryptjs";
+import Session from "../models/session.js";
 
 export async function login(req, res, next) {
   try {
-    const { id, password } = req.body;
+    const { user, sessionDetails } = req.body;
+
+    const { id, password } = user;
 
     // Validate input
     if (!id || !password) {
@@ -41,6 +44,17 @@ export async function login(req, res, next) {
 
     // Generate a token
     const token = await userExist.generateToken();
+
+    const newSession = new Session({
+      token: token,
+      userId: userExist._id,
+      deviceId: sessionDetails.deviceId || "unknown",
+      platform: sessionDetails.platform || "unknown",
+      browser: sessionDetails.browser || "unknown",
+      ip: sessionDetails.ip || "0.0.0.0",
+    });
+
+    await newSession.save();
 
     // Respond with success
     return res.status(200).json({
@@ -142,6 +156,47 @@ export async function registerByAdmin(req, res, next) {
       return res
         .status(200)
         .json({ message: "Role is missing", status_code: 0 });
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getLoginSesssion(req, res, next) {
+  try {
+    const { id } = req.params;
+    if (!id)
+      return res.status(400).json({ message: "ID is missing", status_code: 0 });
+    const sessions = await Session.find({ userId: id });
+    if (sessions) {
+      return res
+        .status(200)
+        .json({ message: "Session found", sessions, status_code: 1 });
+    } else {
+      return res
+        .status(200)
+        .json({ message: "No Session found", status_code: 1 });
+    }
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function deleteSession(req, res, next) {
+  try {
+    const { id } = req.params;
+    if (!id)
+      return res.status(400).json({ message: "ID is missing", status_code: 0 });
+
+    const deletedSession = await Session.deleteMany({ deviceId: id });
+    if (deletedSession) {
+      return res
+        .status(200)
+        .json({ message: "Session Deleted", status_code: 4 });
+    } else {
+      return res
+        .status(200)
+        .json({ message: "Session Not found", status_code: 0 });
     }
   } catch (error) {
     next(error);

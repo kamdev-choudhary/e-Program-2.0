@@ -12,37 +12,69 @@ import setupSocket from "./utils/socket.js";
 import connectDB from "./utils/connectDB.js";
 import errorMiddleware from "./middlewares/error-middleware.js";
 import config from "./config/config.js";
+import cluster from "cluster";
+import os from "os";
 
+const numCPUs = os.cpus().length;
 const port = config.PORT || 5000;
+const isProduction = config.NODE_ENV === "production";
 
-// Resolve __dirname for ESModules
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const app = express();
+if (isProduction && cluster.isPrimary) {
+  logger.info(`Master process ${process.pid} is running`);
 
-// Middleware setup
-app.use(helmet());
-app.use(cors());
-app.use(bodyparser.json({ limit: "50mb" }));
-app.use(bodyparser.urlencoded({ limit: "50mb", extended: true }));
-app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-app.use(compression());
-routes(app);
-app.use(errorMiddleware);
-
-const server = createServer(app);
-const startServer = async () => {
-  try {
-    await connectDB();
-    setupSocket(server);
-    server.listen(port, () => {
-      logger.info(`Server is listening on port: ${port}`);
-    });
-  } catch (error) {
-    logger.error("Failed to connect to the database", error);
-    process.exit(1);
+  for (let i = 0; i < numCPUs; i++) {
+    cluster.fork();
   }
-};
+  cluster.on("exit", (worker, code, signal) => {
+    logger.error(
+      `Worker ${worker.process.pid} exited. Starting a new worker...`
+    );
+    cluster.fork();
+  });
+} else {
+  const app = express();
 
-startServer();
+  app.use(helmet());
+  app.use(
+    cors({
+      origin: config.WHITELIST,
+      methods: config.METHOD,
+      credentials: true,
+    })
+  );
+  app.use(bodyparser.json({ limit: "50mb" }));
+  app.use(bodyparser.urlencoded({ limit: "50mb", extended: true }));
+  app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+  app.use(compression());
+  routes(app);
+  app.use(errorMiddleware);
+
+  const server = createServer(app);
+  const startServer = async () => {
+    try {
+      await connectDB();
+      setupSocket(server);
+      server.listen(port, () => {
+        logger.info(
+          `Worker ${process.pid} is listening on port: ${port} in ${config.NODE_ENV} mode`
+        );
+      });
+    } catch (error) {
+      logger.error("Failed to connect to the database", error);
+      process.exit(1);
+    }
+  };
+  startServer();
+}
+process.on("SIGINT", () => {
+  logger.info("Server is shutting down...");
+  process.exit(0);
+});
+
+process.on("SIGTERM", () => {
+  logger.info("Server is shutting down...");
+  process.exit(0);
+});

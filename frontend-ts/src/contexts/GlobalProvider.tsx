@@ -10,6 +10,7 @@ import { JwtPayload, jwtDecode } from "jwt-decode";
 import Loader from "../components/Loader";
 import { LOCAL_STORAGE_KEYS } from "../constant/constants";
 import toastService from "../utils/toastService";
+import axios from "../hooks/AxiosInterceptor";
 
 interface GlobalProviderProps {
   children: ReactNode;
@@ -43,7 +44,7 @@ interface GlobalContextType {
   user: User | null;
   token: string;
   handleUserLogin: (response: LoginResponse) => void;
-  isValidResponse: (response: Response) => boolean;
+  isValidResponse: (response: Response, notification?: boolean) => boolean;
   handleLogout: () => void;
   profilePicUrl: string;
   setProfilePicUrl: (value: string) => void;
@@ -117,7 +118,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
         },
         token,
       });
-
+      setProfilePicUrl(photo);
       localStorage.setItem(
         LOCAL_STORAGE_KEYS.USER,
         JSON.stringify(decodedToken)
@@ -130,7 +131,9 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
   };
 
   // Handle user logout
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    const deviceId = localStorage.getItem(LOCAL_STORAGE_KEYS.DEVICE_ID);
+    await axios.delete(`/auth/session/${deviceId}`);
     setAuthState({
       isLoggedIn: false,
       user: null,

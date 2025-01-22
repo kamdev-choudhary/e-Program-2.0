@@ -1,6 +1,5 @@
 import axios from "axios";
 import { API_URL } from "../config/environment";
-import toastService from "../utils/toastService";
 
 const instance = axios.create({
   baseURL: API_URL,
@@ -10,8 +9,12 @@ const instance = axios.create({
 instance.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem("token");
+    const deviceId = localStorage.getItem("deviceId");
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+    }
+    if (deviceId) {
+      config.headers.deviceid = deviceId; // Add the deviceId to the headers
     }
     return config;
   },
@@ -25,11 +28,6 @@ instance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      toastService({
-        message: "Token expired or invalid Tokens. Logggin out....",
-        duration: 300,
-        position: "top-center",
-      });
       localStorage.clear();
       window.location.reload();
     }

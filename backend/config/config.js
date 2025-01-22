@@ -15,6 +15,8 @@ const config = {
   OCR_SPACE_KEY: process.env.OCR_SPACE_KEY || "K88503223788957",
   GMAIL_USER: process.env.GMAIL_USER || "kamdevchoudhary@gmail.com",
   GMAIL_APP_PASSWORD: process.env.GMAIL_APP_PASSWORD || "igvjaxopgsmixnur",
+  WHITELIST: ["http://localhost:5173", "https://e-program.onrender.com"],
+  METHOD: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
 };
 
 export default config;

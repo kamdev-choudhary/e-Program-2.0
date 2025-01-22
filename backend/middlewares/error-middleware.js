@@ -1,6 +1,6 @@
 import logger from "../utils/logger.js";
 
-const errorMiddleware = (err, req, res, next) => {
+const errorMiddleware = (err, req, res) => {
   // Set status and message
   const status = err.status || 500;
   const message = err.message || "Internal server error";

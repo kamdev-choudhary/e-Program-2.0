@@ -2,7 +2,7 @@ import { Box, Divider, Typography } from "@mui/material";
 import React from "react";
 import dark from "../assets/dark.png";
 import light from "../assets/light.png";
-import useTheme from "../utils/useOnlineStatus copy";
+import useTheme from "../utils/useTheme";
 
 const SiteSetting: React.FC = () => {
   const { theme, toggleTheme } = useTheme();

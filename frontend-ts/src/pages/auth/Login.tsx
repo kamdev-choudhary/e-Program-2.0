@@ -9,6 +9,7 @@ import React, { useState } from "react";
 import axios from "../../hooks/AxiosInterceptor";
 import { useGlobalContext } from "../../contexts/GlobalProvider";
 import { useDispatch } from "react-redux";
+import useSessionDetails from "../../utils/useSessionDetails";
 
 interface User {
   id: string;
@@ -29,11 +30,16 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<boolean>(false);
 
+  const sessionDetails = useSessionDetails();
+
   const handleLogin = async (e: React.FormEvent) => {
     setLoading(true);
     e.preventDefault();
     try {
-      const response = await axios.post("/auth/login", user);
+      const response = await axios.post("/auth/login", {
+        user,
+        sessionDetails,
+      });
       if (response.status === 200) {
         handleUserLogin(response.data);
         dispatch({ type: "SET_AUTHPAGE", payload: false });

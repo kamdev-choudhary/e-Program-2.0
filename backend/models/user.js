@@ -64,7 +64,7 @@ userSchema.methods.generateToken = async function () {
         mobile: this.mobile,
       },
       jwtSecret,
-      { expiresIn: "15d" }
+      { expiresIn: "1d" }
     );
   } catch (err) {
     logger.error(err);
