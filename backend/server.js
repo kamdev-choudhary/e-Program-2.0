@@ -40,8 +40,8 @@ if (isProduction && cluster.isPrimary) {
   app.use(helmet());
   app.use(
     cors({
-      origin: config.WHITELIST,
-      methods: config.METHOD,
+      origin: ["http://localhost:5173"],
+      methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
       credentials: true,
     })
   );
