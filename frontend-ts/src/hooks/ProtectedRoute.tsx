@@ -4,23 +4,27 @@ import { useGlobalContext } from "../contexts/GlobalProvider";
 
 interface ProtectedRouteProps {
   children: ReactNode;
-  requiredRole?: string[];
+  allowedRoles?: string[];
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children,
-  requiredRole,
+  allowedRoles,
 }) => {
   const { isLoggedIn, user } = useGlobalContext();
   const location = useLocation();
+
+  if (allowedRoles?.includes("public")) {
+    return <>{children}</>;
+  }
 
   if (!isLoggedIn) {
     return <Navigate to="/" state={{ from: location }} replace />;
   }
 
   if (
-    requiredRole &&
-    (!user || !user.role || !requiredRole.includes(user.role))
+    allowedRoles &&
+    (!user || !user.role || !allowedRoles.includes(user.role))
   ) {
     return <Navigate to="/unauthorized" replace />;
   }

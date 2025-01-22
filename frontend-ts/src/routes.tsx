@@ -1,11 +1,8 @@
 import { lazy, Suspense } from "react";
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, RouteObject } from "react-router-dom";
 import Loader from "./components/Loader";
-
 import ProtectedRoute from "./hooks/ProtectedRoute";
 
-// Layout Components
-const AuthPage = lazy(() => import("./pages/auth/AuthPage"));
 import MasterLayout from "./layout/MasterLayout";
 
 // Test Page
@@ -46,74 +43,117 @@ const DoubtDetails = lazy(() => import("./pages/doubts/DoubtDetails"));
 const Chat = lazy(() => import("./pages/chat/Chat"));
 const QuestionBank = lazy(() => import("./pages/question/QuestionBank"));
 
-// Common Suspense Wrapper
-const withSuspense = (Component: React.ComponentType) => (
-  <Suspense fallback={<Loader />}>{<Component />}</Suspense>
-);
+// Define the route structure with types
+interface RouteConfig {
+  path: string;
+  element: React.ComponentType;
+  allowedRoles: string[];
+}
 
-// Route Definitions
-const adminRoutes = [
-  { path: "/admin/dashboard", element: withSuspense(Dashboard) },
-  { path: "/admin/batch", element: withSuspense(AdminBatch) },
-  { path: "/admin/academic", element: withSuspense(Academic) },
-  { path: "/admin/question-bank", element: withSuspense(QuestionBankAdmin) },
-  { path: "/admin/lectures", element: withSuspense(LecturesAdmin) },
-  { path: "/admin/exams/online", element: withSuspense(ExamMasterOnline) },
-  { path: "/admin/exams/offline", element: withSuspense(ExamMasterOffline) },
-  { path: "/admin/users", element: withSuspense(UserMaster) },
-  { path: "/admin/batch/edit/:id", element: withSuspense(EditBatch) },
-  { path: "/admin/jee-data", element: withSuspense(JEEData) },
-];
-
-const userRoutes = [
-  { path: "/batch", element: withSuspense(Batches) },
-  { path: "/batch/:id", element: withSuspense(BatchDetails) },
-  { path: "/books", element: withSuspense(Books) },
-  { path: "/profile", element: withSuspense(Profile) },
-  { path: "/doubts", element: withSuspense(Doubts) },
-  { path: "/doubts/:id", element: withSuspense(DoubtDetails) },
-  { path: "/chat", element: withSuspense(Chat) },
-  { path: "/question-bank", element: withSuspense(QuestionBank) },
-];
-
-const publicRoutes = [
-  { path: "/", element: withSuspense(HomePage) },
-  { path: "/automation/jeemain/cityinfo", element: withSuspense(DCI) },
-  { path: "/automation/jeemain/admitcard", element: withSuspense(DAC) },
-  { path: "/analysis/jeemain", element: withSuspense(JEEMainAnalysis) },
-  { path: "/lectures", element: withSuspense(Lectures) },
-  { path: "/test", element: withSuspense(TestPage) },
-  { path: "/unauthorized", element: withSuspense(Unauthorized) },
-];
-
-// Wrapping Admin Routes with ProtectedRoute
-const protectedAdminRoutes = adminRoutes.map((route) => ({
-  ...route,
-  element: (
-    <ProtectedRoute requiredRole={["admin"]}>{route.element}</ProtectedRoute>
-  ),
-}));
-
-// Wrapping User Routes with ProtectedRoute if needed
-const protectedUserRoutes = userRoutes.map((route) => ({
-  ...route,
-  element: <ProtectedRoute>{route.element}</ProtectedRoute>,
-}));
-
-// Router Configuration
-const router = createBrowserRouter([
+const routesConfig: RouteConfig[] = [
+  { path: "/", element: HomePage, allowedRoles: ["public"] },
+  { path: "/admin/dashboard", element: Dashboard, allowedRoles: ["admin"] },
+  { path: "/admin/batch", element: AdminBatch, allowedRoles: ["admin"] },
+  { path: "/admin/academic", element: Academic, allowedRoles: ["admin"] },
   {
-    path: "/auth",
-    element: withSuspense(AuthPage),
+    path: "/admin/question-bank",
+    element: QuestionBankAdmin,
+    allowedRoles: ["admin"],
+  },
+  { path: "/admin/lectures", element: LecturesAdmin, allowedRoles: ["admin"] },
+  {
+    path: "/admin/exams/online",
+    element: ExamMasterOnline,
+    allowedRoles: ["admin"],
   },
   {
-    element: withSuspense(MasterLayout),
-    children: [
-      { path: "*", element: withSuspense(NotFound) },
-      ...protectedAdminRoutes,
-      ...protectedUserRoutes,
-      ...publicRoutes,
-    ],
+    path: "/admin/exams/offline",
+    element: ExamMasterOffline,
+    allowedRoles: ["admin"],
+  },
+  { path: "/admin/users", element: UserMaster, allowedRoles: ["admin"] },
+  {
+    path: "/admin/batch/edit/:id",
+    element: EditBatch,
+    allowedRoles: ["admin"],
+  },
+  { path: "/admin/jee-data", element: JEEData, allowedRoles: ["admin"] },
+  {
+    path: "/automation/jeemain/cityinfo",
+    element: DCI,
+    allowedRoles: ["public"],
+  },
+  {
+    path: "/automation/jeemain/admitcard",
+    element: DAC,
+    allowedRoles: ["public"],
+  },
+  {
+    path: "/analysis/jeemain",
+    element: JEEMainAnalysis,
+    allowedRoles: ["public"],
+  },
+  {
+    path: "/lectures",
+    element: Lectures,
+    allowedRoles: ["student", "admin"],
+  },
+  { path: "/test", element: TestPage, allowedRoles: ["public"] },
+  { path: "/unauthorized", element: Unauthorized, allowedRoles: ["public"] },
+  {
+    path: "/batch",
+    element: Batches,
+    allowedRoles: ["student", "admin"],
+  },
+  {
+    path: "/batch/:id",
+    element: BatchDetails,
+    allowedRoles: ["student", "admin"],
+  },
+  {
+    path: "/books",
+    element: Books,
+    allowedRoles: ["student", "admin"],
+  },
+  { path: "/profile", element: Profile, allowedRoles: ["student", "admin"] },
+  { path: "/doubts", element: Doubts, allowedRoles: ["student", "admin"] },
+  {
+    path: "/doubts/:id",
+    element: DoubtDetails,
+    allowedRoles: ["student", "admin"],
+  },
+  { path: "/chat", element: Chat, allowedRoles: ["student", "admin"] },
+  {
+    path: "/question-bank",
+    element: QuestionBank,
+    allowedRoles: ["student", "admin"],
+  },
+  {
+    path: "/*",
+    element: NotFound,
+    allowedRoles: ["public"],
+  },
+];
+
+// Simplified route mapping with ProtectedRoute
+const wrapRoute = (route: RouteConfig): RouteObject => {
+  return {
+    path: route.path,
+    element: (
+      <ProtectedRoute allowedRoles={route.allowedRoles}>
+        <Suspense fallback={<Loader />}>
+          <route.element />
+        </Suspense>
+      </ProtectedRoute>
+    ),
+  };
+};
+
+// Router setup with typed routes
+const router = createBrowserRouter([
+  {
+    element: <MasterLayout />,
+    children: routesConfig.map(wrapRoute),
   },
 ]);
 
