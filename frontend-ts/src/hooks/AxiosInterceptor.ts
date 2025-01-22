@@ -1,5 +1,6 @@
 import axios from "axios";
 import { API_URL } from "../config/environment";
+import toastService from "../utils/toastService";
 
 const instance = axios.create({
   baseURL: API_URL,
@@ -24,7 +25,13 @@ instance.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      console.error("Unauthorized or token expired");
+      toastService({
+        message: "Token expired or invalid Tokens. Logggin out....",
+        duration: 300,
+        position: "top-center",
+      });
+      localStorage.clear();
+      window.location.reload();
     }
     return Promise.reject(error);
   }

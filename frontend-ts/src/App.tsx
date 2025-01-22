@@ -7,15 +7,15 @@ import { RootState } from "./store/store.ts";
 import { CustomModal } from "./components/CustomModal.tsx";
 import AuthPage from "./pages/auth/AuthPage.tsx";
 import "./i18";
-import { useGlobalContext } from "./contexts/GlobalProvider.tsx";
 import getTheme from "./constant/theme.ts";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import OnlineStatusIndicator from "./hooks/OnlineStatusIndicator.tsx";
+import useTheme from "./utils/useOnlineStatus copy.ts";
 
 const App: React.FC = () => {
   const queryClient = new QueryClient();
-  const { theme } = useGlobalContext();
+  const { theme } = useTheme();
   const showAuth = useSelector((state: RootState) => state.showAuth);
   const dispatch = useDispatch();
 

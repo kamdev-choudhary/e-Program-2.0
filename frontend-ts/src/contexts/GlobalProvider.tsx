@@ -9,7 +9,6 @@ import React, {
 import { JwtPayload, jwtDecode } from "jwt-decode";
 import Loader from "../components/Loader";
 import { LOCAL_STORAGE_KEYS } from "../constant/constants";
-import axios from "../hooks/AxiosInterceptor";
 import toastService from "../utils/toastService";
 
 interface GlobalProviderProps {
@@ -27,6 +26,7 @@ interface User {
 interface LoginResponse {
   token: string;
   user: User;
+  photo: string;
 }
 
 interface Response {
@@ -39,8 +39,6 @@ interface Response {
 }
 
 interface GlobalContextType {
-  theme: "light" | "dark";
-  toggleTheme: (value: "light" | "dark") => void;
   isLoggedIn: boolean;
   user: User | null;
   token: string;
@@ -64,36 +62,8 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     user: null,
     token: "",
   });
-  const [theme, setTheme] = useState<"light" | "dark">("light");
   const [isLoaded, setIsLoaded] = useState(false);
   const [profilePicUrl, setProfilePicUrl] = useState("");
-
-  // Load theme preference
-  useEffect(() => {
-    const storedTheme = localStorage.getItem(LOCAL_STORAGE_KEYS.THEME);
-    if (storedTheme) {
-      setTheme(storedTheme as "light" | "dark");
-    } else {
-      const prefersDark = window.matchMedia(
-        "(prefers-color-scheme: dark)"
-      ).matches;
-      const initialTheme = prefersDark ? "dark" : "light";
-      setTheme(initialTheme);
-      localStorage.setItem(LOCAL_STORAGE_KEYS.THEME, initialTheme);
-    }
-  }, []);
-
-  // Fetch user profile picture
-  const getProfilePic = async (id: string) => {
-    try {
-      const response = await axios.get(`/user/profile-pic/${id}`);
-      if (isValidResponse(response, false)) {
-        setProfilePicUrl(response.data.profilePicUrl);
-      }
-    } catch (error) {
-      console.error("Failed to fetch profile picture:", error);
-    }
-  };
 
   // Initialize authentication state
   useEffect(() => {
@@ -117,10 +87,8 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
           },
           token: storedToken,
         });
-
-        if (decodedToken._id) {
-          getProfilePic(decodedToken._id);
-        }
+        const photo = localStorage.getItem(LOCAL_STORAGE_KEYS.PHOTO);
+        if (photo) setProfilePicUrl(photo);
       } catch (error) {
         console.error("Invalid token:", error);
         localStorage.removeItem(LOCAL_STORAGE_KEYS.TOKEN);
@@ -134,7 +102,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
 
   // Handle user login
   const handleUserLogin = (data: LoginResponse) => {
-    const { token } = data;
+    const { token, photo } = data;
 
     try {
       const decodedToken = jwtDecode<JwtPayload & User>(token);
@@ -154,6 +122,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
         LOCAL_STORAGE_KEYS.USER,
         JSON.stringify(decodedToken)
       );
+      localStorage.setItem(LOCAL_STORAGE_KEYS.PHOTO, photo);
       localStorage.setItem(LOCAL_STORAGE_KEYS.TOKEN, token);
     } catch (error) {
       console.error("Invalid token:", error);
@@ -203,18 +172,10 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     return false;
   };
 
-  // Toggle theme
-  const toggleTheme = (value: "light" | "dark") => {
-    setTheme(value);
-    localStorage.setItem(LOCAL_STORAGE_KEYS.THEME, value);
-  };
-
   // Memoize context value
   const contextValue = useMemo(
     () => ({
       isValidResponse,
-      theme,
-      toggleTheme,
       isLoggedIn: authState.isLoggedIn,
       user: authState.user,
       token: authState.token,
@@ -223,7 +184,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
       setProfilePicUrl,
       profilePicUrl,
     }),
-    [isValidResponse, theme, authState, profilePicUrl]
+    [isValidResponse, authState, profilePicUrl]
   );
 
   // Show loader while initializing

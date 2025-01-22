@@ -97,14 +97,14 @@ const getTheme = (mode: "light" | "dark") => {
         styleOverrides: {
           root: {
             ":hover": {
-              backgroundColor: isLight ? "#E8F5E9" : "#2E7D32",
+              backgroundColor: isLight ? "#F1FAF2" : "#3A9E3A",
             },
             "&.Mui-selected": {
-              backgroundColor: isLight ? "#C8E6C9" : "#1B5E20",
-              color: isLight ? "#2E7D32" : "#A5D6A7",
-              border: `1px solid ${isLight ? "#81C784" : "#66BB6A"}`,
+              backgroundColor: isLight ? "#DFF5E0" : "#256F28",
+              color: isLight ? "#3B8F40" : "#C4E5C8",
+              border: `1px solid ${isLight ? "#A5D6A7" : "#4CAF50"}`,
               "&:hover": {
-                backgroundColor: isLight ? "#A5D6A7" : "#388E3C",
+                backgroundColor: isLight ? "#CDEECB" : "#3C8744",
               },
             },
           },

@@ -2,10 +2,10 @@ import { Box, Divider, Typography } from "@mui/material";
 import React from "react";
 import dark from "../assets/dark.png";
 import light from "../assets/light.png";
-import { useGlobalContext } from "../contexts/GlobalProvider";
+import useTheme from "../utils/useOnlineStatus copy";
 
 const SiteSetting: React.FC = () => {
-  const { theme, toggleTheme } = useGlobalContext();
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <Box>

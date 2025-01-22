@@ -6,6 +6,7 @@ export interface State {
   user: User | null;
   token: string | null;
   isLoggedIn: boolean;
+  theme: "light" | "dark";
 }
 
 interface User {
@@ -24,6 +25,7 @@ const defaultState: State = {
   user: null,
   token: null,
   isLoggedIn: false,
+  theme: "light",
 };
 
 type Action =
@@ -33,7 +35,8 @@ type Action =
   | { type: "SET_FORGOTPASSWORD"; payload: boolean }
   | { type: "SET_USER"; payload: any }
   | { type: "SET_LOGIN"; payload: boolean }
-  | { type: "LOGOUT_USER"; payload: any };
+  | { type: "LOGOUT_USER"; payload: any }
+  | { type: "SET_THEME"; payload: "dark" | "light" };
 
 // Retrieve and validate stored state
 
@@ -59,6 +62,8 @@ export const rootReducers = (
       return { ...state, isLoggedIn: action.payload };
     case "LOGOUT_USER":
       return { ...state, isLoggedIn: false, user: null };
+    case "SET_THEME":
+      return { ...state, theme: action.payload };
     default:
       return state;
   }

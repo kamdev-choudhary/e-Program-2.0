@@ -157,6 +157,8 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded = true }) => {
         <Divider sx={{ mb: 1 }} />
         {buttons.map((page, index) => {
           if (page.loginRequired && !isLoggedIn) return;
+          if (page.loginRequired && user && !page.role?.includes(user?.role))
+            return;
 
           return (
             <React.Fragment key={index}>

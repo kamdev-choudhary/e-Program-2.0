@@ -30,7 +30,6 @@ export const buttons: Button[] = [
     type: "menu",
     loginRequired: true,
     role: ["admin"],
-
     options: [
       {
         label: "User Master",
@@ -96,6 +95,7 @@ export const buttons: Button[] = [
     icon: "https://img.icons8.com/3d-fluency/94/layers.png",
     type: "button",
     loginRequired: true,
+    role: ["admin"],
   },
   {
     label: "Books",
@@ -109,6 +109,7 @@ export const buttons: Button[] = [
     label: "Exams",
     icon: "https://img.icons8.com/3d-fluency/94/documents.png",
     type: "menu",
+    role: ["admin"],
     loginRequired: true,
     options: [
       {
@@ -127,6 +128,7 @@ export const buttons: Button[] = [
     label: "JEE Main",
     icon: "https://img.icons8.com/3d-fluency/94/signing-a-document.png",
     type: "menu",
+    role: ["admin"],
     loginRequired: false,
     options: [
       {
@@ -147,6 +149,7 @@ export const buttons: Button[] = [
     label: "Analysis",
     icon: "https://img.icons8.com/3d-fluency/50/statistics.png",
     path: "",
+    role: ["admin"],
     loginRequired: false,
     type: "menu",
     options: [
@@ -169,6 +172,7 @@ export const buttons: Button[] = [
     path: "/question-bank",
     icon: "https://img.icons8.com/3d-fluency/50/help.png",
     loginRequired: true,
+    role: ["admin"],
     type: "button",
   },
   {
@@ -176,6 +180,7 @@ export const buttons: Button[] = [
     path: "/doubts",
     icon: "https://img.icons8.com/3d-fluency/94/view-more.png",
     loginRequired: true,
+    role: ["admin", "student"],
     type: "button",
   },
   {
@@ -183,6 +188,7 @@ export const buttons: Button[] = [
     path: "/chat",
     icon: "https://img.icons8.com/isometric/50/chat.png",
     loginRequired: true,
+    role: ["admin"],
     type: "button",
   },
 ];

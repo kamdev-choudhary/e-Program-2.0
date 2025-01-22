@@ -11,22 +11,24 @@ import chatRoute from "./routers/chatRoute.js";
 import automationRoute from "./routers/automationRouter.js";
 import analysisROute from "./routers/analysisRoute.js";
 
+import verifyToken from "./middlewares/verify-token.js";
+
 const routes = (app) => {
   app.get("/", (req, res) =>
     res.status(200).json({ status: "OK", uptime: process.uptime() })
   );
   app.use("/api/v1/auth", authRouter);
-  app.use("/api/v1/user", userRoute);
-  app.use("/api/v1/academic", academicRoute);
-  app.use("/api/v1/lectures", lectureRouter);
-  app.use("/api/v1/question", questionRouter);
-  app.use("/api/v1/materials", materialRouter);
-  app.use("/api/v1/exams", examRouter);
-  app.use("/api/v1/batch", batchRouter);
-  app.use("/api/v1/doubts", doubtRoute);
-  app.use("/api/v1/chat", chatRoute);
-  app.use("/api/v1/automation", automationRoute);
-  app.use("/api/v1/analysis", analysisROute);
+  app.use("/api/v1/user", verifyToken, userRoute);
+  app.use("/api/v1/academic", verifyToken, academicRoute);
+  app.use("/api/v1/lectures", verifyToken, lectureRouter);
+  app.use("/api/v1/question", verifyToken, questionRouter);
+  app.use("/api/v1/materials", verifyToken, materialRouter);
+  app.use("/api/v1/exams", verifyToken, examRouter);
+  app.use("/api/v1/batch", verifyToken, batchRouter);
+  app.use("/api/v1/doubts", verifyToken, doubtRoute);
+  app.use("/api/v1/chat", verifyToken, chatRoute);
+  app.use("/api/v1/automation", verifyToken, automationRoute);
+  app.use("/api/v1/analysis", verifyToken, analysisROute);
   app.use("/*", (req, res) =>
     res.status(404).json({ message: "Route not available" })
   );

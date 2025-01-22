@@ -15,6 +15,7 @@ import dummyProfile from "../../assets/user.jpg";
 import { CustomModal } from "../../components/CustomModal";
 import axios from "../../hooks/AxiosInterceptor";
 import { EditRounded, UploadFileRounded } from "@mui/icons-material";
+import { LOCAL_STORAGE_KEYS } from "../../constant/constants";
 
 const Profile: React.FC = () => {
   const { user, profilePicUrl, isValidResponse, setProfilePicUrl } =
@@ -51,6 +52,10 @@ const Profile: React.FC = () => {
       });
       if (isValidResponse(response)) {
         setProfilePicUrl(response.data.profilePicUrl);
+        localStorage.setItem(
+          LOCAL_STORAGE_KEYS.PHOTO,
+          response.data.profilePicUrl
+        );
         setPreviewUrl("");
         setNewProfilePic(null);
         setShowUpdateProfilePic(false);
