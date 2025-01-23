@@ -135,8 +135,8 @@ export const buttons: Button[] = [
     ],
   },
   {
-    label: "JEE Main",
-    icon: "https://img.icons8.com/3d-fluency/94/signing-a-document.png",
+    label: "Automation",
+    icon: "https://img.icons8.com/3d-fluency/94/services--v1.png",
     type: "menu",
     role: ["admin"],
     loginRequired: false,
@@ -150,6 +150,12 @@ export const buttons: Button[] = [
       {
         label: "JEE Admit Card",
         path: "/automation/jeemain/admitcard",
+        icon: "https://img.icons8.com/3d-fluency/94/pdf.png",
+        loginRequired: false,
+      },
+      {
+        label: "Admit Card",
+        path: "/automation/generate/admitcard",
         icon: "https://img.icons8.com/3d-fluency/94/pdf.png",
         loginRequired: false,
       },

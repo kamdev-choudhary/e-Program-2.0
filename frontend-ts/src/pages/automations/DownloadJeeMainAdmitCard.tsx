@@ -1,4 +1,11 @@
-import { Box, Button, CircularProgress, Divider } from "@mui/material";
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CircularProgress,
+  Typography,
+} from "@mui/material";
 import React, { useState } from "react";
 import axios from "../../hooks/AxiosInterceptor";
 import ExcelJS from "exceljs";
@@ -23,6 +30,7 @@ interface ScholarData {
   timing?: string;
   center?: string;
   address?: string;
+  error: string;
 }
 
 const DownloadAdmitCard: React.FC = () => {
@@ -260,7 +268,6 @@ const DownloadAdmitCard: React.FC = () => {
       editable: true,
       flex: 1,
     },
-
     {
       field: "pdfDownload",
       headerName: "Data",
@@ -270,23 +277,33 @@ const DownloadAdmitCard: React.FC = () => {
       flex: 1,
       renderCell: (params) => (
         <>
-          <Button
-            onClick={() => handleDownloadAdmitCard(params.row)}
-            startIcon={
-              params.row.status === "loading" ? (
-                <CircularProgress size={20} />
-              ) : (
-                <CloudDownloadRounded />
-              )
-            }
-            color="success"
-            disabled={
-              params.row.status === "fetched" || params.row.status === "loading"
-            }
-            variant="outlined"
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%", // Ensure it spans the full cell width
+              height: "100%", // Ensure it spans the full cell height
+            }}
           >
-            {params.row.status === "loading" ? "loading" : "Fetch Data"}
-          </Button>
+            <Button
+              onClick={() => handleDownloadAdmitCard(params.row)}
+              startIcon={
+                params.row.status === "loading" ? (
+                  <CircularProgress size={20} />
+                ) : (
+                  <CloudDownloadRounded />
+                )
+              }
+              disabled={
+                params.row.status === "fetched" ||
+                params.row.status === "loading"
+              }
+              variant="outlined"
+            >
+              {params.row.status === "loading" ? "loading" : "Fetch Data"}
+            </Button>
+          </Box>
         </>
       ),
     },
@@ -305,7 +322,7 @@ const DownloadAdmitCard: React.FC = () => {
   ];
 
   return (
-    <Box>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
         <FileDropZone onDrop={onDrop} acceptedExtensions={[".xlsx", "xls"]} />
         <Box
@@ -354,8 +371,39 @@ const DownloadAdmitCard: React.FC = () => {
           </Button>
         </Box>
       </Box>
-      <Divider sx={{ mt: 2 }} />
-      <Box sx={{ mt: 2 }}>
+      <Card
+        sx={{
+          p: 0, // Add padding inside the card for consistent spacing
+        }}
+      >
+        <CardContent
+          sx={{
+            display: "flex",
+            flexDirection: "row",
+            justifyContent: "space-between", // Distribute items evenly
+            alignItems: "center", // Align items vertically
+            mt: 1,
+            px: 4,
+          }}
+        >
+          <Typography variant="body1">
+            <strong>Total Count:</strong> {jsonData?.length || 0}
+          </Typography>
+          <Typography variant="body1">
+            <strong>Generated Count:</strong>{" "}
+            {jsonData?.filter((item) => item.status === "fetched").length || 0}
+          </Typography>
+          <Typography variant="body1">
+            <strong>Loading Count:</strong>{" "}
+            {jsonData?.filter((item) => item.status === "loading").length || 0}
+          </Typography>
+          <Typography variant="body1">
+            <strong>Error Count:</strong>{" "}
+            {jsonData?.filter((item) => item?.error !== "").length || 0}
+          </Typography>
+        </CardContent>
+      </Card>
+      <Box>
         <DataGrid
           slots={{
             toolbar: () => <CustomToolbar showAddButton={false} />,

@@ -42,6 +42,9 @@ const Doubts = lazy(() => import("./pages/doubts/Doubts"));
 const DoubtDetails = lazy(() => import("./pages/doubts/DoubtDetails"));
 const Chat = lazy(() => import("./pages/chat/Chat"));
 const QuestionBank = lazy(() => import("./pages/question/QuestionBank"));
+const GenerateAdmitCard = lazy(
+  () => import("./pages/automations/GenerateAdmitCard")
+);
 
 // Define the route structure with types
 interface RouteConfig {
@@ -86,6 +89,11 @@ const routesConfig: RouteConfig[] = [
   {
     path: "/automation/jeemain/admitcard",
     element: DAC,
+    allowedRoles: ["public"],
+  },
+  {
+    path: "/automation/generate/admitcard",
+    element: GenerateAdmitCard,
     allowedRoles: ["public"],
   },
   {

@@ -1,12 +1,18 @@
 import puppeteer from "puppeteer";
 import { v4 as uuid } from "uuid";
-import {
-  captureAndSolveCaptcha,
-  captureAnsSolveWithPython,
-} from "../utils/captchaResolver.js";
+import { captureAndSolveCaptcha } from "../utils/captchaResolver.js";
 import logger from "../utils/logger.js";
-import fs from "fs";
+import { fileURLToPath } from "url";
 import path from "path";
+import fs from "fs-extra";
+import PizZip from "pizzip";
+import Docxtemplater from "docxtemplater";
+
+import { convertDocxToPdf } from "../utils/docToPdf.js";
+
+// Define __dirname for ES modules
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const MAX_RETRIES = 10;
 
@@ -150,7 +156,7 @@ export async function downloadAdmitCard(req, res, next) {
 
   const MAX_RETRIES = 10; // Define a maximum number of retries for captcha attempts.
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
   try {
@@ -290,5 +296,70 @@ export async function downloadAdmitCard(req, res, next) {
     next(error);
   } finally {
     await browser.close();
+  }
+}
+
+export async function generateAdmitCard(req, res, next) {
+  const { student } = req.body;
+
+  try {
+    // Load the Word template
+    const templatePath = path.resolve("templates", "admit_card_template.docx");
+    const content = await fs.readFile(templatePath, "binary");
+
+    // Ensure the output folder exists
+    const outputFolder = path.resolve("output");
+    await fs.ensureDir(outputFolder);
+
+    // Create a new instance of PizZip and Docxtemplater
+    const zip = new PizZip(content);
+    const doc = new Docxtemplater(zip, {
+      paragraphLoop: true,
+      linebreaks: true,
+    });
+
+    // Dynamically map fields from the Excel file (student object)
+    const dynamicData = {};
+
+    Object.keys(student).forEach((key) => {
+      // Add fields to dynamicData based on keys in the student object
+      dynamicData[key] = student[key];
+    });
+
+    // Render the template with student-specific data
+    try {
+      doc.render(dynamicData);
+    } catch (error) {
+      console.error("Error rendering template with dynamic fields:", error);
+      return res.status(500).json({ error: "Template rendering error" });
+    }
+
+    const buffer = doc.getZip().generate({ type: "nodebuffer" });
+
+    // Sanitize file name
+    const sanitizedFileName = student.name.replace(/[\\\/:*?"<>|]/g, "_");
+    const docxFilePath = path.resolve(
+      outputFolder,
+      `${student.drn}_Admit_card.docx`
+    );
+
+    // Save the rendered .docx file
+    await fs.outputFile(docxFilePath, buffer);
+
+    // Convert the saved .docx to .pdf
+    try {
+      await convertDocxToPdf(docxFilePath, outputFolder);
+    } catch (error) {
+      console.error("Error converting to PDF:", error);
+      return res.status(200).json({ error: "Error generating PDF" });
+    }
+
+    res.status(200).json({
+      message: "Admit card generated and converted to PDF successfully!",
+      status_code: 1,
+    });
+  } catch (error) {
+    console.error("Error in generateAdmitCard:", error);
+    next(error);
   }
 }

@@ -81,6 +81,9 @@ const UploadJeeMainMarksVsRank: React.FC<UploadJeeMainMarksVsRankProps> = ({
           return {
             id: index + 1, // Add an ID field for the DataGrid
             marks: rowData.marks,
+            date: rowData.date,
+            year: rowData.year,
+            session: rowData.session,
             shift: rowData.shift,
             percentile: rowData.percentile,
             rank: rowData.rank,
