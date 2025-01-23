@@ -18,33 +18,19 @@ const MasterLayout: React.FC = () => {
         backgroundColor: "background.bg",
       }}
     >
-      <Box
-        sx={{
-          height: "67px",
-          borderBottom: "1px solid rgba(0,0,0,0.2)",
-          width: "100%",
-          position: "fixed",
-          top: 0,
-          left: 0,
-          zIndex: 1,
-          bgcolor: "background.paper",
+      <Header
+        handleButtonClick={() => {
+          isSmallScreen
+            ? setOpenDrawer((prev) => !prev)
+            : setExpanded((prev) => !prev);
         }}
-      >
-        <Header
-          handleButtonClick={() => {
-            isSmallScreen
-              ? setOpenDrawer((prev) => !prev)
-              : setExpanded((prev) => !prev);
-          }}
-          expanded={expanded}
-        />
-      </Box>
+        expanded={expanded}
+      />
 
       <Box
         sx={{
           display: "flex",
           flexDirection: "row",
-          marginTop: "67px",
           height: "calc(100vh - 67px)",
         }}
       >

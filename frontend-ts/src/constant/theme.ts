@@ -63,7 +63,10 @@ const getTheme = (mode: "light" | "dark") => {
       MuiAppBar: {
         styleOverrides: {
           root: {
-            backgroundColor: isLight ? "#f1f3fb" : "#1d1d1d",
+            backgroundColor: isLight ? "#fff" : "#1d1d1d",
+            boxShadow: "none",
+            color: isLight ? "#000" : "#fff",
+            borderBottom: "1px solid rgba(0,0,0,0.2)",
           },
         },
       },
