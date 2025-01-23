@@ -4,6 +4,7 @@ import {
   Card,
   CardContent,
   CircularProgress,
+  Paper,
   Typography,
 } from "@mui/material";
 import React, { useState } from "react";
@@ -11,18 +12,19 @@ import axios from "../../hooks/AxiosInterceptor";
 import ExcelJS from "exceljs";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import {
-  CloudDownloadRounded,
   ManageHistoryRounded,
+  StackedBarChartRounded,
 } from "@mui/icons-material";
 import { CustomToolbar } from "../../components/CustomToolbar";
 import FileDropZone from "../../components/FileDropZone";
+import { downloadJsonToExcel } from "../../utils/commonfs";
 
 // Dynamic interface using Record
 type ScholarData = Record<string, any>;
 
 const DownloadAdmitCard: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [jsonData, setJsonData] = useState<ScholarData[] | null>(null);
+  const [jsonData, setJsonData] = useState<ScholarData[]>([]);
   const [columns, setColumns] = useState<GridColDef[]>([]);
 
   const getColumnsFromHeaders = (headers: string[]): GridColDef[] => {
@@ -102,12 +104,13 @@ const DownloadAdmitCard: React.FC = () => {
   const handleDownloadAdmitCard = async (scholar: ScholarData) => {
     try {
       setJsonData((prevData) => {
-        if (!prevData) return null;
+        if (!prevData) return [];
         return prevData.map((item) =>
           item.drn === scholar.drn
             ? {
                 ...item,
                 status: "loading", // Update status to loading
+                error: "",
               }
             : item
         );
@@ -119,7 +122,7 @@ const DownloadAdmitCard: React.FC = () => {
 
       if (response.data?.status_code === 1) {
         setJsonData((prevData) => {
-          if (!prevData) return null;
+          if (!prevData) return [];
           return prevData.map((item) =>
             item.drn === scholar.drn
               ? {
@@ -133,7 +136,7 @@ const DownloadAdmitCard: React.FC = () => {
         });
       } else if (response.data?.error) {
         setJsonData((prevData) => {
-          if (!prevData) return null;
+          if (!prevData) return [];
           return prevData.map((item) =>
             item.drn === scholar.drn
               ? {
@@ -148,7 +151,7 @@ const DownloadAdmitCard: React.FC = () => {
     } catch (error: any) {
       console.error("Error downloading the PDF:", error);
       setJsonData((prevData) => {
-        if (!prevData) return null;
+        if (!prevData) return [];
         const errorMessage = error?.response?.data?.message || "Unknown error";
         return prevData.map((item) =>
           item.drn === scholar.drn
@@ -249,7 +252,7 @@ const DownloadAdmitCard: React.FC = () => {
     oldRow: ScholarData
   ): ScholarData => {
     setJsonData((prevData) => {
-      if (!prevData) return null;
+      if (!prevData) return [];
       return prevData.map((item) =>
         item.drn === oldRow.drn ? { ...item, ...newRow } : item
       );
@@ -274,13 +277,26 @@ const DownloadAdmitCard: React.FC = () => {
             variant="contained"
             onClick={handleDownloadInfo}
             disabled={isLoading || !jsonData}
-            startIcon={<CloudDownloadRounded sx={{ color: "#fff" }} />}
+            startIcon={<ManageHistoryRounded />}
           >
-            {isLoading ? "Loading..." : "Fetch Data"}
+            {isLoading ? "Loading..." : "Generate All"}
+          </Button>
+          <Button
+            onClick={() =>
+              downloadJsonToExcel({
+                jsonData: jsonData,
+                fileName: "Admit_card_generation_report",
+              })
+            }
+            variant="contained"
+            startIcon={<StackedBarChartRounded />}
+          >
+            Download Report
           </Button>
         </Box>
       </Box>
       <Card
+        elevation={4}
         sx={{
           p: 0, // Add padding inside the card for consistent spacing
         }}
@@ -314,13 +330,13 @@ const DownloadAdmitCard: React.FC = () => {
         </CardContent>
       </Card>
 
-      <Box>
+      <Box component={Paper} elevation={4}>
         <DataGrid
           slots={{
             toolbar: () => <CustomToolbar showAddButton={false} />,
           }}
           columns={columns}
-          rows={jsonData || []}
+          rows={jsonData}
           loading={isLoading}
           processRowUpdate={handleProcessRowUpdate}
           initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}

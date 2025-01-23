@@ -46,6 +46,7 @@ const DownloadAdmitCard: React.FC = () => {
             ? {
                 ...item,
                 status: "loading",
+                error: "",
               }
             : item
         );
