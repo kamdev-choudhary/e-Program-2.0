@@ -96,7 +96,7 @@ export const buttons: Button[] = [
     path: "/lectures",
     icon: "https://img.icons8.com/3d-fluency/94/teacher-giving-lecture-in-classroom.png",
     type: "button",
-    loginRequired: false,
+    loginRequired: true,
     role: ["admin", "student"],
   },
   {
@@ -154,7 +154,7 @@ export const buttons: Button[] = [
         loginRequired: false,
       },
       {
-        label: "Admit Card",
+        label: "Generate Admit Card",
         path: "/automation/generate/admitcard",
         icon: "https://img.icons8.com/3d-fluency/94/pdf.png",
         loginRequired: false,
@@ -166,7 +166,7 @@ export const buttons: Button[] = [
     icon: "https://img.icons8.com/3d-fluency/50/statistics.png",
     path: "",
     role: ["admin"],
-    loginRequired: false,
+    loginRequired: true,
     type: "menu",
     options: [
       {
