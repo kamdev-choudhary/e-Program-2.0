@@ -32,6 +32,15 @@ const JEEmainAnalysis: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedYear, setSelectedYear] = useState<string>("");
   const [selectedSession, setSelectedSession] = useState<string>("");
+  const [sessions, setSessions] = useState<string[]>([]);
+
+  const getInitialData = async () => {
+    try {
+      const response = await axios.get("/analysis/jeemain");
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   const calculatePrediction = async (data: DataProps) => {
     if (!selectedSession || !selectedYear) {

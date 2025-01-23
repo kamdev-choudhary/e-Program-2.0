@@ -17,6 +17,7 @@ import {
   LogoutRounded,
   PinRounded,
   AccountBoxRounded,
+  LockRounded,
 } from "@mui/icons-material";
 import { useGlobalContext } from "../contexts/GlobalProvider";
 import { useDispatch } from "react-redux";
@@ -109,6 +110,7 @@ const Header: React.FC<HeaderProps> = ({ handleButtonClick, expanded }) => {
           <Button
             onClick={() => dispatch({ type: "SET_AUTHPAGE", payload: true })}
             variant="outlined"
+            startIcon={<LockRounded />}
           >
             Login
           </Button>

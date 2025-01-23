@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 const marksSchema = new mongoose.Schema({
   year: { type: Number },
   session: { type: String },
-  date: { type: String },
+  date: { type: Date },
   marks: { type: Number },
   percentile: { type: Number },
   rank: { type: Number },

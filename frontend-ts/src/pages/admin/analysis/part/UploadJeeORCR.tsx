@@ -12,6 +12,7 @@ interface DataProps {
   year: string;
   institute: string;
   programName: string;
+
   quota: string;
   seatType: string;
   gender: string;

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import FileDropZone from "../../../../components/FileDropZone";
-import { Box, Button } from "@mui/material";
+import { Box, Button, TextField } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import ExcelJS from "exceljs";
 import { CloudUploadRounded } from "@mui/icons-material";
@@ -12,6 +12,8 @@ interface DataProps {
   year: number; // Exam year, e.g., 2024
   session: string; // Session, e.g., "January", "April"
   marks: number; // Specific marks (e.g., 200)
+  shift: string;
+  date: string;
   percentile: number; // Percentile corresponding to the marks (e.g., 99.5)
   rank: number; // Overall rank for the specific marks
   generalRank: number; // Rank for General category
@@ -32,6 +34,9 @@ const UploadJeeMainMarksVsRank: React.FC<UploadJeeMainMarksVsRankProps> = ({
   const { isValidResponse } = useGlobalContext();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [jsonData, setJsonData] = useState<DataProps[]>([]);
+  const [selectedYear, setSelectedYear] = useState<string>("");
+  const [selectedSession, setSelectedSession] = useState<string>("");
+  const [dateWithShift, setDateWithShift] = useState<string>("");
 
   const onDrop = async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
@@ -75,9 +80,8 @@ const UploadJeeMainMarksVsRank: React.FC<UploadJeeMainMarksVsRankProps> = ({
           }, {} as Partial<DataProps>);
           return {
             id: index + 1, // Add an ID field for the DataGrid
-            year: rowData.year,
-            session: rowData.session,
             marks: rowData.marks,
+            shift: rowData.shift,
             percentile: rowData.percentile,
             rank: rowData.rank,
             generalRank: rowData.generalRank,
@@ -139,7 +143,31 @@ const UploadJeeMainMarksVsRank: React.FC<UploadJeeMainMarksVsRankProps> = ({
       <Box>
         <FileDropZone acceptedExtensions={[".xlsx", "xls"]} onDrop={onDrop} />
       </Box>
-      <Box sx={{ display: "flex", justifyContent: "flex-end", gap: 2 }}>
+      <Box sx={{ display: "flex", gap: 2 }}>
+        <TextField
+          size="small"
+          value={selectedYear}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setSelectedYear(e.target.value)
+          }
+          label="Year"
+        />{" "}
+        <TextField
+          size="small"
+          value={selectedSession}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setSelectedSession(e.target.value)
+          }
+          label="Session"
+        />
+        <TextField
+          size="small"
+          value={dateWithShift}
+          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+            setDateWithShift(e.target.value)
+          }
+          label="Date With Shift"
+        />
         <Button
           onClick={handleUploadData}
           startIcon={<CloudUploadRounded />}

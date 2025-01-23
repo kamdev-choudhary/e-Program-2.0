@@ -19,6 +19,7 @@ interface JEEMainMarksVsRankProps {
   _id?: string; // Optional field for MongoDB document ID
   year: number; // Exam year, e.g., 2024
   session: string; // Session, e.g., "January", "April"
+  date: string;
   marks: number; // Specific marks (e.g., 200)
   percentile: number; // Percentile corresponding to the marks (e.g., 99.5)
   rank: number; // Overall rank for the specific marks
@@ -143,15 +144,16 @@ const JEEMainMarksVsRank: React.FC = () => {
       headerName: "SN",
       headerAlign: "center",
       align: "center",
-      editable: false, // Serial number shouldn't be editable
+      editable: false,
     },
     {
       field: "year",
-      headerName: "Exam Year",
+      headerName: "Year",
       flex: 1,
       headerAlign: "center",
       align: "center",
       editable: true,
+      minWidth: 120,
     },
     {
       field: "session",
@@ -160,6 +162,16 @@ const JEEMainMarksVsRank: React.FC = () => {
       headerAlign: "center",
       align: "center",
       editable: true,
+      minWidth: 150,
+    },
+    {
+      field: "date",
+      headerName: "Date",
+      flex: 1,
+      headerAlign: "center",
+      align: "center",
+      editable: true,
+      minWidth: 150,
     },
     {
       field: "marks",

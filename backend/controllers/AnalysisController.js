@@ -92,61 +92,56 @@ export async function addNewOROC(req, res, next) {
 
 export async function addJeeMainMarksVsRank(req, res, next) {
   try {
-    const { data } = req.body;
-    const parsedData = JSON.parse(data);
+    const { data, year, session, dateWithShift } = req.body;
 
-    // Validate the parsed data
+    // Validate and parse the data
+    if (!data) {
+      return res
+        .status(400)
+        .json({ message: "Data is required.", status_code: 0 });
+    }
+
+    let parsedData;
+    try {
+      parsedData = JSON.parse(data);
+    } catch (err) {
+      return res
+        .status(400)
+        .json({ message: "Invalid JSON format.", status_code: 0 });
+    }
+
     if (!Array.isArray(parsedData) || parsedData.length === 0) {
       return res
         .status(400)
-        .json({ message: "Invalid or empty data provided." });
+        .json({ message: "Data must be a non-empty array.", status_code: 0 });
     }
 
-    // Prepare the data for insertion or update
-    const preparedData = parsedData.map((entry) => ({
-      year: entry.year,
-      session: entry.session,
-      marks: entry.marks,
-      percentile: entry.percentile,
-      rank: entry.rank,
-      generalRank: entry.generalRank,
-      obcRank: entry.obcRank,
-      scRank: entry.scRank,
-      stRank: entry.stRank,
-      ewsRank: entry.ewsRank,
-      pwdRank: entry.pwdRank,
-    }));
-
-    // Iterate over prepared data and handle insert or update for each record
-    const insertPromises = preparedData.map(async (entry) => {
-      // Try to find an existing record with the same year, session, and marks
-      const existingRecord = await JEEMainMarksVsRank.findOne({
-        year: entry.year,
-        session: entry.session,
-        marks: entry.marks,
-      });
-
-      if (existingRecord) {
-        // If the record exists, update it with the new values
-        await JEEMainMarksVsRank.updateOne(
-          { _id: existingRecord._id },
-          { $set: { ...entry } }
+    // Prepare bulk operations for insertion or update
+    const bulkOps = parsedData.map((entry) => {
+      if (!year || !session || entry.marks === undefined) {
+        throw new Error(
+          "Each record must contain 'year', 'session', and 'marks'."
         );
-        return { message: "Record updated", entry };
-      } else {
-        // If no record is found, insert the new record
-        const newRecord = new JEEMainMarksVsRank(entry);
-        await newRecord.save();
-        return { message: "Record inserted", entry };
       }
+
+      return {
+        updateOne: {
+          filter: {
+            year: year,
+            session: session,
+            marks: entry.marks,
+          },
+          update: { $set: { ...entry } },
+          upsert: true, // Insert if no matching document is found
+        },
+      };
     });
 
-    // Wait for all insert/update promises to complete
-    const results = await Promise.all(insertPromises);
+    // Perform bulkWrite operation
+    const result = await JEEMainMarksVsRank.bulkWrite(bulkOps);
 
     res.status(201).json({
-      message: `${results.length} records processed.`,
-      results,
+      message: `${result.nUpserted} records inserted, ${result.nModified} records updated.`,
       status_code: 1,
     });
   } catch (error) {
@@ -264,6 +259,91 @@ export async function calculateJeeMainRank(req, res, next) {
         lowerMatch,
         upperMatch,
       },
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getJeeMainPredictionInitialData(req, res, next) {
+  try {
+    // Dataset 1: Unique Years
+    const uniqueYears = await JEEMainMarksVsRank.distinct("year");
+
+    // Dataset 2: Year with Sessions
+    const yearsWithSessions = await JEEMainMarksVsRank.aggregate([
+      {
+        $group: {
+          _id: {
+            year: "$year",
+            session: "$session",
+          },
+        },
+      },
+      {
+        $project: {
+          year: "$_id.year",
+          session: "$_id.session",
+          _id: 0,
+        },
+      },
+      { $sort: { year: 1, session: 1 } }, // Sort by year and session
+    ]);
+
+    // Dataset 3: Year with Date, Session, and Shifts
+    const yearWithDetails = await JEEMainMarksVsRank.aggregate([
+      {
+        $group: {
+          _id: {
+            year: "$year",
+            date: "$date",
+            session: "$session",
+          },
+        },
+      },
+      {
+        $project: {
+          year: "$_id.year",
+          date: "$_id.date",
+          session: "$_id.session",
+          _id: 0,
+        },
+      },
+      { $sort: { year: 1, date: 1, session: 1 } }, // Sort by year, date, session, and shift
+    ]);
+
+    const withShift = await JEEMainMarksVsRank.aggregate([
+      {
+        $group: {
+          _id: {
+            year: "$year",
+            date: "$date",
+            session: "$session",
+            shift: "$shift",
+          },
+        },
+      },
+      {
+        $project: {
+          year: "$_id.year",
+          date: "$_id.date",
+          session: "$_id.session",
+          shift: "$_id.shift",
+          _id: 0,
+        },
+      },
+      { $sort: { year: 1, date: 1, session: 1, shift: 1 } }, // Sort by year, date, session, and shift
+    ]);
+
+    // Dataset 4: Full Dataset
+    const fullData = await JEEMainMarksVsRank.find();
+
+    // Response
+    res.status(200).json({
+      uniqueYears,
+      yearsWithSessions,
+      yearWithDetails,
+      withShift,
     });
   } catch (error) {
     next(error);
