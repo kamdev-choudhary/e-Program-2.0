@@ -35,14 +35,14 @@ export const WebSocketProvider: React.FC<WebSocketProviderProps> = ({
 
     setSocket(newSocket);
 
-    // Add event listeners
-    newSocket.on("connect", () => {
-      console.log("WebSocket Connected");
-    });
+    // // Add event listeners
+    // newSocket.on("connect", () => {
+    //   console.log("WebSocket Connected");
+    // });
 
-    newSocket.on("disconnect", () => {
-      console.log("WebSocket Disconnected");
-    });
+    // newSocket.on("disconnect", () => {
+    //   console.log("WebSocket Disconnected");
+    // });
 
     newSocket.on("connect_error", (error) => {
       console.error("WebSocket Connection Error:", error);

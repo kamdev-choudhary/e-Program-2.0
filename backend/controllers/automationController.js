@@ -301,6 +301,7 @@ export async function downloadAdmitCard(req, res, next) {
 
 export async function generateAdmitCard(req, res, next) {
   const { student } = req.body;
+  const uniqueId = uuid();
   try {
     // Load the Word template
     const templatePath = path.resolve("templates", "admit_card_template.docx");
@@ -336,10 +337,10 @@ export async function generateAdmitCard(req, res, next) {
     const buffer = doc.getZip().generate({ type: "nodebuffer" });
 
     // Sanitize file name
-    const sanitizedFileName = student.name.replace(/[\\\/:*?"<>|]/g, "_");
+    const sanitizedFileName = student?.name?.replace(/[\\\/:*?"<>|]/g, "_");
     const docxFilePath = path.resolve(
       outputFolder,
-      `${student.drn}_Admit_card.docx`
+      `${student?.drn || uniqueId}_Admit_card.docx`
     );
 
     // Save the rendered .docx file
@@ -353,14 +354,9 @@ export async function generateAdmitCard(req, res, next) {
       return res.status(200).json({ error: "Error generating PDF" });
     }
 
-    const fullPdfUrl = `${req.protocol}://${req.get("host")}/uploads/${
-      student.drn
-    }_Admit_card.pdf`;
-
     res.status(200).json({
       message: "Admit card generated and converted to PDF successfully!",
       status_code: 1,
-      fullPdfUrl,
     });
   } catch (error) {
     console.error("Error in generateAdmitCard:", error);

@@ -1,7 +1,6 @@
 import React from "react";
 import OnlineStatusIndicator from "../hooks/OnlineStatusIndicator";
 import ChatbotWithFAB from "../pages/chatbot/ChatBotWithFab";
-import { ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
@@ -23,20 +22,6 @@ const PopUpPages: React.FC = () => {
       {/* ChatBoat with FAB */}
       <ChatbotWithFAB />
 
-      {/* Toast Contained */}
-      <ToastContainer
-        position="top-right"
-        autoClose={2500}
-        hideProgressBar={false}
-        closeOnClick
-        pauseOnHover
-        draggable
-        pauseOnFocusLoss
-        theme="light"
-        limit={1}
-        style={{ padding: 0 }}
-      />
-
       {/* Auth Page */}
       <CustomModal
         open={showAuth}
@@ -50,6 +35,7 @@ const PopUpPages: React.FC = () => {
         <AuthPage />
       </CustomModal>
 
+      {/* Forgot Password Page */}
       <CustomModal
         open={forgotPassword}
         onClose={() => dispatch({ type: "SET_FORGOTPASSWORD", payload: false })}

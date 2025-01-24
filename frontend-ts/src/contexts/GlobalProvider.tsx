@@ -78,7 +78,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     open: false,
     message: "",
     type: "success",
-    variant: "filled", // Default variant is 'filled'
+    variant: "standard", // Default variant is 'filled'
   });
 
   // Initialize authentication state
@@ -183,7 +183,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
         showNotification(
           response.data.message || statusConfig.message,
           "success",
-          "filled"
+          "standard"
         );
       }
       return true;

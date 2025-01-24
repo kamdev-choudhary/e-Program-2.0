@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Typography, Button } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { HomeRounded } from "@mui/icons-material";
 
 const NotFound: React.FC = () => {
   const navigate = useNavigate();
@@ -54,28 +55,18 @@ const NotFound: React.FC = () => {
       ))}
 
       {/* 404 Title */}
-      <motion.div
-        animate={{
-          scale: [1, 1.1, 1],
-        }}
-        transition={{
-          duration: 2,
-          repeat: Infinity,
-          repeatType: "reverse",
+
+      <Typography
+        variant="h1"
+        color="error"
+        sx={{
+          fontWeight: "bold",
+          fontSize: "8rem",
+          letterSpacing: "0.2rem",
         }}
       >
-        <Typography
-          variant="h1"
-          color="error"
-          sx={{
-            fontWeight: "bold",
-            fontSize: "8rem",
-            letterSpacing: "0.2rem",
-          }}
-        >
-          404
-        </Typography>
-      </motion.div>
+        404
+      </Typography>
 
       {/* Subheading with Pulsating Effect */}
       <motion.div
@@ -98,24 +89,21 @@ const NotFound: React.FC = () => {
       </motion.div>
 
       {/* Button with Hover Effect */}
-      <motion.div
-        whileHover={{ scale: 1.1 }}
-        whileTap={{ scale: 0.9 }}
-        transition={{ type: "spring", stiffness: 300 }}
+
+      <Button
+        variant="contained"
+        color="primary"
+        size="small"
+        onClick={handleGoBack}
+        startIcon={<HomeRounded />}
+        sx={{
+          paddingX: 4,
+          paddingY: 1.5,
+          fontWeight: "bold",
+        }}
       >
-        <Button
-          variant="contained"
-          color="primary"
-          onClick={handleGoBack}
-          sx={{
-            paddingX: 4,
-            paddingY: 1.5,
-            fontWeight: "bold",
-          }}
-        >
-          Go to Homepage
-        </Button>
-      </motion.div>
+        Go to Homepage
+      </Button>
     </Box>
   );
 };
