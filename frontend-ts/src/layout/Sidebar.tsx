@@ -7,6 +7,7 @@ import {
   ListItemButton,
   ListItemText,
   Divider,
+  ListItemIcon,
 } from "@mui/material";
 import { buttons } from "./buttons";
 import { useNavigate, useLocation, NavigateFunction } from "react-router-dom";
@@ -18,9 +19,10 @@ import DummyUserImage from "../assets/user.jpg";
 interface Option {
   label: string;
   path: string;
-  icon?: string;
+  icon: React.ElementType;
   role?: string[];
   loginRequired?: boolean;
+  color?: string;
 }
 
 interface SubMenuProps {
@@ -41,7 +43,12 @@ const SubMenu: React.FC<SubMenuProps> = ({
   isLoggedIn,
 }) => {
   return (
-    <Collapse in={isOpen} timeout="auto" unmountOnExit>
+    <Collapse
+      sx={{ background: "background.paper" }}
+      in={isOpen}
+      timeout="auto"
+      unmountOnExit
+    >
       {menu.map((submenu, index) => {
         if (submenu.loginRequired && !isLoggedIn) return;
         return (
@@ -51,24 +58,22 @@ const SubMenu: React.FC<SubMenuProps> = ({
             initial={{ opacity: 0, y: 40 }}
             transition={{ duration: 0.2 * index }}
           >
-            <List component="div" disablePadding>
+            <List sx={{ m: 0, p: 0 }}>
               <ListItemButton
                 selected={location.pathname === submenu.path}
                 sx={{
-                  pl: expanded ? 5 : 1.6,
+                  pl: expanded ? 4 : 1.6,
                   borderRadius: 1,
                 }}
                 onClick={() => {
                   navigate(submenu.path);
                 }}
               >
-                {submenu.icon && (
-                  <img
-                    src={submenu.icon}
-                    height={25}
-                    alt={`${submenu.label} icon`}
+                <ListItemIcon>
+                  <submenu.icon
+                    sx={{ color: submenu?.color ? submenu.color : "" }}
                   />
-                )}
+                </ListItemIcon>
 
                 {expanded && (
                   <ListItemText
@@ -106,7 +111,7 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded = true }) => {
   };
 
   return (
-    <Box sx={{ width: "95%" }}>
+    <Box sx={{ width: "100%" }}>
       <Box
         sx={{
           display: "flex",
@@ -154,7 +159,7 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded = true }) => {
         )}
       </Box>
       <List>
-        <Divider sx={{ mb: 1 }} />
+        {isLoggedIn && <Divider sx={{ mb: 1 }} />}
         {buttons.map((page, index) => {
           if (page.loginRequired && !isLoggedIn) return;
           if (page.loginRequired && user && !page.role?.includes(user?.role))
@@ -173,18 +178,13 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded = true }) => {
                 selected={location.pathname === page.path}
                 sx={{ borderRadius: 2 }}
               >
-                {page.icon && (
-                  <img src={page.icon} height={25} alt={`${page.label} icon`} />
-                )}
+                <ListItemIcon sx={{ pr: 0.01, mr: 0 }}>
+                  <page.icon sx={{ color: page?.color ? page.color : "" }} />
+                </ListItemIcon>
 
                 {expanded && (
                   <>
-                    <ListItemText
-                      sx={{
-                        ml: 1,
-                      }}
-                      primary={page.label}
-                    />
+                    <ListItemText primary={page.label} />
                     {page.options &&
                       (openMenus[page.label] ? <ExpandLess /> : <ExpandMore />)}
                   </>

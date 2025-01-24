@@ -2,7 +2,6 @@ import {
   Paper,
   Box,
   Typography,
-  Divider,
   Card,
   CardMedia,
   CardContent,
@@ -66,18 +65,6 @@ const Batch: React.FC = () => {
 
   return (
     <Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          mb: 2,
-        }}
-      >
-        <Typography variant="h5" component="h1">
-          Manage Batches
-        </Typography>
-      </Box>
-      <Divider sx={{ mb: 2, border: "1px solid rgba(0,0,0,03" }} />
       <Box sx={{ mb: 2 }}>
         <TextField
           value={searchText}
@@ -85,6 +72,7 @@ const Batch: React.FC = () => {
             setSearchText(e.target.value)
           }
           label="Search"
+          size="small"
           fullWidth
           sx={{ borderRadius: 10 }}
         />

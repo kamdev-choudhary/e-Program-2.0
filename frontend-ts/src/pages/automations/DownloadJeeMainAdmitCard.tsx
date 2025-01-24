@@ -2,11 +2,10 @@ import {
   Box,
   Button,
   Card,
-  CardContent,
   CircularProgress,
-  Typography,
+  ToggleButton,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import axios from "../../hooks/AxiosInterceptor";
 import ExcelJS from "exceljs";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -36,6 +35,7 @@ interface ScholarData {
 const DownloadAdmitCard: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [jsonData, setJsonData] = useState<ScholarData[] | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
 
   const handleDownloadAdmitCard = async (scholar: ScholarData) => {
     try {
@@ -91,7 +91,6 @@ const DownloadAdmitCard: React.FC = () => {
         });
       }
     } catch (error: any) {
-      console.error("Error downloading the PDF:", error);
       setJsonData((prevData) => {
         if (!prevData) return null; // If jsonData is null, maintain null state
         const errorMessage = error?.response?.data?.message || "Unknown error";
@@ -322,6 +321,25 @@ const DownloadAdmitCard: React.FC = () => {
     },
   ];
 
+  const filteredData = useMemo(() => {
+    if (!jsonData) return [];
+
+    return jsonData
+      .filter((data) => {
+        if (selectedStatus === "loading" || selectedStatus === "fetched") {
+          return data.status === selectedStatus;
+        } else if (selectedStatus === "error") {
+          return data.error !== "";
+        } else {
+          return true; // Include all data for other cases
+        }
+      })
+      .map((data, index) => ({
+        ...data,
+        id: index + 1, // Add an id field based on the index (1-based)
+      }));
+  }, [jsonData, selectedStatus]);
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
       <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
@@ -377,32 +395,63 @@ const DownloadAdmitCard: React.FC = () => {
           p: 0, // Add padding inside the card for consistent spacing
         }}
       >
-        <CardContent
+        <Box
           sx={{
             display: "flex",
-            flexDirection: "row",
-            justifyContent: "space-between", // Distribute items evenly
-            alignItems: "center", // Align items vertically
-            mt: 1,
-            px: 4,
+            p: 1.5,
+            gap: 2,
+            justifyContent: "space-between",
+            px: 2,
           }}
         >
-          <Typography variant="body1">
-            <strong>Total Count:</strong> {jsonData?.length || 0}
-          </Typography>
-          <Typography variant="body1">
-            <strong>Generated Count:</strong>{" "}
-            {jsonData?.filter((item) => item.status === "fetched").length || 0}
-          </Typography>
-          <Typography variant="body1">
-            <strong>Loading Count:</strong>{" "}
-            {jsonData?.filter((item) => item.status === "loading").length || 0}
-          </Typography>
-          <Typography variant="body1">
-            <strong>Error Count:</strong>{" "}
-            {jsonData?.filter((item) => item?.error !== "").length || 0}
-          </Typography>
-        </CardContent>
+          <ToggleButton
+            size="small"
+            value="total"
+            color="primary"
+            aria-label="Platform"
+            selected={selectedStatus === ""}
+            onClick={() => setSelectedStatus("")}
+            sx={{ px: 4 }}
+          >
+            <strong>Total &nbsp;&nbsp;</strong> ({jsonData?.length || 0})
+          </ToggleButton>
+          <ToggleButton
+            size="small"
+            value="total"
+            color="primary"
+            aria-label="Platform"
+            selected={selectedStatus === "fetched"}
+            onClick={() => setSelectedStatus("fetched")}
+            sx={{ px: 4 }}
+          >
+            <strong>Generated &nbsp;&nbsp;</strong> (
+            {jsonData?.filter((item) => item.status === "fetched").length || 0})
+          </ToggleButton>
+          <ToggleButton
+            size="small"
+            value="total"
+            color="primary"
+            aria-label="Platform"
+            selected={selectedStatus === "loading"}
+            onClick={() => setSelectedStatus("loading")}
+            sx={{ px: 4 }}
+          >
+            <strong>Loading &nbsp;&nbsp;</strong> (
+            {jsonData?.filter((item) => item.status === "loading").length || 0})
+          </ToggleButton>
+          <ToggleButton
+            size="small"
+            value="total"
+            color="primary"
+            aria-label="Platform"
+            selected={selectedStatus === "error"}
+            onClick={() => setSelectedStatus("error")}
+            sx={{ px: 4 }}
+          >
+            <strong>Error &nbsp;&nbsp;</strong> (
+            {jsonData?.filter((item) => item?.error !== "").length || 0})
+          </ToggleButton>
+        </Box>
       </Card>
       <Box>
         <DataGrid
@@ -410,12 +459,11 @@ const DownloadAdmitCard: React.FC = () => {
             toolbar: () => <CustomToolbar showAddButton={false} />,
           }}
           columns={columns}
-          rows={jsonData || []}
+          rows={filteredData || []}
           loading={isLoading}
           processRowUpdate={handleProcessRowUpdate}
           initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
           pageSizeOptions={[10, 30, 50, 100, 200]}
-          getRowId={(row) => row.drn}
         />
       </Box>
     </Box>

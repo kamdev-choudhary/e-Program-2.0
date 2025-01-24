@@ -2,7 +2,6 @@ import { AddRounded, SearchRounded } from "@mui/icons-material";
 import {
   Box,
   Typography,
-  Divider,
   Card,
   CardMedia,
   CardContent,
@@ -72,21 +71,8 @@ const Batch: React.FC = () => {
   }, [searchText, batches]);
 
   return (
-    <Box sx={{ padding: 2 }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          mb: 2,
-          position: "relative",
-        }}
-      >
-        <Typography variant="h5" component="h1">
-          Manage Batches
-        </Typography>
-      </Box>
-      <Divider />
-      <Box sx={{ display: "flex", my: 2, width: "100%", gap: 2 }}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+      <Box sx={{ display: "flex", width: "100%", gap: 2 }}>
         <OutlinedInput
           placeholder="Search batches"
           sx={{ flexGrow: 1 }}

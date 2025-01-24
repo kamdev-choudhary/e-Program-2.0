@@ -9,8 +9,9 @@ import React, {
 import { JwtPayload, jwtDecode } from "jwt-decode";
 import Loader from "../components/Loader";
 import { LOCAL_STORAGE_KEYS } from "../constant/constants";
-import toastService from "../utils/toastService";
 import axios from "../hooks/AxiosInterceptor";
+import { Alert, IconButton, Snackbar } from "@mui/material";
+import { CloseRounded } from "@mui/icons-material";
 
 interface GlobalProviderProps {
   children: ReactNode;
@@ -50,6 +51,13 @@ interface GlobalContextType {
   setProfilePicUrl: (value: string) => void;
 }
 
+interface NotificationProps {
+  open: boolean;
+  message?: string;
+  type?: "success" | "error" | "warning";
+  variant: "filled" | "outlined" | "standard"; // Type for variant prop
+}
+
 // Create GlobalContext
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
 
@@ -63,8 +71,15 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     user: null,
     token: "",
   });
+
   const [isLoaded, setIsLoaded] = useState(false);
   const [profilePicUrl, setProfilePicUrl] = useState("");
+  const [notification, setNotification] = useState<NotificationProps>({
+    open: false,
+    message: "",
+    type: "success",
+    variant: "filled", // Default variant is 'filled'
+  });
 
   // Initialize authentication state
   useEffect(() => {
@@ -165,15 +180,28 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
 
     if (statusConfig) {
       if (notification !== false) {
-        toastService({
-          message: response.data.message || statusConfig.message,
-          type: statusConfig.type,
-        });
+        showNotification(
+          response.data.message || statusConfig.message,
+          "success",
+          "filled"
+        );
       }
       return true;
     }
 
     return false;
+  };
+
+  const handleCloseAlert = () => {
+    setNotification((prev) => ({ ...prev, open: false }));
+  };
+
+  const showNotification = (
+    message: string,
+    type: "success" | "error" | "warning" = "success",
+    variant: "filled" | "outlined" | "standard"
+  ) => {
+    setNotification({ open: true, message, type, variant });
   };
 
   // Memoize context value
@@ -194,9 +222,35 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
   // Show loader while initializing
   if (!isLoaded) return <Loader />;
 
+  const actions = (
+    <IconButton
+      size="small"
+      aria-label="close"
+      color="inherit"
+      onClick={handleCloseAlert}
+    >
+      <CloseRounded />
+    </IconButton>
+  );
+
   return (
     <GlobalContext.Provider value={contextValue}>
       {children}
+      <Snackbar
+        open={notification.open}
+        autoHideDuration={3000}
+        onClose={handleCloseAlert}
+        action={actions}
+        anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      >
+        <Alert
+          sx={{ minWidth: 250 }}
+          severity={notification.type}
+          variant={notification.variant}
+        >
+          {notification.message}
+        </Alert>
+      </Snackbar>
     </GlobalContext.Provider>
   );
 };

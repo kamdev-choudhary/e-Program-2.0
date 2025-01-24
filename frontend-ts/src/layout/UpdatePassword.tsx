@@ -4,11 +4,11 @@ import React from "react";
 const UpdatePassword: React.FC = () => {
   return (
     <Box
-      sx={{ minWidth: 400, display: "flex", flexDirection: "column", gap: 1 }}
+      sx={{ minWidth: 400, display: "flex", flexDirection: "column", gap: 2 }}
     >
       <Typography variant="h6">Update Password</Typography>
       <Divider />
-      <TextField fullWidth label="Enter OTP" />
+      <TextField fullWidth label="Enter OTP" size="small" />
       <Button variant="contained">Submit OTP</Button>
     </Box>
   );

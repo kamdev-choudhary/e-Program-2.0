@@ -1,7 +1,5 @@
 import {
-  Typography,
   Box,
-  Divider,
   Button,
   IconButton,
   SelectChangeEvent,
@@ -332,43 +330,6 @@ const Lectures: React.FC = () => {
 
   return (
     <Box>
-      <Box
-        sx={{
-          mb: 1,
-          display: "flex",
-          justifyContent: "space-between",
-          flexWrap: "wrap",
-        }}
-      >
-        <Typography variant="h4">Lectures</Typography>
-        <Box
-          sx={{
-            display: "flex",
-            flex: 1,
-            gap: 2,
-            width: { sm: "100%" },
-            maxWidth: 350,
-          }}
-        >
-          <Button
-            sx={{ flexGrow: 1 }}
-            startIcon={<DataArrayRounded />}
-            onClick={() => setShowExcelUpload(true)}
-            variant="contained"
-          >
-            Upload Excel
-          </Button>
-          <Button
-            variant="contained"
-            sx={{ flexGrow: 1 }}
-            startIcon={<UploadFileRounded />}
-            onClick={() => setShowVideoUpload(true)}
-          >
-            Upload Lecture
-          </Button>
-        </Box>
-      </Box>
-      <Divider sx={{ mb: 2 }} />
       <Box sx={{ mb: 2 }}>
         <Grid container spacing={2}>
           <Grid size={{ xs: 12, md: 6, lg: 3 }}>
@@ -395,7 +356,26 @@ const Lectures: React.FC = () => {
               }
             />
           </Grid>
-          <Grid size={{ xs: 12, md: 6, lg: 3 }}></Grid>
+          <Grid size={{ xs: 12, md: 6, lg: 2 }}>
+            <Button
+              sx={{ flexGrow: 1 }}
+              startIcon={<DataArrayRounded />}
+              onClick={() => setShowExcelUpload(true)}
+              variant="contained"
+            >
+              Upload Excel
+            </Button>
+          </Grid>
+          <Grid size={{ xs: 12, md: 6, lg: 2 }}>
+            <Button
+              variant="contained"
+              sx={{ flexGrow: 1 }}
+              startIcon={<UploadFileRounded />}
+              onClick={() => setShowVideoUpload(true)}
+            >
+              Upload Lecture
+            </Button>
+          </Grid>
         </Grid>
       </Box>
       <Box>

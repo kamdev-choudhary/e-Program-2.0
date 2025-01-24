@@ -63,6 +63,7 @@ const CustomizedSwitches: React.FC = () => {
   const { theme, toggleTheme } = useTheme();
   return (
     <MaterialUISwitch
+      sx={{ m: 1 }}
       checked={theme === "dark"}
       onClick={() => toggleTheme(theme === "dark" ? "light" : "dark")}
     />

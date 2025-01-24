@@ -24,13 +24,19 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import DummyImageUrl from "../assets/user.jpg";
 import ThemeSwitch from "../components/ThemeSwitch";
+import SearchBar from "./Searchbar";
 
 interface HeaderProps {
   handleButtonClick: () => void;
   expanded: boolean;
+  isSmallScreen: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({ handleButtonClick, expanded }) => {
+const Header: React.FC<HeaderProps> = ({
+  handleButtonClick,
+  expanded,
+  isSmallScreen,
+}) => {
   const { user, handleLogout, isLoggedIn, profilePicUrl } = useGlobalContext();
   const [isFullscreen, setIsFullscreen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
@@ -88,6 +94,12 @@ const Header: React.FC<HeaderProps> = ({ handleButtonClick, expanded }) => {
           e-Program
         </Typography>
 
+        {!isSmallScreen && (
+          <Box sx={{ mr: 2 }}>
+            <SearchBar />
+          </Box>
+        )}
+
         <ThemeSwitch />
 
         <IconButton
@@ -111,6 +123,8 @@ const Header: React.FC<HeaderProps> = ({ handleButtonClick, expanded }) => {
             variant="outlined"
             startIcon={<LockRounded />}
             aria-label="login"
+            size="small"
+            sx={{ borderRadius: 20 }}
           >
             Login
           </Button>
@@ -158,7 +172,10 @@ const Header: React.FC<HeaderProps> = ({ handleButtonClick, expanded }) => {
             </Button>
             <Button
               startIcon={<PinRounded />}
-              onClick={handleMenuClose}
+              onClick={() => {
+                dispatch({ type: "SET_FORGOTPASSWORD", payload: true });
+                handleMenuClose();
+              }}
               variant="contained"
               color="secondary"
             >

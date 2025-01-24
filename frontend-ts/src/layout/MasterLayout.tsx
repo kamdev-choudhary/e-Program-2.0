@@ -3,6 +3,8 @@ import Sidebar from "./Sidebar";
 import Header from "./Header";
 import { Box, useMediaQuery, Drawer } from "@mui/material";
 import { Outlet } from "react-router-dom";
+import UrlSegmentsProgress from "./UrlSegmentProgress";
+import PopUpPages from "./PopUpPages";
 
 const MasterLayout: React.FC = () => {
   const [expanded, setExpanded] = useState<boolean>(true);
@@ -25,6 +27,7 @@ const MasterLayout: React.FC = () => {
             : setExpanded((prev) => !prev);
         }}
         expanded={expanded}
+        isSmallScreen={isSmallScreen}
       />
 
       <Box
@@ -76,9 +79,11 @@ const MasterLayout: React.FC = () => {
             p: 1.5,
           }}
         >
+          <UrlSegmentsProgress />
           <Outlet />
         </Box>
       </Box>
+      <PopUpPages />
     </Box>
   );
 };

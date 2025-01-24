@@ -129,6 +129,7 @@ const Lectures: React.FC = () => {
       flex: 1,
       minWidth: 120,
       editable: false,
+      sortable: false,
     },
     {
       field: "className",
@@ -139,6 +140,7 @@ const Lectures: React.FC = () => {
       maxWidth: 80,
       align: "center",
       headerAlign: "center",
+      sortable: false,
     },
     {
       field: "subject",
@@ -146,6 +148,7 @@ const Lectures: React.FC = () => {
       flex: 1,
       minWidth: 80,
       editable: false,
+      sortable: false,
     },
     {
       field: "chapter",
@@ -153,6 +156,7 @@ const Lectures: React.FC = () => {
       flex: 1,
       minWidth: 250,
       editable: false,
+      sortable: false,
     },
     {
       field: "topic",
@@ -160,6 +164,7 @@ const Lectures: React.FC = () => {
       flex: 1,
       minWidth: 200,
       editable: false,
+      sortable: false,
     },
     {
       field: "lectureNumber",
@@ -167,6 +172,7 @@ const Lectures: React.FC = () => {
       flex: 1,
       minWidth: 50,
       editable: false,
+      sortable: false,
       align: "center",
       headerAlign: "center",
     },
@@ -176,6 +182,7 @@ const Lectures: React.FC = () => {
       flex: 1,
       minWidth: 200,
       editable: false,
+      sortable: false,
     },
     {
       field: "Actions",
@@ -184,6 +191,7 @@ const Lectures: React.FC = () => {
       minWidth: 50,
       align: "center",
       headerAlign: "center",
+      sortable: false,
       renderCell: (params) => (
         <Box
           sx={{
@@ -199,6 +207,7 @@ const Lectures: React.FC = () => {
               setSelectedLecture(params.row);
               setShowYoutubePlayer(true);
             }}
+            sx={{ border: "1px solid rgba(255,255,255,0.6)" }}
           >
             <YouTube sx={{ color: "red" }} />
           </IconButton>

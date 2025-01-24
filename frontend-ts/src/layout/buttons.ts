@@ -1,7 +1,30 @@
+import {
+  DashboardRounded,
+  SecurityRounded,
+  GroupRounded,
+  MenuBookRounded,
+  ImportContactsRounded,
+  ComputerRounded,
+  DescriptionRounded,
+  CloudRounded,
+  TableChartRounded,
+  GroupsRounded,
+  PlayLessonRounded,
+  QuizRounded,
+  LocationOnRounded,
+  AssignmentIndRounded,
+  CreateRounded,
+  InsightsRounded,
+  AssessmentRounded,
+  BarChartRounded,
+} from "@mui/icons-material";
+import React from "react";
+
 interface Option {
   label: string;
   path: string;
-  icon?: string;
+  icon: React.ElementType;
+  color?: string;
   role?: string[];
   loginRequired?: boolean;
 }
@@ -9,7 +32,8 @@ interface Option {
 interface Button {
   label: string;
   path?: string;
-  icon: string;
+  icon: React.ElementType;
+  color?: string;
   type: "button" | "menu";
   options?: Option[];
   role?: string[];
@@ -20,14 +44,16 @@ export const buttons: Button[] = [
   {
     label: "Home",
     path: "/",
-    icon: "https://img.icons8.com/3d-fluency/94/home.png",
+    icon: DashboardRounded,
+    color: "#0073E6",
     type: "button",
     loginRequired: false,
   },
   {
     label: "Admin",
-    icon: "https://img.icons8.com/3d-fluency/94/user-shield.png",
+    icon: SecurityRounded,
     type: "menu",
+    color: "#673AB7",
     loginRequired: true,
     role: ["admin"],
     options: [
@@ -35,176 +61,164 @@ export const buttons: Button[] = [
         label: "User Master",
         path: "/admin/users",
         loginRequired: true,
-        icon: "https://img.icons8.com/3d-fluency/94/manager--v1.png",
+        color: "#009688",
+        icon: GroupRounded,
       },
       {
         label: "Academic Info",
         path: "/admin/academic",
         loginRequired: true,
-        icon: "https://img.icons8.com/3d-fluency/94/physics.png",
+        icon: MenuBookRounded,
+        color: "#FF5722",
       },
-
       {
         label: "Books",
         path: "/admin/books",
-        icon: "https://img.icons8.com/3d-fluency/94/books.png",
+        icon: ImportContactsRounded,
         loginRequired: true,
+        color: "#4CAF50",
       },
       {
         label: "Online Exams",
         path: "/admin/exams/online",
         loginRequired: true,
-        icon: "https://img.icons8.com/3d-fluency/94/domain.png",
+        icon: ComputerRounded,
+        color: "#1E88E5",
       },
       {
         label: "Offline Exams",
         path: "/admin/exams/offline",
         loginRequired: true,
-        icon: "https://img.icons8.com/3d-fluency/94/document.png",
+        icon: DescriptionRounded,
+        color: "#FFB300",
       },
     ],
   },
   {
     label: "Data",
     type: "menu",
-    icon: "https://img.icons8.com/fluency/48/database--v1.png",
+    icon: CloudRounded,
     loginRequired: true,
+    color: "#8D6E63",
     role: ["admin"],
     options: [
       {
         label: "JEE Data",
         path: "/admin/jee-data",
         loginRequired: true,
-        icon: "https://img.icons8.com/3d-fluency/50/statistics.png",
+        icon: TableChartRounded,
+        color: "#FF7043",
       },
       {
         label: "Batch",
         path: "/admin/batch",
         loginRequired: true,
-        icon: "https://img.icons8.com/3d-fluency/94/layers.png",
+        icon: GroupsRounded,
+        color: "#4DB6AC",
       },
       {
         label: "Lectures",
         path: "/admin/lectures",
         loginRequired: true,
-        icon: "https://img.icons8.com/3d-fluency/94/teacher-giving-lecture-in-classroom.png",
+        icon: PlayLessonRounded,
+        color: "#42A5F5",
       },
     ],
   },
   {
     label: "Lectures",
     path: "/lectures",
-    icon: "https://img.icons8.com/3d-fluency/94/teacher-giving-lecture-in-classroom.png",
+    icon: PlayLessonRounded,
     type: "button",
     loginRequired: true,
+    color: "#1E88E5",
     role: ["admin", "student"],
   },
   {
     label: "Batch",
     path: "/batch",
-    icon: "https://img.icons8.com/3d-fluency/94/layers.png",
+    icon: GroupsRounded,
     type: "button",
     loginRequired: true,
+    color: "#26A69A",
     role: ["admin"],
   },
-  // {
-  //   label: "Books",
-  //   path: "/books",
-  //   icon: "https://img.icons8.com/3d-fluency/94/books.png",
-  //   type: "button",
-  //   loginRequired: true,
-  //   role: ["admin", "student"],
-  // },
   {
     label: "Exams",
-    icon: "https://img.icons8.com/3d-fluency/94/documents.png",
+    icon: QuizRounded,
     type: "menu",
     role: ["admin"],
     loginRequired: true,
+    color: "#FF7043",
     options: [
       {
         label: "Online Exam",
         path: "/exams/online",
-        icon: "https://img.icons8.com/3d-fluency/94/domain.png",
+        icon: ComputerRounded,
+        color: "#29B6F6",
       },
       {
-        label: "offline Exam",
+        label: "Offline Exam",
         path: "/exams/offline",
-        icon: "https://img.icons8.com/3d-fluency/94/document.png",
+        icon: DescriptionRounded,
+        color: "#FFD54F",
       },
     ],
   },
   {
     label: "Automation",
-    icon: "https://img.icons8.com/3d-fluency/94/services--v1.png",
+    icon: CreateRounded,
     type: "menu",
     role: ["admin"],
     loginRequired: false,
+    color: "#FF8A65",
     options: [
       {
         label: "JEE City Info",
         path: "/automation/jeemain/cityinfo",
-        icon: "https://img.icons8.com/3d-fluency/94/city.png",
+        icon: LocationOnRounded,
         loginRequired: false,
+        color: "#43A047",
       },
       {
         label: "JEE Admit Card",
         path: "/automation/jeemain/admitcard",
-        icon: "https://img.icons8.com/3d-fluency/94/pdf.png",
+        icon: AssignmentIndRounded,
         loginRequired: false,
+        color: "#D32F2F",
       },
       {
         label: "Generate Admit Card",
         path: "/automation/generate/admitcard",
-        icon: "https://img.icons8.com/3d-fluency/94/pdf.png",
+        icon: CreateRounded,
         loginRequired: false,
+        color: "#1976D2",
       },
     ],
   },
   {
     label: "Analysis",
-    icon: "https://img.icons8.com/3d-fluency/50/statistics.png",
+    icon: InsightsRounded,
     path: "",
     role: ["admin"],
     loginRequired: true,
     type: "menu",
+    color: "#FF9800",
     options: [
       {
         label: "JEE Main",
         path: "/analysis/jeemain",
-        icon: "https://img.icons8.com/3d-fluency/50/chart.png",
+        icon: AssessmentRounded,
         loginRequired: false,
+        color: "#29B6F6",
       },
       {
         label: "JEE Advanced",
         path: "/analysis/jeeadvanced",
-        icon: "https://img.icons8.com/3d-fluency/50/pie-chart.png",
+        icon: BarChartRounded,
         loginRequired: false,
+        color: "#8E24AA",
       },
     ],
   },
-  // {
-  //   label: "Question Bank",
-  //   path: "/question-bank",
-  //   icon: "https://img.icons8.com/3d-fluency/50/help.png",
-  //   loginRequired: true,
-  //   role: ["admin"],
-  //   type: "button",
-  // },
-  // {
-  //   label: "Doubts",
-  //   path: "/doubts",
-  //   icon: "https://img.icons8.com/3d-fluency/94/view-more.png",
-  //   loginRequired: true,
-  //   role: ["admin", "student"],
-  //   type: "button",
-  // },
-  // {
-  //   label: "Chat",
-  //   path: "/chat",
-  //   icon: "https://img.icons8.com/isometric/50/chat.png",
-  //   loginRequired: true,
-  //   role: ["admin"],
-  //   type: "button",
-  // },
 ];

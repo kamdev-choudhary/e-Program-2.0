@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Divider, Tab, Tabs, Typography } from "@mui/material";
+import { Box, Tab, Tabs } from "@mui/material";
 import { motion } from "framer-motion";
 import Classes from "./Classes";
 import Syllabus from "./Syllabus";
@@ -37,10 +37,6 @@ const Academic: React.FC = () => {
         flexGrow: 1,
       }}
     >
-      <Box sx={{ display: "flex", justifyContent: "center", mb: 2 }}>
-        <Typography variant="h5">Manage Academic Data</Typography>
-      </Box>
-      <Divider sx={{ mb: 2 }} />
       <Box>
         <Tabs
           value={activeTab}
