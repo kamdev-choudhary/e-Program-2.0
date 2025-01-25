@@ -13,9 +13,11 @@ export async function getClasses(req, res, next) {
   try {
     const classes = await Class.find({});
     if (classes) {
-      res.status(200).json({ classes, ...response.success });
+      res
+        .status(200)
+        .json({ classes, ...response.success("Class data found") });
     } else {
-      res.status(200).json({ ...response.notFound });
+      res.status(200).json({ ...response.notFound() });
     }
   } catch (error) {
     next(error);
@@ -28,8 +30,7 @@ export async function addClass(req, res, next) {
     if (!errors.isEmpty()) {
       return res.status(200).json({
         errors: errors.array(),
-        message: "Validation error.",
-        status_code: 0,
+        ...response.validation,
       });
     }
     const { name, value } = req.body;
@@ -38,8 +39,7 @@ export async function addClass(req, res, next) {
     const classes = await Class.find({});
     res.status(201).json({
       classes,
-      status_code: 1,
-      message: "description",
+      ...response.created,
     });
   } catch (error) {
     logger.error(error);
@@ -96,10 +96,8 @@ export async function removeClass(req, res, next) {
         ...response.deleted,
       });
     } else {
-      // Class not found
       return res.status(404).json({
-        message: "Class not found.",
-        status_code: 404,
+        ...response.notFound,
       });
     }
   } catch (error) {
@@ -131,8 +129,7 @@ export async function addSubject(req, res, next) {
     if (!errors.isEmpty()) {
       return res.status(200).json({
         errors: errors.array(),
-        message: "Validation error.",
-        status_code: 0,
+        ...response.validation,
       });
     }
     const { name, description } = req.body;
@@ -155,7 +152,7 @@ export async function editSubject(req, res, next) {
     const { id } = req.params;
 
     if (!name) {
-      res.status(200).json({ message: "Name is Required", status_code: 1 });
+      res.status(200).json({ ...response.validation });
     }
 
     const subject = await Subject.findByIdAndUpdate(
@@ -196,7 +193,7 @@ export async function removeSubject(req, res, next) {
         ...response.deleted,
       });
     } else {
-      res.status(200).json({ message: "Subject Not Found", status_code: 1 });
+      res.status(200).json({ ...response.notFound });
     }
   } catch (error) {
     next(error);
@@ -221,15 +218,11 @@ export async function addSubSubject(req, res, next) {
   try {
     const { name, description, subject: _id_subject } = req.body;
     if (!name || !_id_subject) {
-      return res
-        .status(400)
-        .json({ message: "Name and subject ID are required.", status_code: 0 });
+      return res.status(400).json({ ...response.validation });
     }
     const subject = await Subject.findById(_id_subject);
     if (!subject) {
-      return res
-        .status(404)
-        .json({ message: "Subject not found.", status_code: 0 });
+      return res.status(404).json({ ...response.notFound });
     }
 
     const newSubSubject = new SubSubject({
@@ -277,14 +270,12 @@ export async function removeSubSubject(req, res, next) {
     if (deletedSubSubject) {
       res.status(200).json({
         subSubjects,
-        message: "Sub Subject Deleted Successfully.",
-        status_code: 1,
+        ...response.deleted,
       });
     } else {
       res.status(200).json({
         subSubjects,
-        message: "Sub Subject not found.",
-        status_code: 1,
+        ...response.notFound,
       });
     }
   } catch (error) {
@@ -311,16 +302,13 @@ export async function addTopic(req, res, next) {
     const { name, subjectId, subSubjectId, description } = req.body;
     if (!name || !subjectId || !subSubjectId) {
       return res.status(400).json({
-        message: "Name and subject ID and Sub Subject ID are required.",
-        status_code: 0,
+        ...response.validation,
       });
     }
     const subject = await Subject.findById(subjectId);
     const subSubject = await SubSubject.findById(subSubjectId);
     if (!subSubject || !subject) {
-      return res
-        .status(404)
-        .json({ message: "Subject or Sub Subject not found.", status_code: 0 });
+      return res.status(404).json({ ...response.validation });
     }
 
     const newTopic = new Topic({
@@ -382,13 +370,11 @@ export async function addSubTopic(req, res, next) {
   try {
     const { name, description, subjectId, subSubjectId, topicId } = req.body;
     if ((!name, !description, !subSubjectId, !subjectId, !topicId)) {
-      res
-        .status(200)
-        .json({ message: "Name or Topic is Required", status_code: 0 });
+      res.status(200).json({ ...response.validation });
     }
     const topic = await Topic.findById(topicId);
     if (!topic) {
-      res.status(200).json({ message: "Topic not found", status_code: 0 });
+      res.status(200).json({ ...response.notFound });
     }
 
     const newSubTopic = new SubTopic({
@@ -430,6 +416,8 @@ export async function removeSubTopic(req, res, next) {
     next(error);
   }
 }
+
+// Patterns
 
 export async function getPatterns(req, res, next) {
   try {
@@ -503,6 +491,8 @@ export async function editPattern(req, res, next) {
     next(error);
   }
 }
+
+// All meta data
 
 export async function getAllMetaData(req, res, next) {
   try {

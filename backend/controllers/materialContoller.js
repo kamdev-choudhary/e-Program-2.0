@@ -81,7 +81,7 @@ export async function deleteBook(req, res, next) {
     if (deletedBook) {
       res.status(200).json({ books, ...response.deleted });
     } else {
-      res.status(200).json({ message: "Book not found.", status_code: 0 });
+      res.status(200).json({ ...response.notFound() });
     }
   } catch (error) {
     next(error);

@@ -207,7 +207,14 @@ const Lectures: React.FC = () => {
               setSelectedLecture(params.row);
               setShowYoutubePlayer(true);
             }}
-            sx={{ border: "1px solid rgba(255,255,255,0.6)" }}
+            size="small"
+            sx={{
+              border: "1px solid rgba(255,255,255,0.6)",
+              bgcolor: "#fff",
+              ":hover": {
+                bgcolor: "#f2f2f2",
+              },
+            }}
           >
             <YouTube sx={{ color: "red" }} />
           </IconButton>

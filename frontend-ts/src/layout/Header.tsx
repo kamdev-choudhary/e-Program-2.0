@@ -75,11 +75,7 @@ const Header: React.FC<HeaderProps> = ({
       }}
       position="static"
     >
-      <Toolbar
-        sx={{
-          minHeight: "67px", // Adjust the Toolbar height to match AppBar
-        }}
-      >
+      <Toolbar>
         <IconButton
           size="large"
           edge="start"

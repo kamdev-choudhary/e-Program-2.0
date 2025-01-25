@@ -2,6 +2,7 @@ import Batch from "../models/batch.js";
 import cloudinary from "../utils/cloudinaryConfig.js";
 import { promisify } from "util";
 import fs from "fs";
+import response from "../utils/responses.js";
 
 const unlinkAsync = promisify(fs.unlink);
 
@@ -48,9 +49,8 @@ export async function AddBatch(req, res, next) {
 
     // Respond with success
     res.status(201).json({
-      message: "Batch created successfully",
       batch: savedBatch,
-      status_code: 1,
+      ...response.created("Batch Created Successfully."),
     });
   } catch (error) {
     // Handle errors and pass them to the next middleware

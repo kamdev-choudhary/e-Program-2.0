@@ -1,6 +1,7 @@
 import User from "../models/user.js";
 import bcrypt from "bcryptjs";
 import Session from "../models/session.js";
+import response from "../utils/responses.js";
 
 export async function login(req, res, next) {
   try {
@@ -11,8 +12,7 @@ export async function login(req, res, next) {
     // Validate input
     if (!id || !password) {
       return res.status(400).json({
-        message: "Both ID and password are required.",
-        status_code: 0,
+        ...response.validation("Both ID and Password is required"),
       });
     }
 
@@ -24,8 +24,7 @@ export async function login(req, res, next) {
     // If user doesn't exist
     if (!userExist) {
       return res.status(400).json({
-        message: "Invalid ID or password.",
-        status_code: 0,
+        ...response.notFound("User not found."),
       });
     }
 
@@ -33,13 +32,14 @@ export async function login(req, res, next) {
     const isPasswordValid = await bcrypt.compare(password, userExist.password);
     if (!isPasswordValid) {
       return res.status(400).json({
-        message: "Invalid ID or password.",
-        status_code: 0,
+        ...response.notFound("Invalid ID or Password"),
       });
     }
 
     if (userExist.status === 0) {
-      return res.status(400).json({ message: "Your Account is not active." });
+      return res
+        .status(400)
+        .json({ ...response.validation("Your account is Inactive.") });
     }
 
     // Generate a token
@@ -58,10 +58,9 @@ export async function login(req, res, next) {
 
     // Respond with success
     return res.status(200).json({
-      message: "Login Successful.",
       token,
       photo: userExist.photo || null,
-      status_code: 1,
+      ...response.success("Login Successfull"),
     });
   } catch (error) {
     console.error("Error in login:", error);
@@ -116,8 +115,7 @@ export async function register(req, res, next) {
     // Generate a token if needed and respond
     if (method === "admin") {
       res.status(200).json({
-        message: "Registration Successful.",
-        status_code: 1,
+        ...response.success("Registration successfull."),
       });
     } else {
       const token = await newUser.generateToken();

@@ -107,7 +107,7 @@ export async function uploadLectureInfo(req, res, next) {
       if (!Array.isArray(parsedData) || parsedData.length === 0) {
         return res
           .status(400)
-          .json({ message: "Invalid or empty data provided." });
+          .json({ ...response.validation("invalid or empty array provided") });
       }
       const preparedData = parsedData.map((entry) => ({
         className: entry.className,
@@ -140,9 +140,10 @@ export async function uploadLectureInfo(req, res, next) {
         ordered: false, // Allows inserting valid records while skipping invalid ones
       });
       res.status(201).json({
-        message: `${insertedRecords.length} records successfully inserted.`,
         insertedRecords,
-        status_code: 1,
+        ...response.created(
+          `${insertedRecords.length} records successfully inserted.`
+        ),
       });
     } else {
       const newLecture = new Lecture({
@@ -158,8 +159,7 @@ export async function uploadLectureInfo(req, res, next) {
       await newLecture.save();
       res.status(200).json({
         newLecture,
-        status_code: 1,
-        message: "Lecture Saved Successfully",
+        ...response.created("Lecture data saved successfully"),
       });
     }
   } catch (error) {

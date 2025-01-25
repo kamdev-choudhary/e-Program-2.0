@@ -133,3 +133,11 @@ export const addNewSubject = async (newSubject: any) => {
     throw error;
   }
 };
+
+export const getAllSyllabus = async () => {
+  try {
+    return await axios.get("/academic/syllabus");
+  } catch (error) {
+    throw error;
+  }
+};

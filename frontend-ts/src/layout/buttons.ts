@@ -17,6 +17,7 @@ import {
   InsightsRounded,
   AssessmentRounded,
   BarChartRounded,
+  SettingsSuggestRounded,
 } from "@mui/icons-material";
 import React from "react";
 
@@ -167,7 +168,7 @@ export const buttons: Button[] = [
   },
   {
     label: "Automation",
-    icon: CreateRounded,
+    icon: SettingsSuggestRounded,
     type: "menu",
     role: ["admin"],
     loginRequired: false,

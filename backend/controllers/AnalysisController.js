@@ -1,5 +1,6 @@
 import JEEMainOC from "../models/jeemainoc.js";
 import JEEMainMarksVsRank from "../models/jeemainMarksvsRank.js";
+import response from "../utils/responses.js";
 
 export async function getORCRbyYear(req, res, next) {
   try {
@@ -11,9 +12,7 @@ export async function getORCRbyYear(req, res, next) {
     if (!data) {
       return res.status(200).json({ message: "Record Not Found" });
     } else {
-      return res
-        .status(200)
-        .json({ message: "Record Found", data, status_code: 1 });
+      return res.status(200).json({ data, ...response.success });
     }
   } catch (error) {
     next(error);
@@ -28,13 +27,9 @@ export async function getJEEAdvancedORCRbyYear(req, res, next) {
     }
     const data = await JEEMainOC.find({ year, jee: "advanced" });
     if (!data) {
-      return res
-        .status(200)
-        .json({ message: "Record Not Found", data: [], status_code: 1 });
+      return res.status(200).json({ ...response.notFound });
     } else {
-      return res
-        .status(200)
-        .json({ message: "Record Found", data, status_code: 1 });
+      return res.status(200).json({ data, ...response.success });
     }
   } catch (error) {
     next(error);
@@ -52,7 +47,7 @@ export async function addNewOROC(req, res, next) {
     if (!Array.isArray(parsedData) || parsedData.length === 0) {
       return res
         .status(400)
-        .json({ message: "Invalid or empty data provided." });
+        .json({ ...response.validation("Invalid Data Provided") });
     }
 
     // Prepare the data for bulk insert
@@ -74,15 +69,15 @@ export async function addNewOROC(req, res, next) {
     });
 
     res.status(201).json({
-      message: `${insertedRecords.length} records successfully inserted.`,
       insertedRecords,
-      status_code: 1,
+      ...response.created(
+        `${insertedRecords.length} records successfully inserted.`
+      ),
     });
   } catch (error) {
     if (error.code === 11000) {
       res.status(400).json({
-        message: "Some records were not inserted due to duplicate entries.",
-        error: error.message,
+        ...response.error("Error in inserting Documents"),
       });
     } else {
       next(error);
@@ -98,7 +93,7 @@ export async function addJeeMainMarksVsRank(req, res, next) {
     if (!data) {
       return res
         .status(400)
-        .json({ message: "Data is required.", status_code: 0 });
+        .json({ ...response.validation("Data is missing") });
     }
 
     let parsedData;
@@ -107,13 +102,13 @@ export async function addJeeMainMarksVsRank(req, res, next) {
     } catch (err) {
       return res
         .status(400)
-        .json({ message: "Invalid JSON format.", status_code: 0 });
+        .json({ ...response.validation("Invalid JSON format") });
     }
 
     if (!Array.isArray(parsedData) || parsedData.length === 0) {
       return res
         .status(400)
-        .json({ message: "Data must be a non-empty array.", status_code: 0 });
+        .json({ ...response.validation("Data must not be an empty array") });
     }
 
     // Prepare bulk operations for insertion or update
@@ -141,8 +136,9 @@ export async function addJeeMainMarksVsRank(req, res, next) {
     const result = await JEEMainMarksVsRank.bulkWrite(bulkOps);
 
     res.status(201).json({
-      message: `${result.nUpserted} records inserted, ${result.nModified} records updated.`,
-      status_code: 1,
+      ...response.success(
+        `${result.nUpserted} records inserted, ${result.nModified} records updated.`
+      ),
     });
   } catch (error) {
     next(error);
@@ -161,11 +157,9 @@ export async function getJeeMainRankVsMarks(req, res, next) {
 
     const data = await JEEMainMarksVsRank.find(filter);
     if (data.length > 0) {
-      return res
-        .status(200)
-        .json({ data, status_code: 1, message: "Record Found." });
+      return res.status(200).json({ data, ...response.success });
     } else {
-      res.status(200).json({ status_code: 0, message: "Record not found" });
+      res.status(200).json({ ...response.notFound });
     }
   } catch (error) {
     next(error);
@@ -180,9 +174,7 @@ export async function deleteJeeMainMarksVsRank(req, res, next) {
     }
     const deletedData = await JEEMainMarksVsRank.findOneAndDelete({ _id: id });
     if (deletedData) {
-      res
-        .status(200)
-        .json({ message: "Item deleted", status_code: 4, deletedData });
+      res.status(200).json({ ...response.deleted("Item deleted").deletedData });
     } else {
       res.status(200).json({ message: "Item not found" });
     }
@@ -204,9 +196,7 @@ export async function updateJeeMainMarksVsRank(req, res, next) {
     if (!updatedData) {
       return res.status(200).json("Data not Found");
     }
-    res
-      .status(200)
-      .json({ message: "Data updated successfully", status_code: 3 });
+    res.status(200).json({ ...response.edited("Data edited Succesfully.") });
   } catch (error) {
     next(error);
   }

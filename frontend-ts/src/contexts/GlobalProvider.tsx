@@ -54,7 +54,7 @@ interface GlobalContextType {
 interface NotificationProps {
   open: boolean;
   message?: string;
-  type?: "success" | "error" | "warning";
+  type?: "success" | "error" | "warning" | "info";
   variant: "filled" | "outlined" | "standard"; // Type for variant prop
 }
 
@@ -161,13 +161,13 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
   // Status messages for API responses
   const statusMessages: Record<
     number,
-    { message: string; type: "success" | "error" | "info" }
+    { message: string; type: "success" | "error" | "info" | "warning" }
   > = {
     1: { message: "Record Found.", type: "success" },
-    2: { message: "Record Found.", type: "success" },
-    3: { message: "Updated", type: "info" },
-    4: { message: "Record Found.", type: "success" },
-    0: { message: "Deleted Successfully.", type: "error" },
+    2: { message: "Deleted Successfully.", type: "warning" },
+    3: { message: "Edited Successfully.", type: "info" },
+    4: { message: "Data Saved Successfully.", type: "success" },
+    0: { message: "Record Not Found.", type: "error" },
   };
 
   // Validate API responses

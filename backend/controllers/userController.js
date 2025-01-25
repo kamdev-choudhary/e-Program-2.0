@@ -39,7 +39,7 @@ export async function updateUserData(req, res, next) {
     }
     res
       .status(200)
-      .json({ message: "User updated successfully", users, status_code: 3 });
+      .json({ ...response.edited("User updated successfully"), users });
   } catch (error) {
     next(error);
   }
@@ -60,8 +60,7 @@ export async function getUsersWithPagination(req, res, next) {
     const studentCount = await User.countDocuments({ role: "student" });
     const usersCount = await User.countDocuments({ role });
     res.status(200).json({
-      status_code: 1,
-      message: "Record Found.",
+      ...response.success(),
       users,
       adminCount,
       studentCount,
@@ -80,14 +79,12 @@ export async function deleteUser(req, res, next) {
     const deletedUser = await User.findOneAndDelete({ _id: id });
 
     if (!deletedUser) {
-      return res
-        .status(200)
-        .json({ message: "User not found", status_code: 0 });
+      return res.status(200).json({ ...response.notFound });
     }
 
     const users = await User.find({ role: deletedUser.role });
 
-    res.status(200).json({ users, message: "User deleted", status_code: 1 });
+    res.status(200).json({ users, ...response.deleted("User deleted.") });
   } catch (error) {
     next(error);
   }
@@ -191,8 +188,7 @@ export async function getProfilePic(req, res, next) {
     if (user) {
       return res.status(200).json({
         profilePicUrl: user.photo,
-        message: "Profile Picture found",
-        status_code: 1,
+        ...response.success,
       });
     } else {
       return res.status(200).json({ messgae: "User not found" });

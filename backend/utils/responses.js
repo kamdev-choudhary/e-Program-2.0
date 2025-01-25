@@ -1,29 +1,24 @@
-// responses.js
+const generateResponse = (defaultMessage, statusCode) => {
+  const responseFunction = (customMessage = defaultMessage) => ({
+    message: customMessage,
+    status_code: statusCode,
+  });
+
+  // Attach default properties to the function
+  responseFunction.message = defaultMessage;
+  responseFunction.status_code = statusCode;
+
+  return responseFunction;
+};
+
 const response = {
-  notFound: {
-    message: "Record not found.",
-    status_code: 0,
-  },
-  success: {
-    message: "Record Found.",
-    status_code: 1,
-  },
-  deleted: {
-    message: "Deleted Successfully.",
-    status_code: 2,
-  },
-  edited: {
-    message: "Edited Successfully.",
-    status_code: 3,
-  },
-  created: {
-    message: "Data Saved Successfully",
-    status_code: 4,
-  },
-  validation: {
-    message: "Validation Error",
-    status_code: 5,
-  },
+  notFound: generateResponse("Record not found.", 0),
+  success: generateResponse("Record Found.", 1),
+  deleted: generateResponse("Deleted Successfully.", 2),
+  edited: generateResponse("Edited Successfully.", 3),
+  created: generateResponse("Data Saved Successfully.", 4),
+  validation: generateResponse("Validation error", 5),
+  error: generateResponse("Error", 6),
 };
 
 export default response;
