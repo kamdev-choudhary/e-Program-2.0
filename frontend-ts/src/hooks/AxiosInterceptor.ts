@@ -29,6 +29,7 @@ instance.interceptors.response.use(
   (error) => {
     if (error.response?.status === 401) {
       localStorage.clear();
+      localStorage.setItem("logout", "Session Expired Logged out.");
       window.location.reload();
     }
     return Promise.reject(error);

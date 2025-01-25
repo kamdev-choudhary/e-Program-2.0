@@ -69,6 +69,7 @@ if (isProduction && cluster.isPrimary) {
   };
   startServer();
 }
+
 process.on("SIGINT", () => {
   logger.info("Server is shutting down...");
   process.exit(0);

@@ -300,6 +300,7 @@ const DownloadAdmitCard: React.FC = () => {
                 params.row.status === "loading"
               }
               variant="outlined"
+              size="small"
             >
               {params.row.status === "loading" ? "loading" : "Fetch Data"}
             </Button>
@@ -390,11 +391,7 @@ const DownloadAdmitCard: React.FC = () => {
           </Button>
         </Box>
       </Box>
-      <Card
-        sx={{
-          p: 0, // Add padding inside the card for consistent spacing
-        }}
-      >
+      <Card sx={{ p: 0 }}>
         <Box
           sx={{
             display: "flex",
@@ -407,7 +404,7 @@ const DownloadAdmitCard: React.FC = () => {
           <ToggleButton
             size="small"
             value="total"
-            color="primary"
+            color="success"
             aria-label="Platform"
             selected={selectedStatus === ""}
             onClick={() => setSelectedStatus("")}
@@ -430,7 +427,6 @@ const DownloadAdmitCard: React.FC = () => {
           <ToggleButton
             size="small"
             value="total"
-            color="primary"
             aria-label="Platform"
             selected={selectedStatus === "loading"}
             onClick={() => setSelectedStatus("loading")}
@@ -442,7 +438,7 @@ const DownloadAdmitCard: React.FC = () => {
           <ToggleButton
             size="small"
             value="total"
-            color="primary"
+            color="error"
             aria-label="Platform"
             selected={selectedStatus === "error"}
             onClick={() => setSelectedStatus("error")}
