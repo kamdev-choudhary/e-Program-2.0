@@ -120,10 +120,9 @@ export async function register(req, res, next) {
     } else {
       const token = await newUser.generateToken();
       res.status(200).json({
-        message: "Registration Successful.",
         token,
         userId: newUser._id.toString(),
-        status_code: 1,
+        ...response.success("Registration successfull."),
       });
     }
   } catch (error) {

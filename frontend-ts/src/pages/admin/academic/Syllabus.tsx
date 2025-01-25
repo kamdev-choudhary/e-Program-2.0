@@ -5,12 +5,7 @@ import SubjectsComponent from "./parts/Subjects"; // Renamed import
 import SubSubjects from "./parts/SubSubjects";
 import Topics from "./parts/Topics";
 import SubTopics from "./parts/SubTopics";
-import {
-  getAllSubjects,
-  getAllSubSubjects,
-  getAllTopics,
-  getAllSubTopics,
-} from "../../../api/academic";
+import { getAllAcademicData } from "../../../api/academic";
 import { useGlobalContext } from "../../../contexts/GlobalProvider";
 
 // Subject interface
@@ -55,21 +50,12 @@ const Subjects: React.FC = () => {
     dispatch({ type: "SET_LOADING", payload: true });
     let isMounted = true; // Safety check for component unmount
     try {
-      const subjectResponse = await getAllSubjects();
-      if (isMounted && isValidResponse(subjectResponse)) {
-        setSubjects(subjectResponse?.data?.subjects || []);
-      }
-      const subSubjectResponse = await getAllSubSubjects();
-      if (isMounted && isValidResponse(subSubjectResponse)) {
-        setSubSubjects(subSubjectResponse?.data?.subSubjects || []);
-      }
-      const topicResponse = await getAllTopics();
-      if (isMounted && isValidResponse(topicResponse)) {
-        setTopics(topicResponse?.data?.topics || []);
-      }
-      const subTopicResponse = await getAllSubTopics();
-      if (isMounted && isValidResponse(subTopicResponse)) {
-        setSubTopics(subTopicResponse?.data?.subTopics || []);
+      const response = await getAllAcademicData();
+      if (isMounted && isValidResponse(response)) {
+        setSubjects(response?.data?.subjects || []);
+        setSubSubjects(response?.data?.subSubjects || []);
+        setTopics(response?.data?.topics || []);
+        setSubTopics(response?.data?.subTopics || []);
       }
     } catch (error) {
       console.error(error);
