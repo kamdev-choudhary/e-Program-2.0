@@ -163,7 +163,7 @@ export async function getLoginSesssion(req, res, next) {
     if (!id)
       return res.status(400).json({ ...response.notFound("ID not found.") });
     const sessions = await Session.find({ userId: id });
-    if (sessions) {
+    if (sessions.length > 0) {
       return res
         .status(200)
         .json({ ...response.success("Session Found."), sessions });

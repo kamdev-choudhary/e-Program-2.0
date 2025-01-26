@@ -15,10 +15,15 @@ import axios from "../../../hooks/AxiosInterceptor";
 import { useGlobalContext } from "../../../contexts/GlobalProvider";
 import { CustomModal } from "../../../components/CustomModal";
 import Swal from "sweetalert2";
-import { DeleteRounded, VisibilityRounded } from "@mui/icons-material";
+import {
+  DeleteRounded,
+  DevicesRounded,
+  VisibilityRounded,
+} from "@mui/icons-material";
 import moment from "moment";
 import CustomDropDown from "../../../components/CustomDropDown";
 import ScholarDetails from "./parts/ScholarDetails";
+import Sessions from "./parts/Sessions";
 
 interface UserProps {
   _id: string;
@@ -43,9 +48,7 @@ const UserMaster: React.FC = () => {
   const [showScholarDetails, setShowScholarDetails] = useState<boolean>(false);
   const [adminCount, setAdminCount] = useState<number | null>(0);
   const [studentCount, setStudentCount] = useState<number | null>(0);
-  const [selectedScholar, setSelectedScholar] = useState<UserProps | null>(
-    null
-  );
+  const [selectedUser, setSelectedUser] = useState<UserProps | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [newUser, setNewUser] = useState<newUser>({
     email: "",
@@ -53,6 +56,7 @@ const UserMaster: React.FC = () => {
     name: "",
     role: "admin",
   });
+  const [showSessions, setShowSessions] = useState<boolean>(false);
 
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     page: 0,
@@ -173,7 +177,7 @@ const UserMaster: React.FC = () => {
       field: "mobile",
       headerName: "Mobile",
       flex: 1,
-      minWidth: 200,
+      minWidth: 150,
       align: "center",
       headerAlign: "center",
       editable: true,
@@ -182,7 +186,7 @@ const UserMaster: React.FC = () => {
       field: "role",
       headerName: "Role",
       flex: 1,
-      minWidth: 200,
+      minWidth: 150,
       align: "center",
       headerAlign: "center",
       editable: true,
@@ -193,7 +197,7 @@ const UserMaster: React.FC = () => {
       field: "status",
       headerName: "Status",
       flex: 1,
-      minWidth: 100,
+      minWidth: 80,
       renderCell: (params) => (
         <Checkbox
           onClick={() => handleStatusChange(params.row)}
@@ -227,10 +231,18 @@ const UserMaster: React.FC = () => {
           <Box
             sx={{ display: "flex", gap: 2, mt: 1, justifyContent: "center" }}
           >
+            <IconButton
+              onClick={() => {
+                setSelectedUser(params.row);
+                setShowSessions(true);
+              }}
+            >
+              <DevicesRounded />
+            </IconButton>
             {activeTab === "student" && (
               <IconButton
                 onClick={() => {
-                  setSelectedScholar(params.row);
+                  setSelectedUser(params.row);
                   setShowScholarDetails(true);
                 }}
               >
@@ -374,12 +386,19 @@ const UserMaster: React.FC = () => {
           </Button>
         </Box>
       </CustomModal>
+
+      {/* Scholar Details */}
       <CustomModal
         open={showScholarDetails}
         onClose={() => setShowScholarDetails(false)}
         header="Scholar Details"
       >
-        <ScholarDetails student={selectedScholar} />
+        <ScholarDetails student={selectedUser} />
+      </CustomModal>
+
+      {/* Sessions */}
+      <CustomModal open={showSessions} onClose={() => setShowSessions(false)}>
+        <Sessions user={selectedUser} />
       </CustomModal>
     </Box>
   );

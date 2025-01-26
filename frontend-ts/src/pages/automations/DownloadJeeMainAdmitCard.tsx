@@ -399,6 +399,7 @@ const DownloadAdmitCard: React.FC = () => {
             gap: 2,
             justifyContent: "space-between",
             px: 2,
+            overflow: "auto",
           }}
         >
           <ToggleButton
@@ -408,7 +409,7 @@ const DownloadAdmitCard: React.FC = () => {
             aria-label="Platform"
             selected={selectedStatus === ""}
             onClick={() => setSelectedStatus("")}
-            sx={{ px: 4 }}
+            sx={{ px: 4, minWidth: 150 }}
           >
             <strong>Total &nbsp;&nbsp;</strong> ({jsonData?.length || 0})
           </ToggleButton>
@@ -419,9 +420,9 @@ const DownloadAdmitCard: React.FC = () => {
             aria-label="Platform"
             selected={selectedStatus === "fetched"}
             onClick={() => setSelectedStatus("fetched")}
-            sx={{ px: 4 }}
+            sx={{ px: 4, minWidth: 150 }}
           >
-            <strong>Generated &nbsp;&nbsp;</strong> (
+            <strong>fetched &nbsp;&nbsp;</strong> (
             {jsonData?.filter((item) => item.status === "fetched").length || 0})
           </ToggleButton>
           <ToggleButton
@@ -430,7 +431,7 @@ const DownloadAdmitCard: React.FC = () => {
             aria-label="Platform"
             selected={selectedStatus === "loading"}
             onClick={() => setSelectedStatus("loading")}
-            sx={{ px: 4 }}
+            sx={{ px: 4, minWidth: 150 }}
           >
             <strong>Loading &nbsp;&nbsp;</strong> (
             {jsonData?.filter((item) => item.status === "loading").length || 0})
@@ -442,7 +443,7 @@ const DownloadAdmitCard: React.FC = () => {
             aria-label="Platform"
             selected={selectedStatus === "error"}
             onClick={() => setSelectedStatus("error")}
-            sx={{ px: 4 }}
+            sx={{ px: 4, minWidth: 150 }}
           >
             <strong>Error &nbsp;&nbsp;</strong> (
             {jsonData?.filter((item) => item?.error !== "").length || 0})

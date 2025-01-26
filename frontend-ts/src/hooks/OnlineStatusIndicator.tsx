@@ -19,6 +19,7 @@ const OnlineStatusIndicator: React.FC = () => {
             borderRadius: 2,
             boxShadow: 3,
             zIndex: 100,
+            minWidth: 340,
           }}
           severity="error"
           action={

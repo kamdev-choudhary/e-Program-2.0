@@ -35,7 +35,7 @@ const getTheme = (mode: "light" | "dark") => {
         styleOverrides: {
           root: {
             textTransform: "none", // Prevents uppercase text
-            borderRadius: 4, // Slightly rounded corners
+            borderRadius: 400, // Slightly rounded corners
             padding: "8px 16px", // Padding inside the button
             display: "flex", // Ensures proper alignment of content
             alignItems: "center", // Centers content vertically

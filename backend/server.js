@@ -38,9 +38,10 @@ if (isProduction && cluster.isPrimary) {
   const app = express();
 
   app.use(helmet());
+  app.options("*", cors());
   app.use(
     cors({
-      origin: ["http://localhost:5173"],
+      origin: ["http://localhost:5173", "http://10.0.12.85:5173"],
       methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
       credentials: true,
     })

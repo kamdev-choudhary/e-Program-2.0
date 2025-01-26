@@ -11,6 +11,7 @@ import Loader from "../components/Loader";
 import { LOCAL_STORAGE_KEYS } from "../constant/constants";
 import axios from "../hooks/AxiosInterceptor";
 import { useNotification } from "./NotificationProvider";
+import dummyImage from "../assets/user.jpg";
 
 interface GlobalProviderProps {
   children: ReactNode;
@@ -18,10 +19,10 @@ interface GlobalProviderProps {
 
 interface User {
   _id: string;
+  email: string;
   name: string;
+  mobile: string;
   role: string;
-  email?: string;
-  mobile?: string;
 }
 
 interface LoginResponse {
@@ -103,7 +104,11 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
           token: storedToken,
         });
         const photo = localStorage.getItem(LOCAL_STORAGE_KEYS.PHOTO);
-        if (photo) setProfilePicUrl(photo);
+        if (photo && photo !== "null" && photo !== "undefined") {
+          setProfilePicUrl(photo);
+        } else {
+          setProfilePicUrl(dummyImage);
+        }
       } catch (error) {
         console.error("Invalid token:", error);
         localStorage.clear();
@@ -130,7 +135,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
         },
         token,
       });
-      setProfilePicUrl(photo);
+      photo ? setProfilePicUrl(photo) : setProfilePicUrl(dummyImage);
       localStorage.setItem(
         LOCAL_STORAGE_KEYS.USER,
         JSON.stringify(decodedToken)

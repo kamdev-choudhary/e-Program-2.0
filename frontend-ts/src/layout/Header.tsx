@@ -8,6 +8,7 @@ import {
   Button,
   Avatar,
   AppBar,
+  Divider,
 } from "@mui/material";
 import {
   Fullscreen as FullscreenIcon,
@@ -72,6 +73,8 @@ const Header: React.FC<HeaderProps> = ({
         justifyContent: "center",
         borderRadius: 0,
         m: 0,
+        paddingLeft: 0, // Remove left padding
+        paddingRight: 0, // Remove right padding
       }}
       position="static"
     >
@@ -135,25 +138,28 @@ const Header: React.FC<HeaderProps> = ({
         >
           <Box
             sx={{
-              px: 2,
+              px: { xs: 0, sm: 2 },
               display: "flex",
               flexDirection: "column",
               m: 1,
               mb: 1,
               rowGap: 1,
+              minWidth: 250,
             }}
           >
             <Typography>Name: {user?.name || "Guest"}</Typography>
             <Typography>Email: {user?.email || "N/A"}</Typography>
             <Typography>Mobile: {user?.mobile || "N/A"}</Typography>
           </Box>
+          <Divider />
           <Box
             sx={{
-              px: 2,
+              px: { xs: 0, sm: 2 },
               display: "flex",
               mb: 1,
               flexDirection: "column",
               rowGap: 1,
+              mt: 1,
             }}
           >
             <Button

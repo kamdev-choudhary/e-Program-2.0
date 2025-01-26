@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   Box,
   Card,
@@ -9,26 +9,13 @@ import {
   Button,
   OutlinedInput,
   CircularProgress,
-  ListItemButton,
-  List,
-  ListItemText,
 } from "@mui/material";
 import { useGlobalContext } from "../../contexts/GlobalProvider";
-import dummyProfile from "../../assets/user.jpg";
 import { CustomModal } from "../../components/CustomModal";
 import axios from "../../hooks/AxiosInterceptor";
 import { EditRounded, UploadFileRounded } from "@mui/icons-material";
 import { LOCAL_STORAGE_KEYS } from "../../constant/constants";
-import Swal from "sweetalert2";
-
-interface SessionProps {
-  _id: string;
-  token: string;
-  ip: string;
-  deviceId: string;
-  browser: string;
-  platform: string;
-}
+import Sessions from "../admin/user/parts/Sessions";
 
 const Profile: React.FC = () => {
   const { user, profilePicUrl, isValidResponse, setProfilePicUrl } =
@@ -38,7 +25,6 @@ const Profile: React.FC = () => {
   const [newProfilePic, setNewProfilePic] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
-  const [sessions, setSessions] = useState<SessionProps[] | null>(null);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
@@ -81,54 +67,6 @@ const Profile: React.FC = () => {
     }
   };
 
-  const getSession = async () => {
-    try {
-      const response = await axios.get(`/auth/session/${user?._id}`);
-      if (isValidResponse(response)) {
-        setSessions(response.data.sessions);
-      }
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    getSession();
-  }, []);
-
-  const handleDeleteSession = async (id: string) => {
-    try {
-      const result = await Swal.fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
-      });
-      if (result.isConfirmed) {
-        const response = await axios.delete(`/auth/session/${id}`);
-        if (isValidResponse(response)) {
-          if (!sessions) return;
-          setSessions((prev) => {
-            if (!prev) return []; // Ensure an empty array is returned if prev is null or undefined
-            return prev.filter((s) => s.deviceId !== id); // Remove the session with the given id
-          });
-
-          Swal.fire("Deleted!", "Session has been logged out.", "success");
-        }
-      }
-    } catch (error) {
-      console.error(error);
-      Swal.fire(
-        "Error!",
-        "An error occurred while deleting the session.",
-        "error"
-      );
-    }
-  };
-
   return (
     <Box
       sx={{
@@ -162,7 +100,7 @@ const Profile: React.FC = () => {
                 }}
               >
                 <img
-                  src={profilePicUrl || dummyProfile}
+                  src={profilePicUrl}
                   alt="profile-pic"
                   style={{
                     maxHeight: 150,
@@ -227,41 +165,7 @@ const Profile: React.FC = () => {
       </Card>
 
       {/* Sessions Card */}
-      <Card
-        sx={{
-          width: "100%",
-          p: 2,
-          borderRadius: 2,
-          boxShadow: 3,
-        }}
-      >
-        <Typography variant="h6" sx={{ p: 1, fontWeight: "bold" }}>
-          Sessions
-        </Typography>
-        <Divider />
-        <List sx={{ p: 1 }}>
-          {sessions?.map((session, index) => (
-            <React.Fragment key={index}>
-              <ListItemButton
-                sx={{
-                  borderRadius: 2,
-                  mb: 1,
-                }}
-              >
-                <ListItemText
-                  primary={`${session.browser} (${session.platform})`}
-                  secondary={session.ip}
-                />
-                <Button onClick={() => handleDeleteSession(session.deviceId)}>
-                  Logout
-                </Button>
-              </ListItemButton>
-              {index < sessions.length - 1 && <Divider />}{" "}
-              {/* Divider between items */}
-            </React.Fragment>
-          ))}
-        </List>
-      </Card>
+      <Sessions user={user} />
 
       {/* Update Profile Pic Modal */}
       <CustomModal
@@ -291,7 +195,7 @@ const Profile: React.FC = () => {
             }}
           >
             <img
-              src={previewUrl || dummyProfile}
+              src={previewUrl || ""}
               alt="profile-pic"
               style={{
                 maxHeight: 150,

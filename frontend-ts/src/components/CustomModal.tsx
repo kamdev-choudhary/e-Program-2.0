@@ -46,7 +46,7 @@ export const CustomModal: React.FC<CustomModalProps> = ({
   children,
   header = "",
   onClose,
-  height = "90vh",
+  height = "90svh",
   width = "80vw",
   showHeader = true,
   showFullScreenButton = false,
@@ -66,7 +66,7 @@ export const CustomModal: React.FC<CustomModalProps> = ({
         sx={{
           ...style,
           width: fullScreen || isSmallScreen ? "95vw" : width,
-          height: fullScreen ? "100vh" : height,
+          height: fullScreen ? "100svh" : height,
           bgcolor: "background.paper",
           p: 1.5,
           borderRadius: 4,

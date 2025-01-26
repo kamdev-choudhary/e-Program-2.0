@@ -14,7 +14,6 @@ import { useNavigate, useLocation, NavigateFunction } from "react-router-dom";
 import { ExpandLess, ExpandMore } from "@mui/icons-material";
 import { motion } from "framer-motion";
 import { useGlobalContext } from "../contexts/GlobalProvider";
-import DummyUserImage from "../assets/user.jpg";
 
 interface Option {
   label: string;
@@ -135,7 +134,7 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded = true }) => {
               height: "100%",
               width: "100%",
               borderRadius: "50%",
-              backgroundImage: `url(${profilePicUrl || DummyUserImage})`,
+              backgroundImage: `url(${profilePicUrl})`,
               backgroundSize: "cover", // Ensures the image covers the box
               backgroundPosition: "center", // Centers the image within the box
               backgroundRepeat: "no-repeat", // Prevents tiling of the image

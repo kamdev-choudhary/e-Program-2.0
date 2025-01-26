@@ -1,0 +1,156 @@
+import React, { useEffect, useState } from "react";
+import { useGlobalContext } from "../../../../contexts/GlobalProvider";
+import axios from "../../../../hooks/AxiosInterceptor";
+import {
+  Card,
+  Typography,
+  Button,
+  ListItemButton,
+  Divider,
+  List,
+  ListItemText,
+  Box,
+  CircularProgress,
+} from "@mui/material";
+import Swal from "sweetalert2";
+import { LogoutRounded } from "@mui/icons-material";
+
+interface UserProps {
+  _id: string;
+  email: string;
+  name: string;
+  mobile: string;
+  role: string;
+}
+
+interface UserSessionProps {
+  user?: UserProps | null;
+}
+
+interface SessionProps {
+  _id: string;
+  token: string;
+  ip: string;
+  deviceId: string;
+  browser: string;
+  platform: string;
+}
+
+const Sessions: React.FC<UserSessionProps> = ({ user }) => {
+  const { isValidResponse } = useGlobalContext();
+  const [sessions, setSessions] = useState<SessionProps[] | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+
+  const getSession = async () => {
+    setIsLoading(true);
+    try {
+      const response = await axios.get(`/auth/session/${user?._id}`);
+      if (isValidResponse(response)) {
+        setSessions(response.data.sessions);
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    if (!user?._id) return;
+    getSession();
+  }, [user]);
+
+  const handleDeleteSession = async (id: string) => {
+    try {
+      const result = await Swal.fire({
+        title: "Are you sure?",
+        text: "You won't be able to revert this!",
+        icon: "warning",
+        showCancelButton: true,
+        confirmButtonColor: "#3085d6",
+        cancelButtonColor: "#d33",
+        confirmButtonText: "Yes, delete it!",
+      });
+      if (result.isConfirmed) {
+        const response = await axios.delete(`/auth/session/${id}`);
+        if (isValidResponse(response)) {
+          if (!sessions) return;
+          setSessions((prev) => {
+            if (!prev) return []; // Ensure an empty array is returned if prev is null or undefined
+            return prev.filter((s) => s.deviceId !== id); // Remove the session with the given id
+          });
+
+          Swal.fire("Deleted!", "Session has been logged out.", "success");
+        }
+      }
+    } catch (error) {
+      console.error(error);
+      Swal.fire(
+        "Error!",
+        "An error occurred while deleting the session.",
+        "error"
+      );
+    }
+  };
+
+  return (
+    <Card
+      sx={{
+        width: "100%",
+        p: 2,
+        borderRadius: 2,
+        boxShadow: 3,
+      }}
+    >
+      <Typography variant="h6" sx={{ p: 1, fontWeight: "bold" }}>
+        Sessions
+      </Typography>
+      <Divider />
+      <Box>
+        {isLoading ? (
+          <Box sx={{ display: "flex", justifyContent: "center", my: 2 }}>
+            <CircularProgress size={25} />
+          </Box>
+        ) : (
+          <List sx={{ p: 1, m: 0 }}>
+            {sessions && sessions.length > 0 ? (
+              sessions.map((session, index) => (
+                <React.Fragment key={index}>
+                  <ListItemButton
+                    sx={{
+                      borderRadius: 2,
+                      mb: 1,
+                      p: { xs: 0.5, sm: 1 },
+                    }}
+                  >
+                    <ListItemText
+                      primary={`${session.browser} (${session.platform})`}
+                      secondary={session.ip}
+                    />
+                    <Button
+                      size="small"
+                      startIcon={<LogoutRounded />}
+                      color="error"
+                      variant="outlined"
+                      onClick={() => handleDeleteSession(session.deviceId)}
+                    >
+                      Logout
+                    </Button>
+                  </ListItemButton>
+                  {index < sessions.length - 1 && <Divider />}{" "}
+                  {/* Divider between items */}
+                </React.Fragment>
+              ))
+            ) : (
+              <Box>
+                <Typography>No session available.</Typography>
+              </Box>
+            )}
+          </List>
+        )}
+      </Box>
+    </Card>
+  );
+};
+
+export default Sessions;

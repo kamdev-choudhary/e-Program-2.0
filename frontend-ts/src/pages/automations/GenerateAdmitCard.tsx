@@ -3,7 +3,6 @@ import {
   Button,
   Card,
   CircularProgress,
-  Paper,
   ToggleButton,
 } from "@mui/material";
 import React, { useMemo, useState } from "react";
@@ -323,6 +322,7 @@ const DownloadAdmitCard: React.FC = () => {
             gap: 2,
             justifyContent: "space-between",
             px: 2,
+            overflow: "auto",
           }}
         >
           <ToggleButton
@@ -332,18 +332,18 @@ const DownloadAdmitCard: React.FC = () => {
             aria-label="Platform"
             selected={selectedStatus === ""}
             onClick={() => setSelectedStatus("")}
-            sx={{ px: 4 }}
+            sx={{ px: 4, minWidth: 150 }}
           >
             <strong>Total &nbsp;&nbsp;</strong> ({jsonData?.length || 0})
           </ToggleButton>
           <ToggleButton
             size="small"
             value="total"
-            color="primary"
+            color="success"
             aria-label="Platform"
             selected={selectedStatus === "generated"}
             onClick={() => setSelectedStatus("generated")}
-            sx={{ px: 4 }}
+            sx={{ px: 4, minWidth: 200 }}
           >
             <strong>Generated &nbsp;&nbsp;</strong> (
             {jsonData?.filter((item) => item.status === "generated").length ||
@@ -357,7 +357,7 @@ const DownloadAdmitCard: React.FC = () => {
             aria-label="Platform"
             selected={selectedStatus === "loading"}
             onClick={() => setSelectedStatus("loading")}
-            sx={{ px: 4 }}
+            sx={{ px: 4, minWidth: 150 }}
           >
             <strong>Loading &nbsp;&nbsp;</strong> (
             {jsonData?.filter((item) => item.status === "loading").length || 0})
@@ -365,11 +365,11 @@ const DownloadAdmitCard: React.FC = () => {
           <ToggleButton
             size="small"
             value="total"
-            color="primary"
+            color="error"
             aria-label="Platform"
             selected={selectedStatus === "error"}
             onClick={() => setSelectedStatus("error")}
-            sx={{ px: 4 }}
+            sx={{ px: 4, minWidth: 150 }}
           >
             <strong>Error &nbsp;&nbsp;</strong> (
             {jsonData?.filter((item) => item?.error !== "").length || 0})
@@ -377,19 +377,18 @@ const DownloadAdmitCard: React.FC = () => {
         </Box>
       </Card>
 
-      <Box component={Paper} elevation={4}>
-        <DataGrid
-          slots={{
-            toolbar: () => <CustomToolbar showAddButton={false} />,
-          }}
-          columns={columns}
-          rows={filteredData}
-          loading={isLoading}
-          processRowUpdate={handleProcessRowUpdate}
-          initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
-          pageSizeOptions={[10, 30, 50, 100, 200]}
-        />
-      </Box>
+      <DataGrid
+        slots={{
+          toolbar: () => <CustomToolbar showAddButton={false} />,
+        }}
+        columns={columns}
+        rows={filteredData}
+        loading={isLoading}
+        processRowUpdate={handleProcessRowUpdate}
+        initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
+        pageSizeOptions={[10, 30, 50, 100, 200]}
+        sx={{ background: "background.paper" }}
+      />
     </Box>
   );
 };

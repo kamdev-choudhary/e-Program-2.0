@@ -329,7 +329,7 @@ const Lectures: React.FC = () => {
                   setSelectedLecture(null);
                   setShowYoutubePlayer(false);
                 }}
-                sx={{ position: "absolute", right: 10, top: 10 }}
+                sx={{ position: "absolute", left: 4, top: 4 }}
               >
                 <CancelRounded sx={{ color: "red" }} />
               </IconButton>

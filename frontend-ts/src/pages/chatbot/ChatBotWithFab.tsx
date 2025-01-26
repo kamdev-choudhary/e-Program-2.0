@@ -51,6 +51,7 @@ const ChatbotWithFAB: React.FC = () => {
           },
         }
       );
+      console.log(response);
       // Add AI response to the chat
       setMessages((prev) => [
         ...prev,
@@ -74,7 +75,7 @@ const ChatbotWithFAB: React.FC = () => {
       <Fab
         color="primary"
         onClick={toggleDrawer}
-        sx={{ position: "fixed", bottom: 25, right: 25 }}
+        sx={{ position: "fixed", bottom: 18, right: 18 }}
         size="medium"
       >
         <ChatIcon />
@@ -85,7 +86,6 @@ const ChatbotWithFAB: React.FC = () => {
         <Box
           sx={{
             width: 300,
-
             height: "100%",
             display: "flex",
             flexDirection: "column",
