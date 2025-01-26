@@ -97,16 +97,14 @@ export async function updateProfilePic(req, res, next) {
 
     // Validate ID
     if (!id) {
-      return res
-        .status(400)
-        .json({ message: "User ID is required", status_code: 0 });
+      return res.status(400).json({ ...response.notFound("ID Is required.") });
     }
 
     // Validate file
     if (!req.file) {
       return res
         .status(400)
-        .json({ message: "File is required", status_code: 0 });
+        .json({ ...response.notFound("File is required.") });
     }
 
     const filePath = req.file.path;
@@ -126,7 +124,7 @@ export async function updateProfilePic(req, res, next) {
       if (!user) {
         return res
           .status(404)
-          .json({ message: "User not found", status_code: 0 });
+          .json({ ...response.notFound("User not found.") });
       }
 
       user.photo = response.secure_url;
@@ -134,14 +132,13 @@ export async function updateProfilePic(req, res, next) {
 
       // Return success response
       return res.status(200).json({
-        message: "Profile picture updated successfully",
-        status_code: 1,
+        ...response.success("Profile picture uploaded Successfully."),
         profilePicUrl: response.secure_url,
       });
     } else {
       return res
         .status(500)
-        .json({ message: "Failed to upload image", status_code: 0 });
+        .json({ ...response.notFound("Failed to update Profile Picture.") });
     }
   } catch (error) {
     console.error("Error updating profile picture:", error);
@@ -169,9 +166,8 @@ export async function updateUserStatus(req, res, next) {
     await user.save();
 
     return res.status(200).json({
-      message: "User status updated successfully",
       status: user.status,
-      status_code: 3,
+      ...response.edited("User Status Updated."),
     });
   } catch (error) {
     next(error);

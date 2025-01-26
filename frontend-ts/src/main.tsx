@@ -6,17 +6,20 @@ import { store } from "./store/store.ts";
 import { GlobalProvider } from "./contexts/GlobalProvider.tsx";
 import { WebSocketProvider } from "./contexts/WebSocket.tsx";
 import App from "./App.tsx";
+import { NotificationProvider } from "./contexts/NotificationProvider.tsx";
 
 const isDevelopment = import.meta.env.MODE !== "development";
 
 const AppWrapper = (
-  <GlobalProvider>
-    <WebSocketProvider>
-      <Provider store={store}>
-        <App />
-      </Provider>
-    </WebSocketProvider>
-  </GlobalProvider>
+  <NotificationProvider>
+    <GlobalProvider>
+      <WebSocketProvider>
+        <Provider store={store}>
+          <App />
+        </Provider>
+      </WebSocketProvider>
+    </GlobalProvider>
+  </NotificationProvider>
 );
 
 createRoot(document.getElementById("root")!).render(

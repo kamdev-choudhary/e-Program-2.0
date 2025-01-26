@@ -11,7 +11,7 @@ export async function viewBatch(req, res, next) {
     const batches = await Batch.find({}).select(
       "name, description class templateImage"
     );
-    res.status(200).json({ batches, status_code: 1, message: "Batch Found." });
+    res.status(200).json({ batches, ...response.success("Batches Found.") });
   } catch (error) {
     next(error);
   }

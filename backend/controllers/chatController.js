@@ -101,7 +101,7 @@ export async function sendChat(req, res, next) {
       .limit(limit);
     res
       .status(200)
-      .json({ messages, messgae: "Message send Successfully", status_code: 1 });
+      .json({ messages, ...response.success("Message Send Successfully.") });
   } catch (error) {
     next(error);
   }

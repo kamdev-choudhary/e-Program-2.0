@@ -50,9 +50,8 @@ export const uploadPdf = [
       // Respond with success message and file URL
       res.status(200).json({
         books,
-        message: "File uploaded and book data saved successfully",
         book: newBook,
-        status_code: 1,
+        ...response.success("File Uploaded Successfully and Data Saved."),
       });
     } catch (error) {
       next(error);

@@ -148,11 +148,9 @@ export async function registerByAdmin(req, res, next) {
       const users = await User.find({ role });
       return res
         .status(200)
-        .json({ message: "User created Successfully", status_code: 1, users });
+        .json({ ...response.success("User created Successfully."), users });
     } else {
-      return res
-        .status(200)
-        .json({ message: "Role is missing", status_code: 0 });
+      return res.status(200).json({ ...response.notFound("Role is missing") });
     }
   } catch (error) {
     next(error);
@@ -163,16 +161,14 @@ export async function getLoginSesssion(req, res, next) {
   try {
     const { id } = req.params;
     if (!id)
-      return res.status(400).json({ message: "ID is missing", status_code: 0 });
+      return res.status(400).json({ ...response.notFound("ID not found.") });
     const sessions = await Session.find({ userId: id });
     if (sessions) {
       return res
         .status(200)
-        .json({ message: "Session found", sessions, status_code: 1 });
+        .json({ ...response.success("Session Found."), sessions });
     } else {
-      return res
-        .status(200)
-        .json({ message: "No Session found", status_code: 1 });
+      return res.status(200).json({ ...response.error("Session not found") });
     }
   } catch (error) {
     next(error);
@@ -183,17 +179,15 @@ export async function deleteSession(req, res, next) {
   try {
     const { id } = req.params;
     if (!id)
-      return res.status(400).json({ message: "ID is missing", status_code: 0 });
+      return res.status(400).json({ ...response.notFound("ID is missing.") });
 
     const deletedSession = await Session.deleteMany({ deviceId: id });
     if (deletedSession) {
-      return res
-        .status(200)
-        .json({ message: "Session Deleted", status_code: 4 });
+      return res.status(200).json({ ...response.deleted("Session Deleted") });
     } else {
       return res
         .status(200)
-        .json({ message: "Session Not found", status_code: 0 });
+        .json({ ...response.notFound("Session Not Found.") });
     }
   } catch (error) {
     next(error);

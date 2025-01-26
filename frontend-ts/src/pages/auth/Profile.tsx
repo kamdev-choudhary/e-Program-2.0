@@ -84,7 +84,7 @@ const Profile: React.FC = () => {
   const getSession = async () => {
     try {
       const response = await axios.get(`/auth/session/${user?._id}`);
-      if (isValidResponse(response, false)) {
+      if (isValidResponse(response)) {
         setSessions(response.data.sessions);
       }
     } catch (error) {

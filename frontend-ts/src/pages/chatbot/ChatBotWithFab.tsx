@@ -7,6 +7,7 @@ import {
   Typography,
   Paper,
   Drawer,
+  IconButton,
 } from "@mui/material";
 import ChatIcon from "@mui/icons-material/Chat";
 import CloseIcon from "@mui/icons-material/Close";
@@ -27,6 +28,7 @@ const ChatbotWithFAB: React.FC = () => {
 
     // Add user message to the chat
     setMessages((prev) => [...prev, { sender: "user", text: input }]);
+    setInput(""); // Clear input
 
     try {
       // Make API request to OpenAI (replace YOUR_API_KEY with your key)
@@ -49,7 +51,6 @@ const ChatbotWithFAB: React.FC = () => {
           },
         }
       );
-
       // Add AI response to the chat
       setMessages((prev) => [
         ...prev,
@@ -65,8 +66,6 @@ const ChatbotWithFAB: React.FC = () => {
         },
       ]);
     }
-
-    setInput(""); // Clear input
   };
 
   return (
@@ -86,7 +85,7 @@ const ChatbotWithFAB: React.FC = () => {
         <Box
           sx={{
             width: 300,
-            p: 1,
+
             height: "100%",
             display: "flex",
             flexDirection: "column",
@@ -102,9 +101,9 @@ const ChatbotWithFAB: React.FC = () => {
             }}
           >
             <Typography variant="h6">AI Chatbot</Typography>
-            <Button onClick={toggleDrawer}>
+            <IconButton color="error" onClick={toggleDrawer}>
               <CloseIcon />
-            </Button>
+            </IconButton>
           </Box>
 
           {/* Chat Messages */}

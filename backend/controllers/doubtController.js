@@ -1,4 +1,5 @@
 import Doubt from "../models/doubt.js";
+import response from "../utils/responses.js";
 
 export async function viewDoubts(req, res, next) {
   try {
@@ -42,13 +43,11 @@ export async function saveNewDoubt(req, res, next) {
     if (!doubtQuestion || !description || !subject) {
       return res
         .status(200)
-        .json({ message: "Required details missing", status_code: 1 });
+        .json({ ...response.notFound("Required Data missing.") });
     }
     const doubt = new Doubt(req.body);
     await doubt.save();
-    res
-      .status(200)
-      .json({ message: "Successfully posted Doubt", status_code: 1 });
+    res.status(200).json({ ...response.success("Doubt Posted Successfully.") });
   } catch (error) {
     next(error);
   }
@@ -94,9 +93,9 @@ export async function getDoubtDetails(req, res, next) {
     if (doubt) {
       return res
         .status(200)
-        .json({ status_code: 1, messgae: "Doubt found", doubt });
+        .json({ ...response.success("Doubt Found."), doubt });
     } else {
-      return res.status(200).json({ message: "Doubt not Found" });
+      return res.status(200).json({ ...response.notFound("Data not found") });
     }
   } catch (error) {
     next(error);
