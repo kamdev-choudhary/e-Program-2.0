@@ -176,21 +176,21 @@ export const buttons: Button[] = [
     options: [
       {
         label: "JEE City Info",
-        path: "/automation/jeemain/cityinfo",
+        path: "/automation/jeemaincityinfo",
         icon: LocationOnRounded,
         loginRequired: false,
         color: "#43A047",
       },
       {
         label: "JEE Admit Card",
-        path: "/automation/jeemain/admitcard",
+        path: "/automation/jeemainadmitcard",
         icon: AssignmentIndRounded,
         loginRequired: false,
         color: "#D32F2F",
       },
       {
         label: "Generate Admit Card",
-        path: "/automation/generate/admitcard",
+        path: "/automation/jdstadmitcard",
         icon: CreateRounded,
         loginRequired: false,
         color: "#1976D2",

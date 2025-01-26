@@ -18,7 +18,7 @@ const response = {
   edited: generateResponse("Edited Successfully.", 3),
   created: generateResponse("Data Saved Successfully.", 4),
   validation: generateResponse("Validation error", 5),
-  error: generateResponse("Error", 6),
+  error: generateResponse("Error", 0),
 };
 
 export default response;

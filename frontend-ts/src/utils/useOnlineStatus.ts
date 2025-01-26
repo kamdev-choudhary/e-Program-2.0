@@ -28,7 +28,7 @@ const useOnlineStatus = () => {
     return () => clearInterval(intervalId);
   }, [dispatch]);
 
-  return { loading, online };
+  return { loading, online, fetchStatus };
 };
 
 export default useOnlineStatus;

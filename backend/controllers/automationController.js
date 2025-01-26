@@ -7,7 +7,6 @@ import path from "path";
 import fs from "fs-extra";
 import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
-
 import { convertDocxToPdf } from "../utils/docToPdf.js";
 import response from "../utils/responses.js";
 
@@ -337,8 +336,6 @@ export async function generateAdmitCard(req, res, next) {
 
     const buffer = doc.getZip().generate({ type: "nodebuffer" });
 
-    // Sanitize file name
-    const sanitizedFileName = student?.name?.replace(/[\\\/:*?"<>|]/g, "_");
     const docxFilePath = path.resolve(
       outputFolder,
       `${student?.drn || uniqueId}_Admit_card.docx`

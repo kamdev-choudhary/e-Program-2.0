@@ -112,17 +112,17 @@ const routesConfig: RouteConfig[] = [
   },
   { path: "/admin/jee-data", element: JEEData, allowedRoles: ["admin"] },
   {
-    path: "/automation/jeemain/cityinfo",
+    path: "/automation/jeemaincityinfo",
     element: DCI,
     allowedRoles: ["public"],
   },
   {
-    path: "/automation/jeemain/admitcard",
+    path: "/automation/jeemainadmitcard",
     element: DAC,
     allowedRoles: ["public"],
   },
   {
-    path: "/automation/generate/admitcard",
+    path: "/automation/jdstadmitcard",
     element: GenerateAdmitCard,
     allowedRoles: ["public"],
   },
