@@ -4,8 +4,7 @@ import { Box, Button, TextField } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import ExcelJS from "exceljs";
 import { CloudUploadRounded } from "@mui/icons-material";
-import axios from "../../../../hooks/AxiosInterceptor";
-import { useGlobalContext } from "../../../../contexts/GlobalProvider";
+import useAxios from "../../../../hooks/useAxios";
 
 interface DataProps {
   _id?: string; // Optional field for MongoDB document ID
@@ -31,7 +30,7 @@ interface UploadJeeMainMarksVsRankProps {
 const UploadJeeMainMarksVsRank: React.FC<UploadJeeMainMarksVsRankProps> = ({
   onClose,
 }) => {
-  const { isValidResponse } = useGlobalContext();
+  const axios = useAxios();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [jsonData, setJsonData] = useState<DataProps[]>([]);
   const [selectedYear, setSelectedYear] = useState<string>("");
@@ -109,13 +108,11 @@ const UploadJeeMainMarksVsRank: React.FC<UploadJeeMainMarksVsRankProps> = ({
 
   const handleUploadData = async () => {
     try {
-      const response = await axios.post("/analysis/jeemainmarksvsrank", {
+      await axios.post("/analysis/jeemainmarksvsrank", {
         data: JSON.stringify(jsonData),
         mode: "multiple",
       });
-      if (isValidResponse(response)) {
-        onClose();
-      }
+      onClose();
     } catch (error) {
       console.error(error);
     }

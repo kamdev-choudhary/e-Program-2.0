@@ -11,8 +11,6 @@ import {
 import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import React, { useEffect, useState } from "react";
 import { CustomToolbar } from "../../../components/CustomToolbar";
-import axios from "../../../hooks/AxiosInterceptor";
-import { useGlobalContext } from "../../../contexts/GlobalProvider";
 import { CustomModal } from "../../../components/CustomModal";
 import Swal from "sweetalert2";
 import {
@@ -24,6 +22,7 @@ import moment from "moment";
 import CustomDropDown from "../../../components/CustomDropDown";
 import ScholarDetails from "./parts/ScholarDetails";
 import Sessions from "./parts/Sessions";
+import useAxios from "../../../hooks/useAxios";
 
 interface UserProps {
   _id: string;
@@ -42,7 +41,7 @@ interface newUser {
 
 const UserMaster: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("admin");
-  const { isValidResponse } = useGlobalContext();
+  const axios = useAxios();
   const [users, setUsers] = useState<UserProps[] | null>(null);
   const [addAdminModal, setAddAdminModal] = useState<boolean>(false);
   const [showScholarDetails, setShowScholarDetails] = useState<boolean>(false);
@@ -65,6 +64,7 @@ const UserMaster: React.FC = () => {
   const [totalUsers, setTotalUsers] = useState<number>(0);
 
   const fetchUsers = async (page: number, pageSize: number) => {
+    setLoading(true);
     try {
       const response = await axios.get(`/user`, {
         params: {
@@ -73,12 +73,10 @@ const UserMaster: React.FC = () => {
           limit: pageSize,
         },
       });
-      if (isValidResponse(response)) {
-        setUsers(response.data.users);
-        setTotalUsers(response.data.usersCount);
-        setAdminCount(response.data.adminCount);
-        setStudentCount(response.data.studentCount);
-      }
+      setUsers(response.data.users);
+      setTotalUsers(response.data.usersCount);
+      setAdminCount(response.data.adminCount);
+      setStudentCount(response.data.studentCount);
     } catch (error) {
       console.error(error);
     } finally {
@@ -100,10 +98,8 @@ const UserMaster: React.FC = () => {
       const response = await axios.post("/auth/register/admin", {
         ...newUser,
       });
-      if (isValidResponse(response)) {
-        setUsers(response.data.users);
-        setAddAdminModal(false);
-      }
+      setUsers(response.data.users);
+      setAddAdminModal(false);
     } catch (error) {
       console.error(error);
     }
@@ -121,15 +117,13 @@ const UserMaster: React.FC = () => {
         confirmButtonText: "Yes, delete it!",
       }).then(async (result) => {
         if (result.isConfirmed) {
-          const response = await axios.delete(`/user/${id}`);
-          if (isValidResponse(response)) {
-            setUsers(users?.filter((student) => student._id !== id) || []);
-            Swal.fire({
-              title: "Deleted!",
-              text: "Your file has been deleted.",
-              icon: "success",
-            });
-          }
+          await axios.delete(`/user/${id}`);
+          setUsers(users?.filter((student) => student._id !== id) || []);
+          Swal.fire({
+            title: "Deleted!",
+            text: "Your file has been deleted.",
+            icon: "success",
+          });
         }
       });
     } catch (error) {
@@ -140,19 +134,17 @@ const UserMaster: React.FC = () => {
   const handleStatusChange = async (user: UserProps) => {
     try {
       const response = await axios.patch(`/user/status/${user._id}`);
-      if (isValidResponse(response)) {
-        setUsers((prevData) => {
-          if (!prevData) return null;
-          return prevData.map((admin) =>
-            admin._id === user._id
-              ? {
-                  ...admin,
-                  status: response.data.status,
-                }
-              : admin
-          );
-        });
-      }
+      setUsers((prevData) => {
+        if (!prevData) return null;
+        return prevData.map((admin) =>
+          admin._id === user._id
+            ? {
+                ...admin,
+                status: response.data.status,
+              }
+            : admin
+        );
+      });
     } catch (error) {
       console.error(error);
     }
@@ -265,17 +257,13 @@ const UserMaster: React.FC = () => {
     const hasChanges = Object.keys(newRow).some(
       (key) => newRow[key as keyof UserProps] !== oldRow[key as keyof UserProps]
     );
-
     if (!hasChanges) {
       return oldRow;
     }
-
     try {
       const { _id, ...updateField } = newRow;
-      const response = await axios.patch(`/user/${oldRow._id}`, updateField);
-      if (isValidResponse(response)) {
-        return newRow;
-      }
+      await axios.patch(`/user/${oldRow._id}`, updateField);
+      return newRow;
     } catch (error) {
       console.error("Failed to update the row:", error);
       Swal.fire("Error", "Row update failed. Please try again.", "error");

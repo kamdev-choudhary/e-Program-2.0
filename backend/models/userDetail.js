@@ -1,15 +1,28 @@
-import { Schema as _Schema, model } from "mongoose";
-const Schema = _Schema;
+import mongoose from "mongoose";
+const Schema = mongoose.Schema;
 
-const userDetailSchema = new Schema({
-  addressLineOne: String,
-  addressLineTwo: String,
-  city: String,
-  district: String,
-  state: String,
-  pinCode: Number,
-});
+const scholarSchema = new Schema(
+  {
+    idUser: { type: Schema.Types.ObjectId, ref: "User" },
+    addressLineOne: { type: String },
+    addressLineTwo: { type: String },
+    city: { type: String },
+    district: { type: String },
+    state: { type: String },
+    pinCode: { type: Number },
+    scholarId: { type: String },
+    dateOfBirth: { type: Date },
+    batches: [
+      {
+        type: Schema.Types.ObjectId,
+      },
+    ],
+  },
+  {
+    timestamps: true,
+  }
+);
 
-const UserDetail = model("UserDetail", userDetailSchema);
+const Scholar = mongoose.model("Scholar", scholarSchema);
 
-export default UserDetail;
+export default Scholar;

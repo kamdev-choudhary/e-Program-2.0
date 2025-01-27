@@ -51,10 +51,14 @@ const Notification: React.FC<NotificationProps> = ({
       open={open}
       autoHideDuration={2000}
       onClose={onClose}
-      action={actions}
       anchorOrigin={{ vertical: "top", horizontal: "right" }}
     >
-      <Alert sx={{ minWidth: 250 }} severity={type} variant={variant}>
+      <Alert
+        action={actions}
+        sx={{ minWidth: 250 }}
+        severity={type}
+        variant={variant}
+      >
         {message}
       </Alert>
     </Snackbar>

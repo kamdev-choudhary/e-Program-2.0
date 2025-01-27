@@ -136,9 +136,7 @@ export async function addJeeMainMarksVsRank(req, res, next) {
     const result = await JEEMainMarksVsRank.bulkWrite(bulkOps);
 
     res.status(201).json({
-      ...response.success(
-        `${result.nUpserted} records inserted, ${result.nModified} records updated.`
-      ),
+      message: `${result.nUpserted} records inserted, ${result.nModified} records updated.`,
     });
   } catch (error) {
     next(error);
@@ -157,9 +155,9 @@ export async function getJeeMainRankVsMarks(req, res, next) {
 
     const data = await JEEMainMarksVsRank.find(filter);
     if (data.length > 0) {
-      return res.status(200).json({ data, ...response.success });
+      return res.status(200).json({ data, message: "Record Found." });
     } else {
-      res.status(200).json({ ...response.notFound });
+      res.status(404).json({ message: "Record Not Found." });
     }
   } catch (error) {
     next(error);
@@ -176,7 +174,7 @@ export async function deleteJeeMainMarksVsRank(req, res, next) {
     if (deletedData) {
       res.status(200).json({ ...response.deleted("Item deleted").deletedData });
     } else {
-      res.status(200).json({ message: "Item not found" });
+      res.status(404).json({ message: "Item not found" });
     }
   } catch (error) {
     next(error);
@@ -196,7 +194,7 @@ export async function updateJeeMainMarksVsRank(req, res, next) {
     if (!updatedData) {
       return res.status(200).json("Data not Found");
     }
-    res.status(200).json({ ...response.edited("Data edited Succesfully.") });
+    res.status(200).json({ message: "Data edited Succesfully." });
   } catch (error) {
     next(error);
   }

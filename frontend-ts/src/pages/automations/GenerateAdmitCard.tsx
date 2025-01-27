@@ -6,7 +6,6 @@ import {
   ToggleButton,
 } from "@mui/material";
 import React, { useMemo, useState } from "react";
-import axios from "../../hooks/AxiosInterceptor";
 import ExcelJS from "exceljs";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import {
@@ -16,11 +15,13 @@ import {
 import { CustomToolbar } from "../../components/CustomToolbar";
 import FileDropZone from "../../components/FileDropZone";
 import { downloadJsonToExcel } from "../../utils/commonfs";
+import useAxios from "../../hooks/useAxios";
 
 // Dynamic interface using Record
 type ScholarData = Record<string, any>;
 
 const DownloadAdmitCard: React.FC = () => {
+  const axios = useAxios();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [jsonData, setJsonData] = useState<ScholarData[]>([]);
   const [columns, setColumns] = useState<GridColDef[]>([]);

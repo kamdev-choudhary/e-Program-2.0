@@ -7,8 +7,6 @@ import {
 } from "@mui/material";
 import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
 import React, { useEffect, useMemo, useState } from "react";
-import axios from "../../../hooks/AxiosInterceptor";
-import { useGlobalContext } from "../../../contexts/GlobalProvider";
 import {
   DataArrayRounded,
   DeleteRounded,
@@ -25,6 +23,7 @@ import Swal from "sweetalert2";
 import CustomDropDown from "../../../components/CustomDropDown";
 import { getClasses } from "../../../api/academic";
 import { getYouTubeId } from "../../../utils/commonfs";
+import useAxios from "../../../hooks/useAxios";
 
 interface Lecture {
   _id: string;
@@ -46,7 +45,7 @@ interface ClassItem {
 }
 
 const Lectures: React.FC = () => {
-  const { isValidResponse } = useGlobalContext();
+  const axios = useAxios();
   const [lectures, setLectures] = useState<Lecture[] | null>(null);
   const [faculties, setFaculties] = useState(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -68,9 +67,7 @@ const Lectures: React.FC = () => {
   const fetchClasses = async () => {
     try {
       const response = await getClasses();
-      if (isValidResponse(response)) {
-        setClasses(response.data.classes);
-      }
+      setClasses(response.data.classes);
     } catch (error) {
       console.error(error);
     }
@@ -91,11 +88,9 @@ const Lectures: React.FC = () => {
           className: selectedClass || undefined,
         },
       });
-      if (isValidResponse(response)) {
-        setLectures(response.data.lectures || []);
-        setTotalLectures(response.data.totalCount || 0);
-        setFaculties(response.data.faculties);
-      }
+      setLectures(response.data.lectures || []);
+      setTotalLectures(response.data.totalCount || 0);
+      setFaculties(response.data.faculties);
     } catch (error) {
       console.error("Failed to fetch lectures:", error);
     } finally {
@@ -139,17 +134,15 @@ const Lectures: React.FC = () => {
     const { _id, ...updateField } = newRow;
 
     try {
-      const response = await axios.patch(`/lectures/${oldRow._id}`, {
+      await axios.patch(`/lectures/${oldRow._id}`, {
         lectureDataToUpdate: updateField,
       });
-      if (isValidResponse(response)) {
-        setLectures((prevData) => {
-          if (!prevData) return null;
-          return prevData.map((item) =>
-            item._id === oldRow._id ? newRow : item
-          );
-        });
-      }
+      setLectures((prevData) => {
+        if (!prevData) return null;
+        return prevData.map((item) =>
+          item._id === oldRow._id ? newRow : item
+        );
+      });
       return newRow;
     } catch (error) {
       console.error("Failed to update the row:", error);
@@ -177,19 +170,17 @@ const Lectures: React.FC = () => {
         confirmButtonText: "Yes, delete it!",
       }).then(async (result) => {
         if (result.isConfirmed) {
-          const response = await axios.delete(`/lectures`);
-          if (isValidResponse(response)) {
-            setLectures((prevLectures) => {
-              return prevLectures
-                ? prevLectures.filter((lecture) => lecture._id !== id)
-                : null;
-            });
-            Swal.fire({
-              title: "Deleted!",
-              text: "Your file has been deleted.",
-              icon: "success",
-            });
-          }
+          await axios.delete(`/lectures`);
+          setLectures((prevLectures) => {
+            return prevLectures
+              ? prevLectures.filter((lecture) => lecture._id !== id)
+              : null;
+          });
+          Swal.fire({
+            title: "Deleted!",
+            text: "Your file has been deleted.",
+            icon: "success",
+          });
         }
       });
     } catch (error) {}
@@ -329,34 +320,34 @@ const Lectures: React.FC = () => {
   ];
 
   return (
-    <Box>
-      <Box sx={{ mb: 2 }}>
-        <Grid container spacing={2}>
-          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
-            <CustomDropDown
-              data={classes || []}
-              value={selectedClass}
-              onChange={(e: SelectChangeEvent) =>
-                setSelectedClass(e.target.value)
-              }
-              label="Classes"
-              name="name"
-              dropdownValue="value"
-            />
-          </Grid>
-          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
-            <CustomDropDown
-              data={faculties || []}
-              value={selectedFaculty || ""}
-              label="Faculty"
-              name="facultyName"
-              dropdownValue="facultyName"
-              onChange={(e: SelectChangeEvent) =>
-                setSelectedFaculty(e.target.value)
-              }
-            />
-          </Grid>
-          <Grid size={{ xs: 12, md: 6, lg: 2 }}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+          <CustomDropDown
+            data={classes || []}
+            value={selectedClass}
+            onChange={(e: SelectChangeEvent) =>
+              setSelectedClass(e.target.value)
+            }
+            label="Classes"
+            name="name"
+            dropdownValue="value"
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+          <CustomDropDown
+            data={faculties || []}
+            value={selectedFaculty || ""}
+            label="Faculty"
+            name="facultyName"
+            dropdownValue="facultyName"
+            onChange={(e: SelectChangeEvent) =>
+              setSelectedFaculty(e.target.value)
+            }
+          />
+        </Grid>
+        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+          <Box sx={{ display: "flex", gap: 1 }}>
             <Button
               sx={{ flexGrow: 1 }}
               startIcon={<DataArrayRounded />}
@@ -365,8 +356,6 @@ const Lectures: React.FC = () => {
             >
               Upload Excel
             </Button>
-          </Grid>
-          <Grid size={{ xs: 12, md: 6, lg: 2 }}>
             <Button
               variant="contained"
               sx={{ flexGrow: 1 }}
@@ -375,9 +364,10 @@ const Lectures: React.FC = () => {
             >
               Upload Lecture
             </Button>
-          </Grid>
+          </Box>
         </Grid>
-      </Box>
+      </Grid>
+
       <Box>
         <DataGrid
           columns={columns}

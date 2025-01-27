@@ -13,8 +13,7 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import { useGlobalContext } from "../../contexts/GlobalProvider";
-import axios from "../../hooks/AxiosInterceptor";
+import useAxios from "../../hooks/useAxios";
 
 interface Image {
   url: string;
@@ -31,7 +30,7 @@ interface Batch {
 }
 
 const Batch: React.FC = () => {
-  const { isValidResponse } = useGlobalContext();
+  const axios = useAxios();
   const navigate = useNavigate();
   const [batches, setBatches] = useState<Batch[] | null>(null);
   const [searchText, setSearchText] = useState<string>("");
@@ -50,9 +49,7 @@ const Batch: React.FC = () => {
   const getBatches = async () => {
     try {
       const response = await axios.get("/batch");
-      if (isValidResponse(response)) {
-        setBatches(response.data.batches);
-      }
+      setBatches(response.data.batches);
     } catch (error) {
       console.error(error);
     } finally {
@@ -91,7 +88,6 @@ const Batch: React.FC = () => {
                   height="140"
                   image={batch.templateImage.url}
                   alt={batch.templateImage.title}
-                  sx={{ borderRadius: 2 }}
                 />
                 <CardContent>
                   <Typography variant="h6">{batch.name}</Typography>
@@ -103,12 +99,9 @@ const Batch: React.FC = () => {
                   </Typography>
                 </CardContent>
                 <CardActions sx={{ display: "flex" }}>
-                  <Button sx={{ flex: 1 }} variant="contained">
-                    Join
-                  </Button>
                   <Button
                     onClick={() => navigate(batch._id)}
-                    sx={{ flex: 1 }}
+                    sx={{ flex: 1, m: 1 }}
                     variant="contained"
                   >
                     Details

@@ -13,10 +13,9 @@ import {
 } from "@mui/material";
 import { Edit, Delete, SaveRounded, AddRounded } from "@mui/icons-material";
 import Swal from "sweetalert2";
-import { useGlobalContext } from "../../../../contexts/GlobalProvider";
 import { CustomModal } from "../../../../components/CustomModal";
 import { addNewSubject } from "../../../../api/academic";
-import axios from "../../../../hooks/AxiosInterceptor";
+import useAxios from "../../../../hooks/useAxios";
 
 interface Subject {
   _id: string;
@@ -42,7 +41,7 @@ const Subjects: React.FC<SubjectComponentProps> = ({
   selectedSubject,
   setSelectedSubject,
 }) => {
-  const { isValidResponse } = useGlobalContext();
+  const axios = useAxios();
   const [newSubject, setNewSubject] = useState<NewSubject>({
     name: "",
     description: "",
@@ -68,9 +67,11 @@ const Subjects: React.FC<SubjectComponentProps> = ({
 
       if (result.isConfirmed) {
         const response = await axios.delete(`/academic/subject/${id}`);
-        if (isValidResponse(response)) {
+        try {
           setSubjects(response.data.subjects);
           Swal.fire("Deleted!", "Subject has been deleted.", "success");
+        } catch (error) {
+          console.error(error);
         }
       }
     } catch (error) {
@@ -82,14 +83,12 @@ const Subjects: React.FC<SubjectComponentProps> = ({
   const handleSaveNewSubject = async () => {
     try {
       const response = await addNewSubject(newSubject);
-      if (isValidResponse(response)) {
-        setSubjects(response.data.subjects);
-        setShowAddSubject(false);
-        setNewSubject({
-          name: "",
-          description: "",
-        });
-      }
+      setSubjects(response.data.subjects);
+      setShowAddSubject(false);
+      setNewSubject({
+        name: "",
+        description: "",
+      });
     } catch (error) {
       console.error(error);
     }

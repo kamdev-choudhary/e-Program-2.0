@@ -17,8 +17,7 @@ import { CustomModal } from "../../../components/CustomModal";
 import AddBatch from "./AddBatch";
 import EditBatch from "./EditBatch";
 import BatchDetails from "./BatchDetails";
-import axios from "../../../hooks/AxiosInterceptor";
-import { useGlobalContext } from "../../../contexts/GlobalProvider";
+import useAxios from "../../../hooks/useAxios";
 
 interface Image {
   url: string;
@@ -35,7 +34,7 @@ interface Batch {
 }
 
 const Batch: React.FC = () => {
-  const { isValidResponse } = useGlobalContext();
+  const axios = useAxios();
   const [batches, setBatches] = useState<Batch[] | null>(null);
   const [addBatchModal, setAddBatchModal] = useState<boolean>(false);
   const [showBatchDetails, setShowBatchDetails] = useState<boolean>(false);
@@ -47,9 +46,7 @@ const Batch: React.FC = () => {
   const getBatches = async () => {
     try {
       const response = await axios.get("/batch");
-      if (isValidResponse(response)) {
-        setBatches(response.data.batches);
-      }
+      setBatches(response.data.batches);
     } catch (error) {
       console.error(error);
     } finally {

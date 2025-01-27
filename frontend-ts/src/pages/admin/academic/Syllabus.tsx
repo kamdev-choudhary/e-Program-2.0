@@ -6,7 +6,6 @@ import SubSubjects from "./parts/SubSubjects";
 import Topics from "./parts/Topics";
 import SubTopics from "./parts/SubTopics";
 import { getAllAcademicData } from "../../../api/academic";
-import { useGlobalContext } from "../../../contexts/GlobalProvider";
 
 // Subject interface
 interface Subject {
@@ -34,7 +33,6 @@ interface subTopicsProps {
 
 const Subjects: React.FC = () => {
   const dispatch = useDispatch();
-  const { isValidResponse } = useGlobalContext();
 
   // State variables
   const [subjects, setSubjects] = useState<Subject[]>([]);
@@ -51,12 +49,10 @@ const Subjects: React.FC = () => {
     let isMounted = true; // Safety check for component unmount
     try {
       const response = await getAllAcademicData();
-      if (isMounted && isValidResponse(response)) {
-        setSubjects(response?.data?.subjects || []);
-        setSubSubjects(response?.data?.subSubjects || []);
-        setTopics(response?.data?.topics || []);
-        setSubTopics(response?.data?.subTopics || []);
-      }
+      setSubjects(response?.data?.subjects || []);
+      setSubSubjects(response?.data?.subSubjects || []);
+      setTopics(response?.data?.topics || []);
+      setSubTopics(response?.data?.subTopics || []);
     } catch (error) {
       console.error(error);
     } finally {

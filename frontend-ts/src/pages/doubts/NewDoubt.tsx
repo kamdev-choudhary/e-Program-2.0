@@ -9,29 +9,27 @@ import {
   DialogContent,
   DialogTitle,
 } from "@mui/material";
-import axios from "../../hooks/AxiosInterceptor";
-import { useGlobalContext } from "../../contexts/GlobalProvider";
+
+import useAxios from "../../hooks/useAxios";
 
 interface NewDoubtInterface {
   setShowNewDoubtModal: (value: boolean) => void;
 }
 
 const NewDoubt: React.FC<NewDoubtInterface> = ({ setShowNewDoubtModal }) => {
-  const { isValidResponse } = useGlobalContext();
+  const axios = useAxios();
   const [doubtQuestion, setDoubtQuestion] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [subject, setSubject] = useState<string>("");
 
   const handleSubmit = async () => {
     try {
-      const response = await axios.post("/doubts", {
+      await axios.post("/doubts", {
         doubtQuestion,
         description,
         subject,
       });
-      if (isValidResponse(response)) {
-        setShowNewDoubtModal(false);
-      }
+      setShowNewDoubtModal(false);
     } catch (error) {
       console.error(error);
     }

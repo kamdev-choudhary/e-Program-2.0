@@ -60,7 +60,7 @@ export async function login(req, res, next) {
     return res.status(200).json({
       token,
       photo: userExist.photo || null,
-      ...response.success("Login Successfull"),
+      message: "Login Successfull",
     });
   } catch (error) {
     console.error("Error in login:", error);
@@ -115,14 +115,14 @@ export async function register(req, res, next) {
     // Generate a token if needed and respond
     if (method === "admin") {
       res.status(200).json({
-        ...response.success("Registration successfull."),
+        message: "Registration successfull.",
       });
     } else {
       const token = await newUser.generateToken();
       res.status(200).json({
         token,
         userId: newUser._id.toString(),
-        ...response.success("Registration successfull."),
+        message: "Registration successfull.",
       });
     }
   } catch (error) {
@@ -148,7 +148,7 @@ export async function registerByAdmin(req, res, next) {
       const users = await User.find({ role });
       return res
         .status(200)
-        .json({ ...response.success("User created Successfully."), users });
+        .json({ message: "User created Successfully.", users });
     } else {
       return res.status(200).json({ ...response.notFound("Role is missing") });
     }
@@ -164,11 +164,9 @@ export async function getLoginSesssion(req, res, next) {
       return res.status(400).json({ ...response.notFound("ID not found.") });
     const sessions = await Session.find({ userId: id });
     if (sessions.length > 0) {
-      return res
-        .status(200)
-        .json({ ...response.success("Session Found."), sessions });
+      return res.status(200).json({ message: "Session Found.", sessions });
     } else {
-      return res.status(200).json({ ...response.error("Session not found") });
+      return res.status(200).json({ message: "Session not found" });
     }
   } catch (error) {
     next(error);

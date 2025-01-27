@@ -11,8 +11,6 @@ import {
   Divider,
 } from "@mui/material";
 import {
-  Fullscreen as FullscreenIcon,
-  FullscreenExit as FullscreenExitIcon,
   MenuOpenRounded,
   MenuRounded,
   LogoutRounded,
@@ -39,24 +37,10 @@ const Header: React.FC<HeaderProps> = ({
   isSmallScreen,
 }) => {
   const { user, handleLogout, isLoggedIn, profilePicUrl } = useGlobalContext();
-  const [isFullscreen, setIsFullscreen] = useState(false);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const openMenu = Boolean(anchorEl);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-
-  const toggleFullscreen = () => {
-    if (!isFullscreen) {
-      document.documentElement.requestFullscreen().catch((err) => {
-        console.error("Failed to enable fullscreen mode:", err);
-      });
-    } else {
-      document.exitFullscreen().catch((err) => {
-        console.error("Failed to exit fullscreen mode:", err);
-      });
-    }
-    setIsFullscreen((prev) => !prev);
-  };
 
   const handleMenuClose = () => {
     setAnchorEl(null);
@@ -100,14 +84,6 @@ const Header: React.FC<HeaderProps> = ({
         )}
 
         <ThemeSwitch />
-
-        <IconButton
-          sx={{ mx: 1 }}
-          aria-label={isFullscreen ? "exit fullscreen" : "enter fullscreen"}
-          onClick={toggleFullscreen}
-        >
-          {isFullscreen ? <FullscreenExitIcon /> : <FullscreenIcon />}
-        </IconButton>
 
         {isLoggedIn ? (
           <IconButton aria-label="user menu" onClick={handleMenuClick}>

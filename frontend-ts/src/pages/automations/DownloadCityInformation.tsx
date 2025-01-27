@@ -7,7 +7,6 @@ import {
   Divider,
 } from "@mui/material";
 import React, { useState } from "react";
-import axios from "../../hooks/AxiosInterceptor";
 import { useDropzone } from "react-dropzone";
 import ExcelJS from "exceljs";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -21,6 +20,7 @@ import {
 } from "@mui/icons-material";
 import { CustomToolbar } from "../../components/CustomToolbar";
 import { downloadJsonToExcel, downloadPdfFromUrl } from "../../utils/commonfs";
+import useAxios from "../../hooks/useAxios";
 
 interface ScholarData {
   drn: string;
@@ -36,20 +36,9 @@ interface ScholarData {
 }
 
 const DownloadCityInformation: React.FC = () => {
+  const axios = useAxios();
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [jsonData, setJsonData] = useState<ScholarData[] | null>([
-    {
-      name: "Example",
-      drn: "1234567890",
-      day: "01",
-      month: "05",
-      application: "250310155422",
-      year: "2000",
-      pdfUrl: "",
-      city: "",
-      date: "",
-    },
-  ]);
+  const [jsonData, setJsonData] = useState<ScholarData[] | null>(null);
 
   const handleDownloadCityInfo = async (scholar: ScholarData) => {
     try {

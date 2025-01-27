@@ -1,9 +1,6 @@
 import mongoose from "mongoose";
 const Schema = mongoose.Schema;
-
 import config from "../config/config.js";
-
-import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
 
 const jwtSecret = config.JWT_SECRET;
@@ -23,19 +20,15 @@ const userSchema = new Schema(
       type: String,
       required: true,
     },
-    role: {
-      type: String,
-      default: "student",
-    },
     password: {
       type: String,
       required: true,
     },
-    isProfileUpdated: {
-      type: Boolean,
-      default: false,
+    role: {
+      type: String,
+      default: "student",
     },
-    photo: String,
+    photo: { type: String },
     userDetails: {
       type: Schema.Types.ObjectId,
       ref: "UserDetails",

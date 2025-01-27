@@ -9,11 +9,10 @@ import React, { useEffect, useMemo, useState } from "react";
 import { CustomToolbar } from "../../../components/CustomToolbar";
 import { CustomModal } from "../../../components/CustomModal";
 import UploadJeeMainMarksVsRank from "./part/UploadJeeMainMarksVsRank";
-import axios from "../../../hooks/AxiosInterceptor";
-import { useGlobalContext } from "../../../contexts/GlobalProvider";
 import { DeleteRounded } from "@mui/icons-material";
 import Swal from "sweetalert2";
 import CustomDropDown from "../../../components/CustomDropDown";
+import useAxios from "../../../hooks/useAxios";
 
 interface JEEMainMarksVsRankProps {
   _id?: string; // Optional field for MongoDB document ID
@@ -32,7 +31,7 @@ interface JEEMainMarksVsRankProps {
 }
 
 const JEEMainMarksVsRank: React.FC = () => {
-  const { isValidResponse } = useGlobalContext();
+  const axios = useAxios();
   const [data, setData] = useState<JEEMainMarksVsRankProps[]>([]);
   const [showUploadData, setShowUploadData] = useState<boolean>(false);
   const [selectedYear, setSelectedYear] = useState<string>("");
@@ -46,9 +45,7 @@ const JEEMainMarksVsRank: React.FC = () => {
           year: selectedYear || undefined,
         },
       });
-      if (isValidResponse(response)) {
-        setData(response.data.data);
-      }
+      setData(response.data.data);
     } catch (error) {
       console.error(error);
     } finally {
@@ -74,12 +71,12 @@ const JEEMainMarksVsRank: React.FC = () => {
         confirmButtonText: "Yes, delete it!",
       });
       if (result.isConfirmed) {
-        const response = await axios.delete(
-          `/analysis/jeemainmarksvsrank/${item?._id}`
-        );
-        if (isValidResponse(response)) {
+        try {
+          await axios.delete(`/analysis/jeemainmarksvsrank/${item?._id}`);
           setData((data) => data?.filter((d) => d._id !== item._id) || []);
           Swal.fire("Deleted!", "The item has been deleted.", "success");
+        } catch (error) {
+          console.error(error);
         }
       }
     } catch (error) {

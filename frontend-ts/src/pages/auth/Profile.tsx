@@ -12,14 +12,15 @@ import {
 } from "@mui/material";
 import { useGlobalContext } from "../../contexts/GlobalProvider";
 import { CustomModal } from "../../components/CustomModal";
-import axios from "../../hooks/AxiosInterceptor";
 import { EditRounded, UploadFileRounded } from "@mui/icons-material";
 import { LOCAL_STORAGE_KEYS } from "../../constant/constants";
 import Sessions from "../admin/user/parts/Sessions";
+import StudentDetails from "./StudentDetails";
+import useAxios from "../../hooks/useAxios";
 
 const Profile: React.FC = () => {
-  const { user, profilePicUrl, isValidResponse, setProfilePicUrl } =
-    useGlobalContext();
+  const axios = useAxios();
+  const { user, profilePicUrl, setProfilePicUrl } = useGlobalContext();
   const [showUpdateProfilePic, setShowUpdateProfilePic] =
     useState<boolean>(false);
   const [newProfilePic, setNewProfilePic] = useState<File | null>(null);
@@ -50,16 +51,14 @@ const Profile: React.FC = () => {
           "Content-Type": "multipart/form-data",
         },
       });
-      if (isValidResponse(response)) {
-        setProfilePicUrl(response.data.profilePicUrl);
-        localStorage.setItem(
-          LOCAL_STORAGE_KEYS.PHOTO,
-          response.data.profilePicUrl
-        );
-        setPreviewUrl("");
-        setNewProfilePic(null);
-        setShowUpdateProfilePic(false);
-      }
+      setProfilePicUrl(response.data.profilePicUrl);
+      localStorage.setItem(
+        LOCAL_STORAGE_KEYS.PHOTO,
+        response.data.profilePicUrl
+      );
+      setPreviewUrl("");
+      setNewProfilePic(null);
+      setShowUpdateProfilePic(false);
     } catch (error) {
       console.error(error);
     } finally {
@@ -166,6 +165,9 @@ const Profile: React.FC = () => {
 
       {/* Sessions Card */}
       <Sessions user={user} />
+
+      {/* Student Details */}
+      {user?.role === "student" && <StudentDetails user={user} />}
 
       {/* Update Profile Pic Modal */}
       <CustomModal

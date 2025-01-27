@@ -14,11 +14,11 @@ import {
   Typography,
 } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import axios from "../../hooks/AxiosInterceptor";
 import { CustomModal } from "../../components/CustomModal";
 import { useGlobalContext } from "../../contexts/GlobalProvider";
 import NewDoubt from "./NewDoubt";
 import { useNavigate } from "react-router-dom";
+import useAxios from "../../hooks/useAxios";
 
 interface DoubtSolutions {
   postedBy: string;
@@ -49,7 +49,6 @@ const DoubtCard: React.FC<{ doubt: Doubt }> = ({ doubt }) => {
   return (
     <Card
       sx={{
-        margin: 1,
         padding: 1,
         boxShadow: 4,
       }}
@@ -104,6 +103,7 @@ const DoubtCard: React.FC<{ doubt: Doubt }> = ({ doubt }) => {
 
 const Doubts: React.FC = () => {
   const { isLoggedIn } = useGlobalContext();
+  const axios = useAxios();
   const [searchText, setSearchText] = useState<string>("");
   const [showNewDoubtModal, setShowNewDoubtModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<number>(0);
@@ -118,16 +118,19 @@ const Doubts: React.FC = () => {
       if (activeTab === 1) filter = "solved";
       if (activeTab === 2) filter = "user";
 
-      const response = await axios.post("/doubts/pagination", {
-        page: currentPage,
-        status: filter,
-        limit: 10,
+      const response = await axios.get("/doubts/pagination", {
+        params: {
+          page: currentPage,
+          status: filter,
+          limit: 10,
+        },
       });
 
       setDoubts(response.data.doubts);
       setTotalPages(response.data.totalPages);
     } catch (error) {
       console.error("Error fetching doubts:", error);
+      setDoubts([]);
     }
   };
 
@@ -137,7 +140,7 @@ const Doubts: React.FC = () => {
   }, [activeTab, searchText, currentPage]);
 
   return (
-    <>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
       <Box sx={{ display: "flex", justifyContent: "center" }}>
         <Typography variant="h5" sx={{ p: 1, fontWeight: "bold" }}>
           Ask a Doubt
@@ -146,15 +149,14 @@ const Doubts: React.FC = () => {
       <Divider />
       <Box
         sx={{
-          mt: 2,
           display: "flex",
           gap: 2,
           flexWrap: "wrap",
           justifyContent: "space-between",
-          px: 2,
         }}
       >
         <OutlinedInput
+          size="small"
           value={searchText}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setSearchText(e.target.value)
@@ -168,13 +170,14 @@ const Doubts: React.FC = () => {
           sx={{ flexGrow: 1 }}
         />
         <Button
+          variant="contained"
           onClick={() => setShowNewDoubtModal(true)}
           startIcon={<AddRounded />}
         >
           Post a new Doubt
         </Button>
       </Box>
-      <Box sx={{ my: 2 }}>
+      <Box>
         <Tabs
           value={activeTab}
           onChange={(_: React.SyntheticEvent, value: number) =>
@@ -191,9 +194,9 @@ const Doubts: React.FC = () => {
           {isLoggedIn && <Tab label="Your Doubts" />}
         </Tabs>
       </Box>
-      <Box>
+      <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
         {doubts && doubts.length > 0 ? (
-          doubts.map((doubt) => <DoubtCard doubt={doubt} />)
+          doubts.map((doubt, index) => <DoubtCard key={index} doubt={doubt} />)
         ) : (
           <Typography>No doubts found</Typography>
         )}
@@ -213,7 +216,7 @@ const Doubts: React.FC = () => {
       >
         <NewDoubt setShowNewDoubtModal={setShowNewDoubtModal} />
       </CustomModal>
-    </>
+    </Box>
   );
 };
 

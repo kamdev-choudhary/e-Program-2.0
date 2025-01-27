@@ -1,7 +1,6 @@
 import { Box, CircularProgress, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import axios from "../../../hooks/AxiosInterceptor";
-import { useGlobalContext } from "../../../contexts/GlobalProvider";
+import useAxios from "../../../hooks/useAxios";
 
 interface BatchDetailsProps {
   batchId?: string;
@@ -12,16 +11,14 @@ interface BatchProp {
 }
 
 const BatchDetails: React.FC<BatchDetailsProps> = ({ batchId }) => {
-  const { isValidResponse } = useGlobalContext();
+  const axios = useAxios();
   const [loading, setLoading] = useState<boolean>(true);
   const [batch, setBatch] = useState<BatchProp | null>(null);
 
   const getBatchDetails = async () => {
     try {
       const response = await axios.get("/batch/:id");
-      if (isValidResponse(response)) {
-        setBatch(response.data.batch);
-      }
+      setBatch(response.data.batch);
     } catch (error) {
       console.error(error);
     } finally {

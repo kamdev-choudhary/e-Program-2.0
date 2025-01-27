@@ -31,21 +31,11 @@ interface LoginResponse {
   photo: string;
 }
 
-interface Response {
-  status: number;
-  data: {
-    message?: string;
-    status_code: number;
-    [key: string]: any;
-  };
-}
-
 interface GlobalContextType {
   isLoggedIn: boolean;
   user: User | null;
   token: string;
   handleUserLogin: (response: LoginResponse) => void;
-  isValidResponse: (response: Response, notification?: boolean) => boolean;
   handleLogout: () => void;
   profilePicUrl: string;
   setProfilePicUrl: (value: string) => void;
@@ -172,44 +162,9 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     }
   };
 
-  type StatusCode = 1 | 2 | 3 | 4 | 0;
-
-  const statusMessages: Record<
-    StatusCode,
-    { message: string; type: "success" | "error" | "info" | "warning" }
-  > = {
-    1: { message: "Record Found.", type: "success" },
-    2: { message: "Deleted Successfully.", type: "warning" },
-    3: { message: "Edited Successfully.", type: "info" },
-    4: { message: "Data Saved Successfully.", type: "success" },
-    0: { message: "Record Not Found.", type: "error" },
-  };
-
-  const isValidResponse = (
-    response: Response,
-    notification?: boolean
-  ): boolean => {
-    const { status_code } = response.data;
-
-    if (statusMessages[status_code as StatusCode]) {
-      const statusConfig = statusMessages[status_code as StatusCode];
-      if (notification !== false) {
-        showNotification({
-          message: response.data.message || statusConfig.message,
-          type: statusConfig.type,
-          variant: "standard",
-        });
-      }
-      return true;
-    }
-
-    return false;
-  };
-
   // Memoize context value
   const contextValue = useMemo(
     () => ({
-      isValidResponse,
       isLoggedIn: authState.isLoggedIn,
       user: authState.user,
       token: authState.token,
@@ -218,7 +173,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
       setProfilePicUrl,
       profilePicUrl,
     }),
-    [authState, profilePicUrl, isValidResponse]
+    [authState, profilePicUrl]
   );
 
   // Show loader while initializing

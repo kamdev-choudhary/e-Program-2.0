@@ -3,9 +3,8 @@ import { Box, Button } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import * as ExcelJS from "exceljs";
 import React, { useMemo, useState } from "react";
-import axios from "../../../hooks/AxiosInterceptor";
-import { useGlobalContext } from "../../../contexts/GlobalProvider";
 import FileDropZone from "../../../components/FileDropZone";
+import useAxios from "../../../hooks/useAxios";
 
 interface Lecture {
   _id: string;
@@ -40,7 +39,7 @@ const UploadExcel: React.FC<UploadExcelProps> = ({
   setLectures,
   lectures,
 }) => {
-  const { isValidResponse } = useGlobalContext();
+  const axios = useAxios();
   const [jsonData, setJsonData] = useState<LectureData[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
@@ -127,10 +126,8 @@ const UploadExcel: React.FC<UploadExcelProps> = ({
         linkType: "youtube",
         mode: "multiple",
       });
-      if (isValidResponse(response)) {
-        setShowExcelUpload(false);
-        setLectures([lectures, response.data.insertedRecords]);
-      }
+      setShowExcelUpload(false);
+      setLectures([lectures, response.data.insertedRecords]);
     } catch (error) {
       console.error(error);
     }

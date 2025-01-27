@@ -1,7 +1,5 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
-import axios from "../../hooks/AxiosInterceptor";
-import { useGlobalContext } from "../../contexts/GlobalProvider";
 import {
   Box,
   Paper,
@@ -12,6 +10,7 @@ import {
   ListItem,
   ListItemText,
 } from "@mui/material";
+import useAxios from "../../hooks/useAxios";
 
 interface DoubtSolutions {
   postedBy: string;
@@ -39,15 +38,13 @@ interface Doubt {
 
 const DoubtDetails: React.FC = () => {
   const { id } = useParams();
-  const { isValidResponse } = useGlobalContext();
+  const axios = useAxios();
   const [doubt, setDoubt] = useState<Doubt | null>(null);
 
   const getDoubtDetails = async () => {
     try {
       const response = await axios.get(`/doubts/${id}`);
-      if (isValidResponse(response)) {
-        setDoubt(response.data.doubt);
-      }
+      setDoubt(response.data.doubt);
     } catch (error) {
       console.error(error);
     }

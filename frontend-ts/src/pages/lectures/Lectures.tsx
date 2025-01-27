@@ -8,13 +8,13 @@ import {
   useTheme,
 } from "@mui/material";
 import { DataGrid, GridColDef, GridPaginationModel } from "@mui/x-data-grid";
-import axios from "../../hooks/AxiosInterceptor";
+
 import { CancelRounded, YouTube } from "@mui/icons-material";
 import YouTubeVideoPlayer from "../../components/YoutubePlayer";
-import { useGlobalContext } from "../../contexts/GlobalProvider";
 import { getAllSubjects, getClasses } from "../../api/academic";
 import CustomDropDown from "../../components/CustomDropDown";
 import { getYouTubeId } from "../../utils/commonfs";
+import useAxios from "../../hooks/useAxios";
 
 interface Lecture {
   _id: string;
@@ -30,7 +30,7 @@ interface Lecture {
 }
 
 const Lectures: React.FC = () => {
-  const { isValidResponse } = useGlobalContext();
+  const axios = useAxios();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [lectures, setLectures] = useState<Lecture[]>([]);
@@ -55,13 +55,9 @@ const Lectures: React.FC = () => {
   const getInitialData = async () => {
     try {
       const classResponse = await getClasses();
-      if (isValidResponse(classResponse)) {
-        setClasses(classResponse.data.classes);
-      }
+      setClasses(classResponse.data.classes);
       const SubjectsResponse = await getAllSubjects();
-      if (isValidResponse(SubjectsResponse)) {
-        setSubjects(SubjectsResponse.data.subjects);
-      }
+      setSubjects(SubjectsResponse.data.subjects);
     } catch (error) {
       console.error(error);
     }
@@ -85,11 +81,9 @@ const Lectures: React.FC = () => {
         },
       });
 
-      if (isValidResponse(response)) {
-        setLectures(response.data.lectures);
-        setTotalLectures(response.data.totalCount || 0); // Ensure backend sends total count
-        setChapters(response.data.chapters);
-      }
+      setLectures(response.data.lectures);
+      setTotalLectures(response.data.totalCount || 0); // Ensure backend sends total count
+      setChapters(response.data.chapters);
     } catch (error) {
       console.error("Error fetching lectures:", error);
     } finally {

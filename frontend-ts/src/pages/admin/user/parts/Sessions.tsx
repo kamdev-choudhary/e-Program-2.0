@@ -1,6 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { useGlobalContext } from "../../../../contexts/GlobalProvider";
-import axios from "../../../../hooks/AxiosInterceptor";
 import {
   Card,
   Typography,
@@ -14,6 +12,7 @@ import {
 } from "@mui/material";
 import Swal from "sweetalert2";
 import { LogoutRounded } from "@mui/icons-material";
+import useAxios from "../../../../hooks/useAxios";
 
 interface UserProps {
   _id: string;
@@ -37,7 +36,7 @@ interface SessionProps {
 }
 
 const Sessions: React.FC<UserSessionProps> = ({ user }) => {
-  const { isValidResponse } = useGlobalContext();
+  const axios = useAxios();
   const [sessions, setSessions] = useState<SessionProps[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
@@ -45,9 +44,7 @@ const Sessions: React.FC<UserSessionProps> = ({ user }) => {
     setIsLoading(true);
     try {
       const response = await axios.get(`/auth/session/${user?._id}`);
-      if (isValidResponse(response)) {
-        setSessions(response.data.sessions);
-      }
+      setSessions(response.data.sessions);
     } catch (error) {
       console.error(error);
     } finally {
@@ -72,16 +69,14 @@ const Sessions: React.FC<UserSessionProps> = ({ user }) => {
         confirmButtonText: "Yes, delete it!",
       });
       if (result.isConfirmed) {
-        const response = await axios.delete(`/auth/session/${id}`);
-        if (isValidResponse(response)) {
-          if (!sessions) return;
-          setSessions((prev) => {
-            if (!prev) return []; // Ensure an empty array is returned if prev is null or undefined
-            return prev.filter((s) => s.deviceId !== id); // Remove the session with the given id
-          });
+        await axios.delete(`/auth/session/${id}`);
+        if (!sessions) return;
+        setSessions((prev) => {
+          if (!prev) return []; // Ensure an empty array is returned if prev is null or undefined
+          return prev.filter((s) => s.deviceId !== id); // Remove the session with the given id
+        });
 
-          Swal.fire("Deleted!", "Session has been logged out.", "success");
-        }
+        Swal.fire("Deleted!", "Session has been logged out.", "success");
       }
     } catch (error) {
       console.error(error);

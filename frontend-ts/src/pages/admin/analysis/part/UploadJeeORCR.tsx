@@ -5,8 +5,7 @@ import ExcelJS from "exceljs";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { CloudUploadRounded, DownloadRounded } from "@mui/icons-material";
 import { CustomToolbar } from "../../../../components/CustomToolbar";
-import axios from "../../../../hooks/AxiosInterceptor";
-import { useGlobalContext } from "../../../../contexts/GlobalProvider";
+import useAxios from "../../../../hooks/useAxios";
 
 interface DataProps {
   year: string;
@@ -28,7 +27,7 @@ interface UploadJeeMainORCRProps {
 const UploadJeeMainORCR: React.FC<UploadJeeMainORCRProps> = ({
   setShowUploadData,
 }) => {
-  const { isValidResponse } = useGlobalContext();
+  const axios = useAxios();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [jsonData, setJsonData] = useState<DataProps[] | null>(null);
 
@@ -98,13 +97,11 @@ const UploadJeeMainORCR: React.FC<UploadJeeMainORCRProps> = ({
 
   const handleUploadData = async () => {
     try {
-      const response = await axios.post("/analysis/jeemain", {
+      await axios.post("/analysis/jeemain", {
         data: JSON.stringify(jsonData),
       });
-      if (isValidResponse(response)) {
-        setShowUploadData(false);
-        setJsonData(null);
-      }
+      setShowUploadData(false);
+      setJsonData(null);
     } catch (error) {
       console.error(error);
     } finally {

@@ -25,9 +25,8 @@ const getTheme = (mode: "light" | "dark") => {
     shape: {
       borderRadius: 4,
     },
-    spacing: 8,
     typography: {
-      fontFamily: "'Roboto', 'Arial', sans-serif",
+      fontFamily: "sans-serif,'Roboto', 'Arial'",
       fontSize: 13,
     },
     components: {
@@ -44,12 +43,10 @@ const getTheme = (mode: "light" | "dark") => {
           },
         },
       },
-
       MuiPaper: {
         styleOverrides: {
           root: {
             borderRadius: 8,
-            padding: 16,
           },
         },
       },

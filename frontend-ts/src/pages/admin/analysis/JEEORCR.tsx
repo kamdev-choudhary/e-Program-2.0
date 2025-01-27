@@ -3,10 +3,9 @@ import React, { useEffect, useMemo, useState } from "react";
 import UploadJEEMainData from "./part/UploadJeeORCR";
 import { CustomModal } from "../../../components/CustomModal";
 import CustomDropDown from "../../../components/CustomDropDown";
-import { useGlobalContext } from "../../../contexts/GlobalProvider";
-import axios from "../../../hooks/AxiosInterceptor";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { CustomToolbar } from "../../../components/CustomToolbar";
+import useAxios from "../../../hooks/useAxios";
 
 const years = [
   { name: "2024", value: "2024" },
@@ -25,7 +24,7 @@ interface DataProps {
 }
 
 const JEEORCR: React.FC = () => {
-  const { isValidResponse } = useGlobalContext();
+  const axios = useAxios();
   const [showUploadData, setShowUploadData] = useState<boolean>(false);
   const [selectedYear, setSelectedYear] = useState<string>("");
   const [data, setData] = useState<DataProps | null>(null);
@@ -49,35 +48,33 @@ const JEEORCR: React.FC = () => {
       const response = await axios.get(
         `/analysis/jee${selectedStream}/${selectedYear}`
       );
-      if (isValidResponse(response)) {
-        const fetchedData = response.data.data;
-        setData(fetchedData);
-        // Extract unique institute names
-        const instituteNames = [
-          ...new Set(fetchedData.map((item: any) => item.institute)),
-        ];
+      const fetchedData = response.data.data;
+      setData(fetchedData);
+      // Extract unique institute names
+      const instituteNames = [
+        ...new Set(fetchedData.map((item: any) => item.institute)),
+      ];
 
-        const programNames = [
-          ...new Set(fetchedData.map((item: any) => item.programName)),
-        ];
-        // Map the unique names into objects with 'name' and 'value' properties
-        const instituteObjects: { name: string; value: string }[] =
-          instituteNames.map((name: any) => ({
-            name,
-            value: name, // You can use a different value if needed (e.g., an ID)
-          }));
+      const programNames = [
+        ...new Set(fetchedData.map((item: any) => item.programName)),
+      ];
+      // Map the unique names into objects with 'name' and 'value' properties
+      const instituteObjects: { name: string; value: string }[] =
+        instituteNames.map((name: any) => ({
+          name,
+          value: name, // You can use a different value if needed (e.g., an ID)
+        }));
 
-        const programObjects: { name: string; value: string }[] = programNames
-          .map((name: any) => ({
-            name,
-            value: name,
-          }))
-          .sort((a, b) => a.name.localeCompare(b.name));
+      const programObjects: { name: string; value: string }[] = programNames
+        .map((name: any) => ({
+          name,
+          value: name,
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name));
 
-        // Store the institutes in the state
-        setInstitutes(instituteObjects);
-        setPrograms(programObjects);
-      }
+      // Store the institutes in the state
+      setInstitutes(instituteObjects);
+      setPrograms(programObjects);
     } catch (error) {
       console.error(error);
     } finally {

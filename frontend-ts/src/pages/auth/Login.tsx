@@ -4,12 +4,16 @@ import {
   TextField,
   Button,
   CircularProgress,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
 import React, { useState } from "react";
-import axios from "../../hooks/AxiosInterceptor";
 import { useGlobalContext } from "../../contexts/GlobalProvider";
 import { useDispatch } from "react-redux";
 import useSessionDetails from "../../utils/useSessionDetails";
+import Visibility from "@mui/icons-material/Visibility";
+import VisibilityOff from "@mui/icons-material/VisibilityOff";
+import useAxios from "../../hooks/useAxios";
 
 interface User {
   id: string;
@@ -22,19 +26,23 @@ interface LoginProps {
 
 const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
   const { handleUserLogin } = useGlobalContext();
+  const axios = useAxios();
   const dispatch = useDispatch();
   const [user, setUser] = useState<User>({
     id: "",
     password: "",
   });
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState<boolean>(false);
 
   const sessionDetails = useSessionDetails();
 
   const handleLogin = async (e: React.FormEvent) => {
-    setLoading(true);
     e.preventDefault();
+    setLoading(true);
+    setError(null);
+
     try {
       const response = await axios.post("/auth/login", {
         user,
@@ -46,7 +54,9 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
       }
     } catch (error: any) {
       console.error(error);
-      setError(error?.response?.data?.message);
+      setError(
+        error?.response?.data?.message || "An unexpected error occurred"
+      );
     } finally {
       setLoading(false);
     }
@@ -59,14 +69,17 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
-        p: 1,
-        maxWidth: 350,
+        padding: 1,
+        maxWidth: 400,
+        margin: "auto",
+        borderRadius: 2,
+        backgroundColor: "background.paper",
       }}
     >
       <Typography variant="h5" gutterBottom>
         Login
       </Typography>
-      <Box component="form" onSubmit={handleLogin}>
+      <Box component="form" onSubmit={handleLogin} sx={{ width: "100%" }}>
         <TextField
           fullWidth
           margin="normal"
@@ -77,19 +90,33 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
             setUser((prev) => ({ ...prev, id: e.target.value }))
           }
           aria-label="email"
+          required
         />
         <TextField
           fullWidth
           margin="normal"
           label="Password"
-          type="password"
           variant="outlined"
+          type={showPassword ? "text" : "password"}
           value={user.password}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setUser((prev) => ({ ...prev, password: e.target.value }))
           }
-          autoComplete=""
           aria-label="password"
+          required
+          InputProps={{
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton
+                  onClick={() => setShowPassword((prev) => !prev)}
+                  edge="end"
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? <VisibilityOff /> : <Visibility />}
+                </IconButton>
+              </InputAdornment>
+            ),
+          }}
         />
         <Button
           type="submit"
@@ -107,9 +134,9 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
           </Typography>
         )}
       </Box>
-      <Box>
-        <Typography sx={{ mt: 2 }}>
-          Don't have an account.{" "}
+      <Box sx={{ mt: 2 }}>
+        <Typography variant="body2">
+          Don't have an account?{" "}
           <span
             style={{ color: "#914D7E", cursor: "pointer" }}
             onClick={() => setActiveTab(1)}

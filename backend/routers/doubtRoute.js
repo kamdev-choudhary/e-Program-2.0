@@ -10,7 +10,7 @@ import {
 } from "../controllers/doubtController.js";
 
 router.route("/").get(viewDoubts).post(saveNewDoubt);
-router.route("/pagination").post(viewDoubtsByStatus);
+router.route("/pagination").get(viewDoubtsByStatus);
 
 router
   .route("/:id")

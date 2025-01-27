@@ -14,9 +14,8 @@ import {
 } from "@mui/material";
 import { AddRounded, Edit, Delete, SaveRounded } from "@mui/icons-material";
 import Swal from "sweetalert2";
-import { useGlobalContext } from "../../../contexts/GlobalProvider";
 import { CustomModal } from "../../../components/CustomModal";
-import axios from "../../../hooks/AxiosInterceptor";
+import useAxios from "../../../hooks/useAxios";
 
 interface QuestionPattern {
   _id: string;
@@ -30,7 +29,7 @@ interface NewQuestionPatern {
 }
 
 const QuestionPatterns: React.FC = ({}) => {
-  const { isValidResponse } = useGlobalContext();
+  const axios = useAxios();
   const [quesionPatterns, setQuestionPatterns] = useState<
     QuestionPattern[] | null
   >(null);
@@ -46,9 +45,7 @@ const QuestionPatterns: React.FC = ({}) => {
   const getQuestionPatterns = async () => {
     try {
       const response = await axios.get("/academic/question-pattern");
-      if (isValidResponse(response)) {
-        setQuestionPatterns(response.data.patterns);
-      }
+      setQuestionPatterns(response.data.patterns);
     } catch (error) {
       console.error(error);
     }
@@ -71,10 +68,14 @@ const QuestionPatterns: React.FC = ({}) => {
       });
 
       if (result.isConfirmed) {
-        const response = await axios.delete(`/academic/question-pattern/${id}`);
-        if (isValidResponse(response)) {
+        try {
+          const response = await axios.delete(
+            `/academic/question-pattern/${id}`
+          );
           setQuestionPatterns(response.data.patterns);
           Swal.fire("Deleted!", "Subject has been deleted.", "success");
+        } catch (error) {
+          console.error(error);
         }
       }
     } catch (error) {
@@ -89,10 +90,8 @@ const QuestionPatterns: React.FC = ({}) => {
         name: newQuestionPattern.name,
         description: newQuestionPattern.description,
       });
-      if (isValidResponse(response)) {
-        setQuestionPatterns(response.data.patterns);
-        setShowAQuestionPattern(false);
-      }
+      setQuestionPatterns(response.data.patterns);
+      setShowAQuestionPattern(false);
     } catch (error) {
       console.error(error);
     }

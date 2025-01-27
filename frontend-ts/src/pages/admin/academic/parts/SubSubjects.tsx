@@ -15,8 +15,7 @@ import {
 import React, { useState } from "react";
 import { CustomModal } from "../../../../components/CustomModal";
 import CustomDropDown from "../../../../components/CustomDropDown";
-import axios from "../../../../hooks/AxiosInterceptor";
-import { useGlobalContext } from "../../../../contexts/GlobalProvider";
+import useAxios from "../../../../hooks/useAxios";
 
 // Subject interface
 interface Subject {
@@ -55,7 +54,7 @@ const SubSubjects: React.FC<SubSubjectComponentProps> = ({
   setSubSubjects,
   setSelectedSubject,
 }) => {
-  const { isValidResponse } = useGlobalContext();
+  const axios = useAxios();
   const [showAddSubSubject, setShowAddSubSubject] = useState<boolean>(false);
   const [newSubSubject, setNewSubSubject] = useState<NewSubSubject>({
     name: "",
@@ -69,10 +68,8 @@ const SubSubjects: React.FC<SubSubjectComponentProps> = ({
         description: newSubSubject.description,
         subject: selectedSubject,
       });
-      if (isValidResponse(response)) {
-        setSubSubjects(response.data.subSubjects);
-        setShowAddSubSubject(false);
-      }
+      setSubSubjects(response.data.subSubjects);
+      setShowAddSubSubject(false);
     } catch (error) {
       console.error(error);
     }

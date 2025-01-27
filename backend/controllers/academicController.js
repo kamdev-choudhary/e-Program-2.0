@@ -13,11 +13,9 @@ export async function getClasses(req, res, next) {
   try {
     const classes = await Class.find({});
     if (classes) {
-      res
-        .status(200)
-        .json({ classes, ...response.success("Class data found") });
+      res.status(200).json({ classes, message: "Class data found" });
     } else {
-      res.status(200).json({ ...response.notFound() });
+      res.status(404).json({ message: "Class Data not found." });
     }
   } catch (error) {
     next(error);
@@ -39,7 +37,7 @@ export async function addClass(req, res, next) {
     const classes = await Class.find({});
     res.status(201).json({
       classes,
-      ...response.created,
+      message: "Data Added Successfully.",
     });
   } catch (error) {
     logger.error(error);

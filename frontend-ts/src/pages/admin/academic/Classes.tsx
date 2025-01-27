@@ -22,7 +22,6 @@ import {
   editClass,
   getClasses,
 } from "../../../api/academic";
-import { useGlobalContext } from "../../../contexts/GlobalProvider";
 
 interface ClassItem {
   _id?: string;
@@ -31,7 +30,6 @@ interface ClassItem {
 }
 
 const AcademicInfo: React.FC = () => {
-  const { isValidResponse } = useGlobalContext();
   const dispatch = useDispatch();
   const [classes, setClasses] = useState<ClassItem[]>([]);
   const [showAddClass, setShowAddClass] = useState<boolean>(false);
@@ -46,9 +44,7 @@ const AcademicInfo: React.FC = () => {
     try {
       dispatch({ type: "SET_LOADING", payload: true });
       const response = await getClasses();
-      if (isValidResponse(response)) {
-        setClasses(response.data.classes);
-      }
+      setClasses(response.data.classes);
     } catch (error) {
       console.error(error);
     } finally {
@@ -69,11 +65,10 @@ const AcademicInfo: React.FC = () => {
     try {
       dispatch({ type: "SET_LOADING", payload: true });
       const response = await addNewClass(newClass);
-      if (isValidResponse(response)) {
-        setClasses(response.data.classes);
-        setNewClass({ name: "", value: "" }); // Reset form
-        setShowAddClass(false); // Close modal after saving
-      }
+
+      setClasses(response.data.classes);
+      setNewClass({ name: "", value: "" }); // Reset form
+      setShowAddClass(false); // Close modal after saving
     } catch (error) {
       console.error(error);
     } finally {
@@ -100,14 +95,16 @@ const AcademicInfo: React.FC = () => {
         confirmButtonText: "Yes, delete it!",
       }).then(async (result) => {
         if (result.isConfirmed) {
-          const response = await deleteClass(id);
-          if (isValidResponse(response)) {
+          try {
+            const response = await deleteClass(id);
             setClasses(response.data.classes);
             Swal.fire({
               title: "Deleted!",
               text: "Your file has been deleted.",
               icon: "success",
             });
+          } catch (error) {
+            console.error(error);
           }
         }
       });
@@ -123,10 +120,8 @@ const AcademicInfo: React.FC = () => {
         return;
       }
       const response = await editClass(selectedClass);
-      if (isValidResponse(response)) {
-        setClasses(response?.data?.classes);
-        setShowEditClass(false);
-      }
+      setClasses(response?.data?.classes);
+      setShowEditClass(false);
     } catch (error) {
       console.error(error);
     }

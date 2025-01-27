@@ -8,10 +8,9 @@ import {
   IconButton,
 } from "@mui/material";
 import { Close as CloseIcon } from "@mui/icons-material";
-import axios from "../../../hooks/AxiosInterceptor";
 import React, { useEffect, useRef, useState } from "react";
-import { useGlobalContext } from "../../../contexts/GlobalProvider";
 import CustomDropDown from "../../../components/CustomDropDown";
+import useAxios from "../../../hooks/useAxios";
 
 interface AddBatch {
   setAddBatchModal: (value: boolean) => void;
@@ -26,7 +25,7 @@ interface NewBatch {
 }
 
 const AddBatch: React.FC<AddBatch> = ({ setAddBatchModal }) => {
-  const { isValidResponse } = useGlobalContext();
+  const axios = useAxios();
   const [newBatch, setNewBatch] = useState<NewBatch>({
     name: "",
     class: "",
@@ -41,9 +40,7 @@ const AddBatch: React.FC<AddBatch> = ({ setAddBatchModal }) => {
   const getInitialData = async () => {
     try {
       const classResponse = await axios.get("/academic/class");
-      if (isValidResponse(classResponse)) {
-        setClasses(classResponse.data.classes);
-      }
+      setClasses(classResponse.data.classes);
     } catch (error) {
       console.error(error);
     }
@@ -71,15 +68,12 @@ const AddBatch: React.FC<AddBatch> = ({ setAddBatchModal }) => {
       formData.append("photo", selectedFile);
     }
     try {
-      const response = await axios.post("/batch", formData, {
+      await axios.post("/batch", formData, {
         headers: {
           "Content-Type": "multipart/form-data",
         },
       });
-      if (isValidResponse(response)) {
-        alert("Batch added successfully!");
-        setAddBatchModal(false);
-      }
+      setAddBatchModal(false);
     } catch (error) {
       console.error("Failed to save batch:", error);
     }

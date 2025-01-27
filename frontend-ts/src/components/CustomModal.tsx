@@ -70,6 +70,7 @@ export const CustomModal: React.FC<CustomModalProps> = ({
           bgcolor: "background.paper",
           p: 1.5,
           borderRadius: 4,
+          maxHeight: "95svh",
         }}
       >
         {/* Header section */}

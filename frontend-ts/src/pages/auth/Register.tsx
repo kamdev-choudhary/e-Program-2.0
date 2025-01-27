@@ -6,9 +6,9 @@ import {
   CircularProgress,
 } from "@mui/material";
 import React, { useState } from "react";
-import axios from "../../hooks/AxiosInterceptor";
 import { useGlobalContext } from "../../contexts/GlobalProvider";
 import { useDispatch } from "react-redux";
+import useAxios from "../../hooks/useAxios";
 
 interface User {
   password: string;
@@ -29,6 +29,7 @@ interface RegisterProps {
 }
 
 const Register: React.FC<RegisterProps> = ({ setActiveTab }) => {
+  const axios = useAxios();
   const { handleUserLogin } = useGlobalContext();
   const dispatch = useDispatch();
   const [user, setUser] = useState<User>({
