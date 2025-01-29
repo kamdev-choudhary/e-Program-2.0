@@ -1,33 +1,20 @@
-import {
-  Box,
-  IconButton,
-  Grid2 as Grid,
-  SelectChangeEvent,
-} from "@mui/material";
+import { Box, Grid2 as Grid, SelectChangeEvent } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React, { useEffect, useMemo, useState } from "react";
 import { CustomToolbar } from "../../../components/CustomToolbar";
 import { CustomModal } from "../../../components/CustomModal";
-import UploadJeeMainMarksVsRank from "./part/UploadJeeMainMarksVsRank";
-import { DeleteRounded } from "@mui/icons-material";
-import Swal from "sweetalert2";
+import UploadJeeMainMarksVsRank from "./part/JEEMainMarksVsPercentile";
 import CustomDropDown from "../../../components/CustomDropDown";
 import axios from "../../../hooks/AxiosInterceptor";
+import moment from "moment";
 
 interface JEEMainMarksVsRankProps {
   _id?: string; // Optional field for MongoDB document ID
-  year: number; // Exam year, e.g., 2024
+  year: number; // Exam year, e.g., 2023
   session: string; // Session, e.g., "January", "April"
   date: string;
   marks: number; // Specific marks (e.g., 200)
   percentile: number; // Percentile corresponding to the marks (e.g., 99.5)
-  rank: number; // Overall rank for the specific marks
-  generalRank: number; // Rank for General category
-  obcRank?: number; // Rank for OBC category (optional)
-  scRank?: number; // Rank for SC category (optional)
-  stRank?: number; // Rank for ST category (optional)
-  ewsRank?: number; // Rank for EWS category (optional)
-  pwdRank?: number; // Rank for PwD category (optional)
 }
 
 const JEEMainMarksVsRank: React.FC = () => {
@@ -35,11 +22,32 @@ const JEEMainMarksVsRank: React.FC = () => {
   const [showUploadData, setShowUploadData] = useState<boolean>(false);
   const [selectedYear, setSelectedYear] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [session, setSession] = useState(null);
+  const [sessionWithDates, setSessionWithDates] = useState(null);
+  const [sessionDatesWithShift, setSessionDatesWithShift] = useState(null);
+  const [selectedSession, setSelectedSession] = useState<string>("");
+  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [selectedShift, setSelectedShift] = useState<string>("");
+  useEffect(() => {
+    const getInitialData = async () => {
+      try {
+        const res = await axios.get(
+          "/analysis/jeemain-marks-vs-percentile/metadata"
+        );
+        setSession(res.data.sessions);
+        setSessionWithDates(res.data.sessionDates);
+        setSessionDatesWithShift(res.data.sessionDateShifts);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getInitialData();
+  }, []);
 
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get("/analysis/jeemainmarksvsrank", {
+      const response = await axios.get("/analysis/jeemain-marks-vs-percetile", {
         params: {
           year: selectedYear || undefined,
         },
@@ -57,36 +65,36 @@ const JEEMainMarksVsRank: React.FC = () => {
     fetchData();
   }, [selectedYear]);
 
-  const handleDeleteItem = async (item: JEEMainMarksVsRankProps) => {
-    if (!item?._id) return;
-    try {
-      const result = await Swal.fire({
-        title: "Are you sure?",
-        text: "You won't be able to revert this!",
-        icon: "warning",
-        showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
-      });
-      if (result.isConfirmed) {
-        try {
-          await axios.delete(`/analysis/jeemainmarksvsrank/${item?._id}`);
-          setData((data) => data?.filter((d) => d._id !== item._id) || []);
-          Swal.fire("Deleted!", "The item has been deleted.", "success");
-        } catch (error) {
-          console.error(error);
-        }
-      }
-    } catch (error) {
-      console.error(error);
-      Swal.fire(
-        "Error!",
-        "An error occurred while deleting the item.",
-        "error"
-      );
-    }
-  };
+  // const handleDeleteItem = async (item: JEEMainMarksVsRankProps) => {
+  //   if (!item?._id) return;
+  //   try {
+  //     const result = await Swal.fire({
+  //       title: "Are you sure?",
+  //       text: "You won't be able to revert this!",
+  //       icon: "warning",
+  //       showCancelButton: true,
+  //       confirmButtonColor: "#3085d6",
+  //       cancelButtonColor: "#d33",
+  //       confirmButtonText: "Yes, delete it!",
+  //     });
+  //     if (result.isConfirmed) {
+  //       try {
+  //         await axios.delete(`/analysis/jeemainmarksvsrank/${item?._id}`);
+  //         setData((data) => data?.filter((d) => d._id !== item._id) || []);
+  //         Swal.fire("Deleted!", "The item has been deleted.", "success");
+  //       } catch (error) {
+  //         console.error(error);
+  //       }
+  //     }
+  //   } catch (error) {
+  //     console.error(error);
+  //     Swal.fire(
+  //       "Error!",
+  //       "An error occurred while deleting the item.",
+  //       "error"
+  //     );
+  //   }
+  // };
 
   const handleProcessRowUpdate = async (
     newRow: JEEMainMarksVsRankProps,
@@ -168,6 +176,9 @@ const JEEMainMarksVsRank: React.FC = () => {
       align: "center",
       editable: true,
       minWidth: 150,
+      renderCell: (params) => (
+        <>{moment(params.row.date).format("DD-MM-YYYY")}</>
+      ),
     },
     {
       field: "marks",
@@ -187,89 +198,13 @@ const JEEMainMarksVsRank: React.FC = () => {
       flex: 1,
       editable: true,
     },
-    {
-      field: "rank",
-      headerName: "Overall Rank",
-      align: "center",
-      headerAlign: "center",
-      minWidth: 120,
-      flex: 1,
-      editable: true,
-    },
-    {
-      field: "generalRank",
-      headerName: "General Rank",
-      align: "center",
-      headerAlign: "center",
-      minWidth: 120,
-      flex: 1,
-      editable: true,
-    },
-    {
-      field: "obcRank",
-      headerName: "OBC Rank",
-      align: "center",
-      headerAlign: "center",
-      minWidth: 120,
-      flex: 1,
-      editable: true,
-    },
-    {
-      field: "scRank",
-      headerName: "SC Rank",
-      align: "center",
-      headerAlign: "center",
-      minWidth: 120,
-      flex: 1,
-      editable: true,
-    },
-    {
-      field: "stRank",
-      headerName: "ST Rank",
-      align: "center",
-      headerAlign: "center",
-      minWidth: 120,
-      flex: 1,
-      editable: true,
-    },
-    {
-      field: "ewsRank",
-      headerName: "EWS Rank",
-      align: "center",
-      headerAlign: "center",
-      minWidth: 120,
-      flex: 1,
-      editable: true,
-    },
-    {
-      field: "pwdRank",
-      headerName: "PwD Rank",
-      align: "center",
-      headerAlign: "center",
-      minWidth: 120,
-      flex: 1,
-      editable: true,
-    },
-    {
-      field: "delete",
-      headerName: "Delete",
-      align: "center",
-      headerAlign: "center",
-      renderCell: (params) => (
-        <Box>
-          <IconButton onClick={() => handleDeleteItem(params.row)}>
-            <DeleteRounded />
-          </IconButton>
-        </Box>
-      ),
-    },
   ];
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
       <Box>
         <Grid container spacing={2}>
-          <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
             <CustomDropDown
               data={[
                 { name: 2023, value: 2023 },
@@ -284,8 +219,42 @@ const JEEMainMarksVsRank: React.FC = () => {
               dropdownValue="value"
             />
           </Grid>
-          <Grid size={{ xs: 12, md: 6, lg: 4 }}></Grid>
-          <Grid size={{ xs: 12, md: 6, lg: 4 }}></Grid>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+            <CustomDropDown
+              data={session || []}
+              value={selectedSession}
+              label="Session"
+              onChange={(e: SelectChangeEvent) =>
+                setSelectedSession(e.target.value)
+              }
+              name="session"
+              dropdownValue="session"
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+            <CustomDropDown
+              data={sessionWithDates || []}
+              value={selectedDate}
+              label="Session"
+              onChange={(e: SelectChangeEvent) =>
+                setSelectedDate(e.target.value)
+              }
+              name="date"
+              dropdownValue="date"
+            />
+          </Grid>
+          <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+            <CustomDropDown
+              data={sessionDatesWithShift || []}
+              value={selectedShift}
+              label="Shift"
+              onChange={(e: SelectChangeEvent) =>
+                setSelectedShift(e.target.value)
+              }
+              name="shift"
+              dropdownValue="shift"
+            />
+          </Grid>
         </Grid>
       </Box>
       <DataGrid

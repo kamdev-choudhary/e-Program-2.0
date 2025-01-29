@@ -1,11 +1,13 @@
 import {
   Box,
   Typography,
-  TextField,
   Button,
   CircularProgress,
   InputAdornment,
   IconButton,
+  FilledInput,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import React, { useState } from "react";
 import { useGlobalContext } from "../../contexts/GlobalProvider";
@@ -26,17 +28,18 @@ interface LoginProps {
 
 const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
   const { handleUserLogin } = useGlobalContext();
-
   const dispatch = useDispatch();
-  const [user, setUser] = useState<User>({
-    id: "",
-    password: "",
-  });
-  const [loading, setLoading] = useState<boolean>(false);
+  const [user, setUser] = useState<User>({ id: "", password: "" });
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [showPassword, setShowPassword] = useState<boolean>(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const sessionDetails = useSessionDetails();
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setUser((prev) => ({ ...prev, [name]: value }));
+  };
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -69,7 +72,7 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
-        padding: 1,
+        padding: 2,
         maxWidth: 400,
         margin: "auto",
         borderRadius: 2,
@@ -80,32 +83,29 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
         Login
       </Typography>
       <Box component="form" onSubmit={handleLogin} sx={{ width: "100%" }}>
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Email"
-          variant="outlined"
-          value={user.id}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setUser((prev) => ({ ...prev, id: e.target.value }))
-          }
-          aria-label="email"
-          required
-        />
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Password"
-          variant="outlined"
-          type={showPassword ? "text" : "password"}
-          value={user.password}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setUser((prev) => ({ ...prev, password: e.target.value }))
-          }
-          aria-label="password"
-          required
-          InputProps={{
-            endAdornment: (
+        <FormControl fullWidth variant="filled" margin="normal">
+          <InputLabel htmlFor="email">Email</InputLabel>
+          <FilledInput
+            id="email"
+            name="id"
+            value={user.id}
+            onChange={handleChange}
+            aria-label="email"
+            required
+          />
+        </FormControl>
+
+        <FormControl fullWidth variant="filled" margin="normal">
+          <InputLabel htmlFor="password">Password</InputLabel>
+          <FilledInput
+            id="password"
+            name="password"
+            type={showPassword ? "text" : "password"}
+            value={user.password}
+            onChange={handleChange}
+            aria-label="password"
+            required
+            endAdornment={
               <InputAdornment position="end">
                 <IconButton
                   onClick={() => setShowPassword((prev) => !prev)}
@@ -115,9 +115,10 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
                   {showPassword ? <VisibilityOff /> : <Visibility />}
                 </IconButton>
               </InputAdornment>
-            ),
-          }}
-        />
+            }
+          />
+        </FormControl>
+
         <Button
           type="submit"
           variant="contained"

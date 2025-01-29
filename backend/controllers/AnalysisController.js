@@ -1,6 +1,7 @@
 import JEEMainOC from "../models/jeemainoc.js";
 import JEEMainMarksVsRank from "../models/jeemainMarksvsRank.js";
 import response from "../utils/responses.js";
+import JEEMainMarksVsPercentile from "../models/jeeMainMarksVsPercentile.js";
 
 export async function getORCRbyYear(req, res, next) {
   try {
@@ -333,6 +334,143 @@ export async function getJeeMainPredictionInitialData(req, res, next) {
       yearWithDetails,
       withShift,
     });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function addOrUpdateMarksVsPercentile(req, res, next) {
+  try {
+    const { data } = req.body;
+    const parsedData = JSON.parse(data);
+
+    // Validate the parsed data
+    if (!Array.isArray(parsedData) || parsedData.length === 0) {
+      return res.status(400).json({ message: "Invalid Data Provided" });
+    }
+
+    let upsertedRecords = [];
+
+    for (const entry of parsedData) {
+      const filter = {
+        year: entry.year,
+        date: entry.date,
+        session: entry.session,
+        marks: entry.marks,
+      };
+
+      const update = {
+        $set: {
+          shift: entry.shift,
+          percentile: entry.percentile,
+        },
+      };
+
+      const options = { upsert: true, new: true };
+
+      const updatedRecord = await JEEMainMarksVsPercentile.findOneAndUpdate(
+        filter,
+        update,
+        options
+      );
+
+      upsertedRecords.push(updatedRecord);
+    }
+
+    res.status(201).json({
+      upsertedRecords,
+      message: `${upsertedRecords.length} records successfully upserted.`,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getMarksVsPercentile(req, res, next) {
+  try {
+    const { marks, session, year, shift, date } = req.query;
+
+    // Build the query object dynamically
+    let query = {};
+    if (marks) query.marks = marks;
+    if (session) query.session = session;
+    if (year) query.year = year;
+    if (shift) query.shift = shift;
+    if (date) query.shift = date;
+
+    // Fetch data from the database
+    const records = await JEEMainMarksVsPercentile.find(query);
+
+    if (records.length === 0) {
+      return res.status(404).json({ message: "No records found" });
+    }
+
+    res.status(200).json({ data: records });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getJeeMainMarksVsRankMetadata(req, res, next) {
+  try {
+    const years = await JEEMainMarksVsPercentile.distinct("year");
+
+    const sessions = await JEEMainMarksVsPercentile.aggregate([
+      {
+        $group: {
+          _id: { year: "$year", session: "$session" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          year: "$_id.year",
+          session: "$_id.session",
+        },
+      },
+    ]);
+
+    const sessionDates = await JEEMainMarksVsPercentile.aggregate([
+      {
+        $group: {
+          _id: { year: "$year", session: "$session", date: "$date" },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          year: "$_id.year",
+          session: "$_id.session",
+          date: "$_id.date",
+        },
+      },
+    ]);
+
+    const sessionDateShifts = await JEEMainMarksVsPercentile.aggregate([
+      {
+        $group: {
+          _id: {
+            year: "$year",
+            session: "$session",
+            date: "$date",
+            shift: "$shift",
+          },
+        },
+      },
+      {
+        $project: {
+          _id: 0,
+          year: "$_id.year",
+          session: "$_id.session",
+          date: "$_id.date",
+          shift: "$_id.shift",
+        },
+      },
+    ]);
+
+    return res
+      .status(200)
+      .json({ years, sessions, sessionDates, sessionDateShifts });
   } catch (error) {
     next(error);
   }

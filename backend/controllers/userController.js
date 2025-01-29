@@ -1,116 +1,112 @@
 import User from "../models/user.js";
 import cloudinary from "../utils/cloudinaryConfig.js";
-import response from "../utils/responses.js";
 import { promisify } from "util";
 import fs from "fs";
 
 const unlinkAsync = promisify(fs.unlink);
 
-// GETTING USER DATA
-
+// GET USER DATA
 export async function getUserData(req, res, next) {
-  const { id } = req.params;
   try {
-    const user = await User.findById(id, { password: 0 }); // Exclude password field
-    if (user) {
-      res.status(200).json({ user, ...response.success });
-    } else {
-      res.status(200).json({ message: "User not found", ...response.notFound });
+    const { id } = req.params;
+    const user = await User.findById(id, { password: 0 });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
     }
+
+    res.status(200).json({ user, message: "User retrieved successfully." });
   } catch (error) {
     next(error);
   }
 }
 
 // UPDATE USER DATA
-
 export async function updateUserData(req, res, next) {
-  const { id } = req.params;
-  const userDataToUpdate = req.body;
   try {
+    const { id } = req.params;
+    const userDataToUpdate = req.body;
+
     const updatedUser = await User.findByIdAndUpdate(id, userDataToUpdate, {
-      new: false,
+      new: true,
     });
-    // updatedUser.isProfileUpdated = true;
-    updatedUser.save();
-    const users = await User.find({ role: updatedUser.role });
+
     if (!updatedUser) {
-      return res.status(200).json("User not Found");
+      return res.status(404).json({ message: "User not found." });
     }
+
     res
       .status(200)
-      .json({ ...response.edited("User updated successfully"), users });
+      .json({ message: "User updated successfully.", updatedUser });
   } catch (error) {
     next(error);
   }
 }
 
-// Get user by roles
-
+// GET USERS WITH PAGINATION
 export async function getUsersWithPagination(req, res, next) {
   try {
     const { role, page = 1, limit = 10 } = req.query;
-    const pageNumber = parseInt(page, 10); // Convert `page` to integer
-    const pageSize = parseInt(limit, 10); // Convert `limit` to integer
-    const users = await User.find({ role: role }, { password: 0 })
-      .skip((pageNumber - 1) * pageSize) // Skip documents for previous pages
-      .limit(pageSize) // Limit to the specified number per page
-      .lean(); // Convert Mongoose documents to plain objects for better performance
+    const pageNumber = parseInt(page, 10);
+    const pageSize = parseInt(limit, 10);
+
+    const users = await User.find({ role }, { password: 0 })
+      .skip((pageNumber - 1) * pageSize)
+      .limit(pageSize)
+      .lean();
+
+    const usersCount = await User.countDocuments({ role });
+
     const adminCount = await User.countDocuments({ role: "admin" });
     const studentCount = await User.countDocuments({ role: "student" });
-    const usersCount = await User.countDocuments({ role });
+    const moderatorCount = await User.countDocuments({ role: "moderator" });
+
     res.status(200).json({
-      message: `Users found.`,
+      message: "Users retrieved successfully.",
       users,
+      usersCount,
       adminCount,
       studentCount,
-      usersCount,
+      moderatorCount,
     });
   } catch (error) {
     next(error);
   }
 }
 
-// Delete User
+// DELETE USER
 export async function deleteUser(req, res, next) {
   try {
     const { id } = req.params;
-
-    const deletedUser = await User.findOneAndDelete({ _id: id });
+    const deletedUser = await User.findByIdAndDelete(id);
 
     if (!deletedUser) {
-      return res.status(200).json({ ...response.notFound });
+      return res.status(404).json({ message: "User not found." });
     }
 
-    const users = await User.find({ role: deletedUser.role });
-
-    res.status(200).json({ users, ...response.deleted("User deleted.") });
+    res.status(200).json({ message: "User deleted successfully." });
   } catch (error) {
     next(error);
   }
 }
 
-// Update Profile Pics
+// UPDATE PROFILE PICTURE
 export async function updateProfilePic(req, res, next) {
   try {
     const { id } = req.body;
 
-    // Validate ID
     if (!id) {
-      return res.status(400).json({ ...response.notFound("ID Is required.") });
+      return res.status(400).json({ message: "User ID is required." });
     }
 
-    // Validate file
     if (!req.file) {
-      return res
-        .status(400)
-        .json({ ...response.notFound("File is required.") });
+      return res.status(400).json({ message: "File is required." });
     }
 
     const filePath = req.file.path;
 
     // Upload file to Cloudinary
-    const response = await cloudinary.uploader.upload(filePath, {
+    const uploadResponse = await cloudinary.uploader.upload(filePath, {
       folder: "Profile Pics",
       resource_type: "image",
     });
@@ -118,77 +114,70 @@ export async function updateProfilePic(req, res, next) {
     // Delete local file after upload
     await unlinkAsync(filePath);
 
-    if (response) {
-      // Find and update the user
-      const user = await User.findById(id);
-      if (!user) {
-        return res
-          .status(404)
-          .json({ ...response.notFound("User not found.") });
-      }
-
-      user.photo = response.secure_url;
-      await user.save();
-
-      // Return success response
-      return res.status(200).json({
-        ...response.success("Profile picture uploaded Successfully."),
-        profilePicUrl: response.secure_url,
-      });
-    } else {
+    if (!uploadResponse) {
       return res
         .status(500)
-        .json({ ...response.notFound("Failed to update Profile Picture.") });
+        .json({ message: "Failed to update profile picture." });
     }
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    user.photo = uploadResponse.secure_url;
+    await user.save();
+
+    res.status(200).json({
+      message: "Profile picture updated successfully.",
+      profilePicUrl: uploadResponse.secure_url,
+    });
   } catch (error) {
     console.error("Error updating profile picture:", error);
-    next(error); // Pass error to the global error handler
+    next(error);
   }
 }
 
-// Change user Status
+// UPDATE USER STATUS
 export async function updateUserStatus(req, res, next) {
   try {
     const { id } = req.params;
 
-    // Find the user by ID
     const user = await User.findById(id);
-
-    // Check if the user exists
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(404).json({ message: "User not found." });
     }
 
-    // Toggle the status field (0 to 1, or 1 to 0)
     user.status = user.status === 1 ? 0 : 1;
-
-    // Save the updated user
     await user.save();
 
-    return res.status(200).json({
+    res.status(200).json({
+      message: "User status updated successfully.",
       status: user.status,
-      ...response.edited("User Status Updated."),
     });
   } catch (error) {
     next(error);
   }
 }
 
+// GET PROFILE PICTURE
 export async function getProfilePic(req, res, next) {
   try {
     const { id } = req.params;
+
     if (!id) {
-      return res.status(400).json({ message: "Id is missing" });
+      return res.status(400).json({ message: "User ID is required." });
     }
+
     const user = await User.findById(id);
-    if (user) {
-      return res.status(200).json({
-        profilePicUrl: user.photo,
-        ...response.success,
-      });
-    } else {
-      return res.status(200).json({ messgae: "User not found" });
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
     }
+
+    res.status(200).json({
+      message: "Profile picture retrieved successfully.",
+      profilePicUrl: user.photo,
+    });
   } catch (error) {
     next(error);
   }

@@ -3,7 +3,7 @@ const router = express.Router();
 
 import {
   deleteSession,
-  getLoginSesssion,
+  getLoginSession,
   login,
   refreshToken,
   register,
@@ -15,7 +15,7 @@ router.route("/register").post(register);
 
 router.route("/register/admin").post(registerByAdmin);
 
-router.route("/session/:id").get(getLoginSesssion).delete(deleteSession);
+router.route("/session/:id").get(getLoginSession).delete(deleteSession);
 
 router.route("/refresh-token").post(refreshToken);
 

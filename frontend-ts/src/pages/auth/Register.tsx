@@ -1,9 +1,11 @@
 import {
   Box,
   Typography,
-  TextField,
+  FilledInput,
   Button,
   CircularProgress,
+  FormControl,
+  InputLabel,
 } from "@mui/material";
 import React, { useState } from "react";
 import { useGlobalContext } from "../../contexts/GlobalProvider";
@@ -38,7 +40,7 @@ const Register: React.FC<RegisterProps> = ({ setActiveTab }) => {
     password: "",
   });
   const [loading, setLoading] = useState<boolean>(false);
-  const [error, setError] = useState<string | null>(null); // More informative error state
+  const [error, setError] = useState<string | null>(null);
   const [formError, setFormError] = useState<UserError>({
     name: false,
     mobile: false,
@@ -46,28 +48,27 @@ const Register: React.FC<RegisterProps> = ({ setActiveTab }) => {
     password: false,
   });
 
-  // Validate user input fields
   const validateUser = (): boolean => {
-    const isValidName = user.name.trim() !== "";
-    const isValidEmail = user.email.trim() !== "";
-    const isValidMobile = user.mobile.trim() !== "";
-    const isValidPassword = user.password.trim() !== "";
-
+    const isValid = {
+      name: user.name.trim() !== "",
+      email: user.email.trim() !== "",
+      mobile: user.mobile.trim() !== "",
+      password: user.password.trim() !== "",
+    };
     setFormError({
-      name: !isValidName,
-      email: !isValidEmail,
-      mobile: !isValidMobile,
-      password: !isValidPassword,
+      name: !isValid.name,
+      email: !isValid.email,
+      mobile: !isValid.mobile,
+      password: !isValid.password,
     });
-    return isValidName && isValidEmail && isValidMobile && isValidPassword;
+    return Object.values(isValid).every(Boolean);
   };
 
-  // Handle form submission
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!validateUser()) return;
 
-    setLoading(true); // Set loading state to true while making the API request
+    setLoading(true);
 
     try {
       const response = await axios.post("/auth/register", user);
@@ -79,7 +80,7 @@ const Register: React.FC<RegisterProps> = ({ setActiveTab }) => {
       console.error(error?.response?.data?.message);
       setError(error?.response?.data?.message);
     } finally {
-      setLoading(false); // Reset loading state after the request is complete
+      setLoading(false);
     }
   };
 
@@ -97,59 +98,27 @@ const Register: React.FC<RegisterProps> = ({ setActiveTab }) => {
       <Typography variant="h5" gutterBottom>
         Register
       </Typography>
-      <Box component="form" onSubmit={handleLogin} sx={{ width: "100%" }}>
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Name"
-          value={user.name}
-          onChange={(e) =>
-            setUser((prev) => ({ ...prev, name: e.target.value }))
-          }
-          error={formError.name}
-          helperText={formError.name && "Name is Required"}
-        />
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Email"
-          variant="outlined"
-          value={user.email}
-          onChange={(e) =>
-            setUser((prev) => ({ ...prev, email: e.target.value }))
-          }
-          error={formError.email}
-          helperText={formError.email && "Email is Required"}
-        />
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Mobile"
-          variant="outlined"
-          value={user.mobile}
-          onChange={(e) => {
-            setUser((prev) => ({ ...prev, mobile: e.target.value }));
-            if (formError.mobile)
-              setFormError((prev) => ({ ...prev, mobile: false }));
-          }}
-          error={formError.mobile}
-          helperText={formError.mobile && "Mobile is Required"}
-          type="tel" // More appropriate input type for phone numbers
-        />
-        <TextField
-          fullWidth
-          margin="normal"
-          label="Password"
-          type="password"
-          variant="outlined"
-          value={user.password}
-          onChange={(e) =>
-            setUser((prev) => ({ ...prev, password: e.target.value }))
-          }
-          autoComplete="new-password"
-          error={formError.password}
-          helperText={formError.password && "Password is Required"}
-        />
+      <Box component="form" onSubmit={handleRegister} sx={{ width: "100%" }}>
+        {Object.entries(user).map(([key, value]) => (
+          <FormControl
+            key={key}
+            fullWidth
+            margin="normal"
+            error={formError[key as keyof UserError]}
+          >
+            <InputLabel>
+              {key.charAt(0).toUpperCase() + key.slice(1)}
+            </InputLabel>
+            <FilledInput
+              type={key === "password" ? "password" : "text"}
+              value={value}
+              onChange={(e) =>
+                setUser((prev) => ({ ...prev, [key]: e.target.value }))
+              }
+              autoComplete={key === "password" ? "new-password" : "off"}
+            />
+          </FormControl>
+        ))}
         <Button
           type="submit"
           variant="contained"

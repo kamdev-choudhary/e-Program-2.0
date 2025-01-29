@@ -1,195 +1,134 @@
-import { lazy } from "react";
-import { createBrowserRouter, RouteObject } from "react-router-dom";
+import React, { lazy } from "react";
+import { createBrowserRouter } from "react-router-dom";
 import ProtectedRoute from "./hooks/ProtectedRoute";
 import withSuspense from "./hooks/WithSuspense";
-
 import MasterLayout from "./layout/MasterLayout";
 
-// Test Page
-const TestPage = withSuspense(lazy(() => import("./pages/test/Test")));
+// Lazy Load Components
+const lazyLoad = (path: string) =>
+  withSuspense(lazy(() => import(`./pages/${path}`)));
 
 // Public Pages
-const HomePage = withSuspense(lazy(() => import("./pages/home/HomePage")));
-const NotFound = withSuspense(lazy(() => import("./pages/error/NotFound")));
-const Unauthorized = withSuspense(
-  lazy(() => import("./pages/error/Unauthorized"))
-);
-const DCI = withSuspense(
-  lazy(() => import("./pages/automations/DownloadCityInformation"))
-);
-const DAC = withSuspense(
-  lazy(() => import("./pages/automations/DownloadJeeMainAdmitCard"))
-);
-const JEEMainAnalysis = withSuspense(
-  lazy(() => import("./pages/analysis/JEEmainAnalysis"))
-);
+const HomePage = lazyLoad("home/HomePage");
+const NotFound = lazyLoad("error/NotFound");
+const Unauthorized = lazyLoad("error/Unauthorized");
+
+// Automation & Analysis
+const DCI = lazyLoad("automations/DownloadCityInformation");
+const DAC = lazyLoad("automations/DownloadJeeMainAdmitCard");
+const GenerateAdmitCard = lazyLoad("automations/GenerateAdmitCard");
+const JEEMainAnalysis = lazyLoad("analysis/JEEmainAnalysis");
 
 // Admin Pages
-const Dashboard = withSuspense(
-  lazy(() => import("./pages/dashboard/Dashboard"))
-);
-const AdminBatch = withSuspense(
-  lazy(() => import("./pages/admin/batch/Batch"))
-);
-const Academic = withSuspense(
-  lazy(() => import("./pages/admin/academic/Academic"))
-);
-const QuestionBankAdmin = withSuspense(
-  lazy(() => import("./pages/question/QuestionBank"))
-);
-const LecturesAdmin = withSuspense(
-  lazy(() => import("./pages/admin/lectures/Lectures"))
-);
-const ExamMasterOnline = withSuspense(
-  lazy(() => import("./pages/admin/exams/ExamMasterOnline"))
-);
-const ExamMasterOffline = withSuspense(
-  lazy(() => import("./pages/admin/exams/ExamMasterOffline"))
-);
-const UserMaster = withSuspense(
-  lazy(() => import("./pages/admin/user/UserMaster"))
-);
-const EditBatch = withSuspense(
-  lazy(() => import("./pages/admin/batch/EditBatch"))
-);
-const JEEData = withSuspense(
-  lazy(() => import("./pages/admin/analysis/JEEData"))
-);
+const Dashboard = lazyLoad("dashboard/Dashboard");
+const AdminBatch = lazyLoad("admin/batch/Batch");
+const Academic = lazyLoad("admin/academic/Academic");
+const QuestionBankAdmin = lazyLoad("question/QuestionBank");
+const LecturesAdmin = lazyLoad("admin/lectures/Lectures");
+const ExamMasterOnline = lazyLoad("admin/exams/ExamMasterOnline");
+const ExamMasterOffline = lazyLoad("admin/exams/ExamMasterOffline");
+const UserMaster = lazyLoad("admin/user/UserMaster");
+const EditBatch = lazyLoad("admin/batch/EditBatch");
+const JEEData = lazyLoad("admin/analysis/JEEData");
 
-// User Pages
-const Lectures = withSuspense(lazy(() => import("./pages/lectures/Lectures")));
-const Batches = withSuspense(lazy(() => import("./pages/batch/Batches")));
-const BatchDetails = withSuspense(
-  lazy(() => import("./pages/batch/BatchDetails"))
-);
-const Books = withSuspense(lazy(() => import("./pages/books/Books")));
-const Profile = withSuspense(lazy(() => import("./pages/auth/Profile")));
-const Doubts = withSuspense(lazy(() => import("./pages/doubts/Doubts")));
-const DoubtDetails = withSuspense(
-  lazy(() => import("./pages/doubts/DoubtDetails"))
-);
-const Chat = withSuspense(lazy(() => import("./pages/chat/Chat")));
-const QuestionBank = withSuspense(
-  lazy(() => import("./pages/question/QuestionBank"))
-);
-const GenerateAdmitCard = withSuspense(
-  lazy(() => import("./pages/automations/GenerateAdmitCard"))
-);
+// User Pages (Students, Moderators, Admins)
+const Lectures = lazyLoad("lectures/Lectures");
+const Batches = lazyLoad("batch/Batches");
+const BatchDetails = lazyLoad("batch/BatchDetails");
+const Books = lazyLoad("books/Books");
+const Profile = lazyLoad("auth/Profile");
+const Doubts = lazyLoad("doubts/Doubts");
+const DoubtDetails = lazyLoad("doubts/DoubtDetails");
+const Chat = lazyLoad("chat/Chat");
+const QuestionBank = lazyLoad("question/QuestionBank");
 
-// Define the route structure with types
-interface RouteConfig {
+interface RoutesProps {
   path: string;
-  element: React.ComponentType;
-  allowedRoles: string[];
+  element: React.FC<any>;
+  roles: string[];
 }
 
-const routesConfig: RouteConfig[] = [
-  { path: "/", element: HomePage, allowedRoles: ["public"] },
-  { path: "/admin/dashboard", element: Dashboard, allowedRoles: ["admin"] },
-  { path: "/admin/batch", element: AdminBatch, allowedRoles: ["admin"] },
-  { path: "/admin/academic", element: Academic, allowedRoles: ["admin"] },
-  {
-    path: "/admin/question-bank",
-    element: QuestionBankAdmin,
-    allowedRoles: ["admin"],
-  },
-  { path: "/admin/lectures", element: LecturesAdmin, allowedRoles: ["admin"] },
-  {
-    path: "/admin/exams/online",
-    element: ExamMasterOnline,
-    allowedRoles: ["admin"],
-  },
-  {
-    path: "/admin/exams/offline",
-    element: ExamMasterOffline,
-    allowedRoles: ["admin"],
-  },
-  { path: "/admin/users", element: UserMaster, allowedRoles: ["admin"] },
-  {
-    path: "/admin/batch/edit/:id",
-    element: EditBatch,
-    allowedRoles: ["admin"],
-  },
-  { path: "/admin/jee-data", element: JEEData, allowedRoles: ["admin"] },
-  {
-    path: "/automation/jeemaincityinfo",
-    element: DCI,
-    allowedRoles: ["public"],
-  },
-  {
-    path: "/automation/jeemainadmitcard",
-    element: DAC,
-    allowedRoles: ["public"],
-  },
+// **Role-Based Routes**
+const routes: RoutesProps[] = [
+  // Public Routes
+  { path: "/", element: HomePage, roles: ["public"] },
+  { path: "/unauthorized", element: Unauthorized, roles: ["public"] },
+  { path: "/automation/jeemaincityinfo", element: DCI, roles: ["public"] },
+  { path: "/automation/jeemainadmitcard", element: DAC, roles: ["public"] },
   {
     path: "/automation/jdstadmitcard",
     element: GenerateAdmitCard,
-    allowedRoles: ["public"],
+    roles: ["public"],
+  },
+  { path: "/analysis/jeemain", element: JEEMainAnalysis, roles: ["public"] },
+
+  // Admin Routes
+  { path: "/admin/dashboard", element: Dashboard, roles: ["admin"] },
+  { path: "/admin/batch", element: AdminBatch, roles: ["admin", "moderator"] },
+  { path: "/admin/academic", element: Academic, roles: ["admin"] },
+  {
+    path: "/admin/question-bank",
+    element: QuestionBankAdmin,
+    roles: ["admin"],
   },
   {
-    path: "/analysis/jeemain",
-    element: JEEMainAnalysis,
-    allowedRoles: ["public"],
+    path: "/admin/lectures",
+    element: LecturesAdmin,
+    roles: ["admin", "moderator"],
+  },
+  { path: "/admin/exams/online", element: ExamMasterOnline, roles: ["admin"] },
+  {
+    path: "/admin/exams/offline",
+    element: ExamMasterOffline,
+    roles: ["admin", "moderator"],
+  },
+  { path: "/admin/users", element: UserMaster, roles: ["admin"] },
+  { path: "/admin/batch/edit/:id", element: EditBatch, roles: ["admin"] },
+  { path: "/admin/jee-data", element: JEEData, roles: ["admin", "moderator"] },
+
+  // User Routes (Students, Moderators, Admins)
+  { path: "/lectures", element: Lectures, roles: ["student", "admin"] },
+  { path: "/batch", element: Batches, roles: ["student", "admin"] },
+  { path: "/batch/:id", element: BatchDetails, roles: ["student", "admin"] },
+  { path: "/books", element: Books, roles: ["student", "admin"] },
+  {
+    path: "/profile",
+    element: Profile,
+    roles: ["student", "admin", "moderator"],
   },
   {
-    path: "/lectures",
-    element: Lectures,
-    allowedRoles: ["student", "admin"],
+    path: "/doubts",
+    element: Doubts,
+    roles: ["student", "admin", "moderator"],
   },
-  { path: "/test", element: TestPage, allowedRoles: ["public"] },
-  { path: "/unauthorized", element: Unauthorized, allowedRoles: ["public"] },
-  {
-    path: "/batch",
-    element: Batches,
-    allowedRoles: ["student", "admin"],
-  },
-  {
-    path: "/batch/:id",
-    element: BatchDetails,
-    allowedRoles: ["student", "admin"],
-  },
-  {
-    path: "/books",
-    element: Books,
-    allowedRoles: ["student", "admin"],
-  },
-  { path: "/profile", element: Profile, allowedRoles: ["student", "admin"] },
-  { path: "/doubts", element: Doubts, allowedRoles: ["student", "admin"] },
   {
     path: "/doubts/:id",
     element: DoubtDetails,
-    allowedRoles: ["student", "admin"],
+    roles: ["student", "admin", "moderator"],
   },
-  { path: "/chat", element: Chat, allowedRoles: ["student", "admin"] },
+  { path: "/chat", element: Chat, roles: ["student", "admin", "moderator"] },
   {
     path: "/question-bank",
     element: QuestionBank,
-    allowedRoles: ["student", "admin"],
+    roles: ["student", "admin", "moderator"],
   },
-  {
-    path: "/*",
-    element: NotFound,
-    allowedRoles: ["public"],
-  },
+
+  // Catch-All for Not Found
+  { path: "/*", element: NotFound, roles: ["public"] },
 ];
 
-// Simplified route mapping with ProtectedRoute
-const wrapRoute = (route: RouteConfig): RouteObject => {
-  return {
-    path: route.path,
-    element: (
-      <ProtectedRoute allowedRoles={route.allowedRoles}>
-        <route.element />
-      </ProtectedRoute>
-    ),
-  };
-};
-
-// Router setup with typed routes
+// **Wrap Routes with `ProtectedRoute`**
 const router = createBrowserRouter([
   {
     element: <MasterLayout />,
-    children: routesConfig.map(wrapRoute),
+    children: routes.map(({ path, element, roles }) => ({
+      path,
+      element: (
+        <ProtectedRoute allowedRoles={roles}>
+          {React.createElement(element)}
+        </ProtectedRoute>
+      ),
+    })),
   },
 ]);
 

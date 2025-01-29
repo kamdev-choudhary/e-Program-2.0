@@ -7,7 +7,6 @@ import {
   ListItemButton,
   ListItemText,
   Divider,
-  ListItemIcon,
 } from "@mui/material";
 import { buttons } from "./buttons";
 import { useNavigate, useLocation, NavigateFunction } from "react-router-dom";
@@ -67,16 +66,14 @@ const SubMenu: React.FC<SubMenuProps> = ({
                   navigate(submenu.path);
                 }}
               >
-                <ListItemIcon>
-                  <submenu.icon
-                    sx={{ color: submenu?.color ? submenu.color : "" }}
-                  />
-                </ListItemIcon>
+                <submenu.icon
+                  sx={{ color: submenu?.color ? submenu.color : "" }}
+                />
 
                 {expanded && (
                   <ListItemText
                     sx={{
-                      ml: 1,
+                      ml: 2,
                     }}
                     primary={submenu.label}
                   />
@@ -175,13 +172,11 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded = true }) => {
                 }}
                 selected={location.pathname === page.path}
               >
-                <ListItemIcon sx={{ pr: 0.01, mr: 0 }}>
-                  <page.icon sx={{ color: page?.color ? page.color : "" }} />
-                </ListItemIcon>
+                <page.icon sx={{ color: page?.color ? page.color : "" }} />
 
                 {expanded && (
                   <>
-                    <ListItemText primary={page.label} />
+                    <ListItemText sx={{ ml: 2 }} primary={page.label} />
                     {page.options &&
                       (openMenus[page.label] ? <ExpandLess /> : <ExpandMore />)}
                   </>

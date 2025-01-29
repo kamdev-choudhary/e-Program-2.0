@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { Box, Tab, Tabs } from "@mui/material";
 import JEEORCR from "./JEEORCR";
-import JEEMainMarksVsRank from "./JEEMainMarksVsRank";
+import JEEMainMarksVsRank from "./JEEMainMarksVsPercentile";
 
 const JEEMainData: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Number>(0);

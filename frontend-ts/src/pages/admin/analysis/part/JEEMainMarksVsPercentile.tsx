@@ -1,40 +1,30 @@
 import React, { useState } from "react";
 import FileDropZone from "../../../../components/FileDropZone";
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import ExcelJS from "exceljs";
 import { CloudUploadRounded } from "@mui/icons-material";
 import axios from "../../../../hooks/AxiosInterceptor";
+import moment from "moment";
 
 interface DataProps {
-  _id?: string; // Optional field for MongoDB document ID
   year: number; // Exam year, e.g., 2024
   session: string; // Session, e.g., "January", "April"
   marks: number; // Specific marks (e.g., 200)
   shift: string;
   date: string;
   percentile: number; // Percentile corresponding to the marks (e.g., 99.5)
-  rank: number; // Overall rank for the specific marks
-  generalRank: number; // Rank for General category
-  obcRank?: number; // Rank for OBC category (optional)
-  scRank?: number; // Rank for SC category (optional)
-  stRank?: number; // Rank for ST category (optional)
-  ewsRank?: number; // Rank for EWS category (optional)
-  pwdRank?: number; // Rank for PwD category (optional)
 }
 
-interface UploadJeeMainMarksVsRankProps {
+interface UploadJeeMainMarksVsPercentile {
   onClose: () => void;
 }
 
-const UploadJeeMainMarksVsRank: React.FC<UploadJeeMainMarksVsRankProps> = ({
-  onClose,
-}) => {
+const UploadJeeMainMarksVsPercentile: React.FC<
+  UploadJeeMainMarksVsPercentile
+> = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [jsonData, setJsonData] = useState<DataProps[]>([]);
-  const [selectedYear, setSelectedYear] = useState<string>("");
-  const [selectedSession, setSelectedSession] = useState<string>("");
-  const [dateWithShift, setDateWithShift] = useState<string>("");
 
   const onDrop = async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
@@ -84,13 +74,6 @@ const UploadJeeMainMarksVsRank: React.FC<UploadJeeMainMarksVsRankProps> = ({
             session: rowData.session,
             shift: rowData.shift,
             percentile: rowData.percentile,
-            rank: rowData.rank,
-            generalRank: rowData.generalRank,
-            obcRank: rowData.obcRank,
-            scRank: rowData.scRank,
-            stRank: rowData.stRank,
-            ewsRank: rowData.ewsRank,
-            pwdRank: rowData.pwdRank,
           } as DataProps;
         });
 
@@ -107,7 +90,7 @@ const UploadJeeMainMarksVsRank: React.FC<UploadJeeMainMarksVsRankProps> = ({
 
   const handleUploadData = async () => {
     try {
-      await axios.post("/analysis/jeemainmarksvsrank", {
+      await axios.post("/analysis/jeemain-marks-vs-percetile", {
         data: JSON.stringify(jsonData),
         mode: "multiple",
       });
@@ -119,51 +102,50 @@ const UploadJeeMainMarksVsRank: React.FC<UploadJeeMainMarksVsRankProps> = ({
 
   const columns: GridColDef[] = [
     { field: "id", headerName: "SN", width: 70 },
-    { field: "year", headerName: "Exam Year", flex: 1, align: "center" },
-    { field: "session", headerName: "Session", flex: 1, align: "center" },
-    { field: "marks", headerName: "Marks", flex: 1, align: "center" },
-    { field: "percentile", headerName: "Percentile", flex: 1, align: "center" },
-    { field: "rank", headerName: "Overall Rank", flex: 1, align: "center" },
     {
-      field: "generalRank",
-      headerName: "General Rank",
+      field: "year",
+      headerName: "Exam Year",
       flex: 1,
       align: "center",
+      headerAlign: "center",
     },
-    { field: "obcRank", headerName: "OBC Rank", flex: 1, align: "center" },
-    { field: "scRank", headerName: "SC Rank", flex: 1, align: "center" },
-    { field: "stRank", headerName: "ST Rank", flex: 1, align: "center" },
-    { field: "ewsRank", headerName: "EWS Rank", flex: 1, align: "center" },
-    { field: "pwdRank", headerName: "PwD Rank", flex: 1, align: "center" },
+    {
+      field: "session",
+      headerName: "Session",
+      flex: 1,
+      align: "center",
+      headerAlign: "center",
+    },
+    {
+      field: "date",
+      headerName: "Date",
+      flex: 1,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => (
+        <>{moment(params.row.date).format("DD-MM-YYYY")}</>
+      ),
+    },
+    {
+      field: "marks",
+      headerName: "Marks",
+      flex: 1,
+      align: "center",
+      headerAlign: "center",
+    },
+    {
+      field: "percentile",
+      headerName: "Percentile",
+      flex: 1,
+      align: "center",
+      headerAlign: "center",
+    },
   ];
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-      <Box>
-        <FileDropZone acceptedExtensions={[".xlsx", "xls"]} onDrop={onDrop} />
-      </Box>
-      <Box sx={{ display: "flex", gap: 2 }}>
-        <TextField
-          value={selectedYear}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setSelectedYear(e.target.value)
-          }
-          label="Year"
-        />{" "}
-        <TextField
-          value={selectedSession}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setSelectedSession(e.target.value)
-          }
-          label="Session"
-        />
-        <TextField
-          value={dateWithShift}
-          onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-            setDateWithShift(e.target.value)
-          }
-          label="Date With Shift"
-        />
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+      <Box sx={{ display: "flex", flexDirection: "row", gap: 2 }}>
+        <FileDropZone acceptedExtensions={[".xlsx", "xls"]} onDrop={onDrop} />{" "}
         <Button
           onClick={handleUploadData}
           startIcon={<CloudUploadRounded />}
@@ -172,11 +154,12 @@ const UploadJeeMainMarksVsRank: React.FC<UploadJeeMainMarksVsRankProps> = ({
           Upload
         </Button>
       </Box>
-      <Box height={400}>
+
+      <Box>
         <DataGrid rows={jsonData} columns={columns} loading={isLoading} />
       </Box>
     </Box>
   );
 };
 
-export default UploadJeeMainMarksVsRank;
+export default UploadJeeMainMarksVsPercentile;

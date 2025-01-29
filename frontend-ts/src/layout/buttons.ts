@@ -100,7 +100,7 @@ export const buttons: Button[] = [
     icon: CloudRounded,
     loginRequired: true,
     color: "#8D6E63",
-    role: ["admin"],
+    role: ["admin", "moderator"],
     options: [
       {
         label: "JEE Data",
@@ -132,7 +132,7 @@ export const buttons: Button[] = [
     type: "button",
     loginRequired: true,
     color: "#1E88E5",
-    role: ["admin", "student"],
+    role: ["admin", "student", "moderator"],
   },
   {
     label: "Batch",

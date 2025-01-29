@@ -11,6 +11,9 @@ import {
   updateJeeMainMarksVsRank,
   calculateJeeMainRank,
   getJeeMainPredictionInitialData,
+  addOrUpdateMarksVsPercentile,
+  getMarksVsPercentile,
+  getJeeMainMarksVsRankMetadata,
 } from "../controllers/AnalysisController.js";
 
 router.route("/jeemain/:year").get(getORCRbyYear);
@@ -27,6 +30,15 @@ router
   .route("/jeemainmarksvsrank")
   .post(addJeeMainMarksVsRank)
   .get(getJeeMainRankVsMarks);
+
+router
+  .route("/jeemain-marks-vs-percetile")
+  .post(addOrUpdateMarksVsPercentile)
+  .get(getMarksVsPercentile);
+
+router
+  .route("/jeemain-marks-vs-percentile/metadata")
+  .get(getJeeMainMarksVsRankMetadata);
 
 router
   .route("/jeemainmarksvsrank/:id")

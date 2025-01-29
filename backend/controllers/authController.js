@@ -1,108 +1,86 @@
 import User from "../models/user.js";
 import bcrypt from "bcryptjs";
 import Session from "../models/session.js";
-import response from "../utils/responses.js";
 
 export async function login(req, res, next) {
   try {
     const { user, sessionDetails } = req.body;
-
     const { id, password } = user;
 
-    console.log(sessionDetails);
-
-    // Validate input
     if (!id || !password) {
-      return res.status(400).json({
-        ...response.validation("Both ID and Password is required"),
-      });
+      return res
+        .status(400)
+        .json({ message: "Both ID and Password are required." });
     }
 
-    // Find user by email or mobile
     const userExist = await User.findOne({
       $or: [{ email: id }, { mobile: id }],
     });
 
-    // If user doesn't exist
     if (!userExist) {
-      return res.status(400).json({
-        ...response.notFound("User not found."),
-      });
+      return res.status(404).json({ message: "User not found." });
     }
 
-    // Compare password with bcrypt
     const isPasswordValid = await bcrypt.compare(password, userExist.password);
     if (!isPasswordValid) {
-      return res.status(400).json({
-        ...response.notFound("Invalid ID or Password"),
-      });
+      return res.status(401).json({ message: "Invalid ID or Password" });
     }
 
     if (userExist.status === 0) {
-      return res
-        .status(400)
-        .json({ ...response.validation("Your account is Inactive.") });
+      return res.status(400).json({ message: "Your account is Inactive." });
     }
 
-    // Generate a token
     const token = await userExist.generateToken();
 
     const newSession = new Session({
-      token: token,
+      token,
       userId: userExist._id,
-      deviceId: sessionDetails.deviceId || "unknown",
-      platform: sessionDetails.platform || "unknown",
-      browser: sessionDetails.browser || "unknown",
-      ip: sessionDetails.ip || "0.0.0.0",
+      deviceId: sessionDetails?.deviceId || "unknown",
+      platform: sessionDetails?.platform || "unknown",
+      browser: sessionDetails?.browser || "unknown",
+      ip: sessionDetails?.ip || "0.0.0.0",
     });
 
     await newSession.save();
 
-    // Respond with success
     return res.status(200).json({
       token,
       photo: userExist.photo || null,
-      message: "Login Successfull",
+      message: "Login Successful",
     });
   } catch (error) {
     console.error("Error in login:", error);
-    next(error);
+    return next(error);
   }
 }
 
 export async function register(req, res, next) {
-  const {
-    name,
-    email,
-    password = "Password",
-    mobile,
-    role = "student",
-    method,
-  } = req.body;
-
   try {
-    // Validate input
+    const {
+      name,
+      email,
+      password = "Password",
+      mobile,
+      role = "student",
+      method,
+    } = req.body;
+
     if (!name || !email || !password || !mobile) {
       return res.status(400).json({ message: "All fields are required." });
     }
 
-    // Check for existing email and mobile
     const [checkMail, checkMobile] = await Promise.all([
       User.findOne({ email }),
       User.findOne({ mobile }),
     ]);
 
-    if (checkMail) {
+    if (checkMail)
       return res.status(400).json({ message: "Email already registered." });
-    }
-    if (checkMobile) {
+    if (checkMobile)
       return res.status(400).json({ message: "Mobile already registered." });
-    }
 
-    // Hash the password using bcrypt
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Create a new user
     const newUser = new User({
       name,
       email,
@@ -110,26 +88,21 @@ export async function register(req, res, next) {
       mobile,
       role,
     });
-
-    // Save the user in the database
     await newUser.save();
 
-    // Generate a token if needed and respond
     if (method === "admin") {
-      res.status(200).json({
-        message: "Registration successfull.",
-      });
+      return res.status(201).json({ message: "Registration successful." });
     } else {
       const token = await newUser.generateToken();
-      res.status(200).json({
+      return res.status(201).json({
         token,
         userId: newUser._id.toString(),
-        message: "Registration successfull.",
+        message: "Registration successful.",
       });
     }
   } catch (error) {
     console.error("Error in register:", error);
-    next(error);
+    return next(error);
   }
 }
 
@@ -137,72 +110,89 @@ export async function registerByAdmin(req, res, next) {
   try {
     const { name, email, mobile, password = "Password", role } = req.body;
 
-    if (role === "admin" || role === "student") {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const newAdmin = new User({
-        name,
-        email,
-        mobile,
-        password: hashedPassword,
-        role,
-      });
-      await newAdmin.save();
-      const users = await User.find({ role });
-      return res
-        .status(200)
-        .json({ message: "User created Successfully.", users });
-    } else {
-      return res.status(200).json({ ...response.notFound("Role is missing") });
+    if (!role || !["admin", "student", "moderator"].includes(role)) {
+      return res.status(400).json({ message: "Invalid or missing role." });
     }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newAdmin = new User({
+      name,
+      email,
+      mobile,
+      password: hashedPassword,
+      role,
+    });
+
+    await newAdmin.save();
+    const users = await User.find({ role });
+
+    return res
+      .status(201)
+      .json({ message: "User created successfully.", users });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
 
-export async function getLoginSesssion(req, res, next) {
+export async function getLoginSession(req, res, next) {
   try {
     const { id } = req.params;
-    if (!id)
-      return res.status(400).json({ ...response.notFound("ID not found.") });
+
+    if (!id) return res.status(400).json({ message: "ID not found." });
+
     const sessions = await Session.find({ userId: id });
-    if (sessions.length > 0) {
-      return res.status(200).json({ message: "Session Found.", sessions });
-    } else {
-      return res.status(200).json({ message: "Session not found" });
-    }
+
+    return res.status(200).json({
+      message: sessions.length ? "Session Found." : "Session not found",
+      sessions,
+    });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
 
 export async function deleteSession(req, res, next) {
   try {
     const { id } = req.params;
-    if (!id)
-      return res.status(400).json({ ...response.notFound("ID is missing.") });
+
+    if (!id) return res.status(400).json({ message: "ID is missing." });
 
     const deletedSession = await Session.deleteMany({ deviceId: id });
-    if (deletedSession) {
-      return res.status(200).json({ ...response.deleted("Session Deleted") });
+
+    if (deletedSession.deletedCount > 0) {
+      return res.status(200).json({ message: "Session Deleted." });
     } else {
-      return res
-        .status(200)
-        .json({ ...response.notFound("Session Not Found.") });
+      return res.status(404).json({ message: "Session Not Found." });
     }
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }
 
-// refresh Token
 export async function refreshToken(req, res, next) {
   try {
     const { refreshToken } = req.body;
-    const session = Session.find({ refreshToken });
-    const user = User.findById(session.userId);
-    const token = user.generateToken();
-    res.status(200).json({ token });
+
+    if (!refreshToken) {
+      return res.status(400).json({ message: "Refresh token is required." });
+    }
+
+    const session = await Session.findOne({ refreshToken });
+
+    if (!session) {
+      return res.status(404).json({ message: "Invalid refresh token." });
+    }
+
+    const user = await User.findById(session.userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found." });
+    }
+
+    const token = await user.generateToken();
+
+    return res.status(200).json({ token });
   } catch (error) {
-    next(error);
+    return next(error);
   }
 }

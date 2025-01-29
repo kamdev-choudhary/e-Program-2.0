@@ -73,6 +73,16 @@ const getTheme = (mode: "light" | "dark") => {
           },
         },
       },
+      MuiOutlinedInput: {
+        defaultProps: {
+          size: "small",
+        },
+        styleOverrides: {
+          root: {
+            // borderRadius: 400,
+          },
+        },
+      },
 
       /** APP BAR **/
       MuiAppBar: {

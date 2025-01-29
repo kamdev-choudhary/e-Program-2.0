@@ -47,6 +47,7 @@ const UserMaster: React.FC = () => {
   const [showScholarDetails, setShowScholarDetails] = useState<boolean>(false);
   const [adminCount, setAdminCount] = useState<number | null>(0);
   const [studentCount, setStudentCount] = useState<number | null>(0);
+  const [moderatorCount, setModeratorCount] = useState<number | null>(0);
   const [selectedUser, setSelectedUser] = useState<UserProps | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [newUser, setNewUser] = useState<newUser>({
@@ -77,6 +78,7 @@ const UserMaster: React.FC = () => {
       setTotalUsers(response.data.usersCount);
       setAdminCount(response.data.adminCount);
       setStudentCount(response.data.studentCount);
+      setModeratorCount(response.data.moderatorCount);
     } catch (error) {
       console.error(error);
     } finally {
@@ -281,6 +283,7 @@ const UserMaster: React.FC = () => {
       >
         <Tab label={`Admin (${adminCount})`} value="admin" />
         <Tab label={`Students (${studentCount})`} value="student" />
+        <Tab label={`Moderator (${moderatorCount})`} value="moderator" />
       </Tabs>
       <Box sx={{ mt: 2 }}>
         <DataGrid
@@ -333,6 +336,7 @@ const UserMaster: React.FC = () => {
             data={[
               { name: "Admin", value: "admin" },
               { name: "Student", value: "student" },
+              { name: "Moderator", value: "moderator" },
             ]}
             value={newUser.role}
             name="name"
