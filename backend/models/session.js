@@ -13,6 +13,7 @@ const sessionSchema = new mongoose.Schema(
     platform: { type: String, required: true }, // e.g., "Windows", "iOS"
     browser: { type: String, required: true }, // e.g., "Chrome", "Safari"
     ip: { type: String, required: false }, // User's IP address
+    deviceType: { type: String, required: false },
   },
   {
     timestamps: true,

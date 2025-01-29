@@ -9,6 +9,8 @@ export async function login(req, res, next) {
 
     const { id, password } = user;
 
+    console.log(sessionDetails);
+
     // Validate input
     if (!id || !password) {
       return res.status(400).json({
