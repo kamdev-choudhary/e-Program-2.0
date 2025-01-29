@@ -36,12 +36,7 @@ const Notification: React.FC<NotificationProps> = ({
   onClose,
 }) => {
   const actions = (
-    <IconButton
-      size="small"
-      aria-label="close"
-      color="inherit"
-      onClick={onClose}
-    >
+    <IconButton aria-label="close" color="inherit" onClick={onClose}>
       <CloseRounded />
     </IconButton>
   );

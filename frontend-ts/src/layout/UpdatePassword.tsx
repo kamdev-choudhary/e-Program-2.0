@@ -8,7 +8,7 @@ const UpdatePassword: React.FC = () => {
     >
       <Typography variant="h6">Update Password</Typography>
       <Divider />
-      <TextField fullWidth label="Enter OTP" size="small" />
+      <TextField fullWidth label="Enter OTP" />
       <Button variant="contained">Submit OTP</Button>
     </Box>
   );

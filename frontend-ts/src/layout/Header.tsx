@@ -98,7 +98,6 @@ const Header: React.FC<HeaderProps> = ({
             variant="outlined"
             startIcon={<LockRounded />}
             aria-label="login"
-            size="small"
             sx={{ borderRadius: 20 }}
           >
             Login

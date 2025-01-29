@@ -122,7 +122,6 @@ const Sessions: React.FC<UserSessionProps> = ({ user }) => {
                       secondary={session.ip}
                     />
                     <Button
-                      size="small"
                       startIcon={<LogoutRounded />}
                       color="error"
                       variant="outlined"

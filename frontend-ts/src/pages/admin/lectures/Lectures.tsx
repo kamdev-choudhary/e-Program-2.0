@@ -432,6 +432,7 @@ const Lectures: React.FC = () => {
         }}
         showHeader={false}
         height="auto"
+        width="auto"
       >
         <YouTubeVideoPlayer
           videoId={getYouTubeId(selectedLecture?.link || "") || ""}

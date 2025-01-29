@@ -103,7 +103,6 @@ const AddBatch: React.FC<AddBatch> = ({ setAddBatchModal }) => {
         label="Batch Class"
       />
       <TextField
-        size="small"
         fullWidth
         value={newBatch?.name}
         label="Batch Name"
@@ -122,7 +121,6 @@ const AddBatch: React.FC<AddBatch> = ({ setAddBatchModal }) => {
         }
       />
       <OutlinedInput
-        size="small"
         fullWidth
         inputRef={fileInputRef}
         type="file"
@@ -140,7 +138,6 @@ const AddBatch: React.FC<AddBatch> = ({ setAddBatchModal }) => {
       />
       <TextField
         value={newBatch.session}
-        size="small"
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setNewBatch((prev) => ({ ...prev, session: e.target.value }))
         }
@@ -148,7 +145,6 @@ const AddBatch: React.FC<AddBatch> = ({ setAddBatchModal }) => {
         label="Batch Session"
       />
       <TextField
-        size="small"
         value={newBatch.stream}
         onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
           setNewBatch((prev) => ({ ...prev, stream: e.target.value }))

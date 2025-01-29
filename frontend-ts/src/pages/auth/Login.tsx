@@ -81,7 +81,6 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
       </Typography>
       <Box component="form" onSubmit={handleLogin} sx={{ width: "100%" }}>
         <TextField
-          size="small"
           fullWidth
           margin="normal"
           label="Email"
@@ -94,7 +93,6 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
           required
         />
         <TextField
-          size="small"
           fullWidth
           margin="normal"
           label="Password"

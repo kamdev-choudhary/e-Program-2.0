@@ -62,7 +62,6 @@ const SubMenu: React.FC<SubMenuProps> = ({
                 selected={location.pathname === submenu.path}
                 sx={{
                   pl: expanded ? 4 : 1.6,
-                  borderRadius: 1,
                 }}
                 onClick={() => {
                   navigate(submenu.path);
@@ -175,7 +174,6 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded = true }) => {
                   }
                 }}
                 selected={location.pathname === page.path}
-                sx={{ borderRadius: 2 }}
               >
                 <ListItemIcon sx={{ pr: 0.01, mr: 0 }}>
                   <page.icon sx={{ color: page?.color ? page.color : "" }} />

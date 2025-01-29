@@ -93,7 +93,6 @@ const NotFound: React.FC = () => {
       <Button
         variant="contained"
         color="primary"
-        size="small"
         onClick={handleGoBack}
         startIcon={<HomeRounded />}
         sx={{

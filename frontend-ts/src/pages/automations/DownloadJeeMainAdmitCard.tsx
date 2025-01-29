@@ -300,7 +300,6 @@ const DownloadAdmitCard: React.FC = () => {
                 params.row.status === "loading"
               }
               variant="outlined"
-              size="small"
             >
               {params.row.status === "loading" ? "loading" : "Fetch Data"}
             </Button>
@@ -403,7 +402,6 @@ const DownloadAdmitCard: React.FC = () => {
           }}
         >
           <ToggleButton
-            size="small"
             value="total"
             color="success"
             aria-label="Platform"
@@ -414,7 +412,6 @@ const DownloadAdmitCard: React.FC = () => {
             <strong>Total &nbsp;&nbsp;</strong> ({jsonData?.length || 0})
           </ToggleButton>
           <ToggleButton
-            size="small"
             value="total"
             color="primary"
             aria-label="Platform"
@@ -426,7 +423,6 @@ const DownloadAdmitCard: React.FC = () => {
             {jsonData?.filter((item) => item.status === "fetched").length || 0})
           </ToggleButton>
           <ToggleButton
-            size="small"
             value="total"
             aria-label="Platform"
             selected={selectedStatus === "loading"}
@@ -437,7 +433,6 @@ const DownloadAdmitCard: React.FC = () => {
             {jsonData?.filter((item) => item.status === "loading").length || 0})
           </ToggleButton>
           <ToggleButton
-            size="small"
             value="total"
             color="error"
             aria-label="Platform"

@@ -343,7 +343,6 @@ const UserMaster: React.FC = () => {
             label="Account Type"
           />
           <TextField
-            size="small"
             fullWidth
             label="Name"
             value={newUser.name}
@@ -352,7 +351,6 @@ const UserMaster: React.FC = () => {
             }
           />
           <TextField
-            size="small"
             fullWidth
             label="Email"
             value={newUser.email}
@@ -361,7 +359,6 @@ const UserMaster: React.FC = () => {
             }
           />
           <TextField
-            size="small"
             fullWidth
             label="Mobile"
             value={newUser.mobile}

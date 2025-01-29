@@ -68,12 +68,11 @@ const Test = () => {
     <div>
       <Box sx={{ display: "flex" }}>
         <TextField
-          size="small"
           value={patternId}
           onChange={(e) => setPatternId(e.target.value)}
         />
         <Button onClick={fetchData}>Fetch</Button>
-        <FormControl size="small" sx={{ minWidth: 120 }}>
+        <FormControl sx={{ minWidth: 120 }}>
           <Select
             value={selectedSubject}
             onChange={(e) => setSelectedSubject(e.target.value)}

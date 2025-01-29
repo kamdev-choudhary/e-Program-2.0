@@ -72,7 +72,6 @@ const Batch: React.FC = () => {
         <OutlinedInput
           placeholder="Search batches"
           sx={{ flexGrow: 1 }}
-          size="small"
           startAdornment={
             <InputAdornment position="start">
               <SearchRounded />

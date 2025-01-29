@@ -1,18 +1,17 @@
+import React, { useState, useCallback } from "react";
 import {
   Box,
   Card,
   CardContent,
   Divider,
   Typography,
-  useMediaQuery,
   useTheme,
 } from "@mui/material";
-import React, { useState } from "react";
 import YouTube from "react-youtube";
 
 interface YouTubeVideoPlayerProps {
   videoId: string;
-  data?: any;
+  data?: { subject?: string };
 }
 
 const YouTubeVideoPlayer: React.FC<YouTubeVideoPlayerProps> = ({
@@ -22,8 +21,8 @@ const YouTubeVideoPlayer: React.FC<YouTubeVideoPlayerProps> = ({
   const [isPlaying, setIsPlaying] = useState(false);
   const [videoTitle, setVideoTitle] = useState<string | null>(null);
   const [videoDuration, setVideoDuration] = useState<number | null>(null);
+
   const theme = useTheme();
-  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
   const PLAYER_STATES = {
     UNSTARTED: -1,
@@ -34,20 +33,15 @@ const YouTubeVideoPlayer: React.FC<YouTubeVideoPlayerProps> = ({
     CUED: 5,
   };
 
-  const handleStateChange = (event: any) => {
-    const playerState = event.data;
-    setIsPlaying(playerState === PLAYER_STATES.PLAYING);
-  };
+  const handleStateChange = useCallback((event: any) => {
+    setIsPlaying(event.data === PLAYER_STATES.PLAYING);
+  }, []);
 
-  const handleOnReady = (event: any) => {
+  const handleOnReady = useCallback((event: any) => {
     const player = event.target;
-
-    const title = player.getVideoData().title;
-    const duration = player.getDuration();
-
-    setVideoTitle(title);
-    setVideoDuration(duration);
-  };
+    setVideoTitle(player.getVideoData().title);
+    setVideoDuration(player.getDuration());
+  }, []);
 
   const formatDuration = (seconds: number | null) => {
     if (seconds === null) return "";
@@ -57,40 +51,54 @@ const YouTubeVideoPlayer: React.FC<YouTubeVideoPlayerProps> = ({
   };
 
   return (
-    <Box>
+    <Box sx={{ width: "100%", maxWidth: "800px", mx: "auto" }}>
+      {/* Video Container with Aspect Ratio (16:9) */}
       <Box
         sx={{
+          position: "relative",
           width: "100%",
-          height: isSmallScreen ? "200px" : "390px",
-          borderRadius: "12px", // Rounded corners
-          overflow: "hidden", // Ensures rounded corners are applied to iframe
+          pt: "56.25%", // 16:9 Aspect Ratio
+          borderRadius: "12px",
+          overflow: "hidden",
+          boxShadow: theme.shadows[3],
         }}
       >
-        <YouTube
-          videoId={videoId}
-          onStateChange={handleStateChange}
-          onReady={handleOnReady}
-          opts={{
+        <Box
+          sx={{
+            position: "absolute",
+            top: 0,
+            left: 0,
             width: "100%",
-            height: isSmallScreen ? "200" : "390",
-            playerVars: {
-              autoplay: 0,
-              controls: 1,
-            },
+            height: "100%",
           }}
-        />
+        >
+          <YouTube
+            videoId={videoId}
+            onStateChange={handleStateChange}
+            onReady={handleOnReady}
+            opts={{
+              width: "100%",
+              height: "100%",
+              playerVars: {
+                autoplay: 0,
+                controls: 1,
+              },
+            }}
+          />
+        </Box>
       </Box>
-      <Card sx={{ mt: 1, p: 2, pb: 0 }}>
-        <CardContent sx={{ m: 0, p: 0 }}>
+
+      {/* Video Details Card */}
+      <Card sx={{ mt: 2, p: 2 }}>
+        <CardContent>
           <Typography variant="h6">{videoTitle || "Loading..."}</Typography>
-          <Divider />
+          <Divider sx={{ my: 1 }} />
           <Box
             sx={{
               display: "flex",
               justifyContent: "space-between",
-              mt: 1,
-              gap: 1,
               flexWrap: "wrap",
+              gap: 1,
             }}
           >
             <Typography variant="body1">
@@ -100,7 +108,7 @@ const YouTubeVideoPlayer: React.FC<YouTubeVideoPlayerProps> = ({
               Status: {isPlaying ? "Playing" : "Paused"}
             </Typography>
             {data?.subject && (
-              <Typography variant="body1">Subject : {data.subject}</Typography>
+              <Typography variant="body1">Subject: {data.subject}</Typography>
             )}
           </Box>
         </CardContent>

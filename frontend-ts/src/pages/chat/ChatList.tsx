@@ -21,7 +21,6 @@ const ChatList: React.FC = () => {
           </InputAdornment>
         }
         placeholder="Search Chat"
-        size="small"
         fullWidth
         sx={{ mb: 2 }}
       />

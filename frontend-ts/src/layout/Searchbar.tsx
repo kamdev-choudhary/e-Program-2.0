@@ -57,7 +57,6 @@ const SearchBar: React.FC = () => {
         onChange={handleSearch}
         placeholder="Search..."
         variant="outlined"
-        size="small"
         inputProps={{ "aria-label": "search" }}
       />
       {results.length > 0 && (

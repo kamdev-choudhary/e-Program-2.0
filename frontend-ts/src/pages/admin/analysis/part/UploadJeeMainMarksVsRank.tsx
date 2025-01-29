@@ -144,7 +144,6 @@ const UploadJeeMainMarksVsRank: React.FC<UploadJeeMainMarksVsRankProps> = ({
       </Box>
       <Box sx={{ display: "flex", gap: 2 }}>
         <TextField
-          size="small"
           value={selectedYear}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setSelectedYear(e.target.value)
@@ -152,7 +151,6 @@ const UploadJeeMainMarksVsRank: React.FC<UploadJeeMainMarksVsRankProps> = ({
           label="Year"
         />{" "}
         <TextField
-          size="small"
           value={selectedSession}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setSelectedSession(e.target.value)
@@ -160,7 +158,6 @@ const UploadJeeMainMarksVsRank: React.FC<UploadJeeMainMarksVsRankProps> = ({
           label="Session"
         />
         <TextField
-          size="small"
           value={dateWithShift}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setDateWithShift(e.target.value)

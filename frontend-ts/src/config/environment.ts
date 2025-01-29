@@ -1,7 +1,6 @@
 const LIVE_API = "https://expressjs-uscv.onrender.com";
 
-// const DEV_API = import.meta.env.VITE_REACT_APP_API_URL;
-const DEV_API = "http://10.0.12.85:5000";
+const DEV_API = import.meta.env.VITE_REACT_APP_API_URL;
 
 export const MODE = import.meta.env.MODE;
 

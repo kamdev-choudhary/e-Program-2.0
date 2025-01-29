@@ -39,13 +39,7 @@ if (isProduction && cluster.isPrimary) {
 
   app.use(helmet());
   app.options("*", cors());
-  app.use(
-    cors({
-      origin: true,
-      methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],
-      credentials: true,
-    })
-  );
+  app.use(cors());
   app.use(bodyparser.json({ limit: "50mb" }));
   app.use(bodyparser.urlencoded({ limit: "50mb", extended: true }));
   app.use("/uploads", express.static(path.join(__dirname, "uploads")));

@@ -150,7 +150,6 @@ const ChatbotWithFAB: React.FC = () => {
               placeholder="Type your message..."
               variant="outlined"
               sx={{ mb: 1 }}
-              size="small"
             />
             <Button
               fullWidth

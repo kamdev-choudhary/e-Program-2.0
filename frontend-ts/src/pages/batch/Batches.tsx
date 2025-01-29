@@ -68,7 +68,6 @@ const Batch: React.FC = () => {
             setSearchText(e.target.value)
           }
           label="Search"
-          size="small"
           fullWidth
           sx={{ borderRadius: 10 }}
         />

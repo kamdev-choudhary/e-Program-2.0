@@ -153,7 +153,6 @@ const Subjects: React.FC<SubjectComponentProps> = ({
           }}
         >
           <TextField
-            size="small"
             value={newSubject.name}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setNewSubject((prev) => ({ ...prev, name: e.target.value }))
@@ -162,7 +161,6 @@ const Subjects: React.FC<SubjectComponentProps> = ({
             label="Name"
           />
           <TextField
-            size="small"
             value={newSubject.description}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setNewSubject((prev) => ({

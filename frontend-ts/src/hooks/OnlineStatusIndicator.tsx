@@ -24,7 +24,7 @@ const OnlineStatusIndicator: React.FC = () => {
           severity="error"
           action={
             <>
-              <IconButton onClick={fetchStatus} size="small">
+              <IconButton onClick={fetchStatus}>
                 {loading ? <CircularProgress size={20} /> : <RefreshRounded />}
               </IconButton>
             </>

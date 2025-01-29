@@ -156,7 +156,6 @@ const Doubts: React.FC = () => {
         }}
       >
         <OutlinedInput
-          size="small"
           value={searchText}
           onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
             setSearchText(e.target.value)
