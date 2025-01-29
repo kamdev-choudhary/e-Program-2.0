@@ -1,7 +1,6 @@
-import useAxios from "../hooks/useAxios";
+import axios from "../hooks/AxiosInterceptor";
 
 export const getAllExamTemplates = async () => {
-  const axios = useAxios();
   try {
     return await axios.get("/exam/templates");
   } catch (error) {

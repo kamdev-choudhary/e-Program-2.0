@@ -5,7 +5,7 @@ import ExcelJS from "exceljs";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { CloudUploadRounded, DownloadRounded } from "@mui/icons-material";
 import { CustomToolbar } from "../../../../components/CustomToolbar";
-import useAxios from "../../../../hooks/useAxios";
+import axios from "../../../../hooks/AxiosInterceptor";
 
 interface DataProps {
   year: string;
@@ -27,7 +27,6 @@ interface UploadJeeMainORCRProps {
 const UploadJeeMainORCR: React.FC<UploadJeeMainORCRProps> = ({
   setShowUploadData,
 }) => {
-  const axios = useAxios();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [jsonData, setJsonData] = useState<DataProps[] | null>(null);
 

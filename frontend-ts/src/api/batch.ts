@@ -1,7 +1,6 @@
-import useAxios from "../hooks/useAxios";
+import axios from "../hooks/AxiosInterceptor";
 
 export const getAllBatches = async () => {
-  const axios = useAxios();
   try {
     const response = await axios.get("/batch");
     return response;

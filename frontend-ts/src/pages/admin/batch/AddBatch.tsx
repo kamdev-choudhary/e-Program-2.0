@@ -10,7 +10,7 @@ import {
 import { Close as CloseIcon } from "@mui/icons-material";
 import React, { useEffect, useRef, useState } from "react";
 import CustomDropDown from "../../../components/CustomDropDown";
-import useAxios from "../../../hooks/useAxios";
+import axios from "../../../hooks/AxiosInterceptor";
 
 interface AddBatch {
   setAddBatchModal: (value: boolean) => void;
@@ -25,7 +25,6 @@ interface NewBatch {
 }
 
 const AddBatch: React.FC<AddBatch> = ({ setAddBatchModal }) => {
-  const axios = useAxios();
   const [newBatch, setNewBatch] = useState<NewBatch>({
     name: "",
     class: "",

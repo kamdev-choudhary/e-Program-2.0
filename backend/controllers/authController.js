@@ -191,3 +191,16 @@ export async function deleteSession(req, res, next) {
     next(error);
   }
 }
+
+// refresh Token
+export async function refreshToken(req, res, next) {
+  try {
+    const { refreshToken } = req.body;
+    const session = Session.find({ refreshToken });
+    const user = User.findById(session.userId);
+    const token = user.generateToken();
+    res.status(200).json({ token });
+  } catch (error) {
+    next(error);
+  }
+}

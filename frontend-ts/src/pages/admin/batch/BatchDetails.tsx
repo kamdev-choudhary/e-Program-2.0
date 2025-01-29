@@ -1,6 +1,6 @@
 import { Box, CircularProgress, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
-import useAxios from "../../../hooks/useAxios";
+import axios from "../../../hooks/AxiosInterceptor";
 
 interface BatchDetailsProps {
   batchId?: string;
@@ -11,7 +11,6 @@ interface BatchProp {
 }
 
 const BatchDetails: React.FC<BatchDetailsProps> = ({ batchId }) => {
-  const axios = useAxios();
   const [loading, setLoading] = useState<boolean>(true);
   const [batch, setBatch] = useState<BatchProp | null>(null);
 

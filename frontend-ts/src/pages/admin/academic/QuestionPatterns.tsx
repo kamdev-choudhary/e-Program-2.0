@@ -15,7 +15,7 @@ import {
 import { AddRounded, Edit, Delete, SaveRounded } from "@mui/icons-material";
 import Swal from "sweetalert2";
 import { CustomModal } from "../../../components/CustomModal";
-import useAxios from "../../../hooks/useAxios";
+import axios from "../../../hooks/AxiosInterceptor";
 
 interface QuestionPattern {
   _id: string;
@@ -29,7 +29,6 @@ interface NewQuestionPatern {
 }
 
 const QuestionPatterns: React.FC = ({}) => {
-  const axios = useAxios();
   const [quesionPatterns, setQuestionPatterns] = useState<
     QuestionPattern[] | null
   >(null);

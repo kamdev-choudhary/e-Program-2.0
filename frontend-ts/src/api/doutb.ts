@@ -1,15 +1,11 @@
-import useAxios from "../hooks/useAxios";
+import axios from "../hooks/AxiosInterceptor";
 
 // Helper function to initialize Axios
-export const getAxiosInstance = () => {
-  return useAxios(); // This ensures the hook is used properly inside a React context
-};
 
 // Get Doubts by Status
 export const getDoubtsByStatus = async () => {
-  const axiosInstance = getAxiosInstance(); // Declare axiosInstance here
   try {
-    const response = await axiosInstance.get("/doubts/");
+    const response = await axios.get("/doubts/");
     return response.data; // Extract and return the data
   } catch (error) {
     console.error("Error fetching doubts by status:", error);
@@ -25,9 +21,8 @@ export const getDoubtsWithPagination = async ({
   currentPage: number;
   filter: string;
 }) => {
-  const axiosInstance = getAxiosInstance(); // Declare axiosInstance here
   try {
-    const response = await axiosInstance.post("/doubts/pagination", {
+    const response = await axios.post("/doubts/pagination", {
       page: currentPage,
       status: filter,
       limit: 10,

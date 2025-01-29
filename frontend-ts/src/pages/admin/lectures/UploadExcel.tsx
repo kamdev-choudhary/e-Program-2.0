@@ -4,7 +4,7 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import * as ExcelJS from "exceljs";
 import React, { useMemo, useState } from "react";
 import FileDropZone from "../../../components/FileDropZone";
-import useAxios from "../../../hooks/useAxios";
+import axios from "../../../hooks/AxiosInterceptor";
 
 interface Lecture {
   _id: string;
@@ -39,7 +39,6 @@ const UploadExcel: React.FC<UploadExcelProps> = ({
   setLectures,
   lectures,
 }) => {
-  const axios = useAxios();
   const [jsonData, setJsonData] = useState<LectureData[] | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 

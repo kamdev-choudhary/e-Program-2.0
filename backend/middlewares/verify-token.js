@@ -3,7 +3,7 @@ const { verify } = pkg;
 import config from "../config/config.js";
 import Session from "../models/session.js";
 
-const jwtSecret = config.JWT_SECRET;
+const jwtSecret = config.ACCESS_TOKEN_SECRET;
 
 // Middleware to verify the JWT token
 const verifyToken = async (req, res, next) => {

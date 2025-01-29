@@ -1,13 +1,18 @@
 import { useEffect, useState } from "react";
-import { v4 as uuidv4 } from "uuid";
 import { UAParser } from "ua-parser-js";
 import axios from "axios";
+import { LS_KEYS } from "../constant/constants";
+import { v4 as uuid } from "uuid";
 
 export interface SessionDetails {
   deviceId: string;
-  platform: string;
-  browser: string;
-  ip: string;
+  platform: string; // Operating system (e.g., Windows, macOS)
+  platformVersion: string; // OS version
+  browser: string; // Browser name (e.g., Chrome, Firefox)
+  browserVersion: string; // Browser version
+  deviceType: string; // Device type (e.g., mobile, tablet, desktop)
+  isMobile: boolean; // Whether the device is a mobile device
+  ip: string; // User's public IP address
 }
 
 const useSessionDetails = () => {
@@ -19,12 +24,23 @@ const useSessionDetails = () => {
     const fetchSessionDetails = async () => {
       const deviceId = getDeviceId();
       const ip = await fetchIp();
-      const { platform, browser } = getDeviceDetails();
+      const {
+        platform,
+        platformVersion,
+        browser,
+        browserVersion,
+        deviceType,
+        isMobile,
+      } = getDeviceDetails();
 
       setSessionDetails({
         deviceId,
         platform,
+        platformVersion,
         browser,
+        browserVersion,
+        deviceType,
+        isMobile,
         ip,
       });
     };
@@ -33,19 +49,24 @@ const useSessionDetails = () => {
   }, []);
 
   const getDeviceId = () => {
-    let deviceId = localStorage.getItem("deviceId");
+    let deviceId = localStorage.getItem(LS_KEYS.DEVICE_ID);
     if (!deviceId) {
-      deviceId = uuidv4();
-      localStorage.setItem("deviceId", deviceId);
+      deviceId = uuid(); // Get the machine's unique device ID
+      localStorage.setItem(LS_KEYS.DEVICE_ID, deviceId);
     }
     return deviceId;
   };
 
   const getDeviceDetails = () => {
-    const parser = UAParser(); // No `new` required, just call it as a function
+    const parser = new UAParser();
+    const result = parser.getResult();
     return {
-      platform: parser.os.name || "unknown",
-      browser: parser.browser.name || "unknown",
+      platform: result.os.name || "unknown",
+      platformVersion: result.os.version || "unknown",
+      browser: result.browser.name || "unknown",
+      browserVersion: result.browser.version || "unknown",
+      deviceType: result.device.type || "desktop", // Default to "desktop" if no type is detected
+      isMobile: result.device.type === "mobile" || false,
     };
   };
 

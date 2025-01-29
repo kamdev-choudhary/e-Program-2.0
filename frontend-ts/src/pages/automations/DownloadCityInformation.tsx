@@ -20,7 +20,7 @@ import {
 } from "@mui/icons-material";
 import { CustomToolbar } from "../../components/CustomToolbar";
 import { downloadJsonToExcel, downloadPdfFromUrl } from "../../utils/commonfs";
-import useAxios from "../../hooks/useAxios";
+import axios from "../../hooks/AxiosInterceptor";
 
 interface ScholarData {
   drn: string;
@@ -36,7 +36,6 @@ interface ScholarData {
 }
 
 const DownloadCityInformation: React.FC = () => {
-  const axios = useAxios();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [jsonData, setJsonData] = useState<ScholarData[] | null>(null);
 

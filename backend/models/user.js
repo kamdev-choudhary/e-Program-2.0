@@ -3,7 +3,7 @@ const Schema = mongoose.Schema;
 import config from "../config/config.js";
 import jwt from "jsonwebtoken";
 
-const jwtSecret = config.JWT_SECRET;
+const jwtSecret = config.ACCESS_TOKEN_SECRET;
 import logger from "../utils/logger.js";
 
 const userSchema = new Schema(
@@ -56,12 +56,31 @@ userSchema.methods.generateToken = async function () {
         name: this.name,
         mobile: this.mobile,
       },
-      jwtSecret,
+      config.ACCESS_TOKEN_SECRET,
       { expiresIn: "1d" }
     );
   } catch (err) {
-    logger.error(err);
+    logger.error(err.message);
     throw new Error("Token generation failed");
+  }
+};
+
+userSchema.methods.generateRefreshToken = async () => {
+  try {
+    return jwt.sign(
+      {
+        _id: this._id.toString(),
+        email: this.email,
+        role: this.role,
+        name: this.name,
+        mobile: this.mobile,
+      },
+      config.REFRESH_TOKEN_SECRET,
+      { expiresIn: "5d" }
+    );
+  } catch (error) {
+    logger.error(error.message);
+    throw new Error("Refresh token generation failed.");
   }
 };
 

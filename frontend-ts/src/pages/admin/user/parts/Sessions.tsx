@@ -12,7 +12,7 @@ import {
 } from "@mui/material";
 import Swal from "sweetalert2";
 import { LogoutRounded } from "@mui/icons-material";
-import useAxios from "../../../../hooks/useAxios";
+import axios from "../../../../hooks/AxiosInterceptor";
 
 interface UserProps {
   _id: string;
@@ -36,7 +36,6 @@ interface SessionProps {
 }
 
 const Sessions: React.FC<UserSessionProps> = ({ user }) => {
-  const axios = useAxios();
   const [sessions, setSessions] = useState<SessionProps[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 

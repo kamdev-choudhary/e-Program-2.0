@@ -6,7 +6,11 @@ const config = {
   MONGO_URL:
     process.env.MONGO_URL ||
     "mongodb+srv://kamdevchoudhary:mongopassword@cluster0.mrszysb.mongodb.net/eprogram?retryWrites=true&w=majority",
-  JWT_SECRET: process.env.JWT_SECRET || "supersecretkey",
+
+  // JWT
+  ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET || "supersecretkey",
+  REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET || "citrus",
+
   NODE_ENV: process.env.NODE_ENV || "development",
   API_KEY: process.env.API_KEY || "kd",
   CLOUD_NAME: process.env.CLOUD_NAME || "ddiv6clt7",

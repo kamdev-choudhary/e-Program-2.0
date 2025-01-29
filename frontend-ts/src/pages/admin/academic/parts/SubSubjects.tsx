@@ -15,7 +15,7 @@ import {
 import React, { useState } from "react";
 import { CustomModal } from "../../../../components/CustomModal";
 import CustomDropDown from "../../../../components/CustomDropDown";
-import useAxios from "../../../../hooks/useAxios";
+import axios from "../../../../hooks/AxiosInterceptor";
 
 // Subject interface
 interface Subject {
@@ -54,7 +54,6 @@ const SubSubjects: React.FC<SubSubjectComponentProps> = ({
   setSubSubjects,
   setSelectedSubject,
 }) => {
-  const axios = useAxios();
   const [showAddSubSubject, setShowAddSubSubject] = useState<boolean>(false);
   const [newSubSubject, setNewSubSubject] = useState<NewSubSubject>({
     name: "",

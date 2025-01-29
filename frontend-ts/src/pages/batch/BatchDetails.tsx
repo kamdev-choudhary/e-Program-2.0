@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import { Book, VideoLibrary } from "@mui/icons-material";
 import moment from "moment";
-import useAxios from "../../hooks/useAxios";
+import axios from "../../hooks/AxiosInterceptor";
 
 interface BatchDetails {
   books: [];
@@ -31,7 +31,6 @@ interface BatchDetails {
 }
 
 const BatchDetails: React.FC = () => {
-  const axios = useAxios();
   const { id } = useParams();
   const [batchDetails, setBatchDetails] = useState<BatchDetails | null>(null);
   const [activeTab, setActiveTab] = useState<number>(0);

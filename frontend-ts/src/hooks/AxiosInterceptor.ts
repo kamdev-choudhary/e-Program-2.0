@@ -1,5 +1,6 @@
 import axios from "axios";
 import { API_URL } from "../config/environment";
+import { LS_KEYS } from "../constant/constants";
 
 const instance = axios.create({
   baseURL: API_URL,
@@ -8,8 +9,8 @@ const instance = axios.create({
 
 instance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
-    const deviceId = localStorage.getItem("deviceId");
+    const token = localStorage.getItem(LS_KEYS.TOKEN);
+    const deviceId = localStorage.getItem(LS_KEYS.DEVICE_ID);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -26,12 +27,30 @@ instance.interceptors.request.use(
 // Add a response interceptor to handle errors
 instance.interceptors.response.use(
   (response) => response,
-  (error) => {
-    if (error.response?.status === 401) {
-      localStorage.clear();
-      localStorage.setItem("logout", "Session Expired Logged out.");
-      window.location.reload();
+  async (error) => {
+    const originalRequest = error.config;
+
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      originalRequest._retry = true;
+
+      try {
+        const refreshToken = localStorage.getItem(LS_KEYS.REFRESH_TOKEN);
+        const response = await axios.post(`${API_URL}/refresh-token`, {
+          refreshToken,
+        });
+        const newToken = response.data.token;
+
+        localStorage.setItem(LS_KEYS.TOKEN, newToken);
+        originalRequest.headers.Authorization = `Bearer ${newToken}`;
+
+        return instance(originalRequest);
+      } catch (refreshError) {
+        localStorage.clear();
+        localStorage.setItem(LS_KEYS.LOGOUT, "Session Expired. Logged out.");
+        window.location.reload();
+      }
     }
+
     return Promise.reject(error);
   }
 );

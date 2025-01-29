@@ -13,7 +13,7 @@ import { useDispatch } from "react-redux";
 import useSessionDetails from "../../utils/useSessionDetails";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
-import useAxios from "../../hooks/useAxios";
+import axios from "../../hooks/AxiosInterceptor";
 
 interface User {
   id: string;
@@ -26,7 +26,7 @@ interface LoginProps {
 
 const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
   const { handleUserLogin } = useGlobalContext();
-  const axios = useAxios();
+
   const dispatch = useDispatch();
   const [user, setUser] = useState<User>({
     id: "",
@@ -81,6 +81,7 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
       </Typography>
       <Box component="form" onSubmit={handleLogin} sx={{ width: "100%" }}>
         <TextField
+          size="small"
           fullWidth
           margin="normal"
           label="Email"
@@ -93,6 +94,7 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
           required
         />
         <TextField
+          size="small"
           fullWidth
           margin="normal"
           label="Password"

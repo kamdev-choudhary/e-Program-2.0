@@ -8,7 +8,7 @@ import React, {
 } from "react";
 import { JwtPayload, jwtDecode } from "jwt-decode";
 import Loader from "../components/Loader";
-import { LOCAL_STORAGE_KEYS } from "../constant/constants";
+import { LS_KEYS } from "../constant/constants";
 import axios from "../hooks/AxiosInterceptor";
 import { useNotification } from "./NotificationProvider";
 import dummyImage from "../assets/user.jpg";
@@ -28,7 +28,7 @@ interface User {
 interface LoginResponse {
   token: string;
   user: User;
-  photo: string;
+  photo?: string | null;
 }
 
 interface GlobalContextType {
@@ -54,50 +54,57 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
     user: null,
     token: "",
   });
-  const { showNotification } = useNotification();
 
   const [isLoaded, setIsLoaded] = useState(false);
-  const [profilePicUrl, setProfilePicUrl] = useState("");
+  const [profilePicUrl, setProfilePicUrl] = useState(dummyImage);
+  const { showNotification } = useNotification();
 
   // Initialize authentication state
   useEffect(() => {
     const initializeAuthState = () => {
-      const storedToken = localStorage.getItem(LOCAL_STORAGE_KEYS.TOKEN);
-      const error = localStorage.getItem("logout");
-      if (error) {
+      const storedToken = localStorage.getItem(LS_KEYS.TOKEN);
+      const logoutError = localStorage.getItem(LS_KEYS.LOGOUT);
+
+      // Handle logout error notification
+      if (logoutError) {
         showNotification({
-          message: error,
+          message: logoutError,
           type: "error",
           variant: "standard",
         });
-        localStorage.removeItem("logout");
+        localStorage.removeItem(LS_KEYS.LOGOUT);
       }
-      if (!storedToken) return setIsLoaded(true);
+
+      if (!storedToken) {
+        setIsLoaded(true);
+        return;
+      }
 
       try {
         const decodedToken = jwtDecode<JwtPayload & User>(storedToken);
-        if (decodedToken.exp && decodedToken.exp * 1000 < Date.now()) {
+        const isTokenExpired =
+          decodedToken.exp && decodedToken.exp * 1000 < Date.now();
+
+        if (isTokenExpired) {
           showNotification({ message: "Token expired", type: "error" });
-          localStorage.removeItem(LOCAL_STORAGE_KEYS.TOKEN);
-          setIsLoaded(true);
-          return;
-        }
-        setAuthState({
-          isLoggedIn: true,
-          user: {
+          localStorage.removeItem(LS_KEYS.TOKEN);
+        } else {
+          const user = {
             _id: decodedToken._id,
             name: decodedToken.name,
             role: decodedToken.role,
             email: decodedToken.email,
             mobile: decodedToken.mobile,
-          },
-          token: storedToken,
-        });
-        const photo = localStorage.getItem(LOCAL_STORAGE_KEYS.PHOTO);
-        if (photo && photo !== "null" && photo !== "undefined") {
-          setProfilePicUrl(photo);
-        } else {
-          setProfilePicUrl(dummyImage);
+          };
+
+          setAuthState({ isLoggedIn: true, user, token: storedToken });
+
+          const storedPhoto = localStorage.getItem(LS_KEYS.PHOTO) || dummyImage;
+          setProfilePicUrl(
+            storedPhoto !== "null" && storedPhoto !== "undefined"
+              ? storedPhoto
+              : dummyImage
+          );
         }
       } catch (error) {
         console.error("Invalid token:", error);
@@ -106,32 +113,28 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
         setIsLoaded(true);
       }
     };
+
     initializeAuthState();
-  }, []);
+  }, [showNotification]);
 
   // Handle user login
   const handleUserLogin = (data: LoginResponse) => {
     const { token, photo } = data;
     try {
       const decodedToken = jwtDecode<JwtPayload & User>(token);
-      setAuthState({
-        isLoggedIn: true,
-        user: {
-          _id: decodedToken._id,
-          name: decodedToken.name,
-          role: decodedToken.role,
-          email: decodedToken.email,
-          mobile: decodedToken.mobile,
-        },
-        token,
-      });
-      photo ? setProfilePicUrl(photo) : setProfilePicUrl(dummyImage);
-      localStorage.setItem(
-        LOCAL_STORAGE_KEYS.USER,
-        JSON.stringify(decodedToken)
-      );
-      localStorage.setItem(LOCAL_STORAGE_KEYS.PHOTO, photo);
-      localStorage.setItem(LOCAL_STORAGE_KEYS.TOKEN, token);
+      const user = {
+        _id: decodedToken._id,
+        name: decodedToken.name,
+        role: decodedToken.role,
+        email: decodedToken.email,
+        mobile: decodedToken.mobile,
+      };
+
+      setAuthState({ isLoggedIn: true, user, token });
+      setProfilePicUrl(photo || dummyImage);
+
+      localStorage.setItem(LS_KEYS.PHOTO, photo || "");
+      localStorage.setItem(LS_KEYS.TOKEN, token);
     } catch (error) {
       console.error("Invalid token:", error);
       showNotification({
@@ -144,13 +147,10 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
 
   // Handle user logout
   const handleLogout = async () => {
-    const deviceId = localStorage.getItem(LOCAL_STORAGE_KEYS.DEVICE_ID);
-    setAuthState({
-      isLoggedIn: false,
-      user: null,
-      token: "",
-    });
-    setProfilePicUrl("");
+    const deviceId = localStorage.getItem(LS_KEYS.DEVICE_ID);
+
+    setAuthState({ isLoggedIn: false, user: null, token: "" });
+    setProfilePicUrl(dummyImage);
     localStorage.clear();
 
     try {

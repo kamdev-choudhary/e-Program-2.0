@@ -16,7 +16,7 @@ import {
 import { CustomToolbar } from "../../components/CustomToolbar";
 import { downloadJsonToExcel } from "../../utils/commonfs";
 import FileDropZone from "../../components/FileDropZone";
-import useAxios from "../../hooks/useAxios";
+import axios from "../../hooks/AxiosInterceptor";
 
 interface ScholarData {
   drn: string;
@@ -33,7 +33,6 @@ interface ScholarData {
 }
 
 const DownloadAdmitCard: React.FC = () => {
-  const axios = useAxios();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [jsonData, setJsonData] = useState<ScholarData[] | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>("");

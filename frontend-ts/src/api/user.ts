@@ -1,7 +1,6 @@
-import useAxios from "../hooks/useAxios";
+import axios from "../hooks/AxiosInterceptor";
 
 export const userLogin = async (user: []) => {
-  const axios = useAxios();
   try {
     return await axios.post("/auth/login", {
       ...user,
@@ -13,7 +12,6 @@ export const userLogin = async (user: []) => {
 
 // Register User
 export const registerUser = async (user: []) => {
-  const axios = useAxios();
   try {
     return await axios.post("/auth/register", {
       ...user,
@@ -25,7 +23,6 @@ export const registerUser = async (user: []) => {
 
 // Get users by role
 export const getUsersByRole = async (role: string) => {
-  const axios = useAxios();
   try {
     const response = await axios.get(`/user/role/${role}`);
     return response;
@@ -37,7 +34,6 @@ export const getUsersByRole = async (role: string) => {
 
 // Upload profile pic
 export const uploadProfilePic = async (user: any, photo: string) => {
-  const axios = useAxios();
   try {
     const response = await axios.post(`/user/profile-pic`, {
       id: user?._id,
@@ -51,7 +47,6 @@ export const uploadProfilePic = async (user: any, photo: string) => {
 
 // Delete user
 export const deleteUser = async (userId: string) => {
-  const axios = useAxios();
   try {
     const response = await axios.delete(`/user/${userId}`);
     return response;
@@ -62,7 +57,6 @@ export const deleteUser = async (userId: string) => {
 
 // Add new user
 export const addNewUserAdmin = async (newUser: any) => {
-  const axios = useAxios();
   try {
     const response = await axios.post("/auth/register", {
       ...newUser,
@@ -77,7 +71,6 @@ export const addNewUserAdmin = async (newUser: any) => {
 
 // Save Edited User
 export const saveEditUser = async (user: any) => {
-  const axios = useAxios();
   try {
     const response = await axios.patch(`/user/${user?._id}`, {
       ...user,

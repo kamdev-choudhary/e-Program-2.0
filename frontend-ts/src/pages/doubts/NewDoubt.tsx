@@ -10,14 +10,13 @@ import {
   DialogTitle,
 } from "@mui/material";
 
-import useAxios from "../../hooks/useAxios";
+import axios from "../../hooks/AxiosInterceptor";
 
 interface NewDoubtInterface {
   setShowNewDoubtModal: (value: boolean) => void;
 }
 
 const NewDoubt: React.FC<NewDoubtInterface> = ({ setShowNewDoubtModal }) => {
-  const axios = useAxios();
   const [doubtQuestion, setDoubtQuestion] = useState<string>("");
   const [description, setDescription] = useState<string>("");
   const [subject, setSubject] = useState<string>("");

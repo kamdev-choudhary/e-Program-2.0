@@ -5,7 +5,7 @@ import { CustomModal } from "../../../components/CustomModal";
 import CustomDropDown from "../../../components/CustomDropDown";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { CustomToolbar } from "../../../components/CustomToolbar";
-import useAxios from "../../../hooks/useAxios";
+import axios from "../../../hooks/AxiosInterceptor";
 
 const years = [
   { name: "2024", value: "2024" },
@@ -24,7 +24,6 @@ interface DataProps {
 }
 
 const JEEORCR: React.FC = () => {
-  const axios = useAxios();
   const [showUploadData, setShowUploadData] = useState<boolean>(false);
   const [selectedYear, setSelectedYear] = useState<string>("");
   const [data, setData] = useState<DataProps | null>(null);

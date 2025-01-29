@@ -15,7 +15,7 @@ import { Edit, Delete, SaveRounded, AddRounded } from "@mui/icons-material";
 import Swal from "sweetalert2";
 import { CustomModal } from "../../../../components/CustomModal";
 import { addNewSubject } from "../../../../api/academic";
-import useAxios from "../../../../hooks/useAxios";
+import axios from "../../../../hooks/AxiosInterceptor";
 
 interface Subject {
   _id: string;
@@ -41,7 +41,6 @@ const Subjects: React.FC<SubjectComponentProps> = ({
   selectedSubject,
   setSelectedSubject,
 }) => {
-  const axios = useAxios();
   const [newSubject, setNewSubject] = useState<NewSubject>({
     name: "",
     description: "",

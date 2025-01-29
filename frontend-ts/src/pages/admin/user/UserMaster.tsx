@@ -22,7 +22,7 @@ import moment from "moment";
 import CustomDropDown from "../../../components/CustomDropDown";
 import ScholarDetails from "./parts/ScholarDetails";
 import Sessions from "./parts/Sessions";
-import useAxios from "../../../hooks/useAxios";
+import axios from "../../../hooks/AxiosInterceptor";
 
 interface UserProps {
   _id: string;
@@ -41,7 +41,7 @@ interface newUser {
 
 const UserMaster: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("admin");
-  const axios = useAxios();
+
   const [users, setUsers] = useState<UserProps[] | null>(null);
   const [addAdminModal, setAddAdminModal] = useState<boolean>(false);
   const [showScholarDetails, setShowScholarDetails] = useState<boolean>(false);

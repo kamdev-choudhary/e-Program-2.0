@@ -13,13 +13,12 @@ import {
 import { useGlobalContext } from "../../contexts/GlobalProvider";
 import { CustomModal } from "../../components/CustomModal";
 import { EditRounded, UploadFileRounded } from "@mui/icons-material";
-import { LOCAL_STORAGE_KEYS } from "../../constant/constants";
+import { LS_KEYS } from "../../constant/constants";
 import Sessions from "../admin/user/parts/Sessions";
 import StudentDetails from "./StudentDetails";
-import useAxios from "../../hooks/useAxios";
+import axios from "../../hooks/AxiosInterceptor";
 
 const Profile: React.FC = () => {
-  const axios = useAxios();
   const { user, profilePicUrl, setProfilePicUrl } = useGlobalContext();
   const [showUpdateProfilePic, setShowUpdateProfilePic] =
     useState<boolean>(false);
@@ -52,10 +51,7 @@ const Profile: React.FC = () => {
         },
       });
       setProfilePicUrl(response.data.profilePicUrl);
-      localStorage.setItem(
-        LOCAL_STORAGE_KEYS.PHOTO,
-        response.data.profilePicUrl
-      );
+      localStorage.setItem(LS_KEYS.PHOTO, response.data.profilePicUrl);
       setPreviewUrl("");
       setNewProfilePic(null);
       setShowUpdateProfilePic(false);

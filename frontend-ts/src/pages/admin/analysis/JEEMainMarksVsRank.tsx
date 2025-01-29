@@ -12,7 +12,7 @@ import UploadJeeMainMarksVsRank from "./part/UploadJeeMainMarksVsRank";
 import { DeleteRounded } from "@mui/icons-material";
 import Swal from "sweetalert2";
 import CustomDropDown from "../../../components/CustomDropDown";
-import useAxios from "../../../hooks/useAxios";
+import axios from "../../../hooks/AxiosInterceptor";
 
 interface JEEMainMarksVsRankProps {
   _id?: string; // Optional field for MongoDB document ID
@@ -31,7 +31,6 @@ interface JEEMainMarksVsRankProps {
 }
 
 const JEEMainMarksVsRank: React.FC = () => {
-  const axios = useAxios();
   const [data, setData] = useState<JEEMainMarksVsRankProps[]>([]);
   const [showUploadData, setShowUploadData] = useState<boolean>(false);
   const [selectedYear, setSelectedYear] = useState<string>("");

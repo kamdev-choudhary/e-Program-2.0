@@ -14,7 +14,7 @@ import YouTubeVideoPlayer from "../../components/YoutubePlayer";
 import { getAllSubjects, getClasses } from "../../api/academic";
 import CustomDropDown from "../../components/CustomDropDown";
 import { getYouTubeId } from "../../utils/commonfs";
-import useAxios from "../../hooks/useAxios";
+import axios from "../../hooks/AxiosInterceptor";
 
 interface Lecture {
   _id: string;
@@ -30,7 +30,6 @@ interface Lecture {
 }
 
 const Lectures: React.FC = () => {
-  const axios = useAxios();
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
   const [lectures, setLectures] = useState<Lecture[]>([]);

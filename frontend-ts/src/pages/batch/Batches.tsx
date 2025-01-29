@@ -13,7 +13,7 @@ import {
 } from "@mui/material";
 import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import useAxios from "../../hooks/useAxios";
+import axios from "../../hooks/AxiosInterceptor";
 
 interface Image {
   url: string;
@@ -30,7 +30,6 @@ interface Batch {
 }
 
 const Batch: React.FC = () => {
-  const axios = useAxios();
   const navigate = useNavigate();
   const [batches, setBatches] = useState<Batch[] | null>(null);
   const [searchText, setSearchText] = useState<string>("");

@@ -4,7 +4,7 @@ import { Box, Button, TextField } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import ExcelJS from "exceljs";
 import { CloudUploadRounded } from "@mui/icons-material";
-import useAxios from "../../../../hooks/useAxios";
+import axios from "../../../../hooks/AxiosInterceptor";
 
 interface DataProps {
   _id?: string; // Optional field for MongoDB document ID
@@ -30,7 +30,6 @@ interface UploadJeeMainMarksVsRankProps {
 const UploadJeeMainMarksVsRank: React.FC<UploadJeeMainMarksVsRankProps> = ({
   onClose,
 }) => {
-  const axios = useAxios();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [jsonData, setJsonData] = useState<DataProps[]>([]);
   const [selectedYear, setSelectedYear] = useState<string>("");

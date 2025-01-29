@@ -15,13 +15,12 @@ import {
 import { CustomToolbar } from "../../components/CustomToolbar";
 import FileDropZone from "../../components/FileDropZone";
 import { downloadJsonToExcel } from "../../utils/commonfs";
-import useAxios from "../../hooks/useAxios";
+import axios from "../../hooks/AxiosInterceptor";
 
 // Dynamic interface using Record
 type ScholarData = Record<string, any>;
 
 const DownloadAdmitCard: React.FC = () => {
-  const axios = useAxios();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [jsonData, setJsonData] = useState<ScholarData[]>([]);
   const [columns, setColumns] = useState<GridColDef[]>([]);

@@ -8,7 +8,7 @@ import {
 import React, { useState } from "react";
 import { useGlobalContext } from "../../contexts/GlobalProvider";
 import { useDispatch } from "react-redux";
-import useAxios from "../../hooks/useAxios";
+import axios from "../../hooks/AxiosInterceptor";
 
 interface User {
   password: string;
@@ -29,7 +29,6 @@ interface RegisterProps {
 }
 
 const Register: React.FC<RegisterProps> = ({ setActiveTab }) => {
-  const axios = useAxios();
   const { handleUserLogin } = useGlobalContext();
   const dispatch = useDispatch();
   const [user, setUser] = useState<User>({

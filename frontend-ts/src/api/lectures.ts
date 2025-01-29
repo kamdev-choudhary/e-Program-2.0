@@ -1,4 +1,4 @@
-import useAxios from "../hooks/useAxios";
+import axios from "../hooks/AxiosInterceptor";
 
 // Define interfaces for type safety
 interface ClassData {
@@ -25,7 +25,6 @@ const API_PATHS = {
 
 // Get all classes
 export const getClasses = async () => {
-  const axios = useAxios();
   try {
     return await axios.get(API_PATHS.CLASSES);
   } catch (error) {
@@ -35,7 +34,6 @@ export const getClasses = async () => {
 
 // Save a new class
 export const addNewClass = async (newClass: ClassData) => {
-  const axios = useAxios();
   try {
     return await axios.post(API_PATHS.CLASSES, newClass);
   } catch (error) {
@@ -45,7 +43,6 @@ export const addNewClass = async (newClass: ClassData) => {
 
 // Delete a class
 export const deleteClass = async (id: string) => {
-  const axios = useAxios();
   try {
     return await axios.delete(`${API_PATHS.CLASSES}/${id}`);
   } catch (error) {
@@ -55,7 +52,6 @@ export const deleteClass = async (id: string) => {
 
 // Edit a class
 export const editClass = async (selectedClass: ClassData) => {
-  const axios = useAxios();
   try {
     const { _id, ...data } = selectedClass;
     if (!_id) {
@@ -69,7 +65,6 @@ export const editClass = async (selectedClass: ClassData) => {
 
 // Get all academic metadata
 export const getAllAcademicData = async () => {
-  const axios = useAxios();
   try {
     return await axios.get(API_PATHS.METADATA);
   } catch (error) {
@@ -79,7 +74,6 @@ export const getAllAcademicData = async () => {
 
 // Get all question patterns
 export const getAllQuestionPatterns = async () => {
-  const axios = useAxios();
   try {
     return await axios.get(API_PATHS.PATTERNS);
   } catch (error) {
@@ -89,7 +83,6 @@ export const getAllQuestionPatterns = async () => {
 
 // Add a new question pattern
 export const addNewQuestionPattern = async (data: QuestionPatternData) => {
-  const axios = useAxios();
   try {
     return await axios.post(API_PATHS.PATTERNS, data);
   } catch (error) {
@@ -99,7 +92,6 @@ export const addNewQuestionPattern = async (data: QuestionPatternData) => {
 
 // Get all subjects
 export const getAllSubjects = async () => {
-  const axios = useAxios();
   try {
     return await axios.get(API_PATHS.SUBJECTS);
   } catch (error) {
@@ -109,7 +101,6 @@ export const getAllSubjects = async () => {
 
 // Get all sub-subjects
 export const getAllSubSubjects = async () => {
-  const axios = useAxios();
   try {
     return await axios.get(API_PATHS.SUB_SUBJECTS);
   } catch (error) {
@@ -119,7 +110,6 @@ export const getAllSubSubjects = async () => {
 
 // Get all topics
 export const getAllTopics = async () => {
-  const axios = useAxios();
   try {
     return await axios.get(API_PATHS.TOPICS);
   } catch (error) {
@@ -129,7 +119,6 @@ export const getAllTopics = async () => {
 
 // Get all sub-topics
 export const getAllSubTopics = async () => {
-  const axios = useAxios();
   try {
     return await axios.get(API_PATHS.SUB_TOPICS);
   } catch (error) {

@@ -8,6 +8,7 @@ const sessionSchema = new mongoose.Schema(
       required: true,
     },
     token: { type: String, required: true }, // Authentication token
+    refreshToken: { type: String },
     deviceId: { type: String, required: true }, // Unique ID for the device
     platform: { type: String, required: true }, // e.g., "Windows", "iOS"
     browser: { type: String, required: true }, // e.g., "Chrome", "Safari"

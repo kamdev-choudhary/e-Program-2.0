@@ -23,7 +23,7 @@ import Swal from "sweetalert2";
 import CustomDropDown from "../../../components/CustomDropDown";
 import { getClasses } from "../../../api/academic";
 import { getYouTubeId } from "../../../utils/commonfs";
-import useAxios from "../../../hooks/useAxios";
+import axios from "../../../hooks/AxiosInterceptor";
 
 interface Lecture {
   _id: string;
@@ -45,7 +45,6 @@ interface ClassItem {
 }
 
 const Lectures: React.FC = () => {
-  const axios = useAxios();
   const [lectures, setLectures] = useState<Lecture[] | null>(null);
   const [faculties, setFaculties] = useState(null);
   const [loading, setLoading] = useState<boolean>(true);

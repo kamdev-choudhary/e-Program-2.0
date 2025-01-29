@@ -17,7 +17,7 @@ import { CustomModal } from "../../../components/CustomModal";
 import AddBatch from "./AddBatch";
 import EditBatch from "./EditBatch";
 import BatchDetails from "./BatchDetails";
-import useAxios from "../../../hooks/useAxios";
+import axios from "../../../hooks/AxiosInterceptor";
 
 interface Image {
   url: string;
@@ -34,7 +34,6 @@ interface Batch {
 }
 
 const Batch: React.FC = () => {
-  const axios = useAxios();
   const [batches, setBatches] = useState<Batch[] | null>(null);
   const [addBatchModal, setAddBatchModal] = useState<boolean>(false);
   const [showBatchDetails, setShowBatchDetails] = useState<boolean>(false);

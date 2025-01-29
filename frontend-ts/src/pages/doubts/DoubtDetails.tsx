@@ -10,7 +10,7 @@ import {
   ListItem,
   ListItemText,
 } from "@mui/material";
-import useAxios from "../../hooks/useAxios";
+import axios from "../../hooks/AxiosInterceptor";
 
 interface DoubtSolutions {
   postedBy: string;
@@ -38,7 +38,7 @@ interface Doubt {
 
 const DoubtDetails: React.FC = () => {
   const { id } = useParams();
-  const axios = useAxios();
+
   const [doubt, setDoubt] = useState<Doubt | null>(null);
 
   const getDoubtDetails = async () => {

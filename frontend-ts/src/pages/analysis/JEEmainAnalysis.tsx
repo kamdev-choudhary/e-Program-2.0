@@ -4,7 +4,7 @@ import { Box, SelectChangeEvent, Grid2 as Grid, Button } from "@mui/material";
 import FileDropZone from "../../components/FileDropZone";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import CustomDropDown from "../../components/CustomDropDown";
-import useAxios from "../../hooks/useAxios";
+import axios from "../../hooks/AxiosInterceptor";
 
 interface DataProps {
   drn: string;
@@ -28,7 +28,6 @@ interface DataProps {
 }
 
 const JEEmainAnalysis: React.FC = () => {
-  const axios = useAxios();
   const [jsonData, setJsonData] = useState<DataProps[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedYear, setSelectedYear] = useState<string>("");

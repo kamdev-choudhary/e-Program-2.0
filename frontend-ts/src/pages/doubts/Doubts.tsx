@@ -18,7 +18,7 @@ import { CustomModal } from "../../components/CustomModal";
 import { useGlobalContext } from "../../contexts/GlobalProvider";
 import NewDoubt from "./NewDoubt";
 import { useNavigate } from "react-router-dom";
-import useAxios from "../../hooks/useAxios";
+import axios from "../../hooks/AxiosInterceptor";
 
 interface DoubtSolutions {
   postedBy: string;
@@ -103,7 +103,7 @@ const DoubtCard: React.FC<{ doubt: Doubt }> = ({ doubt }) => {
 
 const Doubts: React.FC = () => {
   const { isLoggedIn } = useGlobalContext();
-  const axios = useAxios();
+
   const [searchText, setSearchText] = useState<string>("");
   const [showNewDoubtModal, setShowNewDoubtModal] = useState<boolean>(false);
   const [activeTab, setActiveTab] = useState<number>(0);
