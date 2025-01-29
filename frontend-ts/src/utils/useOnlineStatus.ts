@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { BASE_URL } from "../config/environment";
+import { BASE_URL } from "../config/config";
 import { RootState } from "../store/store";
 
 const useOnlineStatus = () => {

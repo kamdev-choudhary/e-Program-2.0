@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { Editor } from "@tinymce/tinymce-react";
-import { TINY_API_KEY } from "../config/environment";
+import { TINY_API_KEY } from "../config/config";
 
 // Define a reusable TinyMCEEditor component
 interface TinyMCEEditorProps {

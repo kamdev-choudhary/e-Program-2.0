@@ -1,5 +1,5 @@
 import axios from "axios";
-import { API_URL } from "../config/environment";
+import { API_URL } from "../config/config";
 import { LS_KEYS } from "../constant/constants";
 
 const instance = axios.create({

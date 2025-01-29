@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import { Box, Tab, Tabs } from "@mui/material";
 import JEEORCR from "./JEEORCR";
 import JEEMainMarksVsRank from "./JEEMainMarksVsPercentile";
+import JEEMainPercentileVsRank from "./JEEMainPercentileVsRank";
+import JEEAdvancedCutoff from "./JEEAdvancedCutoff";
 
 const JEEMainData: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Number>(0);
@@ -15,12 +17,16 @@ const JEEMainData: React.FC = () => {
           }
         >
           <Tab label="JEE Opening Closing Rank" />
-          <Tab label="JEE Main Marks Vs Rank" />
+          <Tab label="Main Marks Vs Percentile" />
+          <Tab label="Main Percentile vs Rank" />
+          <Tab label="Advanced Cutoffs" />
         </Tabs>
       </Box>
       <Box>
         {activeTab === 0 && <JEEORCR />}
         {activeTab === 1 && <JEEMainMarksVsRank />}
+        {activeTab === 2 && <JEEMainPercentileVsRank />}
+        {activeTab === 3 && <JEEAdvancedCutoff />}
       </Box>
     </Box>
   );

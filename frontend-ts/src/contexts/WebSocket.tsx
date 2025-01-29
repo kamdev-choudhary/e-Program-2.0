@@ -6,7 +6,7 @@ import React, {
   ReactNode,
 } from "react";
 import { io, Socket } from "socket.io-client";
-import { BASE_URL } from "../config/environment";
+import { BASE_URL } from "../config/config";
 
 interface WebSocketContextType {
   socket: Socket | null;

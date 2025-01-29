@@ -116,7 +116,6 @@ const Header: React.FC<HeaderProps> = ({
               px: { xs: 0, sm: 2 },
               display: "flex",
               flexDirection: "column",
-              m: 1,
               mb: 1,
               rowGap: 1,
               minWidth: 250,

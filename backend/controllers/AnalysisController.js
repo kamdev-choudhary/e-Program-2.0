@@ -2,6 +2,7 @@ import JEEMainOC from "../models/jeemainoc.js";
 import JEEMainMarksVsRank from "../models/jeemainMarksvsRank.js";
 import response from "../utils/responses.js";
 import JEEMainMarksVsPercentile from "../models/jeeMainMarksVsPercentile.js";
+import JEEMainPercentileVsRank from "../models/jeemainPercentileVsRank.js";
 
 export async function getORCRbyYear(req, res, next) {
   try {
@@ -83,85 +84,6 @@ export async function addNewOROC(req, res, next) {
     } else {
       next(error);
     }
-  }
-}
-
-export async function addJeeMainMarksVsRank(req, res, next) {
-  try {
-    const { data, year, session, dateWithShift } = req.body;
-
-    // Validate and parse the data
-    if (!data) {
-      return res
-        .status(400)
-        .json({ ...response.validation("Data is missing") });
-    }
-
-    let parsedData;
-    try {
-      parsedData = JSON.parse(data);
-    } catch (err) {
-      return res
-        .status(400)
-        .json({ ...response.validation("Invalid JSON format") });
-    }
-
-    if (!Array.isArray(parsedData) || parsedData.length === 0) {
-      return res
-        .status(400)
-        .json({ ...response.validation("Data must not be an empty array") });
-    }
-
-    // Prepare bulk operations for insertion or update
-    const bulkOps = parsedData.map((entry) => {
-      if (!year || !session || entry.marks === undefined) {
-        throw new Error(
-          "Each record must contain 'year', 'session', and 'marks'."
-        );
-      }
-
-      return {
-        updateOne: {
-          filter: {
-            year: year,
-            session: session,
-            marks: entry.marks,
-          },
-          update: { $set: { ...entry } },
-          upsert: true, // Insert if no matching document is found
-        },
-      };
-    });
-
-    // Perform bulkWrite operation
-    const result = await JEEMainMarksVsRank.bulkWrite(bulkOps);
-
-    res.status(201).json({
-      message: `${result.nUpserted} records inserted, ${result.nModified} records updated.`,
-    });
-  } catch (error) {
-    next(error);
-  }
-}
-
-export async function getJeeMainRankVsMarks(req, res, next) {
-  try {
-    const { ...filters } = req.query;
-
-    const filter = Object.fromEntries(
-      Object.entries(filters).map(([key, value]) => {
-        return [key, value];
-      })
-    );
-
-    const data = await JEEMainMarksVsRank.find(filter);
-    if (data.length > 0) {
-      return res.status(200).json({ data, message: "Record Found." });
-    } else {
-      res.status(404).json({ message: "Record Not Found." });
-    }
-  } catch (error) {
-    next(error);
   }
 }
 
@@ -339,6 +261,7 @@ export async function getJeeMainPredictionInitialData(req, res, next) {
   }
 }
 
+// JEE Main Marks Vs Percentile
 export async function addOrUpdateMarksVsPercentile(req, res, next) {
   try {
     const { data } = req.body;
@@ -386,6 +309,7 @@ export async function addOrUpdateMarksVsPercentile(req, res, next) {
   }
 }
 
+// JEE Main Get Marks vs Percentile
 export async function getMarksVsPercentile(req, res, next) {
   try {
     const { marks, session, year, shift, date } = req.query;
@@ -396,7 +320,7 @@ export async function getMarksVsPercentile(req, res, next) {
     if (session) query.session = session;
     if (year) query.year = year;
     if (shift) query.shift = shift;
-    if (date) query.shift = date;
+    if (date) query.date = date;
 
     // Fetch data from the database
     const records = await JEEMainMarksVsPercentile.find(query);
@@ -411,6 +335,7 @@ export async function getMarksVsPercentile(req, res, next) {
   }
 }
 
+// JEE Main Marks vs Percentile metadat
 export async function getJeeMainMarksVsRankMetadata(req, res, next) {
   try {
     const years = await JEEMainMarksVsPercentile.distinct("year");
@@ -471,6 +396,79 @@ export async function getJeeMainMarksVsRankMetadata(req, res, next) {
     return res
       .status(200)
       .json({ years, sessions, sessionDates, sessionDateShifts });
+  } catch (error) {
+    next(error);
+  }
+}
+
+// JEE Main Percentile vs Rank
+export async function addOrUpdatePercentileVsRank(req, res, next) {
+  try {
+    const { data } = req.body;
+    const parsedData = JSON.parse(data);
+
+    // Validate the parsed data
+    if (!Array.isArray(parsedData) || parsedData.length === 0) {
+      return res.status(400).json({ message: "Invalid Data Provided" });
+    }
+
+    let upsertedRecords = [];
+
+    for (const entry of parsedData) {
+      const filter = {
+        year: entry.year,
+        percentile: entry.percentile,
+      };
+
+      const update = {
+        $set: {
+          generalRank: entry.generalRank,
+          generalPwdRank: entry.generalPwdRank,
+
+          obcRank: entry.obcRank,
+          obcPwdRank: entry.obcPwdRank,
+
+          scRank: entry.scRank,
+          scPwdRank: entry.scPwdRank,
+
+          stRank: entry.stRank,
+          stPwdRank: entry.stPwdRank,
+
+          ewsRank: entry.ewsRank,
+          ewsPwdRank: entry.ewsPwdRank,
+        },
+      };
+
+      const options = { upsert: true, new: true };
+
+      const updatedRecord = await JEEMainPercentileVsRank.findOneAndUpdate(
+        filter,
+        update,
+        options
+      );
+
+      upsertedRecords.push(updatedRecord);
+    }
+
+    res.status(201).json({
+      upsertedRecords,
+      message: `${upsertedRecords.length} records successfully upserted.`,
+    });
+  } catch (error) {
+    next(error);
+  }
+}
+
+// GET JEE Main Percentile Vs Ranks
+export async function getJEEMainPercentileVsRank(req, res, next) {
+  try {
+    const { year } = req.query;
+    if (!year) {
+      return res.status(404).json({ message: "Year is missing" });
+    }
+    const data = await JEEMainPercentileVsRank.find({ year });
+
+    return res.status(200).json({ message: "Data Found", data });
   } catch (error) {
     next(error);
   }

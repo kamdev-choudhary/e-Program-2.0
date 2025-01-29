@@ -5,8 +5,6 @@ import {
   getORCRbyYear,
   addNewOROC,
   getJEEAdvancedORCRbyYear,
-  addJeeMainMarksVsRank,
-  getJeeMainRankVsMarks,
   deleteJeeMainMarksVsRank,
   updateJeeMainMarksVsRank,
   calculateJeeMainRank,
@@ -14,6 +12,8 @@ import {
   addOrUpdateMarksVsPercentile,
   getMarksVsPercentile,
   getJeeMainMarksVsRankMetadata,
+  addOrUpdatePercentileVsRank,
+  getJEEMainPercentileVsRank,
 } from "../controllers/AnalysisController.js";
 
 router.route("/jeemain/:year").get(getORCRbyYear);
@@ -27,12 +27,7 @@ router
   .get(getJeeMainPredictionInitialData);
 
 router
-  .route("/jeemainmarksvsrank")
-  .post(addJeeMainMarksVsRank)
-  .get(getJeeMainRankVsMarks);
-
-router
-  .route("/jeemain-marks-vs-percetile")
+  .route("/jeemain-marks-vs-percentile")
   .post(addOrUpdateMarksVsPercentile)
   .get(getMarksVsPercentile);
 
@@ -41,8 +36,10 @@ router
   .get(getJeeMainMarksVsRankMetadata);
 
 router
-  .route("/jeemainmarksvsrank/:id")
-  .delete(deleteJeeMainMarksVsRank)
-  .patch(updateJeeMainMarksVsRank);
+  .route("/jeemain-percentile-vs-rank")
+  .post(addOrUpdatePercentileVsRank)
+  .get(getJEEMainPercentileVsRank);
+
+router.route("/jeemainmarksvsrank/:id").patch(updateJeeMainMarksVsRank);
 
 export default router;

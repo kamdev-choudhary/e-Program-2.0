@@ -7,6 +7,7 @@ import {
   Select,
   SelectChangeEvent,
 } from "@mui/material";
+import moment from "moment";
 
 interface CustomDropDownProps<T extends Record<string, any>> {
   data: Array<T>;
@@ -51,22 +52,27 @@ const CustomDropDown = <T extends Record<string, any>>({
             <IconButton onClick={handleClear} sx={{ mr: 1 }}>
               <CloseRounded />
             </IconButton>
-          ) : (
-            ""
-          )
+          ) : null
         }
       >
         {data &&
-          data.map((item, index) => (
-            <MenuItem
-              key={index}
-              value={
-                typeof item === "string" ? item : String(item[dropdownValue])
-              } // Ensure value is a string
-            >
-              {typeof item === "string" ? item : String(item[name])}
-            </MenuItem>
-          ))}
+          data.map((item, index) => {
+            const itemValue =
+              typeof item === "string" ? item : String(item[dropdownValue]);
+            let itemLabel =
+              typeof item === "string" ? item : String(item[name]);
+
+            // Check if itemLabel is an actual date (contains "-" or "/" or "T")
+            if (typeof itemLabel === "string" && /[-/T]/.test(itemLabel)) {
+              itemLabel = moment(itemLabel).format("DD-MM-YYYY");
+            }
+
+            return (
+              <MenuItem key={index} value={itemValue}>
+                {itemLabel}
+              </MenuItem>
+            );
+          })}
       </Select>
     </FormControl>
   );

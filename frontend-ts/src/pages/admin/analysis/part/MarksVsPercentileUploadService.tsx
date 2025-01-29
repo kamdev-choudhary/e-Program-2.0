@@ -90,7 +90,7 @@ const UploadJeeMainMarksVsPercentile: React.FC<
 
   const handleUploadData = async () => {
     try {
-      await axios.post("/analysis/jeemain-marks-vs-percetile", {
+      await axios.post("/analysis/jeemain-marks-vs-percentile", {
         data: JSON.stringify(jsonData),
         mode: "multiple",
       });
