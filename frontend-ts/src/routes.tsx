@@ -18,6 +18,9 @@ const DCI = lazyLoad("automations/DownloadCityInformation");
 const DAC = lazyLoad("automations/DownloadJeeMainAdmitCard");
 const GenerateAdmitCard = lazyLoad("automations/GenerateAdmitCard");
 const JEEMainAnalysis = lazyLoad("analysis/JEEmainAnalysis");
+const DownloadJEEMainAnswerKeyWithpaper = lazyLoad(
+  "automations/DownloadJEEMainAnswerKeyWithpaper"
+);
 
 // Admin Pages
 const Dashboard = lazyLoad("dashboard/Dashboard");
@@ -60,10 +63,15 @@ const routes: RoutesProps[] = [
     element: GenerateAdmitCard,
     roles: ["public"],
   },
+  {
+    path: "/automation/jeemainprovisionalanswerkey",
+    element: DownloadJEEMainAnswerKeyWithpaper,
+    roles: ["public"],
+  },
   { path: "/analysis/jeemain", element: JEEMainAnalysis, roles: ["public"] },
 
   // Admin Routes
-  { path: "/admin/dashboard", element: Dashboard, roles: ["admin"] },
+  { path: "/dashboard", element: Dashboard, roles: ["admin", "moderator"] },
   { path: "/admin/batch", element: AdminBatch, roles: ["admin", "moderator"] },
   { path: "/admin/academic", element: Academic, roles: ["admin"] },
   {

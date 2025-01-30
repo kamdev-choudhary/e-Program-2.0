@@ -1,9 +1,9 @@
 import { v2 as cloudinary } from "cloudinary";
 import { unlinkSync } from "fs";
 import Book from "../models/book.js"; // Assuming the Book model is in this directory
-import response from "../utils/responses.js";
+
 import config from "../config/config.js";
-import upload from "../utils/multerConfig.js";
+import upload from "../services/multerConfig.js";
 
 cloudinary.config({
   cloud_name: config.CLOUD_NAME,
@@ -51,7 +51,7 @@ export const uploadPdf = [
       res.status(200).json({
         books,
         book: newBook,
-        ...response.success("File Uploaded Successfully and Data Saved."),
+        message: "File Uploaded Successfully and Data Saved.",
       });
     } catch (error) {
       next(error);
@@ -63,9 +63,9 @@ export async function getAllBooks(req, res, next) {
   try {
     const books = await Book.find({});
     if (books) {
-      res.status(200).json({ books, ...response.success });
+      res.status(200).json({ books });
     } else {
-      res.status(200).json({ ...response.notFound });
+      res.status(200).json({});
     }
   } catch (error) {
     next(error);
@@ -78,9 +78,9 @@ export async function deleteBook(req, res, next) {
     const deletedBook = await Book.findOneAndDelete({ _id: id });
     const books = await Book.find({});
     if (deletedBook) {
-      res.status(200).json({ books, ...response.deleted });
+      res.status(200).json({ books });
     } else {
-      res.status(200).json({ ...response.notFound() });
+      res.status(404).json({ message: "Books not Found" });
     }
   } catch (error) {
     next(error);

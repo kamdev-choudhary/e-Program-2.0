@@ -1,8 +1,7 @@
 import Batch from "../models/batch.js";
-import cloudinary from "../utils/cloudinaryConfig.js";
+import cloudinary from "../services/cloudinaryConfig.js";
 import { promisify } from "util";
 import fs from "fs";
-import response from "../utils/responses.js";
 
 const unlinkAsync = promisify(fs.unlink);
 
@@ -11,7 +10,7 @@ export async function viewBatch(req, res, next) {
     const batches = await Batch.find({}).select(
       "name, description class templateImage"
     );
-    res.status(200).json({ batches, ...response.success("Batches Found.") });
+    res.status(200).json({ batches, message: "Batches Found." });
   } catch (error) {
     next(error);
   }
@@ -50,7 +49,7 @@ export async function AddBatch(req, res, next) {
     // Respond with success
     res.status(201).json({
       batch: savedBatch,
-      ...response.created("Batch Created Successfully."),
+      message: "Batch Created Successfully.",
     });
   } catch (error) {
     // Handle errors and pass them to the next middleware
@@ -62,7 +61,7 @@ export async function getCurrBatch(req, res, next) {
   try {
     let { id } = req.params;
     const batch = await Batch.findById(id);
-    res.status(200).json({ batch, ...response.success("Batch Detail Found") });
+    res.status(200).json({ batch, message: "Batch Detail Found" });
   } catch (error) {
     next(error);
   }

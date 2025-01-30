@@ -8,7 +8,7 @@ import {
   updateUserStatus,
   getProfilePic,
 } from "../controllers/userController.js";
-import upload from "../utils/multerConfig.js";
+import upload from "../services/multerConfig.js";
 
 const router = express.Router(); // Correct instantiation of the Router
 

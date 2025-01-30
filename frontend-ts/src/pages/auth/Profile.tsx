@@ -179,7 +179,11 @@ const Profile: React.FC = () => {
       >
         <Box sx={{ minWidth: 250 }}>
           <Box>
-            <OutlinedInput type="file" onChange={handleFileChange} />
+            <OutlinedInput
+              inputProps={{ accept: "image/*" }}
+              type="file"
+              onChange={handleFileChange}
+            />
           </Box>
         </Box>
         {newProfilePic && (

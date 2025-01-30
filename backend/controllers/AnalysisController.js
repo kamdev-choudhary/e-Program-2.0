@@ -1,8 +1,10 @@
 import JEEMainOC from "../models/jeemainoc.js";
 import JEEMainMarksVsRank from "../models/jeemainMarksvsRank.js";
-import response from "../utils/responses.js";
+
 import JEEMainMarksVsPercentile from "../models/jeeMainMarksVsPercentile.js";
 import JEEMainPercentileVsRank from "../models/jeemainPercentileVsRank.js";
+import JEEAdvancedCutoff from "../models/jeeAdvancedCutoff.js";
+import message from "../models/message.js";
 
 export async function getORCRbyYear(req, res, next) {
   try {
@@ -14,7 +16,7 @@ export async function getORCRbyYear(req, res, next) {
     if (!data) {
       return res.status(200).json({ message: "Record Not Found" });
     } else {
-      return res.status(200).json({ data, ...response.success });
+      return res.status(200).json({ data });
     }
   } catch (error) {
     next(error);
@@ -29,9 +31,9 @@ export async function getJEEAdvancedORCRbyYear(req, res, next) {
     }
     const data = await JEEMainOC.find({ year, jee: "advanced" });
     if (!data) {
-      return res.status(200).json({ ...response.notFound });
+      return res.status(200).json({});
     } else {
-      return res.status(200).json({ data, ...response.success });
+      return res.status(200).json({ data });
     }
   } catch (error) {
     next(error);
@@ -47,9 +49,7 @@ export async function addNewOROC(req, res, next) {
 
     // Validate the parsed data
     if (!Array.isArray(parsedData) || parsedData.length === 0) {
-      return res
-        .status(400)
-        .json({ ...response.validation("Invalid Data Provided") });
+      return res.status(400).json({ message: "validation error" });
     }
 
     // Prepare the data for bulk insert
@@ -72,15 +72,10 @@ export async function addNewOROC(req, res, next) {
 
     res.status(201).json({
       insertedRecords,
-      ...response.created(
-        `${insertedRecords.length} records successfully inserted.`
-      ),
     });
   } catch (error) {
     if (error.code === 11000) {
-      res.status(400).json({
-        ...response.error("Error in inserting Documents"),
-      });
+      res.status(400).json({});
     } else {
       next(error);
     }
@@ -95,7 +90,7 @@ export async function deleteJeeMainMarksVsRank(req, res, next) {
     }
     const deletedData = await JEEMainMarksVsRank.findOneAndDelete({ _id: id });
     if (deletedData) {
-      res.status(200).json({ ...response.deleted("Item deleted").deletedData });
+      res.status(200).json({ deletedData });
     } else {
       res.status(404).json({ message: "Item not found" });
     }
@@ -469,6 +464,46 @@ export async function getJEEMainPercentileVsRank(req, res, next) {
     const data = await JEEMainPercentileVsRank.find({ year });
 
     return res.status(200).json({ message: "Data Found", data });
+  } catch (error) {
+    next(error);
+  }
+}
+
+// Add or Update JEE Advanced Cutoff
+export async function addOrUpdateJEEAdvancedCutoff(req, res, next) {
+  try {
+    const { data } = req.body;
+    const parsedData = JSON.parse(data);
+
+    // Find a cutoff entry with the same year and update it, or create a new one if it doesn't exist
+    const existingCutoff = await JEEAdvancedCutoff.findOneAndUpdate(
+      { year: parsedData.year }, // Search for existing data by year
+      parsedData, // Update the data with the new parsedData
+      { new: true, upsert: true } // `new: true` returns the updated document, `upsert: true` creates a new document if none exists
+    );
+
+    res.status(200).json({ message: "Data saved or updated", existingCutoff });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getJEEAdvancedCutoff(req, res, next) {
+  try {
+    const { year } = req.query;
+
+    if (year) {
+      const cutoffData = await JEEAdvancedCutoff.findOne({ year });
+
+      if (cutoffData) {
+        res.status(200).json({ data: cutoffData, message: "Data Found" });
+      } else {
+        res.status(404).json({ message: `No data found for year ${year}` });
+      }
+    } else {
+      const allCutoffData = await JEEAdvancedCutoff.find();
+      res.status(200).json({ data: allCutoffData });
+    }
   } catch (error) {
     next(error);
   }

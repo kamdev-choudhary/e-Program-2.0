@@ -1,6 +1,5 @@
 import Chat from "../models/chat.js";
 import Message from "../models/message.js";
-import response from "../utils/responses.js";
 
 export async function getAllChats(req, res, next) {
   try {
@@ -8,7 +7,7 @@ export async function getAllChats(req, res, next) {
     if (!id) {
       return res
         .status(400)
-        .json({ ...response.validation, message: "User ID is required" });
+        .json({ message: "validation error", message: "User ID is required" });
     }
 
     // Find chats where the user is a participant and populate participants
@@ -28,10 +27,10 @@ export async function getAllChats(req, res, next) {
     });
 
     if (modifiedChats.length > 0) {
-      res.status(200).json({ chats: modifiedChats, ...response.success });
+      res.status(200).json({ chats: modifiedChats, message: "Success" });
     } else {
       res.status(404).json({
-        ...response.notFound,
+        message: "validation error",
         message: "No chats found for this user",
       });
     }
@@ -47,7 +46,7 @@ export async function createChat(req, res, next) {
     // Check if both participant IDs are provided
     if (!id1 || !id2 || !content) {
       return res.status(400).json({
-        ...response.validation,
+        message: "validation error",
         message: "Participants and content are required.",
       });
     }
@@ -76,7 +75,6 @@ export async function createChat(req, res, next) {
     // Respond with success and chat and message details
     res.status(200).json({
       chats,
-      ...response.success,
     });
   } catch (error) {
     next(error);
@@ -99,9 +97,7 @@ export async function sendChat(req, res, next) {
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
-    res
-      .status(200)
-      .json({ messages, ...response.success("Message Send Successfully.") });
+    res.status(200).json({ messages, message: "Message Send Successfully." });
   } catch (error) {
     next(error);
   }
@@ -111,9 +107,9 @@ export async function getMessages(req, res, next) {
   try {
     const { id } = req.params;
     const messages = await find({ groupId: id }).lean(); // Await the query to get data
-    res.status(200).json({ messages, ...response.success });
+    res.status(200).json({ messages });
   } catch (error) {
-    res.status(500).json({ message: "Server error", ...response.serverError });
+    res.status(500).json({ message: "Server error" });
     next(error);
   }
 }

@@ -15,6 +15,11 @@ const JEEMainData: React.FC = () => {
           onChange={(_: React.SyntheticEvent, value: Number) =>
             setActiveTab(value)
           }
+          variant="scrollable" // Change to "scrollable" for scroll behavior
+          scrollButtons="auto" // Automatically show scroll buttons when needed
+          allowScrollButtonsMobile // Enable scroll buttons for mobile screens
+          textColor="secondary"
+          indicatorColor="secondary"
         >
           <Tab label="JEE Opening Closing Rank" />
           <Tab label="Main Marks Vs Percentile" />

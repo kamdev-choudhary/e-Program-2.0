@@ -8,7 +8,7 @@ import fs from "fs-extra";
 import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
 import { convertDocxToPdf } from "../utils/docToPdf.js";
-import response from "../utils/responses.js";
+import message from "../models/message.js";
 
 // Define __dirname for ES modules
 const __filename = fileURLToPath(import.meta.url);
@@ -353,7 +353,7 @@ export async function generateAdmitCard(req, res, next) {
     }
 
     res.status(200).json({
-      ...response.success("Admit Card Generated Successfully."),
+      message: "Admit Card Generated Successfully.",
     });
   } catch (error) {
     console.error("Error in generateAdmitCard:", error);

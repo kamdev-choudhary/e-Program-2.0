@@ -1,5 +1,4 @@
 import Lecture from "../models/lectures.js";
-import response from "../utils/responses.js";
 
 export async function viewLectures(req, res, next) {
   try {
@@ -67,11 +66,10 @@ export async function viewLectures(req, res, next) {
         faculties,
         chapters,
         subjects,
-        ...response.success, // Assuming `response.success` contains generic success information
       });
     } else {
       // No lectures found response
-      res.status(200).json({ ...response.notFound }); // Assuming `response.notFound` contains generic not-found information
+      res.status(200).json({ message: "Data Not Found" }); // Assuming `response.notFound` contains generic not-found information
     }
   } catch (error) {
     // Pass the error to the global error handler
@@ -90,7 +88,6 @@ export async function deleteLecture(req, res, next) {
     }
 
     res.status(200).json({
-      ...response.deleted,
       deletedLecture: deletedLecture._id,
     });
   } catch (error) {
@@ -105,9 +102,7 @@ export async function uploadLectureInfo(req, res, next) {
     if (mode === "multiple") {
       const parsedData = JSON.parse(data);
       if (!Array.isArray(parsedData) || parsedData.length === 0) {
-        return res
-          .status(400)
-          .json({ ...response.validation("invalid or empty array provided") });
+        return res.status(400).json({ message: "validation error" });
       }
       const preparedData = parsedData.map((entry) => ({
         className: entry.className,
@@ -141,9 +136,7 @@ export async function uploadLectureInfo(req, res, next) {
       });
       res.status(201).json({
         insertedRecords,
-        ...response.created(
-          `${insertedRecords.length} records successfully inserted.`
-        ),
+        message: `${insertedRecords.length} records successfully inserted.`,
       });
     } else {
       const newLecture = new Lecture({
@@ -159,7 +152,7 @@ export async function uploadLectureInfo(req, res, next) {
       await newLecture.save();
       res.status(200).json({
         newLecture,
-        ...response.created("Lecture data saved successfully"),
+        message: "Lecture data saved successfully",
       });
     }
   } catch (error) {
@@ -171,7 +164,7 @@ export async function uploadLectureInfo(req, res, next) {
 export async function getLecturesWithPagination(req, res, next) {
   try {
     const { limit, page } = req.params;
-    res.status(200).json({ ...response.success, page, limit });
+    res.status(200).json({ page, limit });
   } catch (error) {
     next(error);
   }
@@ -193,7 +186,7 @@ export async function updateLectureData(req, res, next) {
       return res.status(200).json({ message: "Lecture data not found." });
     } else {
       return res.status(200).json({
-        ...response.edited("Lecture data updated Successfully."),
+        message: "Lecture data updated Successfully.",
         updatedLecture,
       });
     }

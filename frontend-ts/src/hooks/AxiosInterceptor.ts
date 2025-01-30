@@ -34,16 +34,14 @@ instance.interceptors.response.use(
       originalRequest._retry = true;
 
       try {
-        const refreshToken = localStorage.getItem(LS_KEYS.REFRESH_TOKEN);
-        const response = await axios.post(`${API_URL}/refresh-token`, {
-          refreshToken,
-        });
-        const newToken = response.data.token;
-
-        localStorage.setItem(LS_KEYS.TOKEN, newToken);
-        originalRequest.headers.Authorization = `Bearer ${newToken}`;
-
-        return instance(originalRequest);
+        // const refreshToken = localStorage.getItem(LS_KEYS.REFRESH_TOKEN);
+        // const response = await axios.post(`${API_URL}/refresh-token`, {
+        //   refreshToken,
+        // });
+        // const newToken = response.data.token;
+        // localStorage.setItem(LS_KEYS.TOKEN, newToken);
+        // originalRequest.headers.Authorization = `Bearer ${newToken}`;
+        // return instance(originalRequest);
       } catch (refreshError) {
         localStorage.clear();
         localStorage.setItem(LS_KEYS.LOGOUT, "Session Expired. Logged out.");

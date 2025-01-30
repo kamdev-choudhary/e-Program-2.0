@@ -17,6 +17,7 @@ import {
   AssessmentRounded,
   BarChartRounded,
   SettingsSuggestRounded,
+  GradingRounded,
 } from "@mui/icons-material";
 import React from "react";
 
@@ -42,12 +43,13 @@ interface Button {
 
 export const buttons: Button[] = [
   {
-    label: "Home",
-    path: "/",
+    label: "Dashboard",
+    path: "/dashboard",
     icon: DashboardRounded,
     color: "#0073E6",
     type: "button",
-    loginRequired: false,
+    loginRequired: true,
+    role: ["admin", "moderator"],
   },
   {
     label: "Admin",
@@ -191,6 +193,13 @@ export const buttons: Button[] = [
         label: "Generate Admit Card",
         path: "/automation/jdstadmitcard",
         icon: CreateRounded,
+        loginRequired: false,
+        color: "#1976D2",
+      },
+      {
+        label: "Provisional Answer Key",
+        path: "/automation/jeemainprovisionalanswerkey",
+        icon: GradingRounded,
         loginRequired: false,
         color: "#1976D2",
       },

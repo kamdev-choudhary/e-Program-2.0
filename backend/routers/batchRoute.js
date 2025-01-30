@@ -5,7 +5,7 @@ import {
   getCurrBatch,
   AddBatch,
 } from "../controllers/batchControlller.js";
-import upload from "../utils/multerConfig.js";
+import upload from "../services/multerConfig.js";
 
 // Define routes
 router.get("/", viewBatch); // GET all batches

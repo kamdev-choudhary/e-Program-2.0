@@ -1,5 +1,5 @@
 import User from "../models/user.js";
-import cloudinary from "../utils/cloudinaryConfig.js";
+import cloudinary from "../services/cloudinaryConfig.js";
 import { promisify } from "util";
 import fs from "fs";
 

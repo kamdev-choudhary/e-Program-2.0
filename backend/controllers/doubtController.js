@@ -1,5 +1,4 @@
 import Doubt from "../models/doubt.js";
-import response from "../utils/responses.js";
 
 export async function viewDoubts(req, res, next) {
   try {
@@ -52,7 +51,7 @@ export async function saveNewDoubt(req, res, next) {
 
     if (!doubtQuestion || !description || !subject) {
       return res.status(400).json({
-        ...response.notFound("Required data is missing."),
+        message: "Required data is missing.",
       });
     }
 
@@ -60,7 +59,7 @@ export async function saveNewDoubt(req, res, next) {
     await doubt.save();
 
     res.status(201).json({
-      ...response.success("Doubt posted successfully."),
+      message: "Doubt posted successfully.",
     });
   } catch (error) {
     next(error);
@@ -116,12 +115,12 @@ export async function getDoubtDetails(req, res, next) {
 
     if (!doubt) {
       return res.status(404).json({
-        ...response.notFound("Doubt not found."),
+        message: "Doubt not found.",
       });
     }
 
     res.status(200).json({
-      ...response.success("Doubt found."),
+      message: "Doubt found.",
       doubt,
     });
   } catch (error) {

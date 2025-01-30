@@ -14,6 +14,8 @@ import {
   getJeeMainMarksVsRankMetadata,
   addOrUpdatePercentileVsRank,
   getJEEMainPercentileVsRank,
+  getJEEAdvancedCutoff,
+  addOrUpdateJEEAdvancedCutoff,
 } from "../controllers/AnalysisController.js";
 
 router.route("/jeemain/:year").get(getORCRbyYear);
@@ -39,6 +41,11 @@ router
   .route("/jeemain-percentile-vs-rank")
   .post(addOrUpdatePercentileVsRank)
   .get(getJEEMainPercentileVsRank);
+
+router
+  .route("/cutoff/jeeadvanced")
+  .post(addOrUpdateJEEAdvancedCutoff)
+  .get(getJEEAdvancedCutoff);
 
 router.route("/jeemainmarksvsrank/:id").patch(updateJeeMainMarksVsRank);
 

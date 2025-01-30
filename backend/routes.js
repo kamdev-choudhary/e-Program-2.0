@@ -10,6 +10,7 @@ import userRoute from "./routers/userRouter.js";
 import chatRoute from "./routers/chatRoute.js";
 import automationRoute from "./routers/automationRouter.js";
 import analysisRoute from "./routers/analysisRoute.js";
+import adminRoute from "./routers/adminRoute.js";
 
 import verifyToken from "./middlewares/verify-token.js";
 
@@ -19,6 +20,7 @@ const routes = (app) => {
   );
   app.use("/api/v1/auth", authRouter);
   app.use("/api/v1/user", verifyToken, userRoute);
+  app.use("/api/v1/admin", verifyToken, adminRoute);
   app.use("/api/v1/academic", verifyToken, academicRoute);
   app.use("/api/v1/lectures", verifyToken, lectureRouter);
   app.use("/api/v1/question", verifyToken, questionRouter);

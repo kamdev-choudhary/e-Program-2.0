@@ -16,6 +16,7 @@ import useSessionDetails from "../../utils/useSessionDetails";
 import Visibility from "@mui/icons-material/Visibility";
 import VisibilityOff from "@mui/icons-material/VisibilityOff";
 import axios from "../../hooks/AxiosInterceptor";
+import { useNavigate } from "react-router-dom";
 
 interface User {
   id: string;
@@ -35,6 +36,7 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const sessionDetails = useSessionDetails();
+  const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -54,6 +56,7 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
       if (response.status === 200) {
         handleUserLogin(response.data);
         dispatch({ type: "SET_AUTHPAGE", payload: false });
+        navigate("/dashboard");
       }
     } catch (error: any) {
       console.error(error);
