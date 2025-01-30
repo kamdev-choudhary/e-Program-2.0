@@ -1,7 +1,8 @@
+import { Box } from "@mui/material";
 import React from "react";
 
 const JEEAdvancedCutoff: React.FC = () => {
-  return <div>JEEAdvancedCutoff</div>;
+  return <Box>JEEAdvancedCutoff</Box>;
 };
 
 export default JEEAdvancedCutoff;
