@@ -1,6 +1,12 @@
 import React, { useState } from "react";
 import ExcelJs from "exceljs";
-import { Box, SelectChangeEvent, Grid2 as Grid, Button } from "@mui/material";
+import {
+  Box,
+  SelectChangeEvent,
+  Grid2 as Grid,
+  Button,
+  Paper,
+} from "@mui/material";
 import FileDropZone from "../../components/FileDropZone";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import CustomDropDown from "../../components/CustomDropDown";
@@ -309,40 +315,47 @@ const JEEmainAnalysis: React.FC = () => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-      <Box>
-        <FileDropZone onDrop={onDrop} acceptedExtensions={[".xlsx", ".xls"]} />
-      </Box>
-      <Box>
-        <Grid container spacing={2}>
-          <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-            <CustomDropDown
-              label="Year"
-              value={selectedYear}
-              data={[{ name: 2024, value: 2024 }]}
-              onChange={(e: SelectChangeEvent) =>
-                setSelectedYear(e.target.value)
-              }
-              name="name"
-              dropdownValue="value"
-            />
+      <Paper sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box>
+          <FileDropZone
+            onDrop={onDrop}
+            acceptedExtensions={[".xlsx", ".xls"]}
+          />
+        </Box>
+        <Box>
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+              <CustomDropDown
+                label="Year"
+                value={selectedYear}
+                data={[{ name: 2024, value: 2024 }]}
+                onChange={(e: SelectChangeEvent) =>
+                  setSelectedYear(e.target.value)
+                }
+                name="name"
+                dropdownValue="value"
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+              <CustomDropDown
+                label="Session"
+                value={selectedSession}
+                data={[{ name: "January", value: "January (01)" }]}
+                onChange={(e: SelectChangeEvent) =>
+                  setSelectedSession(e.target.value)
+                }
+                name="name"
+                dropdownValue="value"
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+              <Button variant="contained" onClick={handleReadyForPrediction}>
+                Calculate Prediction
+              </Button>
+            </Grid>
           </Grid>
-          <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-            <CustomDropDown
-              label="Session"
-              value={selectedSession}
-              data={[{ name: "January", value: "January (01)" }]}
-              onChange={(e: SelectChangeEvent) =>
-                setSelectedSession(e.target.value)
-              }
-              name="name"
-              dropdownValue="value"
-            />
-          </Grid>
-          <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-            <Button onClick={handleReadyForPrediction}>Calculate</Button>
-          </Grid>
-        </Grid>
-      </Box>
+        </Box>
+      </Paper>
       <Box>
         <DataGrid
           loading={isLoading}

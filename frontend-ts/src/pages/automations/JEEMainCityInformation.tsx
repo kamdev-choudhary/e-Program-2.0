@@ -1,44 +1,45 @@
 import {
   Box,
   Button,
+  Typography,
+  IconButton,
   CircularProgress,
   Divider,
-  Paper,
-  ToggleButton,
 } from "@mui/material";
-import React, { useMemo, useState } from "react";
+import React, { useState } from "react";
+import { useDropzone } from "react-dropzone";
 import ExcelJS from "exceljs";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import {
   CloudDownloadRounded,
+  CloudUploadRounded,
   DownloadRounded,
+  LaunchRounded,
+  PictureAsPdfRounded,
   TableChartRounded,
 } from "@mui/icons-material";
 import { CustomToolbar } from "../../components/CustomToolbar";
-import { downloadJsonToExcel } from "../../utils/commonfs";
-import FileDropZone from "../../components/FileDropZone";
+import { downloadJsonToExcel, downloadPdfFromUrl } from "../../utils/commonfs";
 import axios from "../../hooks/AxiosInterceptor";
 
 interface ScholarData {
   drn: string;
+  day: string;
+  month: string;
   application: string;
-  password?: string;
+  year: string;
+  pdfUrl: string;
   city: string;
+  date: string;
+  name?: string;
   status?: string;
-  date?: string;
-  shift?: string;
-  timing?: string;
-  center?: string;
-  address?: string;
-  error: string;
 }
 
-const DownloadJEEMainAnswerKeyWithpaper: React.FC = () => {
+const JEEMainCityInfo: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [jsonData, setJsonData] = useState<ScholarData[] | null>(null);
-  const [selectedStatus, setSelectedStatus] = useState<string>("");
 
-  const handleDownloadAdmitCard = async (scholar: ScholarData) => {
+  const handleDownloadCityInfo = async (scholar: ScholarData) => {
     try {
       setJsonData((prevData) => {
         if (!prevData) return null; // If jsonData is null, maintain null state
@@ -47,32 +48,31 @@ const DownloadJEEMainAnswerKeyWithpaper: React.FC = () => {
             ? {
                 ...item,
                 status: "loading",
-                error: "",
               }
             : item
         );
       });
       // Request to get the PDF file path
-      const response = await axios.post("/automation/jee/admitcard", {
+      const response = await axios.post("/automation/jee/cityinfo", {
         drn: scholar.drn,
+        day: scholar.day,
+        month: scholar.month,
+        year: scholar.year,
         applicationNumber: scholar.application,
-        password: scholar.password,
       });
 
-      if (response.data.success) {
+      if (response.data?.pdfUrl) {
         setJsonData((prevData) => {
           if (!prevData) return null; // If jsonData is null, maintain null state
           return prevData.map((item) =>
             item.drn === scholar.drn
               ? {
                   ...item,
+                  pdfUrl: response.data.pdfUrl,
                   date: response.data.date,
+                  city: response.data.city,
                   error: "",
                   status: "fetched",
-                  shift: response.data.shift,
-                  timing: response.data.timing,
-                  center: response.data.center,
-                  address: response.data.address,
                 }
               : item
           );
@@ -92,6 +92,7 @@ const DownloadJEEMainAnswerKeyWithpaper: React.FC = () => {
         });
       }
     } catch (error: any) {
+      console.error("Error downloading the PDF:", error);
       setJsonData((prevData) => {
         if (!prevData) return null; // If jsonData is null, maintain null state
         const errorMessage = error?.response?.data?.message || "Unknown error";
@@ -108,13 +109,31 @@ const DownloadJEEMainAnswerKeyWithpaper: React.FC = () => {
     }
   };
 
+  const handleDownloadAddPdf = async () => {
+    try {
+      if (jsonData) {
+        // Use Promise.all to wait for all promises to resolve
+        await Promise.all(
+          jsonData.map(async (data) => {
+            if (data.pdfUrl) {
+              await handleDownloadCityInfo(data);
+            }
+          })
+        );
+      }
+    } catch (error) {
+      console.error("Error handling download info:", error);
+    }
+  };
+
   const handleDownloadInfo = async () => {
     try {
       if (jsonData) {
         await Promise.all(
           jsonData.map(async (data) => {
-            if (!data.center && data?.status === "idle") {
-              await handleDownloadAdmitCard(data);
+            if (!data.pdfUrl && data?.status === "idle") {
+              // Fetch the missing PDF URL if not available
+              await handleDownloadCityInfo(data);
             }
           })
         );
@@ -167,16 +186,15 @@ const DownloadJEEMainAnswerKeyWithpaper: React.FC = () => {
 
           return {
             drn: rowData.drn || "",
+            day: rowData.day || "",
+            month: rowData.month || "",
+            year: rowData.year || "",
             application: rowData.application || "",
-            password: rowData.password || "",
+            pdfUrl: rowData.pdfUrl || "",
             city: rowData.city || "",
             date: rowData.date || "",
             error: "",
             status: "idle",
-            shift: "",
-            timing: "",
-            center: "",
-            address: "",
           };
         });
 
@@ -190,6 +208,17 @@ const DownloadJEEMainAnswerKeyWithpaper: React.FC = () => {
 
     reader.readAsArrayBuffer(file);
   };
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    accept: {
+      "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet": [
+        ".xlsx",
+      ],
+      "application/vnd.ms-excel": [".xls"],
+    },
+    multiple: false,
+  });
 
   const handleProcessRowUpdate = (
     newRow: ScholarData,
@@ -209,6 +238,13 @@ const DownloadJEEMainAnswerKeyWithpaper: React.FC = () => {
 
   const columns: GridColDef[] = [
     {
+      field: "id",
+      headerName: "SN",
+      width: 80,
+      align: "center",
+      headerAlign: "center",
+    },
+    {
       field: "drn",
       headerName: "Dakshana Roll #",
       width: 150,
@@ -225,17 +261,8 @@ const DownloadJEEMainAnswerKeyWithpaper: React.FC = () => {
       flex: 1,
     },
     {
-      field: "password",
-      headerName: "Password",
-      minWidth: 150,
-      align: "center",
-      headerAlign: "center",
-      editable: true,
-      flex: 1,
-    },
-    {
-      field: "timing",
-      headerName: "Timimg",
+      field: "name",
+      headerName: "Name",
       minWidth: 200,
       align: "center",
       headerAlign: "center",
@@ -243,8 +270,8 @@ const DownloadJEEMainAnswerKeyWithpaper: React.FC = () => {
       flex: 1,
     },
     {
-      field: "date",
-      headerName: "Date",
+      field: "day",
+      headerName: "Day",
       minWidth: 80,
       align: "center",
       headerAlign: "center",
@@ -252,8 +279,8 @@ const DownloadJEEMainAnswerKeyWithpaper: React.FC = () => {
       flex: 1,
     },
     {
-      field: "shift",
-      headerName: "Shift",
+      field: "month",
+      headerName: "Month",
       minWidth: 80,
       align: "center",
       headerAlign: "center",
@@ -261,13 +288,69 @@ const DownloadJEEMainAnswerKeyWithpaper: React.FC = () => {
       flex: 1,
     },
     {
-      field: "address",
-      headerName: "Address",
+      field: "year",
+      headerName: "Year",
       minWidth: 100,
       align: "center",
       headerAlign: "center",
       editable: true,
       flex: 1,
+    },
+    {
+      field: "city",
+      headerName: "City",
+      minWidth: 150,
+      align: "center",
+      headerAlign: "center",
+      flex: 1,
+    },
+    {
+      field: "date",
+      headerName: "Exam Date",
+      flex: 1,
+      minWidth: 150,
+      align: "center",
+      headerAlign: "center",
+    },
+    {
+      field: "d",
+      headerName: "PDF",
+      align: "center",
+      headerAlign: "center",
+      minWidth: 200,
+      flex: 1,
+      renderCell: (params) => (
+        <>
+          <Box
+            sx={{ display: "flex", gap: 1, justifyContent: "center", mt: 0.5 }}
+          >
+            {/* Open PDF Button */}
+            <IconButton
+              component="a"
+              href={params.row.pdfUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              disabled={!params.row.pdfUrl}
+            >
+              <LaunchRounded sx={{ color: params.row.pdfUrl ? "blue" : "" }} />
+            </IconButton>
+            {/* Download PDF Button */}
+            <IconButton
+              disabled={!params.row.pdfUrl}
+              onClick={() =>
+                downloadPdfFromUrl(
+                  params.row.pdfUrl,
+                  `${params.row.application}`
+                )
+              }
+            >
+              <DownloadRounded
+                sx={{ color: params.row.pdfUrl ? "green" : "" }}
+              />
+            </IconButton>
+          </Box>
+        </>
+      ),
     },
     {
       field: "pdfDownload",
@@ -278,33 +361,23 @@ const DownloadJEEMainAnswerKeyWithpaper: React.FC = () => {
       flex: 1,
       renderCell: (params) => (
         <>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              alignItems: "center",
-              width: "100%", // Ensure it spans the full cell width
-              height: "100%", // Ensure it spans the full cell height
-            }}
+          <Button
+            onClick={() => handleDownloadCityInfo(params.row)}
+            startIcon={
+              params.row.status === "loading" ? (
+                <CircularProgress size={20} />
+              ) : (
+                <CloudDownloadRounded />
+              )
+            }
+            color="success"
+            disabled={
+              params.row.status === "fetched" || params.row.status === "loading"
+            }
+            variant="outlined"
           >
-            <Button
-              onClick={() => handleDownloadAdmitCard(params.row)}
-              startIcon={
-                params.row.status === "loading" ? (
-                  <CircularProgress size={20} />
-                ) : (
-                  <CloudDownloadRounded />
-                )
-              }
-              disabled={
-                params.row.status === "fetched" ||
-                params.row.status === "loading"
-              }
-              variant="outlined"
-            >
-              {params.row.status === "loading" ? "loading" : "Fetch Data"}
-            </Button>
-          </Box>
+            {params.row.status === "loading" ? "loading" : "Fetch Data"}
+          </Button>
         </>
       ),
     },
@@ -322,144 +395,104 @@ const DownloadJEEMainAnswerKeyWithpaper: React.FC = () => {
     },
   ];
 
-  const filteredData = useMemo(() => {
-    if (!jsonData) return [];
-
-    return jsonData
-      .filter((data) => {
-        if (selectedStatus === "loading" || selectedStatus === "fetched") {
-          return data.status === selectedStatus;
-        } else if (selectedStatus === "error") {
-          return data.error !== "";
-        } else {
-          return true; // Include all data for other cases
-        }
-      })
-      .map((data, index) => ({
-        ...data,
-        id: index + 1, // Add an id field based on the index (1-based)
-      }));
-  }, [jsonData, selectedStatus]);
-
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-      <Paper sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-          <FileDropZone onDrop={onDrop} acceptedExtensions={[".xlsx", "xls"]} />
-          <Box
-            sx={{
-              display: "flex",
-              gap: 1,
-
-              flexWrap: "wrap",
-            }}
-          >
-            <Button
-              sx={{ px: 3 }}
-              variant="contained"
-              onClick={handleDownloadInfo}
-              disabled={isLoading || !jsonData}
-              startIcon={<CloudDownloadRounded sx={{ color: "#fff" }} />}
-            >
-              {isLoading ? "Loading..." : "Fetch Data"} (
-              {jsonData?.filter((data) => !data.center).length})
-            </Button>
-            <Button
-              startIcon={<TableChartRounded />}
-              sx={{ px: 3 }}
-              variant="contained"
-              disabled={!jsonData}
-              onClick={() => {
-                if (jsonData) {
-                  downloadJsonToExcel({
-                    jsonData: jsonData,
-                    fileName: "JEE Main City Info",
-                  });
-                }
-              }}
-            >
-              Download Excel ({jsonData?.filter((data) => data.center).length})
-            </Button>
-
-            <Button
-              startIcon={<DownloadRounded />}
-              variant="contained"
-              component="a"
-              href="/jee_main_admit_card_sample.xlsx"
-              download
-            >
-              Sample
-            </Button>
-          </Box>
+    <Box>
+      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+        <Box
+          {...getRootProps()}
+          sx={{
+            border: "1px dashed #1976d2",
+            borderRadius: 20,
+            cursor: "pointer",
+            flexGrow: 1,
+            alignContent: "center",
+            p: 1,
+            display: "flex",
+            justifyContent: "center",
+          }}
+        >
+          <input {...getInputProps()} />
+          <CloudUploadRounded sx={{ mr: 1 }} />
+          <Typography variant="body1">
+            Drag & drop an Excel file here, or click to select a file
+          </Typography>
         </Box>
-        <Divider />
         <Box
           sx={{
             display: "flex",
-            justifyContent: "space-between",
-            overflow: "auto",
+            gap: 1,
+
+            flexWrap: "wrap",
           }}
         >
-          <ToggleButton
-            value="total"
+          <Button
+            sx={{ px: 3 }}
+            variant="contained"
+            onClick={handleDownloadInfo}
+            disabled={isLoading || !jsonData}
+            startIcon={<CloudDownloadRounded sx={{ color: "#fff" }} />}
+          >
+            {isLoading ? "Loading..." : "Fetch Data"} (
+            {jsonData?.filter((data) => !data.pdfUrl).length})
+          </Button>
+          <Button
+            startIcon={<TableChartRounded />}
+            sx={{ px: 3 }}
+            variant="contained"
+            disabled={!jsonData}
+            onClick={() => {
+              if (jsonData) {
+                downloadJsonToExcel({
+                  jsonData: jsonData,
+                  fileName: "JEE Main City Info",
+                });
+              }
+            }}
+          >
+            Download Excel ({jsonData?.filter((data) => data.pdfUrl).length})
+          </Button>
+          <Button
+            variant="contained"
             color="success"
-            aria-label="Platform"
-            selected={selectedStatus === ""}
-            onClick={() => setSelectedStatus("")}
-            sx={{ px: 4, minWidth: 150 }}
+            startIcon={<PictureAsPdfRounded sx={{ color: "#fff" }} />}
+            onClick={handleDownloadAddPdf}
+            sx={{ px: 3 }}
+            disabled={
+              !jsonData ||
+              jsonData.filter((data) => data?.pdfUrl?.trim() !== "").length ===
+                0
+            }
           >
-            <strong>Total &nbsp;&nbsp;</strong> ({jsonData?.length || 0})
-          </ToggleButton>
-          <ToggleButton
-            value="total"
-            color="primary"
-            aria-label="Platform"
-            selected={selectedStatus === "fetched"}
-            onClick={() => setSelectedStatus("fetched")}
-            sx={{ px: 4, minWidth: 150 }}
+            Download PDF
+          </Button>
+          <Button
+            startIcon={<DownloadRounded />}
+            variant="contained"
+            component="a"
+            href="/sample1.xlsx"
+            download
           >
-            <strong>fetched &nbsp;&nbsp;</strong> (
-            {jsonData?.filter((item) => item.status === "fetched").length || 0})
-          </ToggleButton>
-          <ToggleButton
-            value="total"
-            aria-label="Platform"
-            selected={selectedStatus === "loading"}
-            onClick={() => setSelectedStatus("loading")}
-            sx={{ px: 4, minWidth: 150 }}
-          >
-            <strong>Loading &nbsp;&nbsp;</strong> (
-            {jsonData?.filter((item) => item.status === "loading").length || 0})
-          </ToggleButton>
-          <ToggleButton
-            value="total"
-            color="error"
-            aria-label="Platform"
-            selected={selectedStatus === "error"}
-            onClick={() => setSelectedStatus("error")}
-            sx={{ px: 4, minWidth: 150 }}
-          >
-            <strong>Error &nbsp;&nbsp;</strong> (
-            {jsonData?.filter((item) => item?.error !== "").length || 0})
-          </ToggleButton>
+            Sample
+          </Button>
         </Box>
-      </Paper>
-
-      <Box>
+      </Box>
+      <Divider sx={{ mt: 2 }} />
+      <Box sx={{ mt: 2 }}>
         <DataGrid
           slots={{
             toolbar: () => <CustomToolbar showAddButton={false} />,
           }}
           columns={columns}
-          rows={filteredData || []}
+          rows={jsonData || []}
           loading={isLoading}
           processRowUpdate={handleProcessRowUpdate}
           initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
           pageSizeOptions={[10, 30, 50, 100, 200]}
+          getRowId={(row) => row.drn}
         />
       </Box>
     </Box>
   );
 };
 
-export default DownloadJEEMainAnswerKeyWithpaper;
+export default JEEMainCityInfo;

@@ -436,6 +436,7 @@ const Lectures: React.FC = () => {
       >
         <YouTubeVideoPlayer
           videoId={getYouTubeId(selectedLecture?.link || "") || ""}
+          data={null}
         />
       </CustomModal>
 

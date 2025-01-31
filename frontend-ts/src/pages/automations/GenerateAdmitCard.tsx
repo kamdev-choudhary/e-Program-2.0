@@ -21,7 +21,7 @@ import axios from "../../hooks/AxiosInterceptor";
 // Dynamic interface using Record
 type ScholarData = Record<string, any>;
 
-const DownloadAdmitCard: React.FC = () => {
+const GenerateAdmitCard: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [jsonData, setJsonData] = useState<ScholarData[]>([]);
   const [columns, setColumns] = useState<GridColDef[]>([]);
@@ -385,4 +385,4 @@ const DownloadAdmitCard: React.FC = () => {
   );
 };
 
-export default DownloadAdmitCard;
+export default GenerateAdmitCard;

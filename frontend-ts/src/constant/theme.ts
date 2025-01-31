@@ -77,6 +77,17 @@ const getTheme = (mode: "light" | "dark") => {
     components: {
       MuiButton: {
         variants: [
+          // Primary variant is handled in styleOverrides.contained
+          // Secondary variant
+          {
+            props: { variant: "contained", color: "secondary" },
+            style: {
+              background: isLight
+                ? "linear-gradient(135deg, #FF4D7A, #FF6B8F)"
+                : "linear-gradient(135deg, #FF7D9D, #FF95B0)",
+            },
+          },
+          // Success variant
           {
             props: { variant: "contained", color: "success" },
             style: {
@@ -85,6 +96,7 @@ const getTheme = (mode: "light" | "dark") => {
                 : "linear-gradient(135deg, #00E18A, #00F5A0)",
             },
           },
+          // Error variant
           {
             props: { variant: "contained", color: "error" },
             style: {
@@ -93,15 +105,35 @@ const getTheme = (mode: "light" | "dark") => {
                 : "linear-gradient(135deg, #FF6B7F, #FF8494)",
             },
           },
+          // Warning variant
           {
-            props: { disabled: true }, // Add a disabled variant
+            props: { variant: "contained", color: "warning" },
             style: {
-              background: isLight ? "#E0E0E0" : "#616161", // Greyish background
-              color: isLight ? "#9E9E9E" : "#BDBDBD", // Greyish text color
-              opacity: 0.7, // Reduce opacity for a faded look
-              cursor: "not-allowed", // Change cursor to indicate disabled state
+              background: isLight
+                ? "linear-gradient(135deg, #FF9F0A, #FFAF2A)"
+                : "linear-gradient(135deg, #FFB740, #FFC750)",
+            },
+          },
+          // Info variant
+          {
+            props: { variant: "contained", color: "info" },
+            style: {
+              background: isLight
+                ? "linear-gradient(135deg, #00A3FF, #00B3FF)"
+                : "linear-gradient(135deg, #00C7FF, #00D7FF)",
+            },
+          },
+          // Tertiary variant (custom color)
+          {
+            props: { disabled: true },
+            style: {
+              background: isLight ? "#F0F0F0" : "#424242",
+              color: isLight ? "#B0B0B0" : "#757575",
+              transform: "none !important",
+              boxShadow: "none !important",
+              cursor: "not-allowed",
               "&:hover": {
-                background: isLight ? "#E0E0E0" : "#616161", // Keep the same background on hover
+                background: isLight ? "#F0F0F0" : "#424242",
               },
             },
           },
@@ -268,8 +300,8 @@ const getTheme = (mode: "light" | "dark") => {
       MuiDataGrid: {
         styleOverrides: {
           root: {
-            border: "1px solid rgab(0,0,0,0.5)",
-            borderRadius: 24,
+            border: "1px solid rgab(0,0,0,0.3)",
+            borderRadius: 16,
             overflow: "hidden",
             background: isLight
               ? "rgba(255, 255, 255, 0.8)"
@@ -280,18 +312,17 @@ const getTheme = (mode: "light" | "dark") => {
               ? "0 4px 6px rgba(0, 100, 68, 0.08)"
               : "0 4px 10px rgba(0, 225, 138, 0.12)",
 
-            "& .MuiDataGrid-columnHeaders": {
+            "& .MuiDataGrid-columnHeader": {
               background: isLight
                 ? "linear-gradient(135deg, rgba(42, 92, 255, 0.12), rgba(66, 135, 255, 0.08))"
                 : "linear-gradient(135deg, rgba(108, 142, 255, 0.24), rgba(138, 169, 255, 0.16))",
-              borderRadius: 16,
               borderBottom: `1px solid ${
                 isLight ? "rgba(10, 15, 36, 0.08)" : "rgba(249, 250, 255, 0.08)"
               }`,
             },
 
             "& .MuiDataGrid-row": {
-              transition: "all 0.2s ease",
+              transition: "all 0.1s ease",
               "&:hover": {
                 background: isLight
                   ? "rgba(42, 92, 255, 0.04)"
@@ -301,7 +332,7 @@ const getTheme = (mode: "light" | "dark") => {
                 background: isLight
                   ? "rgba(42, 92, 255, 0.08)"
                   : "rgba(108, 142, 255, 0.16)",
-                borderLeft: `4px solid ${isLight ? "#2A5CFF" : "#6C8EFF"}`,
+                borderLeft: `2px solid ${isLight ? "#2A5CFF" : "#6C8EFF"}`,
               },
             },
 
@@ -345,7 +376,21 @@ const getTheme = (mode: "light" | "dark") => {
         },
       },
 
-      // ... keep other component customizations from previous version
+      MuiToggleButton: {
+        styleOverrides: {
+          root: {
+            borderRadius: 20,
+          },
+        },
+        defaultProps: { size: "small" },
+      },
+      MuiListItemButton: {
+        styleOverrides: {
+          root: {
+            borderRadius: 10,
+          },
+        },
+      },
     },
   });
 };

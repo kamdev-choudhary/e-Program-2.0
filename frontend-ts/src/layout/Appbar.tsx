@@ -166,6 +166,7 @@ const Appbar: React.FC<HeaderProps> = ({
                 handleMenuClose();
               }}
               variant="contained"
+              color="secondary"
             >
               Update Password
             </Button>

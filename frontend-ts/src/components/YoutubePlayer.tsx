@@ -7,12 +7,34 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import YouTube from "react-youtube";
+import YouTube, { YouTubeEvent, YouTubePlayer } from "react-youtube";
+
+interface Lecture {
+  _id: string;
+  title: string;
+  subject: string;
+  className: string;
+  chapter: string;
+  topic: string;
+  link: string;
+  linkType: string;
+  facultyName: string;
+  lectureNumber: string;
+}
 
 interface YouTubeVideoPlayerProps {
   videoId: string;
-  data?: { subject?: string };
+  data: Lecture | null;
 }
+
+const PLAYER_STATES = {
+  UNSTARTED: -1,
+  ENDED: 0,
+  PLAYING: 1,
+  PAUSED: 2,
+  BUFFERING: 3,
+  CUED: 5,
+};
 
 const YouTubeVideoPlayer: React.FC<YouTubeVideoPlayerProps> = ({
   videoId,
@@ -24,40 +46,33 @@ const YouTubeVideoPlayer: React.FC<YouTubeVideoPlayerProps> = ({
 
   const theme = useTheme();
 
-  const PLAYER_STATES = {
-    UNSTARTED: -1,
-    ENDED: 0,
-    PLAYING: 1,
-    PAUSED: 2,
-    BUFFERING: 3,
-    CUED: 5,
-  };
-
-  const handleStateChange = useCallback((event: any) => {
+  const handleStateChange = useCallback((event: YouTubeEvent<number>) => {
     setIsPlaying(event.data === PLAYER_STATES.PLAYING);
   }, []);
 
-  const handleOnReady = useCallback((event: any) => {
+  const handleOnReady = useCallback((event: YouTubeEvent<YouTubePlayer>) => {
     const player = event.target;
-    setVideoTitle(player.getVideoData().title);
-    setVideoDuration(player.getDuration());
+    const title = player.getVideoData().title;
+    const duration = player.getDuration();
+
+    if (title) setVideoTitle(title);
+    if (duration) setVideoDuration(duration);
   }, []);
 
   const formatDuration = (seconds: number | null) => {
-    if (seconds === null) return "";
+    if (seconds === null) return "Unknown";
     const minutes = Math.floor(seconds / 60);
-    const remainingSeconds = seconds % 60;
+    const remainingSeconds = Math.floor(seconds % 60);
     return `${minutes}:${remainingSeconds < 10 ? "0" : ""}${remainingSeconds}`;
   };
 
   return (
     <Box sx={{ width: "100%", maxWidth: "800px", mx: "auto" }}>
-      {/* Video Container with Aspect Ratio (16:9) */}
+      {/* Video Container */}
       <Box
         sx={{
           position: "relative",
-          width: "100%",
-          pt: "56.25%", // 16:9 Aspect Ratio
+          paddingTop: "56.25%", // 16:9 aspect ratio
           borderRadius: "12px",
           overflow: "hidden",
           boxShadow: theme.shadows[3],
@@ -78,8 +93,7 @@ const YouTubeVideoPlayer: React.FC<YouTubeVideoPlayerProps> = ({
             onReady={handleOnReady}
             opts={{
               width: "100%",
-              height: "100%",
-
+              height: "450",
               playerVars: {
                 autoplay: 0,
                 controls: 1,
@@ -89,7 +103,7 @@ const YouTubeVideoPlayer: React.FC<YouTubeVideoPlayerProps> = ({
         </Box>
       </Box>
 
-      {/* Video Details Card */}
+      {/* Video Details */}
       <Card sx={{ mt: 2, p: 2 }}>
         <CardContent>
           <Typography variant="h6">{videoTitle || "Loading..."}</Typography>

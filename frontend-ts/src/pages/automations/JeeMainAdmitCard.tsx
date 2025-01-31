@@ -34,7 +34,7 @@ interface ScholarData {
   rollNumber: string;
 }
 
-const DownloadAdmitCard: React.FC = () => {
+const JEEMainAdmitCard: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [jsonData, setJsonData] = useState<ScholarData[] | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
@@ -509,4 +509,4 @@ const DownloadAdmitCard: React.FC = () => {
   );
 };
 
-export default DownloadAdmitCard;
+export default JEEMainAdmitCard;

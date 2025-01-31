@@ -33,7 +33,7 @@ const UrlSegmentsProgress: React.FC = () => {
           },
         }}
       >
-        <HomeIcon font sx={{ marginRight: 0.5 }} />
+        <HomeIcon sx={{ marginRight: 0.5 }} />
         Home
       </MuiLink>
       {urlSegments.map((segment, index) => {
