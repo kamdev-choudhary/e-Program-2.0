@@ -173,6 +173,9 @@ const JEEAdvancedAnalysis: React.FC = () => {
             <IconButton
               color="success"
               sx={{ border: "1px solid rgba(0,0,0,0.2)" }}
+              component="a" // Use the `a` tag as the root element
+              href="/marksheet.xlsx" // Link to the file in the public folder
+              download // Ensure the file is downloaded
             >
               <DownloadRounded />
             </IconButton>
