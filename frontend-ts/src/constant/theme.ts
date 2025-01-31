@@ -269,7 +269,7 @@ const getTheme = (mode: "light" | "dark") => {
             zIndex: 1,
             textTransform: "none",
             fontWeight: 600,
-            padding: "12px 24px",
+            padding: "1px 24px",
             borderRadius: 32,
             transition: "all 0.2s",
             "&.Mui-selected": {
@@ -314,8 +314,8 @@ const getTheme = (mode: "light" | "dark") => {
 
             "& .MuiDataGrid-columnHeader": {
               background: isLight
-                ? "linear-gradient(135deg, rgba(42, 92, 255, 0.12), rgba(66, 135, 255, 0.08))"
-                : "linear-gradient(135deg, rgba(108, 142, 255, 0.24), rgba(138, 169, 255, 0.16))",
+                ? "linear-gradient(0, rgba(42, 92, 255, 0.12), rgba(66, 135, 255, 0.08))"
+                : "linear-gradient(0, rgba(108, 142, 255, 0.24), rgba(138, 169, 255, 0.16))",
               borderBottom: `1px solid ${
                 isLight ? "rgba(10, 15, 36, 0.08)" : "rgba(249, 250, 255, 0.08)"
               }`,

@@ -138,6 +138,13 @@ const UserMaster: React.FC = () => {
   const handleStatusChange = async (user: UserProps) => {
     try {
       const response = await axios.patch(`/user/status/${user._id}`);
+      if (response.status === 200) {
+        showNotification({
+          message: "User Status Changes",
+
+          type: "info",
+        });
+      }
       setUsers((prevData) => {
         if (!prevData) return null;
         return prevData.map((admin) =>

@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   CircularProgress,
+  Divider,
   Paper,
   ToggleButton,
 } from "@mui/material";
@@ -389,59 +390,60 @@ const JEEMainAdmitCard: React.FC = () => {
   }, [jsonData]);
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-      <Box component={Paper} sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-        <FileDropZone onDrop={onDrop} acceptedExtensions={[".xlsx", "xls"]} />
-        <Box
-          sx={{
-            display: "flex",
-            gap: 1,
+      <Paper sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+          <FileDropZone onDrop={onDrop} acceptedExtensions={[".xlsx", "xls"]} />
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1,
 
-            flexWrap: "wrap",
-          }}
-        >
-          <Button
-            sx={{ px: 3 }}
-            variant="contained"
-            onClick={handleDownloadInfo}
-            disabled={isLoading || !jsonData}
-            startIcon={<CloudDownloadRounded sx={{ color: "#fff" }} />}
-          >
-            {isLoading ? "Loading..." : "Fetch Data"} (
-            {jsonData?.filter((data) => !data.center).length})
-          </Button>
-          <Button
-            startIcon={<TableChartRounded />}
-            sx={{ px: 3 }}
-            variant="contained"
-            disabled={!jsonData}
-            onClick={() => {
-              if (jsonData) {
-                downloadJsonToExcel({
-                  jsonData: jsonData,
-                  fileName: "JEE Main AdmitCard Info",
-                });
-              }
+              flexWrap: "wrap",
             }}
           >
-            Download Excel ({jsonData?.filter((data) => data.center).length})
-          </Button>
+            <Button
+              sx={{ px: 3 }}
+              variant="contained"
+              onClick={handleDownloadInfo}
+              disabled={isLoading || !jsonData}
+              startIcon={<CloudDownloadRounded sx={{ color: "#fff" }} />}
+            >
+              {isLoading ? "Loading..." : "Fetch Data"} (
+              {jsonData?.filter((data) => !data.center).length})
+            </Button>
+            <Button
+              startIcon={<TableChartRounded />}
+              sx={{ px: 3 }}
+              variant="contained"
+              disabled={!jsonData}
+              onClick={() => {
+                if (jsonData) {
+                  downloadJsonToExcel({
+                    jsonData: jsonData,
+                    fileName: "JEE Main AdmitCard Info",
+                  });
+                }
+              }}
+            >
+              Download Excel ({jsonData?.filter((data) => data.center).length})
+            </Button>
 
-          <Button
-            startIcon={<DownloadRounded />}
-            variant="contained"
-            component="a"
-            href="/jee_main_admit_card_sample.xlsx"
-            download
-          >
-            Sample
-          </Button>
+            <Button
+              startIcon={<DownloadRounded />}
+              variant="contained"
+              component="a"
+              href="/jee_main_admit_card_sample.xlsx"
+              download
+            >
+              Sample
+            </Button>
+          </Box>
         </Box>
-      </Box>
-      <Paper sx={{ p: 0 }}>
+        <Divider />
         <Box
           sx={{
             display: "flex",
-            p: 1.5,
+
             gap: 2,
             justifyContent: "space-between",
             px: 2,
@@ -492,6 +494,7 @@ const JEEMainAdmitCard: React.FC = () => {
           </ToggleButton>
         </Box>
       </Paper>
+
       <Box>
         <DataGrid
           slots={{
