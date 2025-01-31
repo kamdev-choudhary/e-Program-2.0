@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import Sidebar from "./Sidebar";
-import Header from "./Header";
+import Appbar from "./Appbar";
 import { Box, useMediaQuery, Drawer } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import PopUpPages from "./PopUpPages";
@@ -19,7 +19,7 @@ const MasterLayout: React.FC = () => {
         backgroundColor: "background.bg",
       }}
     >
-      <Header
+      <Appbar
         handleButtonClick={() => {
           isSmallScreen
             ? setOpenDrawer((prev) => !prev)

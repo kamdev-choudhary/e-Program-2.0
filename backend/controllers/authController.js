@@ -61,7 +61,7 @@ export async function register(req, res, next) {
       email,
       password = "Password",
       mobile,
-      role = "student",
+      role = "scholar",
       method,
     } = req.body;
 
@@ -110,7 +110,7 @@ export async function registerByAdmin(req, res, next) {
   try {
     const { name, email, mobile, password = "Password", role } = req.body;
 
-    if (!role || !["admin", "student", "moderator"].includes(role)) {
+    if (!role || !["admin", "scholar", "moderator"].includes(role)) {
       return res.status(400).json({ message: "Invalid or missing role." });
     }
 

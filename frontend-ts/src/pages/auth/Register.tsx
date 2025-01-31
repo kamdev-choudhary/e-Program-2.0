@@ -92,7 +92,7 @@ const Register: React.FC<RegisterProps> = ({ setActiveTab }) => {
         alignItems: "center",
         flexDirection: "column",
         p: 1,
-        maxWidth: 350,
+        maxWidth: 400,
       }}
     >
       <Typography variant="h5" gutterBottom>

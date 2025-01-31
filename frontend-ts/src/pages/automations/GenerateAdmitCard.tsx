@@ -1,8 +1,9 @@
 import {
   Box,
   Button,
-  Card,
   CircularProgress,
+  Divider,
+  Paper,
   ToggleButton,
 } from "@mui/material";
 import React, { useMemo, useState } from "react";
@@ -115,7 +116,7 @@ const DownloadAdmitCard: React.FC = () => {
       });
 
       const response = await axios.post("/automation/generate/admitcard", {
-        student: scholar,
+        scholar: scholar,
       });
 
       if (response.data?.status_code === 1) {
@@ -276,51 +277,47 @@ const DownloadAdmitCard: React.FC = () => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-        <FileDropZone onDrop={onDrop} acceptedExtensions={[".xlsx", "xls"]} />
-        <Box
-          sx={{
-            display: "flex",
-            gap: 1,
-            flexWrap: "wrap",
-          }}
-        >
-          <Button
-            sx={{ px: 3 }}
-            variant="contained"
-            onClick={handleDownloadInfo}
-            disabled={isLoading || !jsonData}
-            startIcon={<ManageHistoryRounded />}
+      <Paper sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+          <FileDropZone onDrop={onDrop} acceptedExtensions={[".xlsx", "xls"]} />
+          <Box
+            sx={{
+              display: "flex",
+              gap: 1,
+              flexWrap: "wrap",
+            }}
           >
-            {isLoading ? "Loading..." : "Generate All"}
-          </Button>
-          <Button
-            onClick={() =>
-              downloadJsonToExcel({
-                jsonData: jsonData,
-                fileName: "Admit_card_generation_report",
-              })
-            }
-            variant="contained"
-            startIcon={<StackedBarChartRounded />}
-          >
-            Download Report
-          </Button>
+            <Button
+              sx={{ px: 3 }}
+              variant="contained"
+              onClick={handleDownloadInfo}
+              disabled={isLoading || !jsonData}
+              startIcon={<ManageHistoryRounded />}
+              color="info"
+            >
+              {isLoading ? "Loading..." : "Generate All"}
+            </Button>
+            <Button
+              onClick={() =>
+                downloadJsonToExcel({
+                  jsonData: jsonData,
+                  fileName: "Admit_card_generation_report",
+                })
+              }
+              variant="contained"
+              startIcon={<StackedBarChartRounded />}
+              color="info"
+            >
+              Download Report
+            </Button>
+          </Box>
         </Box>
-      </Box>
-      <Card
-        elevation={4}
-        sx={{
-          p: 0, // Add padding inside the card for consistent spacing
-        }}
-      >
+        <Divider />
         <Box
           sx={{
             display: "flex",
-            p: 1.5,
             gap: 2,
             justifyContent: "space-between",
-            px: 2,
             overflow: "auto",
           }}
         >
@@ -370,7 +367,7 @@ const DownloadAdmitCard: React.FC = () => {
             {jsonData?.filter((item) => item?.error !== "").length || 0})
           </ToggleButton>
         </Box>
-      </Card>
+      </Paper>
 
       <DataGrid
         slots={{

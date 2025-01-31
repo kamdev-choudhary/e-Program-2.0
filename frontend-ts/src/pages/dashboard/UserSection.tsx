@@ -75,7 +75,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
 
 interface DashboardData {
   admins: number;
-  students: number;
+  scholars: number;
   moderators: number;
 }
 
@@ -124,8 +124,8 @@ const UserSections: React.FC = () => {
         loading={loading}
       />
       <InfoCard
-        count={dashboardData?.students ?? 0}
-        title="Total Students"
+        count={dashboardData?.scholars ?? 0}
+        title="Total Scholars"
         icon={PeopleRounded}
         loading={loading}
       />

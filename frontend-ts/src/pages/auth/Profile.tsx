@@ -15,8 +15,8 @@ import { CustomModal } from "../../components/CustomModal";
 import { EditRounded, UploadFileRounded } from "@mui/icons-material";
 import { LS_KEYS } from "../../constant/constants";
 import Sessions from "../admin/user/parts/Sessions";
-import StudentDetails from "./StudentDetails";
 import axios from "../../hooks/AxiosInterceptor";
+import ScholarDetails from "./ScholarDetails";
 
 const Profile: React.FC = () => {
   const { user, profilePicUrl, setProfilePicUrl } = useGlobalContext();
@@ -162,8 +162,8 @@ const Profile: React.FC = () => {
       {/* Sessions Card */}
       <Sessions user={user} />
 
-      {/* Student Details */}
-      {user?.role === "student" && <StudentDetails user={user} />}
+      {/* Scholar Details */}
+      {user?.role === "scholar" && <ScholarDetails user={user} />}
 
       {/* Update Profile Pic Modal */}
       <CustomModal

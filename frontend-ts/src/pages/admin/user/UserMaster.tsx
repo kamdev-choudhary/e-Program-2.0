@@ -23,6 +23,7 @@ import CustomDropDown from "../../../components/CustomDropDown";
 import ScholarDetails from "./parts/ScholarDetails";
 import Sessions from "./parts/Sessions";
 import axios from "../../../hooks/AxiosInterceptor";
+import { useNotification } from "../../../contexts/NotificationProvider";
 
 interface UserProps {
   _id: string;
@@ -41,12 +42,13 @@ interface newUser {
 
 const UserMaster: React.FC = () => {
   const [activeTab, setActiveTab] = useState<string>("admin");
+  const { showNotification } = useNotification();
 
   const [users, setUsers] = useState<UserProps[] | null>(null);
   const [addAdminModal, setAddAdminModal] = useState<boolean>(false);
   const [showScholarDetails, setShowScholarDetails] = useState<boolean>(false);
   const [adminCount, setAdminCount] = useState<number | null>(0);
-  const [studentCount, setStudentCount] = useState<number | null>(0);
+  const [scholarCount, setScholarCount] = useState<number | null>(0);
   const [moderatorCount, setModeratorCount] = useState<number | null>(0);
   const [selectedUser, setSelectedUser] = useState<UserProps | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
@@ -77,7 +79,7 @@ const UserMaster: React.FC = () => {
       setUsers(response.data.users);
       setTotalUsers(response.data.usersCount);
       setAdminCount(response.data.adminCount);
-      setStudentCount(response.data.studentCount);
+      setScholarCount(response.data.scholarCount);
       setModeratorCount(response.data.moderatorCount);
     } catch (error) {
       console.error(error);
@@ -120,7 +122,7 @@ const UserMaster: React.FC = () => {
       }).then(async (result) => {
         if (result.isConfirmed) {
           await axios.delete(`/user/${id}`);
-          setUsers(users?.filter((student) => student._id !== id) || []);
+          setUsers(users?.filter((scholar) => scholar._id !== id) || []);
           Swal.fire({
             title: "Deleted!",
             text: "Your file has been deleted.",
@@ -185,7 +187,7 @@ const UserMaster: React.FC = () => {
       headerAlign: "center",
       editable: true,
       type: "singleSelect",
-      valueOptions: ["student", "admin"],
+      valueOptions: ["scholar", "admin", "moderator"],
     },
     {
       field: "status",
@@ -233,7 +235,7 @@ const UserMaster: React.FC = () => {
             >
               <DevicesRounded />
             </IconButton>
-            {activeTab === "student" && (
+            {activeTab === "scholar" && (
               <IconButton
                 onClick={() => {
                   setSelectedUser(params.row);
@@ -264,15 +266,28 @@ const UserMaster: React.FC = () => {
     }
     try {
       const { _id, ...updateField } = newRow;
-      await axios.patch(`/user/${oldRow._id}`, updateField);
-      return newRow;
+      const res = await axios.patch(`/user/${oldRow._id}`, updateField);
+
+      if (res.status === 200 || res.status === 204) {
+        showNotification({ message: res.data?.message || "Update successful" });
+
+        // Update the `users` array with the modified user data
+        const updatedUsers =
+          users &&
+          users.map((user) =>
+            user._id === oldRow._id ? { ...user, ...newRow } : user
+          );
+        // Assuming `setUsers` is a state setter function to update the `users` array
+        setUsers(updatedUsers);
+
+        return newRow;
+      }
     } catch (error) {
       console.error("Failed to update the row:", error);
       Swal.fire("Error", "Row update failed. Please try again.", "error");
     }
-    return oldRow; // Safely revert to old row if the update fails
+    return oldRow;
   };
-
   return (
     <Box>
       <Tabs
@@ -282,7 +297,7 @@ const UserMaster: React.FC = () => {
         }
       >
         <Tab label={`Admin (${adminCount})`} value="admin" />
-        <Tab label={`Students (${studentCount})`} value="student" />
+        <Tab label={`Scholars (${scholarCount})`} value="scholar" />
         <Tab label={`Moderator (${moderatorCount})`} value="moderator" />
       </Tabs>
       <Box sx={{ mt: 2 }}>
@@ -335,7 +350,7 @@ const UserMaster: React.FC = () => {
           <CustomDropDown
             data={[
               { name: "Admin", value: "admin" },
-              { name: "Student", value: "student" },
+              { name: "Scholar", value: "scholar" },
               { name: "Moderator", value: "moderator" },
             ]}
             value={newUser.role}
@@ -382,7 +397,7 @@ const UserMaster: React.FC = () => {
         onClose={() => setShowScholarDetails(false)}
         header="Scholar Details"
       >
-        <ScholarDetails student={selectedUser} />
+        <ScholarDetails scholar={selectedUser} />
       </CustomModal>
 
       {/* Sessions */}

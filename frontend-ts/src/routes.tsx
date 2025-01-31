@@ -21,6 +21,7 @@ const JEEMainAnalysis = lazyLoad("analysis/JEEmainAnalysis");
 const DownloadJEEMainAnswerKeyWithpaper = lazyLoad(
   "automations/DownloadJEEMainAnswerKeyWithpaper"
 );
+const JEEAdvancedAnalysis = lazyLoad("analysis/JEEAdvancedAnalysis");
 
 // Admin Pages
 const Dashboard = lazyLoad("dashboard/Dashboard");
@@ -34,7 +35,7 @@ const UserMaster = lazyLoad("admin/user/UserMaster");
 const EditBatch = lazyLoad("admin/batch/EditBatch");
 const JEEData = lazyLoad("admin/analysis/JEEData");
 
-// User Pages (Students, Moderators, Admins)
+// User Pages (Scholars, Moderators, Admins)
 const Lectures = lazyLoad("lectures/Lectures");
 const Batches = lazyLoad("batch/Batches");
 const BatchDetails = lazyLoad("batch/BatchDetails");
@@ -69,6 +70,11 @@ const routes: RoutesProps[] = [
     roles: ["public"],
   },
   { path: "/analysis/jeemain", element: JEEMainAnalysis, roles: ["public"] },
+  {
+    path: "/analysis/jeeadvanced",
+    element: JEEAdvancedAnalysis,
+    roles: ["public"],
+  },
 
   // Admin Routes
   { path: "/dashboard", element: Dashboard, roles: ["admin", "moderator"] },
@@ -94,31 +100,31 @@ const routes: RoutesProps[] = [
   { path: "/admin/batch/edit/:id", element: EditBatch, roles: ["admin"] },
   { path: "/admin/jee-data", element: JEEData, roles: ["admin", "moderator"] },
 
-  // User Routes (Students, Moderators, Admins)
-  { path: "/lectures", element: Lectures, roles: ["student", "admin"] },
-  { path: "/batch", element: Batches, roles: ["student", "admin"] },
-  { path: "/batch/:id", element: BatchDetails, roles: ["student", "admin"] },
-  { path: "/books", element: Books, roles: ["student", "admin"] },
+  // User Routes (Scholars, Moderators, Admins)
+  { path: "/lectures", element: Lectures, roles: ["scholar", "admin"] },
+  { path: "/batch", element: Batches, roles: ["scholar", "admin"] },
+  { path: "/batch/:id", element: BatchDetails, roles: ["scholar", "admin"] },
+  { path: "/books", element: Books, roles: ["scholar", "admin"] },
   {
     path: "/profile",
     element: Profile,
-    roles: ["student", "admin", "moderator"],
+    roles: ["scholar", "admin", "moderator"],
   },
   {
     path: "/doubts",
     element: Doubts,
-    roles: ["student", "admin", "moderator"],
+    roles: ["scholar", "admin", "moderator"],
   },
   {
     path: "/doubts/:id",
     element: DoubtDetails,
-    roles: ["student", "admin", "moderator"],
+    roles: ["scholar", "admin", "moderator"],
   },
-  { path: "/chat", element: Chat, roles: ["student", "admin", "moderator"] },
+  { path: "/chat", element: Chat, roles: ["scholar", "admin", "moderator"] },
   {
     path: "/question-bank",
     element: QuestionBank,
-    roles: ["student", "admin", "moderator"],
+    roles: ["scholar", "admin", "moderator"],
   },
 
   // Catch-All for Not Found

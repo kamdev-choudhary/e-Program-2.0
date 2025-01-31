@@ -58,7 +58,7 @@ export async function getUsersWithPagination(req, res, next) {
     const usersCount = await User.countDocuments({ role });
 
     const adminCount = await User.countDocuments({ role: "admin" });
-    const studentCount = await User.countDocuments({ role: "student" });
+    const scholarCount = await User.countDocuments({ role: "scholar" });
     const moderatorCount = await User.countDocuments({ role: "moderator" });
 
     res.status(200).json({
@@ -66,7 +66,7 @@ export async function getUsersWithPagination(req, res, next) {
       users,
       usersCount,
       adminCount,
-      studentCount,
+      scholarCount,
       moderatorCount,
     });
   } catch (error) {

@@ -15,21 +15,21 @@ interface Student {
   mobile: string;
 }
 
-interface ScholarDetailsProps {
-  student: Student | null;
+interface StudentDetailsProps {
+  scholar: Student | null;
 }
 
-const ScholarDetails: React.FC<ScholarDetailsProps> = ({ student }) => {
-  if (!student) {
+const StudentDetails: React.FC<StudentDetailsProps> = ({ scholar }) => {
+  if (!scholar) {
     return (
       <Typography variant="h6" color="textSecondary">
-        No student data available
+        No Scholar data available
       </Typography>
     );
   }
 
   return (
-    <Card sx={{ margin: "auto", mt: 4, p: 2, boxShadow: 3 }}>
+    <Card sx={{ margin: "auto", boxShadow: 2 }}>
       <CardContent>
         <Typography variant="h4" gutterBottom>
           Basic Details
@@ -49,7 +49,7 @@ const ScholarDetails: React.FC<ScholarDetailsProps> = ({ student }) => {
               <Typography variant="subtitle1" fontWeight="bold">
                 Name:
               </Typography>
-              <Typography variant="body1">{student.name}</Typography>
+              <Typography variant="body1">{scholar.name}</Typography>
             </Box>
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
@@ -64,7 +64,7 @@ const ScholarDetails: React.FC<ScholarDetailsProps> = ({ student }) => {
               <Typography variant="subtitle1" fontWeight="bold">
                 Email:
               </Typography>{" "}
-              <Typography variant="body1">{student.email}</Typography>
+              <Typography variant="body1">{scholar.email}</Typography>
             </Box>
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
@@ -79,7 +79,7 @@ const ScholarDetails: React.FC<ScholarDetailsProps> = ({ student }) => {
               <Typography variant="subtitle1" fontWeight="bold">
                 Mobile:
               </Typography>
-              <Typography variant="body1">{student.mobile}</Typography>
+              <Typography variant="body1">{scholar.mobile}</Typography>
             </Box>
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
@@ -95,7 +95,7 @@ const ScholarDetails: React.FC<ScholarDetailsProps> = ({ student }) => {
               <Typography variant="subtitle1" fontWeight="bold">
                 ID:
               </Typography>
-              <Typography variant="body1">{student._id}</Typography>
+              <Typography variant="body1">{scholar._id}</Typography>
             </Box>
           </Grid>
         </Grid>
@@ -104,4 +104,4 @@ const ScholarDetails: React.FC<ScholarDetailsProps> = ({ student }) => {
   );
 };
 
-export default ScholarDetails;
+export default StudentDetails;

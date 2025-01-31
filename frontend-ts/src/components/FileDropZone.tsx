@@ -70,7 +70,7 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({
         border: `1px dashed ${
           theme === "dark" ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.3)"
         }`,
-        borderRadius: 4,
+        borderRadius: 2,
         cursor: "pointer",
         flexGrow: 1,
         alignContent: "center",

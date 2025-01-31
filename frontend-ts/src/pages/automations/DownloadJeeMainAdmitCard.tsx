@@ -1,11 +1,11 @@
 import {
   Box,
   Button,
-  Card,
   CircularProgress,
+  Paper,
   ToggleButton,
 } from "@mui/material";
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ExcelJS from "exceljs";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import {
@@ -17,6 +17,7 @@ import { CustomToolbar } from "../../components/CustomToolbar";
 import { downloadJsonToExcel } from "../../utils/commonfs";
 import FileDropZone from "../../components/FileDropZone";
 import axios from "../../hooks/AxiosInterceptor";
+import { useLocation } from "react-router-dom";
 
 interface ScholarData {
   drn: string;
@@ -30,12 +31,14 @@ interface ScholarData {
   center?: string;
   address?: string;
   error: string;
+  rollNumber: string;
 }
 
 const DownloadAdmitCard: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [jsonData, setJsonData] = useState<ScholarData[] | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const location = useLocation();
 
   const handleDownloadAdmitCard = async (scholar: ScholarData) => {
     try {
@@ -72,6 +75,7 @@ const DownloadAdmitCard: React.FC = () => {
                   timing: response.data.timing,
                   center: response.data.center,
                   address: response.data.address,
+                  rollNumber: response.data.rollNumber,
                 }
               : item
           );
@@ -176,6 +180,7 @@ const DownloadAdmitCard: React.FC = () => {
             timing: "",
             center: "",
             address: "",
+            rollNumber: "",
           };
         });
 
@@ -226,6 +231,15 @@ const DownloadAdmitCard: React.FC = () => {
     {
       field: "password",
       headerName: "Password",
+      minWidth: 150,
+      align: "center",
+      headerAlign: "center",
+      editable: true,
+      flex: 1,
+    },
+    {
+      field: "rollNumber",
+      headerName: "Roll Number",
       minWidth: 150,
       align: "center",
       headerAlign: "center",
@@ -340,9 +354,42 @@ const DownloadAdmitCard: React.FC = () => {
       }));
   }, [jsonData, selectedStatus]);
 
+  useEffect(() => {
+    const handleRouteChange = () => {
+      if (jsonData) {
+        downloadJsonToExcel({
+          jsonData: jsonData,
+          fileName: "JEE Main AdmitCard Info",
+        });
+      }
+    };
+
+    // Listen for route changes
+    return () => {
+      handleRouteChange();
+    };
+  }, [location]);
+
+  // Handle Tab Close or Page Refresh
+  useEffect(() => {
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      if (jsonData) {
+        downloadJsonToExcel({
+          jsonData: jsonData,
+          fileName: "JEE Main AdmitCard Info",
+        });
+      }
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+    return () => {
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [jsonData]);
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-      <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+      <Box component={Paper} sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
         <FileDropZone onDrop={onDrop} acceptedExtensions={[".xlsx", "xls"]} />
         <Box
           sx={{
@@ -371,7 +418,7 @@ const DownloadAdmitCard: React.FC = () => {
               if (jsonData) {
                 downloadJsonToExcel({
                   jsonData: jsonData,
-                  fileName: "JEE Main City Info",
+                  fileName: "JEE Main AdmitCard Info",
                 });
               }
             }}
@@ -390,7 +437,7 @@ const DownloadAdmitCard: React.FC = () => {
           </Button>
         </Box>
       </Box>
-      <Card sx={{ p: 0 }}>
+      <Paper sx={{ p: 0 }}>
         <Box
           sx={{
             display: "flex",
@@ -444,7 +491,7 @@ const DownloadAdmitCard: React.FC = () => {
             {jsonData?.filter((item) => item?.error !== "").length || 0})
           </ToggleButton>
         </Box>
-      </Card>
+      </Paper>
       <Box>
         <DataGrid
           slots={{

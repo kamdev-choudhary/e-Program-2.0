@@ -15,11 +15,11 @@ interface UserProps {
   role: string;
 }
 
-interface StudentDetailsProps {
+interface ScholarDetailsProps {
   user?: UserProps | null;
 }
 
-const StudentDetails: React.FC<StudentDetailsProps> = ({ user }) => {
+const ScholarDetails: React.FC<ScholarDetailsProps> = ({ user }) => {
   const [details, setDetails] = useState<any>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const getUserDetails = async () => {
@@ -62,4 +62,4 @@ const StudentDetails: React.FC<StudentDetailsProps> = ({ user }) => {
   );
 };
 
-export default StudentDetails;
+export default ScholarDetails;

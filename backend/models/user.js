@@ -26,7 +26,7 @@ const userSchema = new Schema(
     },
     role: {
       type: String,
-      default: "student",
+      default: "scholar",
     },
     photo: { type: String },
     userDetails: {

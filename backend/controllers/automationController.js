@@ -152,6 +152,7 @@ export async function downloadAdmitCard(req, res, next) {
     centerName: "#lblCentName",
     centerAddress: "#lblCentAdd",
     downloadPdf: "#i-downloadbtn",
+    rollNumber: "#lblRollNo",
   };
 
   const MAX_RETRIES = 10; // Define a maximum number of retries for captcha attempts.
@@ -274,6 +275,10 @@ export async function downloadAdmitCard(req, res, next) {
     const shift = await page.$eval(SELECTORS.shift, (el) => el.innerText);
     const timing = await page.$eval(SELECTORS.timing, (el) => el.innerText);
     const center = await page.$eval(SELECTORS.centerName, (el) => el.innerText);
+    const rollNumber = await page.$eval(
+      SELECTORS.rollNumber,
+      (el) => el.innerHTML
+    );
     const address = await page.$eval(
       SELECTORS.centerAddress,
       (el) => el.innerText
@@ -287,11 +292,12 @@ export async function downloadAdmitCard(req, res, next) {
       timing,
       center,
       address,
+      rollNumber,
     });
 
-    await page.click(SELECTORS.downloadPdf);
+    // await page.click(SELECTORS.downloadPdf);
 
-    await new Promise((resolve) => setTimeout(resolve, 15000));
+    // await new Promise((resolve) => setTimeout(resolve, 15000));
   } catch (error) {
     next(error);
   } finally {
@@ -300,7 +306,7 @@ export async function downloadAdmitCard(req, res, next) {
 }
 
 export async function generateAdmitCard(req, res, next) {
-  const { student } = req.body;
+  const { scholar } = req.body;
   const uniqueId = uuid();
   try {
     // Load the Word template
@@ -318,15 +324,15 @@ export async function generateAdmitCard(req, res, next) {
       linebreaks: true,
     });
 
-    // Dynamically map fields from the Excel file (student object)
+    // Dynamically map fields from the Excel file (scholar object)
     const dynamicData = {};
 
-    Object.keys(student).forEach((key) => {
-      // Add fields to dynamicData based on keys in the student object
-      dynamicData[key] = student[key];
+    Object.keys(scholar).forEach((key) => {
+      // Add fields to dynamicData based on keys in the scholar object
+      dynamicData[key] = scholar[key];
     });
 
-    // Render the template with student-specific data
+    // Render the template with scholar-specific data
     try {
       doc.render(dynamicData);
     } catch (error) {
@@ -338,7 +344,7 @@ export async function generateAdmitCard(req, res, next) {
 
     const docxFilePath = path.resolve(
       outputFolder,
-      `${student?.drn || uniqueId}_Admit_card.docx`
+      `${scholar?.drn || uniqueId}_Admit_card.docx`
     );
 
     // Save the rendered .docx file

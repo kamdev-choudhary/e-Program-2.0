@@ -160,7 +160,7 @@ const JEEAdvancedCutoff: React.FC = () => {
           flexWrap: "wrap",
         }}
       >
-        <Box sx={{ flexGrow: 1 }}>
+        <Box sx={{ display: "flex", minWidth: 350 }}>
           <CustomDropDown
             label="Select Year"
             data={[{ name: "2024", value: "2024" }]} // Ensure value is a string here

@@ -134,7 +134,7 @@ export const buttons: Button[] = [
     type: "button",
     loginRequired: true,
     color: "#1E88E5",
-    role: ["admin", "student", "moderator"],
+    role: ["admin", "scholar", "moderator"],
   },
   {
     label: "Batch",
@@ -143,7 +143,7 @@ export const buttons: Button[] = [
     type: "button",
     loginRequired: true,
     color: "#26A69A",
-    role: ["student"],
+    role: ["scholar"],
   },
   {
     label: "Exams",

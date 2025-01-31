@@ -26,9 +26,9 @@ const PopUpPages: React.FC = () => {
       <CustomModal
         open={showAuth}
         header=""
-        autoClose={true}
+        autoClose={false}
         onClose={() => dispatch({ type: "SET_AUTHPAGE", payload: false })}
-        showHeader={false}
+        // showHeader={false}
         height="auto"
         width="auto"
       >

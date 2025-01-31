@@ -19,11 +19,12 @@ import {
   LockRounded,
 } from "@mui/icons-material";
 import { useGlobalContext } from "../contexts/GlobalProvider";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import DummyImageUrl from "../assets/user.jpg";
 import ThemeSwitch from "../components/ThemeSwitch";
 import SearchBar from "./Searchbar";
+import { RootState } from "../store/store";
 
 interface HeaderProps {
   handleButtonClick: () => void;
@@ -31,12 +32,13 @@ interface HeaderProps {
   isSmallScreen: boolean;
 }
 
-const Header: React.FC<HeaderProps> = ({
+const Appbar: React.FC<HeaderProps> = ({
   handleButtonClick,
   expanded,
   isSmallScreen,
 }) => {
   const { user, handleLogout, isLoggedIn, profilePicUrl } = useGlobalContext();
+  const theme = useSelector((state: RootState) => state.theme);
   const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
   const openMenu = Boolean(anchorEl);
   const dispatch = useDispatch();
@@ -72,10 +74,21 @@ const Header: React.FC<HeaderProps> = ({
         >
           {expanded ? <MenuOpenRounded /> : <MenuRounded />}
         </IconButton>
-
-        <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          e-Program
-        </Typography>
+        <Box
+          sx={{
+            mr: 2,
+            display: { xs: "none", md: "flex" },
+            flexGrow: 1,
+            zIndex: 100,
+          }}
+        >
+          <Typography
+            sx={{ color: theme === "dark" ? "white" : "black" }}
+            variant="h5"
+          >
+            e-Program
+          </Typography>
+        </Box>
 
         {!isSmallScreen && (
           <Box sx={{ mr: 2 }}>
@@ -153,7 +166,6 @@ const Header: React.FC<HeaderProps> = ({
                 handleMenuClose();
               }}
               variant="contained"
-              color="secondary"
             >
               Update Password
             </Button>
@@ -175,4 +187,4 @@ const Header: React.FC<HeaderProps> = ({
   );
 };
 
-export default Header;
+export default Appbar;
