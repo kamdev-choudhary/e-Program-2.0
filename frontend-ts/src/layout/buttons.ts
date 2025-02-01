@@ -209,8 +209,7 @@ export const buttons: Button[] = [
     label: "Analysis",
     icon: InsightsRounded,
     path: "",
-    role: ["admin"],
-    loginRequired: true,
+    loginRequired: false,
     type: "menu",
     color: "#FF9800",
     options: [

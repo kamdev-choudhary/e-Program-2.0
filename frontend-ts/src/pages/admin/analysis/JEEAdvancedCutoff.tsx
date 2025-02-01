@@ -5,6 +5,8 @@ import AddAdvancedCutoff from "./part/AddAdvancedCutoff";
 import { CustomModal } from "../../../components/CustomModal";
 import CustomDropDown from "../../../components/CustomDropDown";
 import axios from "../../../hooks/AxiosInterceptor";
+import { DownloadRounded } from "@mui/icons-material";
+import { downloadJsonToExcel } from "../../../utils/commonfs";
 
 interface CategoryProp {
   subject: number;
@@ -170,9 +172,25 @@ const JEEAdvancedCutoff: React.FC = () => {
             onChange={(e: SelectChangeEvent) => setSelectedYear(e.target.value)}
           />
         </Box>
-        <Button onClick={() => setShowAddCutoff(true)} variant="contained">
-          Add New Cutoff
-        </Button>
+        <Box sx={{ display: "flex", gap: 2 }}>
+          <Button
+            variant="contained"
+            color="success"
+            startIcon={<DownloadRounded />}
+            disabled={!selectedYear}
+            onClick={() =>
+              downloadJsonToExcel({
+                jsonData: rows || [],
+                fileName: `JEE Advanced Cutoff ${selectedYear}.xlsx`,
+              })
+            }
+          >
+            Download
+          </Button>
+          <Button onClick={() => setShowAddCutoff(true)} variant="contained">
+            Add New Cutoff
+          </Button>
+        </Box>
       </Box>
 
       <Container maxWidth="md">

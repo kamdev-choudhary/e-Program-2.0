@@ -147,9 +147,9 @@ const getTheme = (mode: "light" | "dark") => {
             boxShadow: "none",
             "&:hover": {
               transform: "translateY(-1px)",
-              boxShadow: isLight
-                ? "0px 4px 12px rgba(42, 92, 255, 0.24)"
-                : "0px 4px 12px rgba(108, 142, 255, 0.32)",
+              // boxShadow: isLight
+              //   ? "0px 4px 12px rgba(42, 92, 255, 0.24)"
+              //   : "0px 4px 12px rgba(108, 142, 255, 0.32)",
             },
             "&:active": {
               transform: "translateY(0)",

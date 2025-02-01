@@ -508,3 +508,134 @@ export async function getJEEAdvancedCutoff(req, res, next) {
     next(error);
   }
 }
+
+export async function generateJeeAdvancedPrediction(req, res, next) {
+  try {
+    const { students, mode, year, weightage = 1 } = req.body;
+
+    // Fetch cutoff data for the specified year
+    const cutoffData = await JEEAdvancedCutoff.findOne({ year });
+
+    if (!cutoffData) {
+      return res
+        .status(404)
+        .json({ message: "Cutoff data not found for the given year" });
+    }
+
+    // Parse student data
+    const parsedData = JSON.parse(students);
+
+    const categoryMap = {
+      gen: "general",
+      general: "general",
+      obc: "obc",
+      "obc-ncl": "obc",
+      obcncl: "obc",
+      sc: "sc",
+      st: "st",
+      ews: "ews",
+      "ews-ncl": "ews",
+      ewsc: "ews",
+      "general-pwd": "generalPwD",
+      "gen-pwd": "generalPwD",
+      "obc-pwd": "obcPwD",
+      "obc-ncl-pwd": "obcPwD",
+      "obcncl-pwd": "obcPwD",
+      "sc-pwd": "scPwD",
+      "st-pwd": "stPwD",
+      "ews-pwd": "ewsPwD",
+      "ews-ncl-pwd": "ewsPwD",
+      preparatory: "preparatory",
+    };
+
+    let summary = {
+      physicsQualified: [],
+      chemistryQualified: [],
+      mathsQualified: [],
+      totalQualified: [],
+      physicsDidNotQualified: [],
+      chemistryDidNotQualified: [],
+      mathsDidNotQualified: [],
+      totalDidNotQualified: [],
+    };
+
+    // Compute predictions
+    const predictions = parsedData.map((student) => {
+      let categoryKey = student.category.toLowerCase();
+      categoryKey = categoryMap[categoryKey] || categoryKey;
+      if (["yes", "y"].includes(student.pwd.toLowerCase())) {
+        categoryKey += "PwD";
+      }
+
+      const categoryCutoff = cutoffData[categoryKey];
+
+      if (!categoryCutoff) {
+        return {
+          ...student,
+          message: `Cutoff data not available for category ${student.category} (PWD: ${student.pwd})`,
+          error: "Error",
+        };
+      }
+
+      // Calculate weighted scores
+      const adjustedPhysics = student.physics * weightage;
+      const adjustedChemistry = student.chemistry * weightage;
+      const adjustedMaths = student.maths * weightage;
+      const adjustedTotal = student.total * weightage;
+
+      // Compare with the respective cutoffs
+      const isPhysicsQualified = adjustedPhysics >= categoryCutoff.subject;
+      isPhysicsQualified
+        ? summary.physicsQualified.push(student)
+        : summary.physicsDidNotQualified.push(student);
+      const isChemistryQualified = adjustedChemistry >= categoryCutoff.subject;
+      isChemistryQualified
+        ? summary.chemistryQualified.push(student)
+        : summary.chemistryDidNotQualified.push(student);
+      const isMathsQualified = adjustedMaths >= categoryCutoff.subject;
+      isMathsQualified
+        ? summary.mathsQualified.push(student)
+        : summary.mathsDidNotQualified.push(student);
+      const isTotalQualified = adjustedTotal >= categoryCutoff.total;
+      isTotalQualified
+        ? summary.totalQualified.push(student)
+        : summary.totalDidNotQualified.push(student);
+
+      // Final qualification decision (must clear all subjects and total)
+      const isQualified =
+        isPhysicsQualified &&
+        isChemistryQualified &&
+        isMathsQualified &&
+        isTotalQualified;
+
+      return {
+        ...student,
+        adjustedScores: {
+          physics: adjustedPhysics,
+          chemistry: adjustedChemistry,
+          maths: adjustedMaths,
+          total: adjustedTotal,
+        },
+        cutoff: {
+          subject: categoryCutoff.subject,
+          total: categoryCutoff.total,
+        },
+        isQualified,
+        isPhysicsQualified,
+        isChemistryQualified,
+        isMathsQualified,
+        isTotalQualified,
+      };
+    });
+
+    // Return predictions
+    res.status(200).json({
+      year,
+      mode,
+      predictions,
+      summary,
+    });
+  } catch (error) {
+    next(error);
+  }
+}

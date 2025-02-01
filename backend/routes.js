@@ -30,7 +30,7 @@ const routes = (app) => {
   app.use("/api/v1/doubts", verifyToken, doubtRoute);
   app.use("/api/v1/chat", verifyToken, chatRoute);
   app.use("/api/v1/automation", verifyToken, automationRoute);
-  app.use("/api/v1/analysis", verifyToken, analysisRoute);
+  app.use("/api/v1/analysis", analysisRoute);
   app.use("/*", (req, res) =>
     res.status(404).json({ message: "Route not available" })
   );

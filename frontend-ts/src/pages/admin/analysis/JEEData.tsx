@@ -4,6 +4,7 @@ import JEEORCR from "./JEEORCR";
 import JEEMainMarksVsRank from "./JEEMainMarksVsPercentile";
 import JEEMainPercentileVsRank from "./JEEMainPercentileVsRank";
 import JEEAdvancedCutoff from "./JEEAdvancedCutoff";
+import AdvancedMarksVsRank from "./AdvancedMarksVsRank";
 
 const JEEMainData: React.FC = () => {
   const [activeTab, setActiveTab] = useState<Number>(0);
@@ -25,6 +26,7 @@ const JEEMainData: React.FC = () => {
           <Tab label="Main Marks Vs Percentile" />
           <Tab label="Main Percentile vs Rank" />
           <Tab label="Advanced Cutoffs" />
+          <Tab label="Advanced Marks Vs Rank" />
         </Tabs>
       </Box>
       <Box>
@@ -32,6 +34,7 @@ const JEEMainData: React.FC = () => {
         {activeTab === 1 && <JEEMainMarksVsRank />}
         {activeTab === 2 && <JEEMainPercentileVsRank />}
         {activeTab === 3 && <JEEAdvancedCutoff />}
+        {activeTab === 4 && <AdvancedMarksVsRank />}
       </Box>
     </Box>
   );

@@ -26,7 +26,7 @@ const useOnlineStatus = () => {
     fetchStatus();
     const intervalId = setInterval(fetchStatus, 20000); // Poll every 20 seconds
     return () => clearInterval(intervalId);
-  }, [dispatch]);
+  }, []);
 
   return { loading, online, fetchStatus };
 };

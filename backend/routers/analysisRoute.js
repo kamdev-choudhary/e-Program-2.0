@@ -5,7 +5,6 @@ import {
   getORCRbyYear,
   addNewOROC,
   getJEEAdvancedORCRbyYear,
-  deleteJeeMainMarksVsRank,
   updateJeeMainMarksVsRank,
   calculateJeeMainRank,
   getJeeMainPredictionInitialData,
@@ -16,6 +15,7 @@ import {
   getJEEMainPercentileVsRank,
   getJEEAdvancedCutoff,
   addOrUpdateJEEAdvancedCutoff,
+  generateJeeAdvancedPrediction,
 } from "../controllers/AnalysisController.js";
 
 router.route("/jeemain/:year").get(getORCRbyYear);
@@ -46,6 +46,8 @@ router
   .route("/cutoff/jeeadvanced")
   .post(addOrUpdateJEEAdvancedCutoff)
   .get(getJEEAdvancedCutoff);
+
+router.route("/prediction/jeeadvanced").post(generateJeeAdvancedPrediction);
 
 router.route("/jeemainmarksvsrank/:id").patch(updateJeeMainMarksVsRank);
 

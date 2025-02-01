@@ -6,10 +6,10 @@ interface LoaderProps {
   open?: boolean;
 }
 
-const Loader: React.FC<LoaderProps> = ({ open }) => {
+const Loader: React.FC<LoaderProps> = ({ open = true }) => {
   return (
     <Backdrop
-      open={open || true}
+      open={open}
       sx={{
         zIndex: 15000,
         backdropFilter: "blur(5px)", // Adjust the blur level here

@@ -76,7 +76,7 @@ userSchema.methods.generateRefreshToken = async () => {
         mobile: this.mobile,
       },
       config.REFRESH_TOKEN_SECRET,
-      { expiresIn: "5d" }
+      { expiresIn: "5h" }
     );
   } catch (error) {
     logger.error(error.message);
