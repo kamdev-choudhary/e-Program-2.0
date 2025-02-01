@@ -13,7 +13,7 @@ import {
   Box,
 } from "@mui/material";
 import { captureElementAsPNG } from "../../../utils/caputureAsPNG";
-import { ScreenshotRounded } from "@mui/icons-material";
+import { PhotoCameraRounded } from "@mui/icons-material";
 
 interface DataProps {
   physics: number;
@@ -81,10 +81,10 @@ const SubjectRangeDistribution: React.FC<SubjectRangeDistributionProps> = ({
           size="small"
           onClick={() => captureElementAsPNG("range-map", "capture.png")}
         >
-          <ScreenshotRounded />
+          <PhotoCameraRounded />
         </IconButton>
       </Box>
-      <Divider sx={{ mb: 2 }} />
+      <Divider sx={{ my: 2 }} />
       <div>
         <TableContainer>
           <Table size="small">
@@ -103,7 +103,9 @@ const SubjectRangeDistribution: React.FC<SubjectRangeDistributionProps> = ({
             <TableBody>
               {percentageRanges.map((range, rangeIndex) => (
                 <TableRow key={range}>
-                  <TableCell align="center">{range}</TableCell>
+                  <TableCell sx={{ minWidth: 120 }} align="center">
+                    {range}
+                  </TableCell>
                   {subjectRangeData.map((subject) => (
                     <TableCell align="center" key={subject.name}>
                       {subject.ranges[rangeIndex]}

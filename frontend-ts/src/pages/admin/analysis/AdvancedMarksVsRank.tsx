@@ -3,9 +3,10 @@ import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import React, { useEffect, useMemo, useState } from "react";
 import { CustomToolbar } from "../../../components/CustomToolbar";
 import { CustomModal } from "../../../components/CustomModal";
-import UploadJeeMainMarksVsRank from "./part/MarksVsPercentileUploadService";
 import CustomDropDown from "../../../components/CustomDropDown";
 import axios from "../../../hooks/AxiosInterceptor";
+import UploadJEEAdvancedMarksVsRank from "./part/UploadAdvancedMarksVsPercentile";
+import { useNotification } from "../../../contexts/NotificationProvider";
 
 interface JEEMainMarksVsRankProps {
   _id?: string;
@@ -17,6 +18,7 @@ interface JEEMainMarksVsRankProps {
 }
 
 const AdvancedMarksVsRank: React.FC = () => {
+  const { showNotification } = useNotification();
   const [data, setData] = useState<JEEMainMarksVsRankProps[]>([]);
   const [showUploadData, setShowUploadData] = useState<boolean>(false);
   const [selectedYear, setSelectedYear] = useState<string>("");
@@ -28,18 +30,16 @@ const AdvancedMarksVsRank: React.FC = () => {
   const fetchData = async () => {
     try {
       setIsLoading(true);
-      const response = await axios.get(
-        "/analysis/jeemain-marks-vs-percentile",
-        {
-          params: {
-            year: selectedYear || undefined,
-            session: selectedSession || undefined,
-            shift: selectedShift || undefined,
-            date: selectedDate || undefined,
-          },
-        }
-      );
+      const response = await axios.get("/analysis/jeeadvanced-marks-vs-rank", {
+        params: {
+          year: selectedYear || undefined,
+          session: selectedSession || undefined,
+          shift: selectedShift || undefined,
+          date: selectedDate || undefined,
+        },
+      });
       setData(response.data.data);
+      showNotification({ message: response.data.message || "Record Found" });
     } catch (error) {
       console.error(error);
     } finally {
@@ -48,7 +48,7 @@ const AdvancedMarksVsRank: React.FC = () => {
   };
 
   useEffect(() => {
-    if (!selectedYear) return;
+    // if (!selectedYear) return;
     fetchData();
   }, [selectedYear]);
 
@@ -91,7 +91,6 @@ const AdvancedMarksVsRank: React.FC = () => {
     () => data.map((d, index) => ({ ...d, id: index + 1 })),
     [data]
   );
-
   const columns: GridColDef[] = [
     {
       field: "id",
@@ -109,13 +108,93 @@ const AdvancedMarksVsRank: React.FC = () => {
       editable: true,
       minWidth: 120,
     },
-
     {
-      field: "marks",
-      headerName: "Marks",
+      field: "generalRank",
+      headerName: "General Rank",
       align: "center",
       headerAlign: "center",
       minWidth: 120,
+      flex: 1,
+      editable: true,
+    },
+    {
+      field: "generalPwDRank",
+      headerName: "General PwD Rank",
+      align: "center",
+      headerAlign: "center",
+      minWidth: 140,
+      flex: 1,
+      editable: true,
+    },
+    {
+      field: "obcRank",
+      headerName: "OBC Rank",
+      align: "center",
+      headerAlign: "center",
+      minWidth: 120,
+      flex: 1,
+      editable: true,
+    },
+    {
+      field: "obcPwDRank",
+      headerName: "OBC PwD Rank",
+      align: "center",
+      headerAlign: "center",
+      minWidth: 140,
+      flex: 1,
+      editable: true,
+    },
+    {
+      field: "scRank",
+      headerName: "SC Rank",
+      align: "center",
+      headerAlign: "center",
+      minWidth: 120,
+      flex: 1,
+      editable: true,
+    },
+    {
+      field: "scPwDRank",
+      headerName: "SC PwD Rank",
+      align: "center",
+      headerAlign: "center",
+      minWidth: 140,
+      flex: 1,
+      editable: true,
+    },
+    {
+      field: "stRank",
+      headerName: "ST Rank",
+      align: "center",
+      headerAlign: "center",
+      minWidth: 120,
+      flex: 1,
+      editable: true,
+    },
+    {
+      field: "stPwDRank",
+      headerName: "ST PwD Rank",
+      align: "center",
+      headerAlign: "center",
+      minWidth: 140,
+      flex: 1,
+      editable: true,
+    },
+    {
+      field: "ewsRank",
+      headerName: "EWS Rank",
+      align: "center",
+      headerAlign: "center",
+      minWidth: 120,
+      flex: 1,
+      editable: true,
+    },
+    {
+      field: "ewsPwDRank",
+      headerName: "EWS PwD Rank",
+      align: "center",
+      headerAlign: "center",
+      minWidth: 140,
       flex: 1,
       editable: true,
     },
@@ -166,7 +245,9 @@ const AdvancedMarksVsRank: React.FC = () => {
         onClose={() => setShowUploadData(false)}
         header="Upload JEE Main Marks Vs Rank"
       >
-        <UploadJeeMainMarksVsRank onClose={() => setShowUploadData(false)} />
+        <UploadJEEAdvancedMarksVsRank
+          onClose={() => setShowUploadData(false)}
+        />
       </CustomModal>
     </Box>
   );

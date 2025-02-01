@@ -1,10 +1,9 @@
 import JEEMainOC from "../models/jeemainoc.js";
 import JEEMainMarksVsRank from "../models/jeemainMarksvsRank.js";
-
 import JEEMainMarksVsPercentile from "../models/jeeMainMarksVsPercentile.js";
 import JEEMainPercentileVsRank from "../models/jeemainPercentileVsRank.js";
 import JEEAdvancedCutoff from "../models/jeeAdvancedCutoff.js";
-import message from "../models/message.js";
+import JEEAdvancedMarksVsRank from "../models/jeeAdvancedMarksVsRank.js";
 
 export async function getORCRbyYear(req, res, next) {
   try {
@@ -488,6 +487,7 @@ export async function addOrUpdateJEEAdvancedCutoff(req, res, next) {
   }
 }
 
+// GET JEE Advanced cutoff
 export async function getJEEAdvancedCutoff(req, res, next) {
   try {
     const { year } = req.query;
@@ -509,6 +509,7 @@ export async function getJEEAdvancedCutoff(req, res, next) {
   }
 }
 
+// Generate JEE Advanced Prediction
 export async function generateJeeAdvancedPrediction(req, res, next) {
   try {
     const { students, mode, year, weightage = 1 } = req.body;
@@ -635,6 +636,62 @@ export async function generateJeeAdvancedPrediction(req, res, next) {
       predictions,
       summary,
     });
+  } catch (error) {
+    next(error);
+  }
+}
+
+// Add or Update JEE Advanced Marks Vs Rank
+export async function addOrUpdateJEEAdvancedMarksVsRank(req, res, next) {
+  try {
+    const { data } = req.body;
+    const parsedData = JSON.parse(data);
+    console.log(parsedData);
+
+    // Ensure parsedData is an array
+    if (!Array.isArray(parsedData)) {
+      throw new Error("Data must be an array of objects.");
+    }
+
+    // Array to store the results of each update/insert operation
+    const results = [];
+
+    // Iterate through each entry in the dataset
+    for (const entry of parsedData) {
+      // Find a cutoff entry with the same year and marks, and update it, or create a new one if it doesn't exist
+      const existingCutoff = await JEEAdvancedMarksVsRank.findOneAndUpdate(
+        { year: entry.year, marks: entry.marks }, // Search for existing data by year and marks
+        { $set: entry }, // Use $set to update the fields in the entry
+        { new: true, upsert: true } // `new: true` returns the updated document, `upsert: true` creates a new document if none exists
+      );
+
+      // Add the result of this operation to the results array
+      results.push(existingCutoff);
+    }
+
+    res.status(200).json({ message: "Data saved or updated", results });
+  } catch (error) {
+    next(error);
+  }
+}
+
+// GET JEE Advanced Marks VS Rank
+export async function getJEEAdvancedMarksVsRank(req, res, next) {
+  try {
+    const { year } = req.query;
+
+    if (year) {
+      const cutoffData = await JEEAdvancedMarksVsRank.find({ year });
+
+      if (cutoffData) {
+        res.status(200).json({ data: cutoffData, message: "Data Found" });
+      } else {
+        res.status(404).json({ message: `No data found for year ${year}` });
+      }
+    } else {
+      const allCutoffData = await JEEAdvancedMarksVsRank.find();
+      res.status(200).json({ data: allCutoffData });
+    }
   } catch (error) {
     next(error);
   }

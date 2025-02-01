@@ -15,7 +15,7 @@ import {
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { captureElementAsPNG } from "../../../utils/caputureAsPNG";
-import { ScreenshotRounded } from "@mui/icons-material";
+import { PhotoCameraRounded } from "@mui/icons-material";
 
 interface AdjustedScores {
   physics?: number;
@@ -97,11 +97,19 @@ const SummaryTable: React.FC<SummaryTableProps> = ({
           size="small"
           onClick={() => captureElementAsPNG("summary-table", "Summary.png")}
         >
-          <ScreenshotRounded />
+          <PhotoCameraRounded />
         </IconButton>
       </Box>
       <Divider />
-      <Box sx={{ display: "flex", justifyContent: "space-between", p: 0 }}>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          p: 0,
+          flexWrap: "wrap",
+          gap: 2,
+        }}
+      >
         <Chip label={`Total: ${jsonData.length}`} />
         <Chip
           color="success"

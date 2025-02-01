@@ -12,16 +12,20 @@ import FileDropZone from "../../components/FileDropZone";
 import CustomDropDown from "../../components/CustomDropDown";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import ExcelJs from "exceljs";
-import { DownloadRounded, RefreshRounded } from "@mui/icons-material";
+import {
+  DownloadRounded,
+  InfoRounded,
+  RefreshRounded,
+} from "@mui/icons-material";
 import axios from "../../hooks/AxiosInterceptor";
 import { CustomModal } from "../../components/CustomModal";
 import { CustomToolbar } from "../../components/CustomToolbar";
 import { downloadJsonToExcel } from "../../utils/commonfs";
 import { motion } from "framer-motion";
 import SummaryTable from "./parts/SummaryTable";
-import SubjectRangeDistribution from "./parts/RangeDistribution";
-import { debounce } from "lodash";
+import SubjectRangeDistribution from "./parts/SubjectRangeDistribution";
 import Loader from "../../components/Loader";
+import CutoffCreateria from "./parts/CutoffCreateria";
 
 interface AdjustedScores {
   physics?: number;
@@ -84,6 +88,7 @@ interface CategoryProp {
 }
 
 interface CutoffDataProps {
+  _id: string;
   general: CategoryProp;
   ews: CategoryProp;
   obc: CategoryProp;
@@ -105,6 +110,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
   const [summary, setSummary] = useState<SummaryProps | null>(null);
   const [cutoff, setCutoff] = useState<CutoffDataProps | null>(null);
   const [showScholars, setShowScholars] = useState<boolean>(false);
+  const [showCutoff, setShowCutoff] = useState<boolean>(false);
   const [scholars, setScholars] = useState<DataProps[]>([]);
   const [subjectMarks, setSubjectMarks] = useState({
     physics: "120",
@@ -128,12 +134,6 @@ const JEEAdvancedAnalysis: React.FC = () => {
     [subjectMarks]
   );
 
-  // Debounced weightage using lodash
-  const debouncedWeightage = useMemo(
-    () => debounce((value: string) => value, 500),
-    []
-  );
-
   const getCutoff = useCallback(async () => {
     try {
       const res = await axios.get("/analysis/cutoff/jeeadvanced", {
@@ -149,7 +149,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
     if (selectedYear) getCutoff();
   }, [selectedYear, getCutoff]);
 
-  const generatePrediction = async () => {
+  const generatePrediction = async (jsonData: DataProps[]) => {
     setIsLoading(true);
     try {
       const categoryMap: Record<string, keyof CutoffDataProps> = {
@@ -345,6 +345,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
         });
 
         setJsonData(json);
+        generatePrediction(json);
       } catch (error) {
         console.error("Error reading the Excel file:", error);
       } finally {
@@ -531,6 +532,22 @@ const JEEAdvancedAnalysis: React.FC = () => {
         return "";
       },
     },
+    {
+      field: "airRank",
+      headerName: "AIR Rank",
+      align: "center",
+      headerAlign: "center",
+      flex: 1,
+      minWidth: 120,
+    },
+    {
+      field: "catRank",
+      headerName: "CAT Rank",
+      align: "center",
+      headerAlign: "center",
+      flex: 1,
+      minWidth: 120,
+    },
   ];
 
   const rows = useMemo(() => {
@@ -538,8 +555,8 @@ const JEEAdvancedAnalysis: React.FC = () => {
   }, [jsonData]);
 
   useEffect(() => {
-    generatePrediction();
-  }, [jsonData, selectedYear, debouncedWeightage, generatePrediction]);
+    generatePrediction(jsonData);
+  }, [selectedYear, weightage]);
 
   const shouldShowSummary = useMemo(
     () => summary && jsonData.length > 0,
@@ -556,7 +573,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
           flexWrap: "wrap",
         }}
       >
-        <Box sx={{ display: "flex", gap: 2 }}>
+        <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
           <FileDropZone onDrop={onDrop} acceptedExtensions={[".xlsx"]} />
           <Box
             sx={{
@@ -566,15 +583,17 @@ const JEEAdvancedAnalysis: React.FC = () => {
               alignItems: "center",
             }}
           >
-            <IconButton
+            <Button
               color="success"
               sx={{ border: "1px solid rgba(0,0,0,0.2)" }}
               component="a"
               href="/marksheet.xlsx" // Link to the file in the public folder
               download // Ensure the file is downloaded
+              variant="outlined"
+              startIcon={<DownloadRounded />}
             >
-              <DownloadRounded />
-            </IconButton>
+              Download Template
+            </Button>
           </Box>
           <Button
             startIcon={<DownloadRounded />}
@@ -586,6 +605,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
                 fileName: "JEE Advanced Analysis.xlsx",
               })
             }
+            disabled={jsonData.length === 0}
           >
             Download Analysis
           </Button>
@@ -601,20 +621,32 @@ const JEEAdvancedAnalysis: React.FC = () => {
               data={years}
               name="name"
               dropdownValue="value"
+              error={!cutoff}
+              showClearButton={false}
             />
           </Box>
+          <IconButton onClick={() => setShowCutoff(true)}>
+            <InfoRounded />
+          </IconButton>
           <TextField
             value={weightage}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setWieghtage(e.target.value)
             }
             label="Weightage"
+            type="number"
           />
           <TextField
             value={subjectMarks.physics}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setSubjectMarks((prev) => ({ ...prev, physics: e.target.value }))
+              setSubjectMarks((prev) => ({
+                ...prev,
+                physics: e.target.value,
+                chemistry: e.target.value,
+                maths: e.target.value,
+              }))
             }
+            type="number"
             label="Subject Mark"
           />
           <TextField
@@ -622,14 +654,18 @@ const JEEAdvancedAnalysis: React.FC = () => {
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
               setSubjectMarks((prev) => ({ ...prev, total: e.target.value }))
             }
+            type="number"
             label="Total Mark"
           />
-          <IconButton
-            disabled={!selectedYear || !jsonData}
-            onClick={generatePrediction}
+          <Button
+            disabled={!selectedYear || jsonData.length === 0}
+            onClick={() => generatePrediction(jsonData)}
+            variant="contained"
+            startIcon={<RefreshRounded />}
+            color="success"
           >
-            <RefreshRounded />
-          </IconButton>
+            Regenerate
+          </Button>
         </Box>
       </Paper>
       {shouldShowSummary && (
@@ -691,7 +727,10 @@ const JEEAdvancedAnalysis: React.FC = () => {
         <DataGrid
           columns={columns}
           rows={scholars}
+          pageSizeOptions={[10, 30, 50]}
+          slots={{ toolbar: () => <CustomToolbar showAddButton={false} /> }}
           initialState={{
+            pagination: { paginationModel: { pageSize: 10 } },
             columns: {
               columnVisibilityModel: {
                 id: false,
@@ -707,6 +746,20 @@ const JEEAdvancedAnalysis: React.FC = () => {
               },
             },
           }}
+        />
+      </CustomModal>
+
+      {/* Cutoff */}
+      <CustomModal
+        open={showCutoff}
+        onClose={() => setShowCutoff(false)}
+        showHeader={false}
+      >
+        <CutoffCreateria
+          selectedYear={selectedYear}
+          setSelectedYear={setSelectedYear}
+          cutoff={cutoff}
+          setCutoff={setCutoff}
         />
       </CustomModal>
       <Loader open={isLoading} />

@@ -20,58 +20,21 @@ const NotificationContext = createContext<NotificationContextType | undefined>(
   undefined
 );
 
-interface NotificationProps {
-  open: boolean;
-  message: string;
-  type: "success" | "error" | "warning" | "info";
-  variant: "filled" | "outlined" | "standard";
-  onClose: () => void;
-}
-
-const Notification: React.FC<NotificationProps> = ({
-  open,
-  message,
-  type,
-  variant,
-  onClose,
-}) => {
-  const actions = (
-    <IconButton aria-label="close" color="inherit" onClick={onClose}>
-      <CloseRounded />
-    </IconButton>
-  );
-
-  return (
-    <Snackbar
-      open={open}
-      autoHideDuration={2000}
-      onClose={onClose}
-      anchorOrigin={{ vertical: "top", horizontal: "right" }}
-    >
-      <Alert
-        action={actions}
-        sx={{ minWidth: 250 }}
-        severity={type}
-        variant={variant}
-      >
-        {message}
-      </Alert>
-    </Snackbar>
-  );
-};
-
 // NotificationProvider to wrap your app
 export const NotificationProvider: React.FC<NotificationProviderProps> = ({
   children,
 }) => {
-  const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState("");
-  const [type, setType] = useState<"success" | "error" | "warning" | "info">(
-    "success"
-  );
-  const [variant, setVariant] = useState<"filled" | "outlined" | "standard">(
-    "standard"
-  );
+  const [notification, setNotification] = useState<{
+    open: boolean;
+    message: string;
+    type: "success" | "error" | "warning" | "info";
+    variant: "filled" | "outlined" | "standard";
+  }>({
+    open: false,
+    message: "",
+    type: "success",
+    variant: "standard",
+  });
 
   const showNotification = ({
     message,
@@ -82,14 +45,11 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
     type?: "success" | "error" | "warning" | "info";
     variant?: "filled" | "outlined" | "standard";
   }) => {
-    setMessage(message);
-    setType(type);
-    setVariant(variant);
-    setOpen(true);
+    setNotification({ open: true, message, type, variant });
   };
 
   const hideNotification = () => {
-    setOpen(false);
+    setNotification((prev) => ({ ...prev, open: false }));
   };
 
   return (
@@ -97,13 +57,29 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
       value={{ showNotification, hideNotification }}
     >
       {children}
-      <Notification
-        open={open}
-        message={message}
-        type={type}
-        variant={variant}
+      <Snackbar
+        open={notification.open}
+        autoHideDuration={2000}
         onClose={hideNotification}
-      />
+        anchorOrigin={{ vertical: "top", horizontal: "right" }}
+      >
+        <Alert
+          action={
+            <IconButton
+              aria-label="close"
+              color="inherit"
+              onClick={hideNotification}
+            >
+              <CloseRounded />
+            </IconButton>
+          }
+          sx={{ minWidth: 250 }}
+          severity={notification.type}
+          variant={notification.variant}
+        >
+          {notification.message}
+        </Alert>
+      </Snackbar>
     </NotificationContext.Provider>
   );
 };

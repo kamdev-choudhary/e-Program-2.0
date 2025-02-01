@@ -57,7 +57,6 @@ const SearchBar: React.FC = () => {
         onChange={handleSearch}
         placeholder="Search..."
         variant="outlined"
-        inputProps={{ "aria-label": "search" }}
       />
       {results.length > 0 && (
         <Paper
@@ -67,7 +66,6 @@ const SearchBar: React.FC = () => {
             width: "100%",
             maxHeight: "300px",
             overflowY: "auto",
-            zIndex: 10,
             borderRadius: "4px",
             boxShadow: "0px 2px 5px rgba(0,0,0,0.2)",
             minWidth: 280,

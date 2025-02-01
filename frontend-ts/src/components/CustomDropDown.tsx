@@ -6,6 +6,7 @@ import {
   MenuItem,
   Select,
   SelectChangeEvent,
+  FormHelperText,
 } from "@mui/material";
 import moment from "moment";
 
@@ -20,6 +21,8 @@ interface CustomDropDownProps<T extends Record<string, any>> {
   readonly?: boolean;
   required?: boolean;
   showClearButton?: boolean;
+  error?: boolean; // Optional error prop
+  errorMessage?: string; // Optional error message prop
 }
 
 const CustomDropDown = <T extends Record<string, any>>({
@@ -33,13 +36,15 @@ const CustomDropDown = <T extends Record<string, any>>({
   readonly = false,
   required = false,
   showClearButton = true,
+  error = false, // Default to false
+  errorMessage = "", // Default to empty string
 }: CustomDropDownProps<T>) => {
   const handleClear = () => {
     onChange({ target: { value: "" } } as SelectChangeEvent);
   };
 
   return (
-    <FormControl size="small" required={required} fullWidth>
+    <FormControl size="small" required={required} fullWidth error={error}>
       <InputLabel>{label}</InputLabel>
       <Select
         label={label}
@@ -74,6 +79,7 @@ const CustomDropDown = <T extends Record<string, any>>({
             );
           })}
       </Select>
+      {error && <FormHelperText>{errorMessage}</FormHelperText>}
     </FormControl>
   );
 };

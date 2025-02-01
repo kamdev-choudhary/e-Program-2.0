@@ -38,6 +38,18 @@ export const captureElementAsPNG = async (
     // Remove the temporary wrapper
     document.body.removeChild(wrapper);
 
+    // 📌 Copy to clipboard
+    if (navigator.clipboard) {
+      canvas.toBlob((blob) => {
+        if (blob) {
+          const item = new ClipboardItem({ "image/png": blob });
+          navigator.clipboard.write([item]);
+        }
+      });
+    } else {
+      console.warn("Clipboard API not supported.");
+    }
+
     // Convert to image and trigger download
     const image = canvas.toDataURL("image/png");
     const link = document.createElement("a");
