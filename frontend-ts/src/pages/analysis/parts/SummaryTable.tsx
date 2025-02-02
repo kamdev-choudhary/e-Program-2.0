@@ -112,16 +112,12 @@ const SummaryTable: React.FC<SummaryTableProps> = ({
             dataKey="value"
             paddingAngle={5}
             fill="#8884d8"
+            style={{ paddingTop: 0 }}
           >
             <Cell fill="#00C853" />
             <Cell fill="#F44336" />
           </Pie>
-          <Legend
-            verticalAlign="bottom"
-            align="center"
-            iconSize={14}
-            wrapperStyle={{ paddingTop: 5 }}
-          />
+          <Legend verticalAlign="bottom" align="center" iconSize={14} />
         </PieChart>
       </ResponsiveContainer>
     );
@@ -181,7 +177,7 @@ const SummaryTable: React.FC<SummaryTableProps> = ({
 
       <Divider />
       <TableContainer>
-        <Table size="small">
+        <Table>
           <TableHead>
             <TableRow>
               <TableCell align="center">
