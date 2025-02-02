@@ -16,7 +16,6 @@ const MasterLayout: React.FC = () => {
         height: "100vh",
         display: "flex",
         flexDirection: "column",
-        backgroundColor: "background.bg",
       }}
     >
       <Appbar

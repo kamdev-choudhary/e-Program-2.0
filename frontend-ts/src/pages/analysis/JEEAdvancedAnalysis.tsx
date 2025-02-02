@@ -589,7 +589,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
               component="a"
               href="/marksheet.xlsx" // Link to the file in the public folder
               download // Ensure the file is downloaded
-              variant="outlined"
+              variant="contained"
               startIcon={<DownloadRounded />}
             >
               Download Template

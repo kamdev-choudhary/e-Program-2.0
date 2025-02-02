@@ -1,24 +1,46 @@
 import React, { useState } from "react";
 import {
   Box,
-  Fab,
   TextField,
   Button,
   Typography,
   Paper,
   Drawer,
   IconButton,
+  Avatar,
+  Slide,
+  useScrollTrigger,
+  styled,
 } from "@mui/material";
-import ChatIcon from "@mui/icons-material/Chat";
+import SendIcon from "@mui/icons-material/Send";
 import CloseIcon from "@mui/icons-material/Close";
+import SmartToyOutlinedIcon from "@mui/icons-material/SmartToyOutlined";
 import axios from "axios";
 
+const StyledButton = styled(Button)(({ theme }) => ({
+  position: "fixed",
+  right: 0,
+  top: "50%",
+  transform: "translateY(-50%)",
+  writingMode: "vertical-rl",
+  padding: theme.spacing(2),
+  borderTopRightRadius: 0,
+  borderBottomRightRadius: 0,
+  zIndex: 999,
+  transition: "all 0.3s ease",
+  "&:hover": {
+    right: theme.spacing(0.5),
+    transform: "translateY(-50%) scale(1.05)",
+  },
+}));
+
 const ChatbotWithFAB: React.FC = () => {
-  const [open, setOpen] = useState(false); // Controls drawer visibility
+  const [open, setOpen] = useState(false);
   const [messages, setMessages] = useState<{ sender: string; text: string }[]>(
     []
   );
   const [input, setInput] = useState("");
+  const trigger = useScrollTrigger();
 
   const toggleDrawer = () => setOpen(!open);
 
@@ -26,12 +48,11 @@ const ChatbotWithFAB: React.FC = () => {
     e.preventDefault();
     if (!input.trim()) return;
 
-    // Add user message to the chat
-    setMessages((prev) => [...prev, { sender: "user", text: input }]);
-    setInput(""); // Clear input
+    const newMessage = { sender: "user", text: input };
+    setMessages((prev) => [...prev, newMessage]);
+    setInput("");
 
     try {
-      // Make API request to OpenAI (replace YOUR_API_KEY with your key)
       const response = await axios.post(
         "https://api.openai.com/v1/chat/completions",
         {
@@ -51,19 +72,19 @@ const ChatbotWithFAB: React.FC = () => {
           },
         }
       );
-      console.log(response);
-      // Add AI response to the chat
-      setMessages((prev) => [
-        ...prev,
-        { sender: "bot", text: response.data.choices[0].message.content },
-      ]);
+
+      const botMessage = {
+        sender: "bot",
+        text: response.data.choices[0].message.content,
+      };
+      setMessages((prev) => [...prev, botMessage]);
     } catch (error) {
       console.error("Error fetching AI response:", error);
       setMessages((prev) => [
         ...prev,
         {
           sender: "bot",
-          text: "Sorry, I encountered an error. Please try again.",
+          text: "⚠️ Sorry, I'm having trouble connecting. Please try again later.",
         },
       ]);
     }
@@ -71,94 +92,137 @@ const ChatbotWithFAB: React.FC = () => {
 
   return (
     <>
-      {/* Floating Action Button */}
-      <Fab
-        color="primary"
-        onClick={toggleDrawer}
-        sx={{ position: "fixed", bottom: 18, right: 18 }}
-        size="medium"
-      >
-        <ChatIcon />
-      </Fab>
+      <Slide appear={false} direction="left" in={!trigger && !open}>
+        <StyledButton
+          variant="contained"
+          color="primary"
+          onClick={toggleDrawer}
+          size="small"
+        >
+          AI Assistant
+        </StyledButton>
+      </Slide>
 
-      {/* Chatbot Drawer */}
-      <Drawer anchor="right" open={open} onClose={toggleDrawer}>
+      <Drawer
+        anchor="right"
+        open={open}
+        onClose={toggleDrawer}
+        PaperProps={{
+          sx: {
+            width: 350,
+            boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
+          },
+        }}
+      >
         <Box
           sx={{
-            width: 300,
             height: "100%",
             display: "flex",
             flexDirection: "column",
+            bgcolor: "background.paper",
           }}
         >
-          {/* Header */}
           <Box
             sx={{
+              p: 2,
               display: "flex",
-              justifyContent: "space-between",
               alignItems: "center",
-              mb: 2,
+              justifyContent: "space-between",
+              borderBottom: "1px solid",
+              borderColor: "divider",
             }}
           >
-            <Typography variant="h6">AI Chatbot</Typography>
-            <IconButton color="error" onClick={toggleDrawer}>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+              <Avatar sx={{ bgcolor: "primary.main" }}>
+                <SmartToyOutlinedIcon sx={{ color: "#fff" }} />
+              </Avatar>
+              <Typography variant="h6">AI Assistant</Typography>
+            </Box>
+            <IconButton size="small" onClick={toggleDrawer} color="inherit">
               <CloseIcon />
             </IconButton>
           </Box>
 
-          {/* Chat Messages */}
           <Paper
             sx={{
               flex: 1,
               overflowY: "auto",
               p: 2,
-              mb: 2,
-              "&::-webkit-scrollbar": { display: "none" },
+              borderRadius: 0,
+              "&::-webkit-scrollbar": { width: 6 },
+              "&::-webkit-scrollbar-thumb": {
+                borderRadius: 3,
+                bgcolor: "primary.main",
+              },
             }}
           >
             {messages.map((msg, index) => (
               <Box
                 key={index}
                 sx={{
-                  textAlign: msg.sender === "user" ? "right" : "left",
-                  mb: 1,
+                  display: "flex",
+                  justifyContent:
+                    msg.sender === "user" ? "flex-end" : "flex-start",
+                  mb: 2,
                 }}
               >
-                <Typography
+                <Box
                   sx={{
-                    display: "inline-block",
-                    px: 2,
-                    py: 1,
+                    maxWidth: "80%",
+                    p: 1.5,
                     borderRadius: 2,
                     bgcolor:
-                      msg.sender === "user" ? "primary.main" : "grey.300",
-                    color: msg.sender === "user" ? "white" : "black",
+                      msg.sender === "user"
+                        ? "primary.main"
+                        : "background.default",
+                    color: msg.sender === "user" ? "white" : "text.primary",
+                    boxShadow: 1,
                   }}
                 >
-                  {msg.text}
-                </Typography>
+                  <Typography variant="body2">{msg.text}</Typography>
+                </Box>
               </Box>
             ))}
           </Paper>
 
-          {/* Input Field */}
-          <Box component="form" onSubmit={handleSend}>
-            <TextField
-              fullWidth
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              placeholder="Type your message..."
-              variant="outlined"
-              sx={{ mb: 1 }}
-            />
-            <Button
-              fullWidth
-              variant="contained"
-              onClick={handleSend}
-              disabled={!input.trim()}
-            >
-              Send
-            </Button>
+          <Box
+            component="form"
+            onSubmit={handleSend}
+            sx={{
+              p: 2,
+              borderTop: "1px solid",
+              borderColor: "divider",
+              bgcolor: "background.default",
+            }}
+          >
+            <Box sx={{ display: "flex", gap: 1 }}>
+              <TextField
+                fullWidth
+                value={input}
+                onChange={(e) => setInput(e.target.value)}
+                placeholder="Type your message..."
+                variant="outlined"
+                size="small"
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: 20,
+                    bgcolor: "background.paper",
+                  },
+                }}
+              />
+              <IconButton
+                color="primary"
+                onClick={handleSend}
+                disabled={!input.trim()}
+                sx={{
+                  bgcolor: "primary.main",
+                  color: "white",
+                  "&:hover": { bgcolor: "primary.dark" },
+                }}
+              >
+                <SendIcon fontSize="small" />
+              </IconButton>
+            </Box>
           </Box>
         </Box>
       </Drawer>

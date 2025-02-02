@@ -124,8 +124,9 @@ const Sessions: React.FC<UserSessionProps> = ({ user }) => {
                     <Button
                       startIcon={<LogoutRounded />}
                       color="error"
-                      variant="outlined"
+                      variant="contained"
                       onClick={() => handleDeleteSession(session.deviceId)}
+                      size="small"
                     >
                       Logout
                     </Button>

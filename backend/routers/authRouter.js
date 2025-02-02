@@ -2,6 +2,7 @@ import express from "express";
 const router = express.Router();
 
 import {
+  deleteAllSession,
   deleteSession,
   getLoginSession,
   login,
@@ -16,6 +17,8 @@ router.route("/register").post(register);
 router.route("/register/admin").post(registerByAdmin);
 
 router.route("/session/:id").get(getLoginSession).delete(deleteSession);
+
+router.route("/session/clear-all/:id").delete(deleteAllSession);
 
 router.route("/refresh-token").post(refreshToken);
 

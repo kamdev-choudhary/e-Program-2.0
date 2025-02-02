@@ -12,25 +12,18 @@ import { useGlobalContext } from "../../contexts/GlobalProvider";
 import { useDispatch } from "react-redux";
 import axios from "../../hooks/AxiosInterceptor";
 
-interface User {
-  password: string;
+type User = {
+  name: string;
   mobile: string;
   email: string;
-  name: string;
-}
+  password: string;
+};
 
-interface UserError {
-  password: boolean;
-  mobile: boolean;
-  email: boolean;
-  name: boolean;
-}
+type FieldKeys = keyof User;
 
-interface RegisterProps {
-  setActiveTab: (value: number) => void;
-}
-
-const Register: React.FC<RegisterProps> = ({ setActiveTab }) => {
+const Register: React.FC<{ setActiveTab: (value: number) => void }> = ({
+  setActiveTab,
+}) => {
   const { handleUserLogin } = useGlobalContext();
   const dispatch = useDispatch();
   const [user, setUser] = useState<User>({
@@ -39,115 +32,99 @@ const Register: React.FC<RegisterProps> = ({ setActiveTab }) => {
     email: "",
     password: "",
   });
-  const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [formError, setFormError] = useState<UserError>({
+  const [formError, setFormError] = useState<Record<FieldKeys, boolean>>({
     name: false,
     mobile: false,
     email: false,
     password: false,
   });
 
-  const validateUser = (): boolean => {
-    const isValid = {
-      name: user.name.trim() !== "",
-      email: user.email.trim() !== "",
-      mobile: user.mobile.trim() !== "",
-      password: user.password.trim() !== "",
-    };
-    setFormError({
-      name: !isValid.name,
-      email: !isValid.email,
-      mobile: !isValid.mobile,
-      password: !isValid.password,
+  const fields: FieldKeys[] = ["name", "mobile", "email", "password"];
+
+  const validateForm = () => {
+    const errors = {} as Record<FieldKeys, boolean>;
+    let isValid = true;
+
+    fields.forEach((key) => {
+      const isEmpty = !user[key].trim();
+      errors[key] = isEmpty;
+      if (isEmpty) isValid = false;
     });
-    return Object.values(isValid).every(Boolean);
+
+    setFormError(errors);
+    return isValid;
   };
 
-  const handleRegister = async (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!validateUser()) return;
+    if (!validateForm()) return;
 
     setLoading(true);
-
     try {
-      const response = await axios.post("/auth/register", user);
-      if (response.status === 200) {
-        handleUserLogin(response.data);
-        dispatch({ type: "SET_AUTHPAGE", payload: false });
-      }
-    } catch (error: any) {
-      console.error(error?.response?.data?.message);
-      setError(error?.response?.data?.message);
+      const { data } = await axios.post("/auth/register", user);
+      handleUserLogin(data);
+      dispatch({ type: "SET_AUTHPAGE", payload: false });
+    } catch (err: any) {
+      setError(err.response?.data?.message || "Registration failed");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-        flexDirection: "column",
-        p: 1,
-        maxWidth: 400,
-      }}
-    >
-      <Typography variant="h5" gutterBottom>
+    <Box sx={{ maxWidth: 400, p: 2 }}>
+      <Typography variant="h5" align="center" gutterBottom>
         Register
       </Typography>
-      <Box component="form" onSubmit={handleRegister} sx={{ width: "100%" }}>
-        {Object.entries(user).map(([key, value]) => (
+
+      <Box component="form" onSubmit={handleSubmit}>
+        {fields.map((key) => (
           <FormControl
             key={key}
             fullWidth
             margin="normal"
-            error={formError[key as keyof UserError]}
+            error={formError[key]}
+            variant="filled"
           >
             <InputLabel>
               {key.charAt(0).toUpperCase() + key.slice(1)}
             </InputLabel>
             <FilledInput
+              id={key}
+              value={user[key]}
+              onChange={(e) => setUser({ ...user, [key]: e.target.value })}
               type={key === "password" ? "password" : "text"}
-              value={value}
-              onChange={(e) =>
-                setUser((prev) => ({ ...prev, [key]: e.target.value }))
-              }
               autoComplete={key === "password" ? "new-password" : "off"}
             />
           </FormControl>
         ))}
+
         <Button
           type="submit"
-          variant="contained"
-          color="primary"
           fullWidth
+          variant="contained"
           sx={{ mt: 2 }}
           disabled={loading}
         >
-          {loading ? (
-            <CircularProgress size={24} color="inherit" />
-          ) : (
-            "Register"
-          )}
+          {loading ? <CircularProgress size={24} /> : "Register"}
         </Button>
+
         {error && (
-          <Typography color="error" variant="body2" sx={{ mt: 2 }}>
+          <Typography color="error" align="center" sx={{ mt: 2 }}>
             {error}
           </Typography>
         )}
-      </Box>
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 2 }}>
-        <Typography sx={{ mr: 1 }}>
+
+        <Typography align="center" sx={{ mt: 2 }}>
           Already have an account?{" "}
-          <span
-            style={{ color: "#914D7E", cursor: "pointer" }}
+          <Button
             onClick={() => setActiveTab(0)}
+            sx={{ color: "#914D7E", textTransform: "none" }}
           >
             Login
-          </span>
+          </Button>
         </Typography>
       </Box>
     </Box>

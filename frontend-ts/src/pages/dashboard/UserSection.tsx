@@ -96,6 +96,7 @@ const UserSections: React.FC = () => {
         });
         setDashboardData(response.data);
       } catch (err: any) {
+        console.log(err);
         setError("Failed to fetch dashboard data");
       } finally {
         setLoading(false);

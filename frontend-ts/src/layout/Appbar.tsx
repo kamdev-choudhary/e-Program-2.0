@@ -9,14 +9,20 @@ import {
   Avatar,
   AppBar,
   Divider,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
 } from "@mui/material";
 import {
   MenuOpenRounded,
   MenuRounded,
   LogoutRounded,
-  PinRounded,
   AccountBoxRounded,
   LockRounded,
+  LockResetRounded,
+  AccountCircleRounded,
+  EmailRounded,
+  PhoneRounded,
 } from "@mui/icons-material";
 import { useGlobalContext } from "../contexts/GlobalProvider";
 import { useDispatch, useSelector } from "react-redux";
@@ -79,13 +85,6 @@ const Appbar: React.FC<HeaderProps> = React.memo(
       m: 0,
       paddingLeft: 0,
       paddingRight: 0,
-    };
-
-    const menuContentStyles = {
-      px: { xs: 0, sm: 2 },
-      display: "flex",
-      flexDirection: "column",
-      rowGap: 1,
     };
 
     return (
@@ -152,35 +151,88 @@ const Appbar: React.FC<HeaderProps> = React.memo(
             transformOrigin={{ horizontal: "right", vertical: "top" }}
             anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
           >
-            <Box sx={{ ...menuContentStyles, mb: 1 }}>
-              <Typography>Name: {user?.name || "Guest"}</Typography>
-              <Typography>Email: {user?.email || "N/A"}</Typography>
-              <Typography>Mobile: {user?.mobile || "N/A"}</Typography>
+            <Box sx={{ p: 1.2 }}>
+              <Typography
+                variant="subtitle2"
+                sx={{ color: "text.secondary", mb: 2 }}
+              >
+                Account Details
+              </Typography>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1.5,
+                  mb: 1.5,
+                }}
+              >
+                <AccountCircleRounded
+                  sx={{ color: "action.active", fontSize: 20 }}
+                />
+                <Typography variant="body2">{user?.name || "Guest"}</Typography>
+              </Box>
+              <Box
+                sx={{
+                  display: "flex",
+                  alignItems: "center",
+                  gap: 1.5,
+                  mb: 1.5,
+                }}
+              >
+                <EmailRounded sx={{ color: "action.active", fontSize: 20 }} />
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                  {user?.email || "N/A"}
+                </Typography>
+              </Box>
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
+                <PhoneRounded sx={{ color: "action.active", fontSize: 20 }} />
+                <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                  {user?.mobile || "N/A"}
+                </Typography>
+              </Box>
             </Box>
-            <Divider />
-            <Box sx={{ ...menuContentStyles, mt: 1 }}>
+
+            <Divider sx={{ my: 0.5 }} />
+
+            <MenuItem
+              onClick={handleProfileClick}
+              sx={{ borderRadius: 1, mb: 0.5 }}
+            >
+              <ListItemIcon>
+                <AccountBoxRounded fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>Profile Settings</ListItemText>
+            </MenuItem>
+
+            <MenuItem
+              onClick={handleUpdatePasswordClick}
+              sx={{ borderRadius: 1, mb: 0.5 }}
+            >
+              <ListItemIcon>
+                <LockResetRounded fontSize="small" />
+              </ListItemIcon>
+              <ListItemText>Change Password</ListItemText>
+            </MenuItem>
+
+            <Divider sx={{ my: 0.5 }} />
+
+            <Box sx={{ p: 1 }}>
               <Button
-                variant="contained"
-                onClick={handleProfileClick}
-                startIcon={<AccountBoxRounded />}
-              >
-                Profile
-              </Button>
-              <Button
-                startIcon={<PinRounded />}
-                onClick={handleUpdatePasswordClick}
-                variant="contained"
-                color="secondary"
-              >
-                Update Password
-              </Button>
-              <Button
-                startIcon={<LogoutRounded />}
                 fullWidth
-                variant="outlined"
+                variant="contained"
+                color="error"
                 onClick={handleLogoutClick}
+                startIcon={<LogoutRounded />}
+                sx={{
+                  justifyContent: "flex-start",
+                  pl: 2.5,
+                  py: 1,
+                  borderRadius: 1,
+                  transition: "all 0.2s",
+                  "&:hover": { transform: "translateY(-1px)" },
+                }}
               >
-                Logout
+                Sign Out
               </Button>
             </Box>
           </Menu>

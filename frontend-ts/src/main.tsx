@@ -8,7 +8,7 @@ import { WebSocketProvider } from "./contexts/WebSocket.tsx";
 import App from "./App.tsx";
 import { NotificationProvider } from "./contexts/NotificationProvider.tsx";
 
-const isDevelopment = import.meta.env.MODE !== "development";
+const isDevelopment = import.meta.env.MODE === "development";
 
 const AppWrapper = (
   <NotificationProvider>

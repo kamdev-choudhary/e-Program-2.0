@@ -1,6 +1,6 @@
 import React from "react";
 import OnlineStatusIndicator from "../hooks/OnlineStatusIndicator";
-import ChatbotWithFAB from "../pages/chatbot/ChatBotWithFab";
+// import ChatbotWithFAB from "../pages/chatbot/ChatBotWithFab";
 import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
@@ -20,7 +20,7 @@ const PopUpPages: React.FC = () => {
       <OnlineStatusIndicator />
 
       {/* ChatBoat with FAB */}
-      <ChatbotWithFAB />
+      {/* <ChatbotWithFAB /> */}
 
       {/* Auth Page */}
       <CustomModal
