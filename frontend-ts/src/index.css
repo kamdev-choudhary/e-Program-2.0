@@ -8,3 +8,57 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+/* Add this to your global CSS file or a style tag in your component */
+
+@media print {
+  /* Ensure the header, footer, and sidebar are visible */
+  header,
+  footer,
+  aside {
+    display: block !important;
+  }
+
+  /* Adjust the layout for printing */
+  body {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Hide unnecessary elements */
+  .no-print {
+    display: none !important;
+  }
+
+  /* Ensure the main content takes up the full width */
+  main {
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  /* Adjust the DataGrid for printing */
+  .MuiDataGrid-root {
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  .MuiDataGrid-virtualScroller {
+    overflow: visible !important;
+  }
+
+  .MuiDataGrid-row {
+    break-inside: avoid; /* Prevent rows from breaking across pages */
+  }
+
+  /* Ensure the modal content is visible */
+  .MuiModal-root {
+    position: relative !important;
+    display: block !important;
+  }
+
+  .MuiPaper-root {
+    box-shadow: none !important;
+  }
+}

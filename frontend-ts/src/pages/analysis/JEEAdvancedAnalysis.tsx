@@ -1,7 +1,6 @@
 import {
   Box,
   Button,
-  Grid2 as Grid,
   IconButton,
   Paper,
   SelectChangeEvent,
@@ -12,11 +11,7 @@ import FileDropZone from "../../components/FileDropZone";
 import CustomDropDown from "../../components/CustomDropDown";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import ExcelJs from "exceljs";
-import {
-  DownloadRounded,
-  InfoRounded,
-  RefreshRounded,
-} from "@mui/icons-material";
+import { DownloadRounded, InfoRounded } from "@mui/icons-material";
 import axios from "../../hooks/AxiosInterceptor";
 import { CustomModal } from "../../components/CustomModal";
 import { CustomToolbar } from "../../components/CustomToolbar";
@@ -27,84 +22,21 @@ import SubjectRangeDistribution from "./parts/SubjectRangeDistribution";
 import Loader from "../../components/Loader";
 import CutoffCreateria from "./parts/CutoffCreateria";
 import SubjectStatistics from "./parts/SubjectStatistics";
+import DebouncedInput from "../../components/DebouncedInout";
 
-interface AdjustedScores {
-  physics?: number;
-  chemistry?: number;
-  maths?: number;
-  total?: number;
-}
-
-interface CutOff {
-  subject?: number;
-  total?: number;
-}
-
-interface DataProps {
-  id?: string;
-  name: string;
-  uniqueId: string;
-  category: "general" | "obc" | "st" | "sc" | "sc";
-  pwd: "yes" | "no";
-  physics_positive?: number;
-  physics_negative?: number;
-  physics: number;
-  chemistry_positive?: number;
-  chemistry_negative?: number;
-  chemistry: number;
-  maths_positive?: number;
-  maths_negative?: number;
-  maths: number;
-  total_positive?: number;
-  total_negative?: number;
-  total: number;
-  percetile?: number;
-  rank?: number;
-  isPhysicsQualified?: boolean;
-  isChemistryQualified?: boolean;
-  isMathsQualified?: boolean;
-  isTotalQualified?: boolean;
-  adjustedScores?: AdjustedScores;
-  cutoff?: CutOff;
-}
-
-interface SummaryProps {
-  physicsQualified: DataProps[];
-  chemistryQualified: DataProps[];
-  mathsQualified: DataProps[];
-  totalQualified: DataProps[];
-  physicsDidNotQualified: DataProps[];
-  chemistryDidNotQualified: DataProps[];
-  mathsDidNotQualified: DataProps[];
-  totalDidNotQualified: DataProps[];
-  qualified: DataProps[];
-  didNotQualified: DataProps[];
-}
-
-const years = [{ name: "2024", value: "2024" }];
-
-interface CategoryProp {
-  subject: number;
-  total: number;
-}
-
-interface CutoffDataProps {
-  _id: string;
-  general: CategoryProp;
-  ews: CategoryProp;
-  obc: CategoryProp;
-  st: CategoryProp;
-  sc: CategoryProp;
-  generalPwD: CategoryProp;
-  ewsPwD: CategoryProp;
-  obcPwD: CategoryProp;
-  stPwD: CategoryProp;
-  scPwD: CategoryProp;
-  preparatory: CategoryProp;
-}
+// types
+import {
+  AdjustedScores,
+  DataProps,
+  SummaryProps,
+  CategoryProp,
+  CutoffDataProps,
+  YearsProps,
+} from "./types";
 
 const JEEAdvancedAnalysis: React.FC = () => {
-  const [weightage, setWieghtage] = useState<string>("1");
+  const [years, setYears] = useState<YearsProps[] | null>(null);
+  const [weightage, setWeightage] = useState<string | number>(1);
   const [selectedYear, setSelectedYear] = useState<string>("2024");
   const [jsonData, setJsonData] = useState<DataProps[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -125,15 +57,28 @@ const JEEAdvancedAnalysis: React.FC = () => {
     () => ["physics", "chemistry", "maths", "total"],
     []
   );
-  const maxMarksArray = useMemo(
-    () => [
-      Number(subjectMarks.physics),
-      Number(subjectMarks.chemistry),
-      Number(subjectMarks.maths),
-      Number(subjectMarks.total),
-    ],
+
+  const maxMarksObj = useMemo(
+    () => ({
+      physics: Number(subjectMarks.physics),
+      chemistry: Number(subjectMarks.chemistry),
+      maths: Number(subjectMarks.maths),
+      total: Number(subjectMarks.total),
+    }),
     [subjectMarks]
   );
+
+  useEffect(() => {
+    const getJeeAdvancedYears = async () => {
+      try {
+        const res = await axios.get("/analysis/cutoff/jeeadvanced/metadata");
+        setYears(res.data.years);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getJeeAdvancedYears();
+  }, []);
 
   const getCutoff = useCallback(async () => {
     try {
@@ -174,6 +119,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
         "ews-pwd": "ewsPwD",
         "ews-ncl-pwd": "ewsPwD",
         preparatory: "preparatory",
+        "gen-ews": "ews",
       };
 
       const newSummary: SummaryProps = {
@@ -188,6 +134,8 @@ const JEEAdvancedAnalysis: React.FC = () => {
         qualified: [],
         didNotQualified: [],
       };
+
+      console.log(jsonData.filter((data) => typeof data.total !== "number"));
 
       const predictions =
         jsonData?.map((student: DataProps) => {
@@ -324,24 +272,27 @@ const JEEAdvancedAnalysis: React.FC = () => {
             uniqueId: rowData.uc || rowData.drn,
             category: rowData.category.toLowerCase(),
             pwd: rowData.pwd.toLowerCase(),
-            physics_positive: rowData.physics_positive || 0,
-            physics_negative: rowData.physics_negative || 0,
-            physics: rowData.physics || 0,
-            chemistry_positive: rowData.chemistry_positive || 0,
-            chemistry_negative: rowData.chemistry_negative || 0,
-            chemistry: rowData.chemistry || 0,
-            maths_positive: rowData.maths_positive || 0,
-            maths_negative: rowData.maths_negative || 0,
-            maths: rowData.maths || 0,
+            physics_positive: Number(rowData.physics_positive) || 0,
+            physics_negative: Number(rowData.physics_negative) || 0,
+            physics: Number(rowData.physics) || 0,
+            chemistry_positive: Number(rowData.chemistry_positive) || 0,
+            chemistry_negative: Number(rowData.chemistry_negative) || 0,
+            chemistry: Number(rowData.chemistry) || 0,
+            maths_positive: Number(rowData.maths_positive) || 0,
+            maths_negative: Number(rowData.maths_negative) || 0,
+            maths: Number(rowData.maths) || 0,
             total_positive:
-              rowData.physics_positive +
-                rowData.chemistry_positive +
-                rowData.maths_positive || 0,
+              Number(rowData.physics_positive) +
+                Number(rowData.chemistry_positive) +
+                Number(rowData.maths_positive) || 0,
             total_negative:
-              rowData.physics_negative +
-                rowData.chemistry_negative +
-                rowData.maths_negative || 0,
-            total: rowData.physics + rowData.chemistry + rowData.maths || 0,
+              Number(rowData.physics_negative) +
+                Number(rowData.chemistry_negative) +
+                Number(rowData.maths_negative) || 0,
+            total:
+              Number(rowData.physics) +
+                Number(rowData.chemistry) +
+                Number(rowData.maths) || 0,
           };
         });
 
@@ -559,6 +510,17 @@ const JEEAdvancedAnalysis: React.FC = () => {
     },
   ];
 
+  const invisibleColumns = {
+    physics_positive: false,
+    physics_negative: false,
+    chemistry_positive: false,
+    chemistry_negative: false,
+    maths_positive: false,
+    maths_negative: false,
+    total_positive: false,
+    total_negative: false,
+  };
+
   const rows = useMemo(() => {
     return jsonData;
   }, [jsonData]);
@@ -566,11 +528,6 @@ const JEEAdvancedAnalysis: React.FC = () => {
   useEffect(() => {
     generatePrediction(jsonData);
   }, [selectedYear, weightage]);
-
-  const shouldShowSummary = useMemo(
-    () => summary && jsonData.length > 0,
-    [summary, jsonData]
-  );
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -627,7 +584,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
                 setSelectedYear(e.target.value)
               }
               label="Select Year"
-              data={years}
+              data={years || []}
               name="name"
               dropdownValue="value"
               error={!cutoff}
@@ -637,13 +594,12 @@ const JEEAdvancedAnalysis: React.FC = () => {
           <IconButton onClick={() => setShowCutoff(true)}>
             <InfoRounded />
           </IconButton>
-          <TextField
+          <DebouncedInput
             value={weightage}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setWieghtage(e.target.value)
-            }
+            onChange={setWeightage}
+            delay={1000}
+            placeholder="Weightage"
             label="Weightage"
-            type="number"
           />
           <TextField
             value={subjectMarks.physics}
@@ -666,68 +622,60 @@ const JEEAdvancedAnalysis: React.FC = () => {
             type="number"
             label="Total Mark"
           />
-          <Button
-            disabled={!selectedYear || jsonData.length === 0}
-            onClick={() => generatePrediction(jsonData)}
-            variant="contained"
-            startIcon={<RefreshRounded />}
-            color="success"
-          >
-            Regenerate
-          </Button>
         </Box>
       </Paper>
-      {shouldShowSummary && (
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.3 }}
-        >
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12 }}>
-              <SubjectStatistics
-                jsonData={jsonData}
-                subjects={["physics", "chemistry", "maths", "total"]}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <SubjectRangeDistribution
-                jsonData={jsonData}
-                subjects={subjects}
-                maxMarks={maxMarksArray}
-              />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6 }}>
-              <SummaryTable
-                jsonData={jsonData}
-                setScholars={setScholars}
-                setShowScholars={setShowScholars}
-                summary={summary}
-              />
-            </Grid>
-          </Grid>
-        </motion.div>
-      )}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <SummaryTable
+          jsonData={jsonData}
+          setScholars={setScholars}
+          setShowScholars={setShowScholars}
+          summary={summary}
+        />
+      </motion.div>
+
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <SubjectStatistics
+          jsonData={jsonData}
+          subjects={subjects}
+          maxMarks={maxMarksObj}
+        />
+      </motion.div>
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.3 }}
+      >
+        <SubjectRangeDistribution
+          jsonData={jsonData}
+          subjects={subjects}
+          maxMarks={maxMarksObj}
+        />
+      </motion.div>
 
       <DataGrid
+        aria-label="JEE Advanced Results"
         columns={columns}
         rows={rows}
         loading={isLoading}
-        slots={{ toolbar: () => <CustomToolbar showAddButton={false} /> }}
+        slots={{
+          toolbar: () => (
+            <CustomToolbar showAddButton={false} showExportButton={true} />
+          ),
+        }}
+        disableRowSelectionOnClick
         pageSizeOptions={[10, 30, 50]}
         initialState={{
           pagination: { paginationModel: { pageSize: 10 } },
           columns: {
-            columnVisibilityModel: {
-              physics_positive: false,
-              physics_negative: false,
-              chemistry_positive: false,
-              chemistry_negative: false,
-              maths_positive: false,
-              maths_negative: false,
-              total_positive: false,
-              total_negative: false,
-            },
+            columnVisibilityModel: invisibleColumns,
           },
         }}
       />
@@ -743,22 +691,15 @@ const JEEAdvancedAnalysis: React.FC = () => {
           columns={columns}
           rows={scholars}
           pageSizeOptions={[10, 30, 50]}
-          slots={{ toolbar: () => <CustomToolbar showAddButton={false} /> }}
+          slots={{
+            toolbar: () => (
+              <CustomToolbar showAddButton={false} showExportButton={true} />
+            ),
+          }}
           initialState={{
             pagination: { paginationModel: { pageSize: 10 } },
             columns: {
-              columnVisibilityModel: {
-                id: false,
-                physics_positive: false,
-                physics_negative: false,
-                chemistry_positive: false,
-                chemistry_negative: false,
-                maths_positive: false,
-                maths_negative: false,
-                total_positive: false,
-                total_negative: false,
-                status: false,
-              },
+              columnVisibilityModel: invisibleColumns,
             },
           }}
         />
@@ -767,7 +708,12 @@ const JEEAdvancedAnalysis: React.FC = () => {
       {/* Cutoff */}
       <CustomModal
         open={showCutoff}
-        onClose={() => setShowCutoff(false)}
+        onClose={() => {
+          setShowCutoff(false);
+          if (jsonData.length > 0) {
+            generatePrediction(jsonData);
+          }
+        }}
         showHeader={false}
       >
         <CutoffCreateria

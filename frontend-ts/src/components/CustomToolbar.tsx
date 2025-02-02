@@ -52,7 +52,11 @@ export const CustomToolbar: React.FC<CustomToolbarProps> = ({
     >
       <div style={{ display: "flex", gap: 2, overflow: "auto" }}>
         {showGridToolbarColumnButton && <GridToolbarColumnsButton />}
-        {showExportButton && <GridToolbarExport />}
+        {showExportButton && (
+          <GridToolbarExport
+            printOptions={{ allColumns: true, disableToolbarButton: true }}
+          />
+        )}
         <GridToolbarFilterButton />
         {showAddButton && (
           <Button onClick={onAddButtonClick} startIcon={<AddRounded />}>

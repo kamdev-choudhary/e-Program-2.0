@@ -1,8 +1,7 @@
-import React, { useEffect } from "react";
+import React from "react";
 import { Box, Container, SelectChangeEvent } from "@mui/material";
 import { DataGrid, GridColDef, GridRowModel } from "@mui/x-data-grid";
 import CustomDropDown from "../../../components/CustomDropDown";
-import axios from "../../../hooks/AxiosInterceptor";
 
 interface CategoryProp {
   subject: number;
@@ -44,24 +43,6 @@ const CutoffCreateria: React.FC<CutoffCreateriaProps> = ({
   setCutoff,
   setSelectedYear,
 }) => {
-  const getJeeAdvancedCutoff = async () => {
-    try {
-      const res = await axios.get("/analysis/cutoff/jeeadvanced", {
-        params: {
-          year: selectedYear,
-        },
-      });
-      setCutoff(res.data.data);
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
-  useEffect(() => {
-    if (!selectedYear) return;
-    getJeeAdvancedCutoff();
-  }, [selectedYear]);
-
   // Prepare DataGrid rows
   const rows: RowData[] = cutoff
     ? [
@@ -121,6 +102,12 @@ const CutoffCreateria: React.FC<CutoffCreateriaProps> = ({
         },
         {
           id: 10,
+          category: "SC PwD",
+          subjectCutoff: cutoff.scPwD.subject,
+          totalCutoff: cutoff.scPwD.total,
+        },
+        {
+          id: 11,
           category: "Preparotary",
           subjectCutoff: cutoff.preparatory.subject,
           totalCutoff: cutoff.preparatory.total,
@@ -179,6 +166,7 @@ const CutoffCreateria: React.FC<CutoffCreateriaProps> = ({
       "EWS PwD": "ewsPwD",
       "OBC PwD": "obcPwD",
       "ST PwD": "stPwD",
+      "SC PwD": "scPwD",
       Preparotary: "preparatory",
     };
 
@@ -196,8 +184,6 @@ const CutoffCreateria: React.FC<CutoffCreateriaProps> = ({
     setCutoff(updatedCutoff);
     return newRow;
   };
-
-  console.log(cutoff);
 
   return (
     <Box sx={{ p: 1, display: "flex", flexDirection: "column", gap: 2 }}>

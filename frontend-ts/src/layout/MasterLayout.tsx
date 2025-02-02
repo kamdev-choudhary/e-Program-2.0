@@ -37,6 +37,7 @@ const MasterLayout: React.FC = () => {
       >
         {isSmallScreen ? (
           <Drawer
+            className="no-print"
             open={openDrawer}
             onClose={() => setOpenDrawer(false)}
             sx={{
@@ -51,6 +52,7 @@ const MasterLayout: React.FC = () => {
           </Drawer>
         ) : (
           <Box
+            className="no-print"
             sx={{
               width: expanded ? "285px" : "inherit",
               transition: "width 0.3s ease",

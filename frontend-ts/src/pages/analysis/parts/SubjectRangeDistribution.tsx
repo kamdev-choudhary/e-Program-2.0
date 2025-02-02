@@ -24,7 +24,8 @@ interface DataProps {
 interface SubjectRangeDistributionProps {
   jsonData: DataProps[];
   subjects: string[];
-  maxMarks: number[];
+  // Changed maxMarks from array to object mapping subject names to their max marks
+  maxMarks: { [subject: string]: number };
 }
 
 const SubjectRangeDistribution: React.FC<SubjectRangeDistributionProps> = ({
@@ -63,13 +64,16 @@ const SubjectRangeDistribution: React.FC<SubjectRangeDistributionProps> = ({
   };
 
   // Compute range data for all subjects
-  const subjectRangeData = subjects.map((subject, index) => {
+  const subjectRangeData = subjects.map((subject) => {
+    // Convert subject name to lower case to match the keys in DataProps and maxMarks
+    const subjectKey = subject.toLowerCase();
     const subjectData = jsonData.map(
-      (student) => student[subject.toLowerCase() as keyof DataProps]
+      (student) => student[subjectKey as keyof DataProps]
     );
+    const maxMark = maxMarks[subjectKey];
     return {
       name: subject,
-      ranges: calculateRangeDistribution(subjectData, maxMarks[index]),
+      ranges: calculateRangeDistribution(subjectData, maxMark),
     };
   });
 
@@ -86,8 +90,8 @@ const SubjectRangeDistribution: React.FC<SubjectRangeDistributionProps> = ({
       </Box>
       <Divider sx={{ my: 2 }} />
       <div>
-        <TableContainer>
-          <Table>
+        <TableContainer component={Paper}>
+          <Table size="small">
             <TableHead>
               <TableRow>
                 <TableCell align="center">
