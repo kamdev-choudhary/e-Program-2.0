@@ -1,6 +1,6 @@
 import express from "express";
 import cors from "cors";
-import bodyparser from "body-parser";
+import bodyParser from "body-parser";
 import compression from "compression";
 import path from "path";
 import helmet from "helmet";
@@ -28,49 +28,59 @@ if (isProduction && cluster.isPrimary) {
   for (let i = 0; i < numCPUs; i++) {
     cluster.fork();
   }
+
   cluster.on("exit", (worker, code, signal) => {
-    logger.error(
-      `Worker ${worker.process.pid} exited. Starting a new worker...`
-    );
+    logger.error(`Worker ${worker.process.pid} exited. Restarting...`);
     cluster.fork();
   });
 } else {
   const app = express();
 
-  app.use(helmet());
-  app.options("*", cors());
-  app.use(cors());
-  app.use(bodyparser.json({ limit: "50mb" }));
-  app.use(bodyparser.urlencoded({ limit: "50mb", extended: true }));
-  app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+  // Security middleware
+  app.use(helmet({ contentSecurityPolicy: false })); // Disable CSP to avoid blocking frontend scripts
+  app.use(
+    cors({ origin: "*", methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"] })
+  );
+
+  // Middleware
+  app.use(bodyParser.json({ limit: "50mb" }));
+  app.use(bodyParser.urlencoded({ limit: "50mb", extended: true }));
   app.use(compression());
+
+  // Static file serving
+  app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+  // Routes
   routes(app);
+
+  // Error handling middleware
   app.use(errorMiddleware);
 
   const server = createServer(app);
+
   const startServer = async () => {
     try {
       await connectDB();
       setupSocket(server);
       server.listen(port, () => {
         logger.info(
-          `Worker ${process.pid} is listening on port: ${port} in ${config.NODE_ENV} mode`
+          `Worker ${process.pid} listening on port ${port} in ${config.NODE_ENV} mode`
         );
       });
     } catch (error) {
-      logger.error("Failed to connect to the database", error);
+      logger.error("Failed to connect to the database:", error);
       process.exit(1);
     }
   };
+
   startServer();
+
+  // Graceful Shutdown
+  const shutdown = async () => {
+    logger.info("Shutting down server...");
+    process.exit(0);
+  };
+
+  process.on("SIGINT", shutdown);
+  process.on("SIGTERM", shutdown);
 }
-
-process.on("SIGINT", () => {
-  logger.info("Server is shutting down...");
-  process.exit(0);
-});
-
-process.on("SIGTERM", () => {
-  logger.info("Server is shutting down...");
-  process.exit(0);
-});

@@ -84,37 +84,21 @@ const UserSections: React.FC = () => {
     null
   );
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    const controller = new AbortController();
-
     const fetchData = async () => {
       try {
-        const response = await axios.get("/admin/dashboard", {
-          signal: controller.signal,
-        });
+        const response = await axios.get("/admin/dashboard");
         setDashboardData(response.data);
       } catch (err: any) {
-        console.log(err);
-        setError("Failed to fetch dashboard data");
+        console.error(err);
       } finally {
         setLoading(false);
       }
     };
 
     fetchData();
-
-    return () => controller.abort();
   }, []);
-
-  if (error) {
-    return (
-      <Box p={2} sx={{ bgcolor: "#fff" }}>
-        <Typography color="error">{error}</Typography>
-      </Box>
-    );
-  }
 
   return (
     <Box display="flex" gap={2} flexWrap="wrap">

@@ -1,7 +1,6 @@
 import React from "react";
 import OnlineStatusIndicator from "../hooks/OnlineStatusIndicator";
 // import ChatbotWithFAB from "../pages/chatbot/ChatBotWithFab";
-import "react-toastify/dist/ReactToastify.css";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";
 import { CustomModal } from "../components/CustomModal";

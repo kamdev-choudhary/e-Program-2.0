@@ -4,7 +4,6 @@ import { LS_KEYS } from "../constant/constants";
 
 const instance = axios.create({
   baseURL: API_URL,
-  //timeout: 10000,
 });
 
 instance.interceptors.request.use(
@@ -27,8 +26,8 @@ instance.interceptors.request.use(
 // Add a response interceptor to handle errors
 instance.interceptors.response.use(
   (response) => response,
-  async (error) => {
-    if (error.response?.status === 401) {
+  (error) => {
+    if (error?.response?.status === 401) {
       localStorage.clear();
       localStorage.setItem(LS_KEYS.LOGOUT, "Session Expired. Logged out.");
       window.location.reload();
