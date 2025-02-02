@@ -8,18 +8,3 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
-
-.high-score {
-  color: #00ff3c !important;
-  font-weight: 450 !important;
-}
-
-.medium-score {
-  color: #856404 !important;
-  font-weight: 450 !important;
-}
-
-.low-score {
-  color: #fe0019 !important;
-  font-weight: 450 !important;
-}

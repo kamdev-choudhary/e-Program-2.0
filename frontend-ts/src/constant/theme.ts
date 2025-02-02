@@ -99,9 +99,6 @@ const getTheme = (mode: "light" | "dark") => {
 
     components: {
       MuiButton: {
-        defaultProps: {
-          disableElevation: true,
-        },
         variants: [
           {
             props: { variant: "contained", color: "secondary" },
@@ -180,7 +177,7 @@ const getTheme = (mode: "light" | "dark") => {
         styleOverrides: {
           root: {
             textTransform: "none",
-            borderRadius: 24,
+            borderRadius: 30,
             padding: "8px 24px",
             transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
             position: "relative",
@@ -237,7 +234,7 @@ const getTheme = (mode: "light" | "dark") => {
       MuiAlert: {
         styleOverrides: {
           root: {
-            borderRadius: 12,
+            borderRadius: 8,
             backdropFilter: "blur(4px)",
             border: "1px solid",
           },
@@ -255,7 +252,7 @@ const getTheme = (mode: "light" | "dark") => {
       MuiPaper: {
         styleOverrides: {
           root: {
-            borderRadius: 16,
+            borderRadius: 8,
             background: isLight ? "rgba(255, 255, 255, 0.8)" : "#212327",
             backdropFilter: "blur(12px)",
             border: "1px solid",
@@ -263,7 +260,7 @@ const getTheme = (mode: "light" | "dark") => {
               ? "rgba(15, 23, 42, 0.08)"
               : "rgba(248, 250, 252, 0.08)",
             boxShadow: "0 8px 32px rgba(0,0,0,0.05)",
-            padding: 12,
+            padding: 14,
           },
         },
       },
@@ -289,7 +286,7 @@ const getTheme = (mode: "light" | "dark") => {
       MuiOutlinedInput: {
         styleOverrides: {
           root: {
-            borderRadius: 12,
+            borderRadius: 8,
             "&:hover .MuiOutlinedInput-notchedOutline": {
               borderColor: `hsl(${primaryHue}, 80%, 55%)`,
             },
@@ -336,7 +333,7 @@ const getTheme = (mode: "light" | "dark") => {
       MuiSkeleton: {
         styleOverrides: {
           root: {
-            borderRadius: 12,
+            borderRadius: 8,
           },
         },
       },
@@ -441,7 +438,7 @@ const getTheme = (mode: "light" | "dark") => {
       MuiListItemButton: {
         styleOverrides: {
           root: {
-            borderRadius: 12,
+            borderRadius: 8,
           },
         },
       },
@@ -457,15 +454,6 @@ const getTheme = (mode: "light" | "dark") => {
               ? "rgba(255, 255, 255, 0.8)"
               : "rgba(53, 53, 56, 0.89)",
             transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
-            boxShadow: isLight
-              ? "0 4px 6px rgba(63, 64, 64, 0.52)"
-              : "0 4px 10px rgba(225, 217, 217, 0.12)",
-
-            "& .MuiDataGrid-columnHeader": {
-              borderBottom: `1px solid ${
-                isLight ? "rgba(10, 15, 36, 0.08)" : "rgba(249, 250, 255, 0.08)"
-              }`,
-            },
 
             "& .MuiDataGrid-row": {
               transition: "all 0.1s ease",
@@ -478,45 +466,15 @@ const getTheme = (mode: "light" | "dark") => {
                 background: isLight
                   ? "rgba(42, 92, 255, 0.08)"
                   : "rgba(108, 142, 255, 0.16)",
-                borderLeft: `2px solid ${isLight ? "#2A5CFF" : "#6C8EFF"}`,
               },
             },
 
             "& .status-success": {
-              background: isLight
-                ? "linear-gradient(135deg, rgba(0, 200, 117, 0.12), rgba(0, 214, 143, 0.08))"
-                : "linear-gradient(135deg, rgba(0, 225, 138, 0.16), rgba(0, 245, 160, 0.12))",
               color: isLight ? "#006644" : "#00E18A",
-              padding: "4px 12px",
-              borderRadius: 8,
-              fontWeight: 600,
-              display: "flex",
-              alignItems: "center",
-              width: "fit-content",
-              boxShadow: isLight
-                ? "0 2px 4px rgba(0, 100, 68, 0.08)"
-                : "0 2px 8px rgba(0, 225, 138, 0.12)",
             },
 
             "& .status-error": {
-              background: isLight
-                ? "linear-gradient(135deg, rgba(255, 59, 91, 0.12), rgba(255, 82, 111, 0.08))"
-                : "linear-gradient(135deg, rgba(255, 107, 127, 0.16), rgba(255, 132, 148, 0.12))",
               color: isLight ? "#CC0025" : "#FF6B7F",
-              padding: "4px 12px",
-              borderRadius: 8,
-              fontWeight: 600,
-              display: "flex",
-              alignItems: "center",
-              width: "fit-content",
-              boxShadow: isLight
-                ? "0 2px 4px rgba(204, 0, 37, 0.08)"
-                : "0 2px 8px rgba(255, 107, 127, 0.12)",
-              animation: "$pulseError 1.5s infinite",
-            },
-
-            "& .MuiDataGrid-menuIcon": {
-              marginLeft: "auto",
             },
           },
         },

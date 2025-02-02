@@ -12,10 +12,14 @@ import {
   Chip,
   Divider,
   IconButton,
+  Grid2 as Grid,
 } from "@mui/material";
 import { motion } from "framer-motion";
 import { captureElementAsPNG } from "../../../utils/caputureAsPNG";
 import { PhotoCameraRounded } from "@mui/icons-material";
+
+// Recharts imports
+import { PieChart, Pie, Cell, Legend, ResponsiveContainer } from "recharts";
 
 interface AdjustedScores {
   physics?: number;
@@ -86,6 +90,43 @@ const SummaryTable: React.FC<SummaryTableProps> = ({
   if (!summary) {
     return <Box>Summary Not Generated</Box>;
   }
+
+  // Function to render half pie chart
+  const renderPieChart = (qualifiedCount: number, dnqCount: number) => {
+    const data = [
+      { name: "Qualified", value: qualifiedCount },
+      { name: "Not Qualified", value: dnqCount },
+    ];
+
+    return (
+      <ResponsiveContainer width="100%" height={250}>
+        <PieChart>
+          <Pie
+            data={data}
+            cx="50%"
+            cy="50%"
+            innerRadius="40%"
+            outerRadius="70%"
+            startAngle={90}
+            endAngle={-270}
+            dataKey="value"
+            paddingAngle={5}
+            fill="#8884d8"
+          >
+            <Cell fill="#00C853" />
+            <Cell fill="#F44336" />
+          </Pie>
+          <Legend
+            verticalAlign="bottom"
+            align="center"
+            iconSize={14}
+            wrapperStyle={{ paddingTop: 5 }}
+          />
+        </PieChart>
+      </ResponsiveContainer>
+    );
+  };
+
   return (
     <Paper
       id="summary-table"
@@ -101,30 +142,43 @@ const SummaryTable: React.FC<SummaryTableProps> = ({
         </IconButton>
       </Box>
       <Divider />
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          p: 0,
-          flexWrap: "wrap",
-          gap: 2,
-        }}
-      >
-        <Chip label={`Total: ${jsonData.length}`} />
-        <Chip
-          color="success"
-          label={`Qualified: ${summary?.qualified?.length} (${(
-            (summary && summary?.qualified?.length / jsonData?.length) * 100
-          ).toFixed(2)}%)`}
-        />
-        <Chip
-          color="error"
-          label={`DNQ: ${summary?.didNotQualified?.length} (${(
-            (summary && summary?.didNotQualified?.length / jsonData?.length) *
-            100
-          ).toFixed(2)}%)`}
-        />
-      </Box>
+      <Grid container spacing={1}>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              p: 0,
+              flexWrap: "wrap",
+              gap: 2,
+              flexDirection: "column",
+              height: "100%",
+            }}
+          >
+            <Chip label={`Total: ${jsonData.length}`} />
+            <Chip
+              color="success"
+              label={`Qualified: ${summary?.qualified?.length} (${(
+                (summary && summary?.qualified?.length / jsonData?.length) * 100
+              ).toFixed(2)}%)`}
+            />
+            <Chip
+              color="error"
+              label={`DNQ: ${summary?.didNotQualified?.length} (${(
+                (summary &&
+                  summary?.didNotQualified?.length / jsonData?.length) * 100
+              ).toFixed(2)}%)`}
+            />
+          </Box>
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          {renderPieChart(
+            summary?.qualified?.length,
+            summary?.didNotQualified?.length
+          )}
+        </Grid>
+      </Grid>
+
       <Divider />
       <TableContainer>
         <Table size="small">
@@ -145,82 +199,71 @@ const SummaryTable: React.FC<SummaryTableProps> = ({
             </TableRow>
           </TableHead>
           <TableBody>
-            {["physics", "chemistry", "maths", "total"].map((subject) => (
-              <motion.tr
-                key={subject}
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: 50 }}
-                transition={{
-                  duration: 0.5,
-                  ease: "easeOut",
-                  delay: 0.1,
-                }}
-              >
-                <TableCell align="center">
-                  {subject.charAt(0).toUpperCase() + subject.slice(1)}
-                </TableCell>
-                <TableCell align="center">
-                  <Chip
-                    sx={{ minWidth: 65 }}
-                    onClick={() => {
-                      setScholars(
-                        summary[`${subject}Qualified` as keyof SummaryProps]
-                      );
-                      setShowScholars(true);
-                    }}
-                    label={
-                      summary[`${subject}Qualified` as keyof SummaryProps]
-                        .length
-                    }
-                  />
-                </TableCell>
-                <TableCell align="center">
-                  <Chip
-                    sx={{ minWidth: 65 }}
-                    onClick={() => {
-                      setScholars(
-                        summary[
-                          `${subject}DidNotQualified` as keyof SummaryProps
-                        ]
-                      );
-                      setShowScholars(true);
-                    }}
-                    label={
-                      summary[`${subject}DidNotQualified` as keyof SummaryProps]
-                        .length
-                    }
-                  />
-                </TableCell>
-                <TableCell align="center">
-                  <Chip
-                    color={
-                      (summary[`${subject}Qualified` as keyof SummaryProps]
-                        .length /
-                        (summary[`${subject}Qualified` as keyof SummaryProps]
-                          .length +
+            {["physics", "chemistry", "maths", "total"].map((subject) => {
+              const qualifiedCount =
+                summary[`${subject}Qualified` as keyof SummaryProps].length;
+              const dnqCount =
+                summary[`${subject}DidNotQualified` as keyof SummaryProps]
+                  .length;
+
+              return (
+                <motion.tr
+                  key={subject}
+                  initial={{ opacity: 0, x: -50 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  exit={{ opacity: 0, x: 50 }}
+                  transition={{
+                    duration: 0.5,
+                    ease: "easeOut",
+                    delay: 0.1,
+                  }}
+                >
+                  <TableCell align="center">
+                    {subject.charAt(0).toUpperCase() + subject.slice(1)}
+                  </TableCell>
+                  <TableCell align="center">
+                    <Chip
+                      sx={{ minWidth: 65 }}
+                      onClick={() => {
+                        setScholars(
+                          summary[`${subject}Qualified` as keyof SummaryProps]
+                        );
+                        setShowScholars(true);
+                      }}
+                      label={qualifiedCount}
+                    />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Chip
+                      sx={{ minWidth: 65 }}
+                      onClick={() => {
+                        setScholars(
                           summary[
                             `${subject}DidNotQualified` as keyof SummaryProps
-                          ].length)) *
-                        100 >
-                      75
-                        ? "success"
-                        : "error"
-                    }
-                    label={(
-                      (summary[`${subject}Qualified` as keyof SummaryProps]
-                        .length /
-                        (summary[`${subject}Qualified` as keyof SummaryProps]
-                          .length +
-                          summary[
-                            `${subject}DidNotQualified` as keyof SummaryProps
-                          ].length)) *
-                      100
-                    ).toFixed(2)}
-                  />
-                </TableCell>
-              </motion.tr>
-            ))}
+                          ]
+                        );
+                        setShowScholars(true);
+                      }}
+                      label={dnqCount}
+                    />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Chip
+                      color={
+                        (qualifiedCount / (qualifiedCount + dnqCount)) * 100 >
+                        75
+                          ? "success"
+                          : "error"
+                      }
+                      label={(
+                        (qualifiedCount / (qualifiedCount + dnqCount)) *
+                        100
+                      ).toFixed(2)}
+                    />
+                  </TableCell>
+                </motion.tr>
+              );
+            })}
           </TableBody>
         </Table>
       </TableContainer>

@@ -26,6 +26,7 @@ import SummaryTable from "./parts/SummaryTable";
 import SubjectRangeDistribution from "./parts/SubjectRangeDistribution";
 import Loader from "../../components/Loader";
 import CutoffCreateria from "./parts/CutoffCreateria";
+import SubjectStatistics from "./parts/SubjectStatistics";
 
 interface AdjustedScores {
   physics?: number;
@@ -416,7 +417,9 @@ const JEEAdvancedAnalysis: React.FC = () => {
       headerAlign: "center",
       cellClassName: (params) => {
         if ("isPhysicsQualified" in params.row) {
-          return params.row.isPhysicsQualified ? "high-score" : "low-score";
+          return params.row.isPhysicsQualified
+            ? "status-success"
+            : "status-error";
         }
         return "";
       },
@@ -446,7 +449,9 @@ const JEEAdvancedAnalysis: React.FC = () => {
       headerAlign: "center",
       cellClassName: (params) => {
         if ("isChemistryQualified" in params.row) {
-          return params.row.isChemistryQualified ? "high-score" : "low-score";
+          return params.row.isChemistryQualified
+            ? "status-success"
+            : "status-error";
         }
         return "";
       },
@@ -476,7 +481,9 @@ const JEEAdvancedAnalysis: React.FC = () => {
       headerAlign: "center",
       cellClassName: (params) => {
         if ("isMathsQualified" in params.row) {
-          return params.row.isMathsQualified ? "high-score" : "low-score";
+          return params.row.isMathsQualified
+            ? "status-success"
+            : "status-error";
         }
         return "";
       },
@@ -506,7 +513,9 @@ const JEEAdvancedAnalysis: React.FC = () => {
       headerAlign: "center",
       cellClassName: (params) => {
         if ("isTotalQualified" in params.row) {
-          return params.row.isTotalQualified ? "high-score" : "low-score";
+          return params.row.isTotalQualified
+            ? "status-success"
+            : "status-error";
         }
         return "";
       },
@@ -527,7 +536,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
       headerAlign: "center",
       cellClassName: (params) => {
         if ("isQualified" in params.row) {
-          return params.row.isQualified ? "high-score" : "low-score";
+          return params.row.isQualified ? "status-success" : "status-error";
         }
         return "";
       },
@@ -675,6 +684,12 @@ const JEEAdvancedAnalysis: React.FC = () => {
           transition={{ duration: 0.3 }}
         >
           <Grid container spacing={2}>
+            <Grid size={{ xs: 12 }}>
+              <SubjectStatistics
+                jsonData={jsonData}
+                subjects={["physics", "chemistry", "maths", "total"]}
+              />
+            </Grid>
             <Grid size={{ xs: 12, md: 6 }}>
               <SubjectRangeDistribution
                 jsonData={jsonData}
