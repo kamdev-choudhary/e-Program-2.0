@@ -1,3 +1,6 @@
+import swaggerUi from "swagger-ui-express";
+import { swaggerSpec } from "./services/swagger.js";
+
 import authRouter from "./routers/authRouter.js";
 import lectureRouter from "./routers/lectureRouter.js";
 import questionRouter from "./routers/questionRoute.js";
@@ -31,6 +34,9 @@ const routes = (app) => {
   app.use("/api/v1/chat", verifyToken, chatRoute);
   app.use("/api/v1/automation", verifyToken, automationRoute);
   app.use("/api/v1/analysis", analysisRoute);
+
+  app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
   app.use("/*", (req, res) =>
     res.status(404).json({ message: "Route not available" })
   );

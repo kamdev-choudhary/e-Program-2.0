@@ -173,10 +173,12 @@ export async function calculateJeeMainRank(req, res, next) {
 export async function getJeeMainPredictionInitialData(req, res, next) {
   try {
     // Dataset 1: Unique Years
-    const uniqueYears = await JEEMainMarksVsRank.distinct("year");
+    const uniqueYears = await JEEMainMarksVsPercentile.distinct("year");
+
+    const years = uniqueYears.map((year) => ({ name: year, value: year }));
 
     // Dataset 2: Year with Sessions
-    const yearsWithSessions = await JEEMainMarksVsRank.aggregate([
+    const yearsWithSessions = await JEEMainMarksVsPercentile.aggregate([
       {
         $group: {
           _id: {
@@ -196,7 +198,7 @@ export async function getJeeMainPredictionInitialData(req, res, next) {
     ]);
 
     // Dataset 3: Year with Date, Session, and Shifts
-    const yearWithDetails = await JEEMainMarksVsRank.aggregate([
+    const yearWithDetails = await JEEMainMarksVsPercentile.aggregate([
       {
         $group: {
           _id: {
@@ -217,7 +219,7 @@ export async function getJeeMainPredictionInitialData(req, res, next) {
       { $sort: { year: 1, date: 1, session: 1 } }, // Sort by year, date, session, and shift
     ]);
 
-    const withShift = await JEEMainMarksVsRank.aggregate([
+    const withShift = await JEEMainMarksVsPercentile.aggregate([
       {
         $group: {
           _id: {
@@ -241,11 +243,11 @@ export async function getJeeMainPredictionInitialData(req, res, next) {
     ]);
 
     // Dataset 4: Full Dataset
-    const fullData = await JEEMainMarksVsRank.find();
+    const fullData = await JEEMainMarksVsPercentile.find();
 
     // Response
     res.status(200).json({
-      uniqueYears,
+      uniqueYears: years,
       yearsWithSessions,
       yearWithDetails,
       withShift,
@@ -334,6 +336,8 @@ export async function getJeeMainMarksVsRankMetadata(req, res, next) {
   try {
     const years = await JEEMainMarksVsPercentile.distinct("year");
 
+    const formattedYears = years.map((data) => ({ name: data, value: data }));
+
     const sessions = await JEEMainMarksVsPercentile.aggregate([
       {
         $group: {
@@ -389,7 +393,12 @@ export async function getJeeMainMarksVsRankMetadata(req, res, next) {
 
     return res
       .status(200)
-      .json({ years, sessions, sessionDates, sessionDateShifts });
+      .json({
+        years: formattedYears,
+        sessions,
+        sessionDates,
+        sessionDateShifts,
+      });
   } catch (error) {
     next(error);
   }
@@ -692,6 +701,17 @@ export async function getJEEAdvancedMarksVsRank(req, res, next) {
       const allCutoffData = await JEEAdvancedMarksVsRank.find();
       res.status(200).json({ data: allCutoffData });
     }
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getJEEAdvancedCutoffYears(req, res, next) {
+  try {
+    const years = await JEEAdvancedCutoff.distinct("year");
+    const formattedYears = years.map((year) => ({ name: year, value: year }));
+
+    res.status(200).json({ message: "Data Found", years: formattedYears });
   } catch (error) {
     next(error);
   }

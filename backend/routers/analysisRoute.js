@@ -18,6 +18,7 @@ import {
   generateJeeAdvancedPrediction,
   addOrUpdateJEEAdvancedMarksVsRank,
   getJEEAdvancedMarksVsRank,
+  getJEEAdvancedCutoffYears,
 } from "../controllers/AnalysisController.js";
 
 router.route("/jeemain/:year").get(getORCRbyYear);
@@ -53,6 +54,8 @@ router
   .route("/cutoff/jeeadvanced")
   .post(addOrUpdateJEEAdvancedCutoff)
   .get(getJEEAdvancedCutoff);
+
+router.route("/cutoff/jeeadvanced/metadata").get(getJEEAdvancedCutoffYears);
 
 router.route("/prediction/jeeadvanced").post(generateJeeAdvancedPrediction);
 
