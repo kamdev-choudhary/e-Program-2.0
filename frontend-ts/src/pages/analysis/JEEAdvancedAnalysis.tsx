@@ -18,7 +18,6 @@ import { DownloadRounded, ExpandMoreRounded } from "@mui/icons-material";
 import { CustomModal } from "../../components/CustomModal";
 import { CustomToolbar } from "../../components/CustomToolbar";
 import { downloadJsonToExcel } from "../../utils/commonfs";
-import { motion } from "framer-motion";
 import SummaryTable from "./parts/SummaryTable";
 import SubjectRangeDistribution from "./parts/SubjectRangeDistribution";
 import Loader from "../../components/Loader";
@@ -32,8 +31,11 @@ import {
   CategoryProp,
   CutoffDataProps,
 } from "./types";
+import { useNotification } from "../../contexts/NotificationProvider";
+import axios from "../../hooks/AxiosInterceptor";
 
 const JEEAdvancedAnalysis: React.FC = () => {
+  const { showNotification } = useNotification();
   const [weightage, setWeightage] = useState<string | number>(1);
   const [jsonData, setJsonData] = useState<DataProps[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
@@ -48,11 +50,37 @@ const JEEAdvancedAnalysis: React.FC = () => {
     total: "360",
   });
 
-  // Memoized subjects and max marks
-  const subjects = useMemo(
-    () => ["physics", "chemistry", "maths", "total"],
-    []
-  );
+  const getAdvancedRank = async (student: DataProps) => {
+    try {
+      const res = await axios.post("/analysis/jeeadvanced/predict-rank", {
+        student,
+      });
+
+      setJsonData((prevData: DataProps[]) =>
+        prevData.map((item) =>
+          item.uniqueId === student.uniqueId
+            ? { ...item, airRank: res.data.airRank, catRank: res.data.airRank } // Preserve existing properties
+            : item
+        )
+      );
+    } catch (error) {
+      console.error("Error fetching rank:", error);
+    }
+  };
+
+  const handleGetRank = async () => {
+    try {
+      if (jsonData) {
+        await Promise.all(
+          jsonData.map(async (data) => {
+            await getAdvancedRank(data);
+          })
+        );
+      }
+    } catch (error) {
+      console.error("Error handling download info:", error);
+    }
+  };
 
   const maxMarksObj = useMemo(
     () => ({
@@ -254,6 +282,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
 
         setJsonData(json);
         generatePrediction(json);
+        showNotification({ message: "file Processed." });
       } catch (error) {
         console.error("Error reading the Excel file:", error);
       } finally {
@@ -499,13 +528,14 @@ const JEEAdvancedAnalysis: React.FC = () => {
   }, [cutoff]);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+    <Box sx={{ display: "flex", flexDirection: "column" }}>
       <Paper
         sx={{
           display: "flex",
           flexDirection: "column",
           gap: 2,
           flexWrap: "wrap",
+          mb: 2,
         }}
       >
         <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
@@ -547,7 +577,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
         </Box>
         <Grid container spacing={2}>
           <Grid size={{ xs: 12, md: 6 }}>
-            <Accordion sx={{ minWidth: 350, p: 0, m: 0 }}>
+            <Accordion sx={{ p: 0, m: 0 }}>
               <AccordionSummary expandIcon={<ExpandMoreRounded />}>
                 <Typography>
                   Cutoff Createria :{" "}
@@ -594,47 +624,54 @@ const JEEAdvancedAnalysis: React.FC = () => {
                 type="number"
                 label="Total Mark"
               />
+              <Button onClick={handleGetRank}>Get Rank</Button>
             </Box>
           </Grid>
         </Grid>
       </Paper>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        <SummaryTable
-          jsonData={jsonData}
-          setScholars={setScholars}
-          setShowScholars={setShowScholars}
-          summary={summary}
-        />
-      </motion.div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        <SubjectStatistics
-          jsonData={jsonData}
-          subjects={subjects}
-          maxMarks={maxMarksObj}
-        />
-      </motion.div>
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3 }}
-      >
-        <SubjectRangeDistribution
-          jsonData={jsonData}
-          subjects={subjects}
-          maxMarks={maxMarksObj}
-        />
-      </motion.div>
+      <Accordion sx={{ p: 0, m: 0 }}>
+        <AccordionSummary expandIcon={<ExpandMoreRounded />}>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
+            <Typography variant="h6">Qualification Summary</Typography>
+          </Box>
+        </AccordionSummary>
+        <AccordionDetails>
+          <SummaryTable
+            jsonData={jsonData}
+            setScholars={setScholars}
+            setShowScholars={setShowScholars}
+            summary={summary}
+          />
+        </AccordionDetails>
+      </Accordion>
+      <Accordion sx={{ p: 0, m: 0 }}>
+        <AccordionSummary expandIcon={<ExpandMoreRounded />}>
+          <Typography variant="h6">Subject Statistics</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <SubjectStatistics
+            jsonData={jsonData}
+            subjects={["physics", "chemistry", "maths", "total"]}
+            maxMarks={maxMarksObj}
+          />
+        </AccordionDetails>
+      </Accordion>
+      <Accordion sx={{ p: 0, m: 0 }}>
+        <AccordionSummary expandIcon={<ExpandMoreRounded />}>
+          <Typography variant="h6">Marks Range Distribution</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <SubjectRangeDistribution
+            jsonData={jsonData}
+            subjects={["physics", "chemistry", "maths", "total"]}
+            maxMarks={maxMarksObj}
+          />
+        </AccordionDetails>
+      </Accordion>
 
       <DataGrid
+        sx={{ mt: 2 }}
         aria-label="JEE Advanced Results"
         columns={columns}
         rows={jsonData}

@@ -7,20 +7,14 @@ import {
   TableHead,
   TableBody,
   TableCell,
-  Typography,
   Box,
   Chip,
-  Divider,
-  IconButton,
   Grid2 as Grid,
 } from "@mui/material";
 import { motion } from "framer-motion";
-import { captureElementAsPNG } from "../../../utils/caputureAsPNG";
-import { PhotoCameraRounded } from "@mui/icons-material";
 
 // Recharts imports
 import { PieChart, Pie, Cell, Legend, ResponsiveContainer } from "recharts";
-import { useNotification } from "../../../contexts/NotificationProvider";
 
 interface AdjustedScores {
   physics?: number;
@@ -88,7 +82,6 @@ const SummaryTable: React.FC<SummaryTableProps> = ({
   summary,
   setShowScholars,
 }) => {
-  const { showNotification } = useNotification();
   if (!summary) {
     return <Box>Summary Not Generated</Box>;
   }
@@ -127,28 +120,10 @@ const SummaryTable: React.FC<SummaryTableProps> = ({
   };
 
   return (
-    <Paper
+    <Box
       id="summary-table"
-      sx={{ display: "flex", flexDirection: "column", gap: 2, p: 2 }}
+      sx={{ display: "flex", flexDirection: "column", gap: 2 }}
     >
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography variant="h6">Qualification Summary</Typography>
-        <IconButton
-          id="photo-camera-button"
-          size="small"
-          onClick={async () => {
-            await captureElementAsPNG({
-              elementId: "summary-table",
-              filename: "Summary.png",
-              hiddenSelectors: ["#photo-camera-button"],
-            });
-            showNotification({ message: "Image Copied!!" });
-          }}
-        >
-          <PhotoCameraRounded />
-        </IconButton>
-      </Box>
-      <Divider />
       <Grid container>
         <Grid
           size={{ xs: 12, md: 6 }}
@@ -296,7 +271,7 @@ const SummaryTable: React.FC<SummaryTableProps> = ({
           </Box>
         </Grid>
       </Grid>
-    </Paper>
+    </Box>
   );
 };
 

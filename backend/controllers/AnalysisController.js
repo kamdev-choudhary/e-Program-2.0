@@ -391,14 +391,12 @@ export async function getJeeMainMarksVsRankMetadata(req, res, next) {
       },
     ]);
 
-    return res
-      .status(200)
-      .json({
-        years: formattedYears,
-        sessions,
-        sessionDates,
-        sessionDateShifts,
-      });
+    return res.status(200).json({
+      years: formattedYears,
+      sessions,
+      sessionDates,
+      sessionDateShifts,
+    });
   } catch (error) {
     next(error);
   }
@@ -655,17 +653,12 @@ export async function addOrUpdateJEEAdvancedMarksVsRank(req, res, next) {
   try {
     const { data } = req.body;
     const parsedData = JSON.parse(data);
-    console.log(parsedData);
 
-    // Ensure parsedData is an array
     if (!Array.isArray(parsedData)) {
       throw new Error("Data must be an array of objects.");
     }
-
-    // Array to store the results of each update/insert operation
     const results = [];
 
-    // Iterate through each entry in the dataset
     for (const entry of parsedData) {
       // Find a cutoff entry with the same year and marks, and update it, or create a new one if it doesn't exist
       const existingCutoff = await JEEAdvancedMarksVsRank.findOneAndUpdate(
@@ -674,11 +667,20 @@ export async function addOrUpdateJEEAdvancedMarksVsRank(req, res, next) {
         { new: true, upsert: true } // `new: true` returns the updated document, `upsert: true` creates a new document if none exists
       );
 
-      // Add the result of this operation to the results array
       results.push(existingCutoff);
     }
 
     res.status(200).json({ message: "Data saved or updated", results });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getMetaDataForJEEAdvancedMarksVsRank(req, res, next) {
+  try {
+    const years = await JEEAdvancedMarksVsRank.distinct("year");
+    const formattedYears = years.map((year) => ({ name: year, value: year }));
+    res.status(200).json({ years: formattedYears });
   } catch (error) {
     next(error);
   }
@@ -712,6 +714,14 @@ export async function getJEEAdvancedCutoffYears(req, res, next) {
     const formattedYears = years.map((year) => ({ name: year, value: year }));
 
     res.status(200).json({ message: "Data Found", years: formattedYears });
+  } catch (error) {
+    next(error);
+  }
+}
+
+export async function getJeeAdvancedRank(req, res, next) {
+  try {
+    res.status(200).json({ airRank: 300, crlRank: 400 });
   } catch (error) {
     next(error);
   }

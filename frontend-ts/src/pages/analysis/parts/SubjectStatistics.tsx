@@ -6,12 +6,9 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Typography,
   Paper,
-  Divider,
   Grid2 as Grid,
   Box,
-  IconButton,
 } from "@mui/material";
 import {
   BarChart,
@@ -22,8 +19,6 @@ import {
   ResponsiveContainer,
   Legend,
 } from "recharts";
-import { PhotoCameraRounded } from "@mui/icons-material";
-import { captureElementAsPNG } from "../../../utils/caputureAsPNG";
 
 interface DataProps {
   physics: number;
@@ -76,23 +71,7 @@ const SubjectStatistics: React.FC<SubjectStatisticsProps> = ({
   });
 
   return (
-    <Paper id="subject-static" sx={{ p: 2 }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography variant="h6">Subject Statistics</Typography>
-        <IconButton
-          id="photo-camera-button"
-          onClick={() =>
-            captureElementAsPNG({
-              elementId: "subject-static",
-              filename: "Subject Static.png",
-              hiddenSelectors: ["#photo-camera-button"],
-            })
-          }
-        >
-          <PhotoCameraRounded />
-        </IconButton>
-      </Box>
-      <Divider sx={{ my: 2 }} />
+    <Box id="subject-static">
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 6 }}>
           <TableContainer component={Paper}>
@@ -185,7 +164,7 @@ const SubjectStatistics: React.FC<SubjectStatisticsProps> = ({
           </ResponsiveContainer>
         </Grid>
       </Grid>
-    </Paper>
+    </Box>
   );
 };
 

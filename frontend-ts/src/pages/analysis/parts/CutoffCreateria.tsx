@@ -162,7 +162,7 @@ const CutoffCriteria: React.FC<CutoffCriteriaProps> = ({
     {
       field: "category",
       headerName: "Category",
-      width: 180,
+      width: 60,
       align: "center",
       headerAlign: "center",
       flex: 1,
@@ -170,7 +170,7 @@ const CutoffCriteria: React.FC<CutoffCriteriaProps> = ({
     {
       field: "subjectCutoff",
       headerName: "Subject Cutoff",
-      width: 180,
+      width: 60,
       align: "center",
       headerAlign: "center",
       editable: true,
@@ -179,7 +179,7 @@ const CutoffCriteria: React.FC<CutoffCriteriaProps> = ({
     {
       field: "totalCutoff",
       headerName: "Total Cutoff",
-      width: 180,
+      width: 60,
       align: "center",
       headerAlign: "center",
       editable: true,

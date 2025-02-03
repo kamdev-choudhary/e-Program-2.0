@@ -8,7 +8,7 @@ import axios from "../../../../hooks/AxiosInterceptor";
 
 interface DataProps {
   year: number; // Exam year, e.g., 2024
-  percentile: number; // Percentile corresponding to the marks (e.g., 99.5)
+
   marks: number;
   generalRank: number; // General category rank
   generalPwDRank: number; // General PwD category rank
@@ -79,7 +79,7 @@ const UploadJEEAdvancedMarksVsRank: React.FC<UploadPercentilevsRankProps> = ({
 
           return {
             year: rowData.year,
-            percentile: rowData.percentile,
+            maxMarks: rowData.maxMarks,
             marks: rowData.marks,
             // Ranks for different categories
             generalRank: rowData.generalRank,
@@ -133,6 +133,24 @@ const UploadJEEAdvancedMarksVsRank: React.FC<UploadPercentilevsRankProps> = ({
     {
       field: "year",
       headerName: "Year",
+      flex: 1,
+      headerAlign: "center",
+      align: "center",
+      editable: true,
+      minWidth: 120,
+    },
+    {
+      field: "maxMarks",
+      headerName: "Max Marks",
+      flex: 1,
+      headerAlign: "center",
+      align: "center",
+      editable: true,
+      minWidth: 120,
+    },
+    {
+      field: "marks",
+      headerName: "Marks",
       flex: 1,
       headerAlign: "center",
       align: "center",
@@ -262,7 +280,22 @@ const UploadJEEAdvancedMarksVsRank: React.FC<UploadPercentilevsRankProps> = ({
       </Box>
 
       <Box>
-        <DataGrid rows={rows} columns={columns} loading={isLoading} />
+        <DataGrid
+          rows={rows}
+          columns={columns}
+          loading={isLoading}
+          initialState={{
+            columns: {
+              columnVisibilityModel: {
+                generalPwDRank: false,
+                obcPwDRank: false,
+                stPwDRank: false,
+                scPwDRank: false,
+                ewsPwDRank: false,
+              },
+            },
+          }}
+        />
       </Box>
     </Box>
   );

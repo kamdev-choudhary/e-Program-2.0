@@ -36,6 +36,8 @@ export interface DataProps {
   isTotalQualified?: boolean;
   adjustedScores?: AdjustedScores;
   cutoff?: CutOff;
+  airRank?: number | string | null | undefined;
+  catRank?: number | string | null | undefined;
 }
 
 export interface SummaryProps {

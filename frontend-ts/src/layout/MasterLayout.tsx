@@ -73,10 +73,10 @@ const MasterLayout: React.FC = () => {
         <Box
           sx={{
             flex: 1, // This will take the remaining space
-            overflowY: "auto",
+            overflowY: "scroll",
             height: "100%", // Ensure it takes full height
             pb: 2,
-            p: 1.5,
+            p: { xs: 0.5, sm: 1.5 },
           }}
         >
           <Outlet />

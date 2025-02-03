@@ -3,6 +3,7 @@ import mongoose from "mongoose";
 const JEEAdvancedMarksVsRankSchema = new mongoose.Schema(
   {
     year: String,
+    maxMarks: Number,
     marks: Number,
     generalRank: Number,
     obcRank: Number,

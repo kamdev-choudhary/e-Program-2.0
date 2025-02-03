@@ -5,7 +5,7 @@ import { CustomToolbar } from "../../../components/CustomToolbar";
 import { CustomModal } from "../../../components/CustomModal";
 import CustomDropDown from "../../../components/CustomDropDown";
 import axios from "../../../hooks/AxiosInterceptor";
-import UploadJEEAdvancedMarksVsRank from "./part/UploadAdvancedMarksVsPercentile";
+import UploadJEEAdvancedMarksVsRank from "./part/UploadAdvancedMarksVsRank";
 import { useNotification } from "../../../contexts/NotificationProvider";
 
 interface JEEMainMarksVsRankProps {
@@ -17,15 +17,33 @@ interface JEEMainMarksVsRankProps {
   percentile: number;
 }
 
+interface YearsProps {
+  name: string | number;
+  value: string | number;
+}
+
 const AdvancedMarksVsRank: React.FC = () => {
   const { showNotification } = useNotification();
   const [data, setData] = useState<JEEMainMarksVsRankProps[]>([]);
   const [showUploadData, setShowUploadData] = useState<boolean>(false);
   const [selectedYear, setSelectedYear] = useState<string>("");
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [selectedSession, setSelectedSession] = useState<string>("");
-  const [selectedDate, setSelectedDate] = useState<string>("");
-  const [selectedShift, setSelectedShift] = useState<string>("");
+  const [years, setYears] = useState<YearsProps[] | null>(null);
+
+  const fetchInitialData = async () => {
+    try {
+      const res = await axios.get(
+        "/analysis/jeeadvanced-marks-vs-rank/metadata"
+      );
+      setYears(res.data.years);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchInitialData();
+  }, []);
 
   const fetchData = async () => {
     try {
@@ -33,9 +51,6 @@ const AdvancedMarksVsRank: React.FC = () => {
       const response = await axios.get("/analysis/jeeadvanced-marks-vs-rank", {
         params: {
           year: selectedYear || undefined,
-          session: selectedSession || undefined,
-          shift: selectedShift || undefined,
-          date: selectedDate || undefined,
         },
       });
       setData(response.data.data);
@@ -48,7 +63,7 @@ const AdvancedMarksVsRank: React.FC = () => {
   };
 
   useEffect(() => {
-    // if (!selectedYear) return;
+    if (!selectedYear) return;
     fetchData();
   }, [selectedYear]);
 
@@ -74,7 +89,7 @@ const AdvancedMarksVsRank: React.FC = () => {
     const { _id, ...updateField } = newRow;
     try {
       await axios.patch(
-        `/analysis/jeemainmarksvsrank/${oldRow._id}`,
+        `/analysis/jeeadvaned-marks-vs-rank/${oldRow._id}`,
         updateField
       );
       return newRow;
@@ -91,6 +106,7 @@ const AdvancedMarksVsRank: React.FC = () => {
     () => data.map((d, index) => ({ ...d, id: index + 1 })),
     [data]
   );
+
   const columns: GridColDef[] = [
     {
       field: "id",
@@ -102,6 +118,15 @@ const AdvancedMarksVsRank: React.FC = () => {
     {
       field: "year",
       headerName: "Year",
+      flex: 1,
+      headerAlign: "center",
+      align: "center",
+      editable: true,
+      minWidth: 120,
+    },
+    {
+      field: "maxMarks",
+      headerName: "Max Marks",
       flex: 1,
       headerAlign: "center",
       align: "center",
@@ -206,17 +231,11 @@ const AdvancedMarksVsRank: React.FC = () => {
         <Grid container spacing={2}>
           <Grid size={{ xs: 12, md: 6, lg: 3 }}>
             <CustomDropDown
-              data={[
-                { name: 2023, value: 2023 },
-                { name: 2024, value: 2024 },
-              ]}
+              data={years || []}
               value={selectedYear}
               label="Year"
               onChange={(e: SelectChangeEvent) => {
                 setSelectedYear(e.target.value);
-                setSelectedSession("");
-                setSelectedDate("");
-                setSelectedShift("");
               }}
               name="name"
               dropdownValue="value"
@@ -236,7 +255,18 @@ const AdvancedMarksVsRank: React.FC = () => {
           ),
         }}
         loading={isLoading}
-        initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}
+        initialState={{
+          pagination: { paginationModel: { pageSize: 10 } },
+          columns: {
+            columnVisibilityModel: {
+              generalPwDRank: false,
+              obcPwDRank: false,
+              stPwDRank: false,
+              scPwDRank: false,
+              ewsPwDRank: false,
+            },
+          },
+        }}
         pageSizeOptions={[10, 30, 50]}
         processRowUpdate={handleProcessRowUpdate}
       />

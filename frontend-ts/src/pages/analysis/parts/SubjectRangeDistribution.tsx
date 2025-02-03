@@ -6,14 +6,8 @@ import {
   TableBody,
   TableRow,
   TableCell,
-  Typography,
   Paper,
-  Divider,
-  IconButton,
-  Box,
 } from "@mui/material";
-import { captureElementAsPNG } from "../../../utils/caputureAsPNG";
-import { PhotoCameraRounded } from "@mui/icons-material";
 
 interface DataProps {
   physics: number;
@@ -78,57 +72,36 @@ const SubjectRangeDistribution: React.FC<SubjectRangeDistributionProps> = ({
   });
 
   return (
-    <Paper id="range-map" sx={{ p: 2 }}>
-      <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-        <Typography variant="h6">Marks Range Distribution</Typography>
-        <IconButton
-          id="photo-camera-button"
-          size="small"
-          onClick={() =>
-            captureElementAsPNG({
-              elementId: "range-map",
-              filename: "capture.png",
-              hiddenSelectors: ["#photo-camera-button"],
-            })
-          }
-        >
-          <PhotoCameraRounded />
-        </IconButton>
-      </Box>
-      <Divider sx={{ my: 2 }} />
-      <div>
-        <TableContainer component={Paper}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell align="center">
-                  <b>Range</b>
+    <TableContainer component={Paper}>
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell align="center">
+              <b>Range</b>
+            </TableCell>
+            {subjects.map((subject) => (
+              <TableCell align="center" key={subject}>
+                <b>{subject.toUpperCase()}</b>
+              </TableCell>
+            ))}
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {percentageRanges.map((range, rangeIndex) => (
+            <TableRow key={range}>
+              <TableCell sx={{ minWidth: 120 }} align="center">
+                {range}
+              </TableCell>
+              {subjectRangeData.map((subject) => (
+                <TableCell align="center" key={subject.name}>
+                  {subject.ranges[rangeIndex]}
                 </TableCell>
-                {subjects.map((subject) => (
-                  <TableCell align="center" key={subject}>
-                    <b>{subject.toUpperCase()}</b>
-                  </TableCell>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {percentageRanges.map((range, rangeIndex) => (
-                <TableRow key={range}>
-                  <TableCell sx={{ minWidth: 120 }} align="center">
-                    {range}
-                  </TableCell>
-                  {subjectRangeData.map((subject) => (
-                    <TableCell align="center" key={subject.name}>
-                      {subject.ranges[rangeIndex]}
-                    </TableCell>
-                  ))}
-                </TableRow>
               ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </div>
-    </Paper>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </TableContainer>
   );
 };
 
