@@ -1,9 +1,20 @@
-import { Box, Button, Chip, Paper, TextField, Typography } from "@mui/material";
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Button,
+  Chip,
+  Grid2 as Grid,
+  Paper,
+  TextField,
+  Typography,
+} from "@mui/material";
 import React, { useEffect, useMemo, useState } from "react";
 import FileDropZone from "../../components/FileDropZone";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import ExcelJs from "exceljs";
-import { DownloadRounded, EditRounded } from "@mui/icons-material";
+import { DownloadRounded, ExpandMoreRounded } from "@mui/icons-material";
 import { CustomModal } from "../../components/CustomModal";
 import { CustomToolbar } from "../../components/CustomToolbar";
 import { downloadJsonToExcel } from "../../utils/commonfs";
@@ -29,7 +40,6 @@ const JEEAdvancedAnalysis: React.FC = () => {
   const [summary, setSummary] = useState<SummaryProps | null>(null);
   const [cutoff, setCutoff] = useState<CutoffDataProps | null>(null);
   const [showScholars, setShowScholars] = useState<boolean>(false);
-  const [showCutoff, setShowCutoff] = useState<boolean>(false);
   const [scholars, setScholars] = useState<DataProps[]>([]);
   const [subjectMarks, setSubjectMarks] = useState({
     physics: "120",
@@ -535,57 +545,58 @@ const JEEAdvancedAnalysis: React.FC = () => {
             Download Analysis
           </Button>
         </Box>
-        <Box sx={{ display: "flex", gap: 2, flex: 1, flexWrap: "wrap" }}>
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              maxWidth: 350,
-              alignItems: "center",
-              flexGrow: 1,
-              border: `1px solid ${
-                cutoff ? "rgba(0,0,0,0.3)" : "rgba(232, 37, 37, 0.79)"
-              }`,
-              borderRadius: 2,
-              background: cutoff ? "" : "rgba(236, 95, 82, 0.69)",
-              gap: 2,
-            }}
-          >
-            <Typography variant="h6">
-              {cutoff ? `Year: ${cutoff?.year?.toString()}` : "Select Cutoff"}
-            </Typography>
-            <Chip
-              onClick={() => setShowCutoff(true)}
-              size="small"
-              label="Edit"
-              icon={<EditRounded />}
-              sx={{ p: 1 }}
-              color="primary"
-            />
-          </Box>
-
-          <TextField
-            value={subjectMarks.physics}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setSubjectMarks((prev) => ({
-                ...prev,
-                physics: e.target.value,
-                chemistry: e.target.value,
-                maths: e.target.value,
-              }))
-            }
-            type="number"
-            label="Subject Mark"
-          />
-          <TextField
-            value={subjectMarks.total}
-            onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
-              setSubjectMarks((prev) => ({ ...prev, total: e.target.value }))
-            }
-            type="number"
-            label="Total Mark"
-          />
-        </Box>
+        <Grid container spacing={2}>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Accordion sx={{ minWidth: 350, p: 0, m: 0 }}>
+              <AccordionSummary expandIcon={<ExpandMoreRounded />}>
+                <Typography>
+                  Cutoff Createria :{" "}
+                  {cutoff ? (
+                    <Chip label={`Year - ${cutoff?.year?.toString()}`} />
+                  ) : (
+                    "Select Cutoff"
+                  )}
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <CutoffCreateria
+                  cutoff={cutoff}
+                  setCutoff={setCutoff}
+                  weightage={weightage}
+                  setWeightage={setWeightage}
+                />
+              </AccordionDetails>
+            </Accordion>
+          </Grid>
+          <Grid size={{ xs: 12, md: 6 }}>
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <TextField
+                value={subjectMarks.physics}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setSubjectMarks((prev) => ({
+                    ...prev,
+                    physics: e.target.value,
+                    chemistry: e.target.value,
+                    maths: e.target.value,
+                  }))
+                }
+                type="number"
+                label="Subject Mark"
+              />
+              <TextField
+                value={subjectMarks.total}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                  setSubjectMarks((prev) => ({
+                    ...prev,
+                    total: e.target.value,
+                  }))
+                }
+                type="number"
+                label="Total Mark"
+              />
+            </Box>
+          </Grid>
+        </Grid>
       </Paper>
       <motion.div
         initial={{ opacity: 0, y: 20 }}
@@ -668,22 +679,6 @@ const JEEAdvancedAnalysis: React.FC = () => {
         />
       </CustomModal>
 
-      {/* Cutoff */}
-      <CustomModal
-        open={showCutoff}
-        onClose={() => {
-          setShowCutoff(false);
-        }}
-        header="JEE Advanced Cutoff"
-        width="auto"
-      >
-        <CutoffCreateria
-          cutoff={cutoff}
-          setCutoff={setCutoff}
-          weightage={weightage}
-          setWeightage={setWeightage}
-        />
-      </CustomModal>
       <Loader open={isLoading} />
     </Box>
   );

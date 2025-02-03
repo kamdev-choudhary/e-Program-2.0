@@ -98,7 +98,7 @@ const SubjectRangeDistribution: React.FC<SubjectRangeDistributionProps> = ({
       <Divider sx={{ my: 2 }} />
       <div>
         <TableContainer component={Paper}>
-          <Table size="small">
+          <Table>
             <TableHead>
               <TableRow>
                 <TableCell align="center">

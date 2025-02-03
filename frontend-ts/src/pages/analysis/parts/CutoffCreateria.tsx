@@ -1,11 +1,5 @@
 import React, { useCallback, useEffect, useState } from "react";
-import {
-  Box,
-  Button,
-  Container,
-  SelectChangeEvent,
-  Typography,
-} from "@mui/material";
+import { Box, Button, SelectChangeEvent } from "@mui/material";
 import { DataGrid, GridColDef, GridRowModel } from "@mui/x-data-grid";
 import CustomDropDown from "../../../components/CustomDropDown";
 import { RestorePageRounded } from "@mui/icons-material";
@@ -44,7 +38,7 @@ const categoryMapping: Record<string, CutoffCategoryKey> = {
   "OBC PwD": "obcPwD",
   "ST PwD": "stPwD",
   "SC PwD": "scPwD",
-  Preparatory: "preparatory",
+  // Preparatory: "preparatory",
 };
 
 const computeDisplayedCutoff = (
@@ -221,7 +215,7 @@ const CutoffCriteria: React.FC<CutoffCriteriaProps> = ({
           flexWrap: "wrap",
         }}
       >
-        <Box sx={{ display: "flex", minWidth: 350 }}>
+        <Box sx={{ display: "flex", minWidth: 150 }}>
           <CustomDropDown
             label="Select Year"
             data={years || []}
@@ -232,8 +226,8 @@ const CutoffCriteria: React.FC<CutoffCriteriaProps> = ({
             showClearButton={false}
           />
         </Box>
-        <Typography>{cutoff?.examName}</Typography>
         <DebouncedInput
+          sx={{ minWidth: 150 }}
           value={weightage}
           onChange={setWeightage}
           delay={500}
@@ -252,14 +246,12 @@ const CutoffCriteria: React.FC<CutoffCriteriaProps> = ({
         </Button>
       </Box>
 
-      <Container maxWidth="md">
-        <DataGrid
-          processRowUpdate={processRowUpdate}
-          rows={rows}
-          columns={columns}
-          autoHeight
-        />
-      </Container>
+      <DataGrid
+        processRowUpdate={processRowUpdate}
+        rows={rows}
+        columns={columns}
+        autoHeight
+      />
     </Box>
   );
 };

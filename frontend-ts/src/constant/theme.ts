@@ -421,36 +421,6 @@ const getTheme = (mode: "light" | "dark") => {
         },
       },
 
-      MuiMenuItem: {
-        styleOverrides: {
-          root: {
-            borderRadius: 8,
-            margin: "2px",
-            padding: "8px ",
-            transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-            "&:hover": {
-              background: isLight
-                ? `hsla(${primaryHue}, 80%, 55%, 0.08)`
-                : `hsla(${primaryHue}, 80%, 75%, 0.12)`,
-            },
-            "&.Mui-selected": {
-              background: isLight
-                ? `hsla(${primaryHue}, 80%, 55%, 0.12)`
-                : `hsla(${primaryHue}, 80%, 75%, 0.2)`,
-              fontWeight: 600,
-              "&:hover": {
-                background: isLight
-                  ? `hsla(${primaryHue}, 80%, 55%, 0.16)`
-                  : `hsla(${primaryHue}, 80%, 75%, 0.24)`,
-              },
-            },
-          },
-        },
-        defaultProps: {
-          dense: true,
-        },
-      },
-
       MuiTooltip: {
         styleOverrides: {
           tooltip: {
@@ -483,9 +453,7 @@ const getTheme = (mode: "light" | "dark") => {
             border: "1px solid rgab(0,0,0,0.3)",
             borderRadius: 16,
             overflow: "hidden",
-            background: isLight
-              ? "rgba(255, 255, 255, 0.8)"
-              : "rgba(53, 53, 56, 0.89)",
+            background: isLight ? "rgba(255, 255, 255, 0.8)" : "#212327",
             transition: "all 0.3s cubic-bezier(0.4, 0, 0.2, 1)",
 
             "& .MuiDataGrid-row": {
