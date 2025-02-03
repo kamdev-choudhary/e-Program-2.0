@@ -440,6 +440,21 @@ const JEEAdvancedAnalysis: React.FC = () => {
       },
     },
     {
+      field: "cutoff",
+      headerName: "Cut off",
+      headerAlign: "center",
+      align: "center",
+      flex: 1,
+      minWidth: 120,
+      renderCell: (params) => (
+        <>
+          <Chip
+            label={`${params.row.cutoff.subject}/${params.row.cutoff.total}`}
+          />
+        </>
+      ),
+    },
+    {
       field: "airRank",
       headerName: "AIR Rank",
       align: "center",
@@ -531,7 +546,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
                 cutoff ? "rgba(0,0,0,0.3)" : "rgba(232, 37, 37, 0.79)"
               }`,
               borderRadius: 2,
-
+              background: cutoff ? "" : "rgba(236, 95, 82, 0.69)",
               gap: 2,
             }}
           >
