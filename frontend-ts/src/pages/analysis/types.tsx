@@ -15,7 +15,7 @@ export interface DataProps {
   name: string;
   uniqueId: string;
   category: "general" | "obc" | "st" | "sc" | "sc";
-  pwd: "yes" | "no";
+  pwd: "yes" | "no" | "y" | "n";
   physics_positive?: number;
   physics_negative?: number;
   physics: number;
@@ -38,6 +38,7 @@ export interface DataProps {
   cutoff?: CutOff;
   airRank?: number | string | null | undefined;
   catRank?: number | string | null | undefined;
+  isQualified?: boolean;
 }
 
 export interface SummaryProps {

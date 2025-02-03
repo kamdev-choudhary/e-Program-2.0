@@ -33,6 +33,8 @@ import {
 } from "./types";
 import { useNotification } from "../../contexts/NotificationProvider";
 import axios from "../../hooks/AxiosInterceptor";
+import CategoryWise from "./parts/CategoryWise";
+import RankRangeWise from "./parts/RankRangeWise";
 
 const JEEAdvancedAnalysis: React.FC = () => {
   const { showNotification } = useNotification();
@@ -631,7 +633,6 @@ const JEEAdvancedAnalysis: React.FC = () => {
           </Grid>
         </Grid>
       </Paper>
-
       <Accordion sx={{ p: 0, m: 0 }}>
         <AccordionSummary expandIcon={<ExpandMoreRounded />}>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -672,6 +673,27 @@ const JEEAdvancedAnalysis: React.FC = () => {
         </AccordionDetails>
       </Accordion>
 
+      {/* category Wise */}
+      <Accordion sx={{ p: 0, m: 0 }}>
+        <AccordionSummary expandIcon={<ExpandMoreRounded />}>
+          <Typography variant="h6">Category Wise Details</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <CategoryWise jsonData={jsonData} />
+        </AccordionDetails>
+      </Accordion>
+
+      {/* Rank Range Wise */}
+      <Accordion sx={{ p: 0, m: 0 }}>
+        <AccordionSummary expandIcon={<ExpandMoreRounded />}>
+          <Typography variant="h6">Rank Range Wise</Typography>
+        </AccordionSummary>
+        <AccordionDetails>
+          <RankRangeWise jsonData={jsonData} />
+        </AccordionDetails>
+      </Accordion>
+
+      {/* Scholar List */}
       <DataGrid
         sx={{ mt: 2 }}
         aria-label="JEE Advanced Results"
@@ -692,7 +714,6 @@ const JEEAdvancedAnalysis: React.FC = () => {
           },
         }}
       />
-
       <CustomModal
         open={showScholars}
         onClose={() => {
@@ -717,7 +738,6 @@ const JEEAdvancedAnalysis: React.FC = () => {
           }}
         />
       </CustomModal>
-
       <Loader open={isLoading} />
     </Box>
   );

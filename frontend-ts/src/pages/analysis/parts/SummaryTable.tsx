@@ -16,17 +16,7 @@ import { motion } from "framer-motion";
 // Recharts imports
 import { PieChart, Pie, Cell, Legend, ResponsiveContainer } from "recharts";
 
-interface AdjustedScores {
-  physics?: number;
-  chemistry?: number;
-  maths?: number;
-  total?: number;
-}
-
-interface CutOff {
-  subject?: number;
-  total?: number;
-}
+import { DataProps } from "../types";
 
 interface SummaryProps {
   physicsQualified: DataProps[];
@@ -39,34 +29,6 @@ interface SummaryProps {
   totalDidNotQualified: DataProps[];
   qualified: DataProps[];
   didNotQualified: DataProps[];
-}
-
-interface DataProps {
-  id?: string;
-  name: string;
-  uniqueId: string;
-  category: "general" | "obc" | "st" | "sc" | "sc";
-  pwd: "yes" | "no";
-  physics_positive?: number;
-  physics_negative?: number;
-  physics: number;
-  chemistry_positive?: number;
-  chemistry_negative?: number;
-  chemistry: number;
-  maths_positive?: number;
-  maths_negative?: number;
-  maths: number;
-  total_positive?: number;
-  total_negative?: number;
-  total: number;
-  percetile?: number;
-  rank?: number;
-  isPhysicsQualified?: boolean;
-  isChemistryQualified?: boolean;
-  isMathsQualified?: boolean;
-  isTotalQualified?: boolean;
-  adjustedScores?: AdjustedScores;
-  cutoff?: CutOff;
 }
 
 interface SummaryTableProps {

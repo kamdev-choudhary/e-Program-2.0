@@ -250,7 +250,12 @@ const CutoffCriteria: React.FC<CutoffCriteriaProps> = ({
         processRowUpdate={processRowUpdate}
         rows={rows}
         columns={columns}
-        autoHeight
+        initialState={{
+          pagination:{paginationModel:{
+            pageSize:5
+          }}
+        }}
+        pageSizeOptions={[5,10]}
       />
     </Box>
   );
