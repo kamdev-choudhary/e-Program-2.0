@@ -22,10 +22,8 @@ interface RowData {
 }
 
 interface CutoffCriteriaProps {
-  selectedYear: string;
   cutoff: CutoffDataProps | null;
   setCutoff: (value: CutoffDataProps) => void;
-  setSelectedYear: (value: string) => void;
   weightage: number | string;
   setWeightage: (value: number | string) => void;
 }
@@ -87,14 +85,14 @@ const computeDisplayedCutoff = (
 };
 
 const CutoffCriteria: React.FC<CutoffCriteriaProps> = ({
-  selectedYear,
   cutoff,
   setCutoff,
-  setSelectedYear,
+
   weightage,
   setWeightage,
 }) => {
   const [years, setYears] = useState<YearsProps[] | null>(null);
+  const [selectedYear, setSelectedYear] = useState<string>("2024");
   const [originalCutoff, setOriginalCutoff] = useState<CutoffDataProps | null>(
     null
   );

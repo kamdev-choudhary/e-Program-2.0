@@ -24,7 +24,6 @@ import {
 
 const JEEAdvancedAnalysis: React.FC = () => {
   const [weightage, setWeightage] = useState<string | number>(1);
-  const [selectedYear, setSelectedYear] = useState<string>("2024");
   const [jsonData, setJsonData] = useState<DataProps[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [summary, setSummary] = useState<SummaryProps | null>(null);
@@ -449,7 +448,9 @@ const JEEAdvancedAnalysis: React.FC = () => {
       renderCell: (params) => (
         <>
           <Chip
-            label={`${params.row.cutoff.subject}/${params.row.cutoff.total}`}
+            label={`${params.row.cutoff?.subject ?? "N/A"}/${
+              params.row.cutoff?.total ?? "N/A"
+            }`}
           />
         </>
       ),
@@ -672,15 +673,11 @@ const JEEAdvancedAnalysis: React.FC = () => {
         open={showCutoff}
         onClose={() => {
           setShowCutoff(false);
-          if (jsonData.length > 0) {
-            generatePrediction(jsonData);
-          }
         }}
         header="JEE Advanced Cutoff"
+        width="auto"
       >
         <CutoffCreateria
-          selectedYear={selectedYear}
-          setSelectedYear={setSelectedYear}
           cutoff={cutoff}
           setCutoff={setCutoff}
           weightage={weightage}

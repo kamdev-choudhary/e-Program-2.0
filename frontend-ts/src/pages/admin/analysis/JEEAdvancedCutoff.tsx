@@ -27,10 +27,16 @@ interface DataProps {
   preparatory: CategoryProp;
 }
 
+export interface YearsProps {
+  name: string | number;
+  value: string | number;
+}
+
 const JEEAdvancedCutoff: React.FC = () => {
   const [showAddCutoff, setShowAddCutoff] = useState<boolean>(false);
   const [selectedYear, setSelectedYear] = useState<string>("");
   const [data, setData] = useState<DataProps | null>(null);
+  const [years, setYears] = useState<YearsProps[] | null>(null);
 
   const getJeeAdvancedCutoff = async () => {
     try {
@@ -44,6 +50,18 @@ const JEEAdvancedCutoff: React.FC = () => {
       console.error(error);
     }
   };
+
+  useEffect(() => {
+    const getJeeAdvancedYears = async () => {
+      try {
+        const res = await axios.get("/analysis/cutoff/jeeadvanced/metadata");
+        setYears(res.data.years);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getJeeAdvancedYears();
+  }, []);
 
   useEffect(() => {
     if (!selectedYear) return;
@@ -165,7 +183,7 @@ const JEEAdvancedCutoff: React.FC = () => {
         <Box sx={{ display: "flex", minWidth: 350 }}>
           <CustomDropDown
             label="Select Year"
-            data={[{ name: "2024", value: "2024" }]} // Ensure value is a string here
+            data={years || []} // Ensure value is a string here
             name="name"
             dropdownValue="value"
             value={selectedYear}

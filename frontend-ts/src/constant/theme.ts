@@ -95,6 +95,9 @@ const getTheme = (mode: "light" | "dark") => {
       "0 4px 6px -1px rgba(0,0,0,0.1), 0 2px 4px -2px rgba(0,0,0,0.1)",
       "0 10px 15px -3px rgba(0,0,0,0.1), 0 4px 6px -4px rgba(0,0,0,0.1)",
       "0 20px 25px -5px rgba(0,0,0,0.1), 0 8px 10px -6px rgba(0,0,0,0.1)",
+      "0 25px 50px -12px rgba(0, 0, 0, 0.15)",
+      "0 30px 60px -15px rgba(0, 0, 0, 0.2)",
+      "0 35px 70px -20px rgba(0, 0, 0, 0.25)",
     ] as any,
 
     components: {
@@ -415,6 +418,36 @@ const getTheme = (mode: "light" | "dark") => {
             marginTop: 8,
             minWidth: 200,
           },
+        },
+      },
+
+      MuiMenuItem: {
+        styleOverrides: {
+          root: {
+            borderRadius: 8,
+            margin: "2px",
+            padding: "8px ",
+            transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
+            "&:hover": {
+              background: isLight
+                ? `hsla(${primaryHue}, 80%, 55%, 0.08)`
+                : `hsla(${primaryHue}, 80%, 75%, 0.12)`,
+            },
+            "&.Mui-selected": {
+              background: isLight
+                ? `hsla(${primaryHue}, 80%, 55%, 0.12)`
+                : `hsla(${primaryHue}, 80%, 75%, 0.2)`,
+              fontWeight: 600,
+              "&:hover": {
+                background: isLight
+                  ? `hsla(${primaryHue}, 80%, 55%, 0.16)`
+                  : `hsla(${primaryHue}, 80%, 75%, 0.24)`,
+              },
+            },
+          },
+        },
+        defaultProps: {
+          dense: true,
         },
       },
 

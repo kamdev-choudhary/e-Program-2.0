@@ -141,17 +141,8 @@ const SummaryTable: React.FC<SummaryTableProps> = ({
               elementId: "summary-table",
               filename: "Summary.png",
               hiddenSelectors: ["#photo-camera-button"],
-              download: false,
             });
             showNotification({ message: "Image Copied!!" });
-          }}
-          onDoubleClick={async () => {
-            await captureElementAsPNG({
-              elementId: "summary-table",
-              filename: "Summary.png",
-              hiddenSelectors: ["#photo-camera-button"],
-            });
-            showNotification({ message: "Image Copied and Downloaded." });
           }}
         >
           <PhotoCameraRounded />
