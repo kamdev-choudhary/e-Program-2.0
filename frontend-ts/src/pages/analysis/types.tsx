@@ -57,6 +57,8 @@ export interface CategoryProp {
 }
 
 export interface CutoffDataProps {
+  year: string | Number;
+  examName: string;
   _id: string;
   general: CategoryProp;
   ews: CategoryProp;

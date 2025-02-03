@@ -1,27 +1,18 @@
-import React from "react";
-import { Box, Container, SelectChangeEvent } from "@mui/material";
+import React, { useCallback, useEffect, useState } from "react";
+import {
+  Box,
+  Button,
+  Container,
+  SelectChangeEvent,
+  Typography,
+} from "@mui/material";
 import { DataGrid, GridColDef, GridRowModel } from "@mui/x-data-grid";
 import CustomDropDown from "../../../components/CustomDropDown";
+import { RestorePageRounded } from "@mui/icons-material";
+import axios from "../../../hooks/AxiosInterceptor";
 
-interface CategoryProp {
-  subject: number;
-  total: number;
-}
-
-interface DataProps {
-  _id: string;
-  general: CategoryProp;
-  ews: CategoryProp;
-  obc: CategoryProp;
-  st: CategoryProp;
-  sc: CategoryProp;
-  generalPwD: CategoryProp;
-  ewsPwD: CategoryProp;
-  obcPwD: CategoryProp;
-  stPwD: CategoryProp;
-  scPwD: CategoryProp;
-  preparatory: CategoryProp;
-}
+import { CutoffDataProps, YearsProps, CategoryProp } from "../types";
+import DebouncedInput from "../../../components/DebouncedInput";
 
 interface RowData {
   id: number;
@@ -30,92 +21,144 @@ interface RowData {
   totalCutoff: number;
 }
 
-interface CutoffCreateriaProps {
+interface CutoffCriteriaProps {
   selectedYear: string;
-  cutoff: DataProps | null;
-  setCutoff: (value: DataProps) => void;
+  cutoff: CutoffDataProps | null;
+  setCutoff: (value: CutoffDataProps) => void;
   setSelectedYear: (value: string) => void;
+  weightage: number | string;
+  setWeightage: (value: number | string) => void;
 }
 
-const CutoffCreateria: React.FC<CutoffCreateriaProps> = ({
+type CutoffCategoryKey = Exclude<
+  keyof CutoffDataProps,
+  "year" | "examName" | "_id"
+>;
+
+const categoryMapping: Record<string, CutoffCategoryKey> = {
+  General: "general",
+  EWS: "ews",
+  OBC: "obc",
+  ST: "st",
+  SC: "sc",
+  "General PwD": "generalPwD",
+  "EWS PwD": "ewsPwD",
+  "OBC PwD": "obcPwD",
+  "ST PwD": "stPwD",
+  "SC PwD": "scPwD",
+  Preparatory: "preparatory",
+};
+
+const computeDisplayedCutoff = (
+  original: CutoffDataProps,
+  weightage: number | string,
+  modified: Partial<CutoffDataProps>
+): CutoffDataProps => {
+  const weight =
+    typeof weightage === "string" ? parseFloat(weightage) || 1 : weightage;
+
+  // Create a copy while preserving non-category fields
+  const displayed: CutoffDataProps = { ...original };
+
+  (Object.keys(categoryMapping) as (keyof typeof categoryMapping)[]).forEach(
+    (key) => {
+      const categoryKey = categoryMapping[key];
+      const modifiedCategory = modified[categoryKey] as
+        | CategoryProp
+        | undefined;
+      const originalCategory = original[categoryKey] as CategoryProp;
+
+      if (originalCategory && typeof originalCategory === "object") {
+        displayed[categoryKey] = {
+          subject:
+            modifiedCategory?.subject !== undefined
+              ? Number(modifiedCategory.subject)
+              : Number(originalCategory.subject) * weight,
+          total:
+            modifiedCategory?.total !== undefined
+              ? Number(modifiedCategory.total)
+              : Number(originalCategory.total) * weight,
+        };
+      }
+    }
+  );
+
+  return displayed;
+};
+
+const CutoffCriteria: React.FC<CutoffCriteriaProps> = ({
   selectedYear,
   cutoff,
   setCutoff,
   setSelectedYear,
+  weightage,
+  setWeightage,
 }) => {
-  // Prepare DataGrid rows
+  const [years, setYears] = useState<YearsProps[] | null>(null);
+  const [originalCutoff, setOriginalCutoff] = useState<CutoffDataProps | null>(
+    null
+  );
+  const [modifiedCutoffs, setModifiedCutoffs] = useState<
+    Partial<CutoffDataProps>
+  >({});
+
+  useEffect(() => {
+    const getJeeAdvancedYears = async () => {
+      try {
+        const res = await axios.get("/analysis/cutoff/jeeadvanced/metadata");
+        setYears(res.data.years);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getJeeAdvancedYears();
+  }, []);
+
+  const getCutoff = useCallback(async () => {
+    try {
+      const res = await axios.get("/analysis/cutoff/jeeadvanced", {
+        params: { year: selectedYear },
+      });
+      const data: CutoffDataProps = res.data.data;
+      setOriginalCutoff(data);
+      setModifiedCutoffs({});
+      const computed = computeDisplayedCutoff(data, weightage, {});
+      setCutoff(computed);
+    } catch (error) {
+      console.error(error);
+    }
+  }, [selectedYear, setCutoff, weightage]);
+
+  useEffect(() => {
+    if (selectedYear) getCutoff();
+  }, [selectedYear, getCutoff]);
+
+  useEffect(() => {
+    if (originalCutoff) {
+      const computed = computeDisplayedCutoff(
+        originalCutoff,
+        weightage,
+        modifiedCutoffs
+      );
+      setCutoff(computed);
+    }
+  }, [originalCutoff, weightage, modifiedCutoffs, setCutoff]);
+
   const rows: RowData[] = cutoff
-    ? [
-        {
-          id: 1,
-          category: "General",
-          subjectCutoff: cutoff.general.subject,
-          totalCutoff: cutoff.general.total,
-        },
-        {
-          id: 2,
-          category: "EWS",
-          subjectCutoff: cutoff.ews.subject,
-          totalCutoff: cutoff.ews.total,
-        },
-        {
-          id: 3,
-          category: "OBC",
-          subjectCutoff: cutoff.obc.subject,
-          totalCutoff: cutoff.obc.total,
-        },
-        {
-          id: 4,
-          category: "ST",
-          subjectCutoff: cutoff.st.subject,
-          totalCutoff: cutoff.st.total,
-        },
-        {
-          id: 5,
-          category: "SC",
-          subjectCutoff: cutoff.sc.subject,
-          totalCutoff: cutoff.sc.total,
-        },
-        {
-          id: 6,
-          category: "General PwD",
-          subjectCutoff: cutoff.generalPwD.subject,
-          totalCutoff: cutoff.generalPwD.total,
-        },
-        {
-          id: 7,
-          category: "EWS PwD",
-          subjectCutoff: cutoff.ewsPwD.subject,
-          totalCutoff: cutoff.ewsPwD.total,
-        },
-        {
-          id: 8,
-          category: "OBC PwD",
-          subjectCutoff: cutoff.obcPwD.subject,
-          totalCutoff: cutoff.obcPwD.total,
-        },
-        {
-          id: 9,
-          category: "ST PwD",
-          subjectCutoff: cutoff.stPwD.subject,
-          totalCutoff: cutoff.stPwD.total,
-        },
-        {
-          id: 10,
-          category: "SC PwD",
-          subjectCutoff: cutoff.scPwD.subject,
-          totalCutoff: cutoff.scPwD.total,
-        },
-        {
-          id: 11,
-          category: "Preparotary",
-          subjectCutoff: cutoff.preparatory.subject,
-          totalCutoff: cutoff.preparatory.total,
-        },
-      ]
+    ? (Object.entries(categoryMapping) as [string, CutoffCategoryKey][]).map(
+        ([categoryLabel, categoryKey], index) => {
+          const categoryData = cutoff[categoryKey];
+
+          return {
+            id: index + 1,
+            category: categoryLabel,
+            subjectCutoff: categoryData?.subject ?? 0,
+            totalCutoff: categoryData?.total ?? 0,
+          };
+        }
+      )
     : [];
 
-  // Define DataGrid columns
   const columns: GridColDef[] = [
     {
       field: "id",
@@ -152,36 +195,21 @@ const CutoffCreateria: React.FC<CutoffCreateriaProps> = ({
     },
   ];
 
-  // Handle row updates
   const processRowUpdate = (newRow: GridRowModel, oldRow: GridRowModel) => {
-    if (!cutoff) return newRow;
-
-    const categoryMapping: Record<string, keyof DataProps> = {
-      General: "general",
-      EWS: "ews",
-      OBC: "obc",
-      ST: "st",
-      SC: "sc",
-      "General PwD": "generalPwD",
-      "EWS PwD": "ewsPwD",
-      "OBC PwD": "obcPwD",
-      "ST PwD": "stPwD",
-      "SC PwD": "scPwD",
-      Preparotary: "preparatory",
-    };
-
     const categoryKey = categoryMapping[oldRow.category];
-    if (!categoryKey) return newRow;
+    if (!categoryKey || !originalCutoff) return newRow;
 
-    const updatedCutoff: DataProps = {
-      ...cutoff,
+    const newSubject = Number(newRow.subjectCutoff) || 0;
+    const newTotal = Number(newRow.totalCutoff) || 0;
+
+    setModifiedCutoffs((prev) => ({
+      ...prev,
       [categoryKey]: {
-        subject: Number(newRow.subjectCutoff),
-        total: Number(newRow.totalCutoff),
+        subject: newSubject,
+        total: newTotal,
       },
-    };
+    }));
 
-    setCutoff(updatedCutoff);
     return newRow;
   };
 
@@ -198,7 +226,7 @@ const CutoffCreateria: React.FC<CutoffCreateriaProps> = ({
         <Box sx={{ display: "flex", minWidth: 350 }}>
           <CustomDropDown
             label="Select Year"
-            data={[{ name: "2024", value: "2024" }]}
+            data={years || []}
             name="name"
             dropdownValue="value"
             value={selectedYear}
@@ -206,6 +234,24 @@ const CutoffCreateria: React.FC<CutoffCreateriaProps> = ({
             showClearButton={false}
           />
         </Box>
+        <Typography>{cutoff?.examName}</Typography>
+        <DebouncedInput
+          value={weightage}
+          onChange={setWeightage}
+          delay={500}
+          placeholder="Weightage"
+          label="Weightage"
+        />
+        <Button
+          onClick={() => {
+            setWeightage(1);
+            getCutoff();
+          }}
+          startIcon={<RestorePageRounded />}
+          variant="contained"
+        >
+          Reset Cutoff
+        </Button>
       </Box>
 
       <Container maxWidth="md">
@@ -213,10 +259,11 @@ const CutoffCreateria: React.FC<CutoffCreateriaProps> = ({
           processRowUpdate={processRowUpdate}
           rows={rows}
           columns={columns}
+          autoHeight
         />
       </Container>
     </Box>
   );
 };
 
-export default CutoffCreateria;
+export default CutoffCriteria;

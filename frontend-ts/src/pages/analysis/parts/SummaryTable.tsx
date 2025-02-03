@@ -207,7 +207,9 @@ const SummaryTable: React.FC<SummaryTableProps> = ({
                       }}
                     >
                       <TableCell align="center">
-                        {subject.charAt(0).toUpperCase() + subject.slice(1)}
+                        <b>
+                          {subject.charAt(0).toUpperCase() + subject.slice(1)}
+                        </b>
                       </TableCell>
                       <TableCell align="center">
                         <Chip

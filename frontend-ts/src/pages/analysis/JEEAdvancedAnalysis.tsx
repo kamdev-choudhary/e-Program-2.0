@@ -1,18 +1,9 @@
-import {
-  Box,
-  Button,
-  IconButton,
-  Paper,
-  SelectChangeEvent,
-  TextField,
-} from "@mui/material";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import { Box, Button, Chip, Paper, TextField, Typography } from "@mui/material";
+import React, { useEffect, useMemo, useState } from "react";
 import FileDropZone from "../../components/FileDropZone";
-import CustomDropDown from "../../components/CustomDropDown";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import ExcelJs from "exceljs";
-import { DownloadRounded, InfoRounded } from "@mui/icons-material";
-import axios from "../../hooks/AxiosInterceptor";
+import { DownloadRounded, EditRounded } from "@mui/icons-material";
 import { CustomModal } from "../../components/CustomModal";
 import { CustomToolbar } from "../../components/CustomToolbar";
 import { downloadJsonToExcel } from "../../utils/commonfs";
@@ -22,20 +13,16 @@ import SubjectRangeDistribution from "./parts/SubjectRangeDistribution";
 import Loader from "../../components/Loader";
 import CutoffCreateria from "./parts/CutoffCreateria";
 import SubjectStatistics from "./parts/SubjectStatistics";
-import DebouncedInput from "../../components/DebouncedInout";
 
 // types
 import {
-  AdjustedScores,
   DataProps,
   SummaryProps,
   CategoryProp,
   CutoffDataProps,
-  YearsProps,
 } from "./types";
 
 const JEEAdvancedAnalysis: React.FC = () => {
-  const [years, setYears] = useState<YearsProps[] | null>(null);
   const [weightage, setWeightage] = useState<string | number>(1);
   const [selectedYear, setSelectedYear] = useState<string>("2024");
   const [jsonData, setJsonData] = useState<DataProps[]>([]);
@@ -67,33 +54,6 @@ const JEEAdvancedAnalysis: React.FC = () => {
     }),
     [subjectMarks]
   );
-
-  useEffect(() => {
-    const getJeeAdvancedYears = async () => {
-      try {
-        const res = await axios.get("/analysis/cutoff/jeeadvanced/metadata");
-        setYears(res.data.years);
-      } catch (error) {
-        console.error(error);
-      }
-    };
-    getJeeAdvancedYears();
-  }, []);
-
-  const getCutoff = useCallback(async () => {
-    try {
-      const res = await axios.get("/analysis/cutoff/jeeadvanced", {
-        params: { year: selectedYear },
-      });
-      setCutoff(res.data.data);
-    } catch (error) {
-      console.error(error);
-    }
-  }, [selectedYear]);
-
-  useEffect(() => {
-    if (selectedYear) getCutoff();
-  }, [selectedYear, getCutoff]);
 
   const generatePrediction = async (jsonData: DataProps[]) => {
     setIsLoading(true);
@@ -135,8 +95,6 @@ const JEEAdvancedAnalysis: React.FC = () => {
         didNotQualified: [],
       };
 
-      console.log(jsonData.filter((data) => typeof data.total !== "number"));
-
       const predictions =
         jsonData?.map((student: DataProps) => {
           if (!student) return student;
@@ -163,21 +121,11 @@ const JEEAdvancedAnalysis: React.FC = () => {
             };
           }
 
-          const adjustedScores: AdjustedScores = {
-            physics: student.physics * Number(weightage),
-            chemistry: student.chemistry * Number(weightage),
-            maths: student.maths * Number(weightage),
-            total: student.total * Number(weightage),
-          };
-
-          const isPhysicsQualified =
-            adjustedScores.physics! >= categoryCutoff.subject;
+          const isPhysicsQualified = student.physics! >= categoryCutoff.subject;
           const isChemistryQualified =
-            adjustedScores.chemistry! >= categoryCutoff.subject;
-          const isMathsQualified =
-            adjustedScores.maths! >= categoryCutoff.subject;
-          const isTotalQualified =
-            adjustedScores.total! >= categoryCutoff.total;
+            student.chemistry! >= categoryCutoff.subject;
+          const isMathsQualified = student.maths! >= categoryCutoff.subject;
+          const isTotalQualified = student.total! >= categoryCutoff.total;
 
           isPhysicsQualified
             ? newSummary.physicsQualified.push(student)
@@ -205,7 +153,6 @@ const JEEAdvancedAnalysis: React.FC = () => {
 
           return {
             ...student,
-            adjustedScores,
             cutoff: categoryCutoff,
             isPhysicsQualified,
             isChemistryQualified,
@@ -521,13 +468,9 @@ const JEEAdvancedAnalysis: React.FC = () => {
     total_negative: false,
   };
 
-  const rows = useMemo(() => {
-    return jsonData;
-  }, [jsonData]);
-
   useEffect(() => {
     generatePrediction(jsonData);
-  }, [selectedYear, weightage]);
+  }, [cutoff]);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -553,7 +496,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
               color="success"
               sx={{ border: "1px solid rgba(0,0,0,0.2)" }}
               component="a"
-              href="/marksheet.xlsx" // Link to the file in the public folder
+              href="/marksheet.xlsx"
               download // Ensure the file is downloaded
               variant="contained"
               startIcon={<DownloadRounded />}
@@ -577,30 +520,34 @@ const JEEAdvancedAnalysis: React.FC = () => {
           </Button>
         </Box>
         <Box sx={{ display: "flex", gap: 2, flex: 1, flexWrap: "wrap" }}>
-          <Box sx={{ maxWidth: 350, flexGrow: 1 }}>
-            <CustomDropDown
-              value={selectedYear}
-              onChange={(e: SelectChangeEvent) =>
-                setSelectedYear(e.target.value)
-              }
-              label="Select Year"
-              data={years || []}
-              name="name"
-              dropdownValue="value"
-              error={!cutoff}
-              showClearButton={false}
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              maxWidth: 350,
+              alignItems: "center",
+              flexGrow: 1,
+              border: `1px solid ${
+                cutoff ? "rgba(0,0,0,0.3)" : "rgba(232, 37, 37, 0.79)"
+              }`,
+              borderRadius: 2,
+
+              gap: 2,
+            }}
+          >
+            <Typography variant="h6">
+              {cutoff ? `Year: ${cutoff?.year?.toString()}` : "Select Cutoff"}
+            </Typography>
+            <Chip
+              onClick={() => setShowCutoff(true)}
+              size="small"
+              label="Edit"
+              icon={<EditRounded />}
+              sx={{ p: 1 }}
+              color="primary"
             />
           </Box>
-          <IconButton onClick={() => setShowCutoff(true)}>
-            <InfoRounded />
-          </IconButton>
-          <DebouncedInput
-            value={weightage}
-            onChange={setWeightage}
-            delay={1000}
-            placeholder="Weightage"
-            label="Weightage"
-          />
+
           <TextField
             value={subjectMarks.physics}
             onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -663,7 +610,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
       <DataGrid
         aria-label="JEE Advanced Results"
         columns={columns}
-        rows={rows}
+        rows={jsonData}
         loading={isLoading}
         slots={{
           toolbar: () => (
@@ -714,13 +661,15 @@ const JEEAdvancedAnalysis: React.FC = () => {
             generatePrediction(jsonData);
           }
         }}
-        showHeader={false}
+        header="JEE Advanced Cutoff"
       >
         <CutoffCreateria
           selectedYear={selectedYear}
           setSelectedYear={setSelectedYear}
           cutoff={cutoff}
           setCutoff={setCutoff}
+          weightage={weightage}
+          setWeightage={setWeightage}
         />
       </CustomModal>
       <Loader open={isLoading} />

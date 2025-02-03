@@ -15,6 +15,7 @@ interface Category {
 
 interface CutoffData {
   year: number | "";
+  marks: number | string;
   examName: string;
   general: Category;
   obc: Category;
@@ -38,6 +39,7 @@ const AddAdvancedCutoff: React.FC = () => {
   const [cutoffData, setCutoffData] = useState<CutoffData>({
     year: "",
     examName: "",
+    marks: "",
     general: { ...initialCategory },
     obc: { ...initialCategory },
     sc: { ...initialCategory },
@@ -87,6 +89,7 @@ const AddAdvancedCutoff: React.FC = () => {
         setCutoffData({
           year: "",
           examName: "",
+          marks: "",
           general: { ...initialCategory },
           obc: { ...initialCategory },
           sc: { ...initialCategory },
@@ -136,13 +139,23 @@ const AddAdvancedCutoff: React.FC = () => {
               required
             />
           </Grid>
+          <Grid size={{ xs: 6 }}>
+            <TextField
+              label="Exam Marks"
+              name="marks"
+              value={cutoffData.marks}
+              onChange={handleChange}
+              fullWidth
+              required
+            />
+          </Grid>
 
           {[
             "general",
+            "ews",
             "obc",
             "sc",
             "st",
-            "ews",
             "generalPwD",
             "obcPwD",
             "scPwD",

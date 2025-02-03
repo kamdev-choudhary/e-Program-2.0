@@ -122,7 +122,12 @@ const SubjectStatistics: React.FC<SubjectStatisticsProps> = ({
               <TableBody>
                 {subjectStats.map((subject) => (
                   <TableRow key={subject.name}>
-                    <TableCell align="center">{subject.name}</TableCell>
+                    <TableCell align="center">
+                      <b>
+                        {subject.name.charAt(0).toUpperCase() +
+                          subject.name.slice(1)}
+                      </b>
+                    </TableCell>
                     <TableCell align="center">
                       {subject.mean.toFixed(2)}
                     </TableCell>

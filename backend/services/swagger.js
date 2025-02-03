@@ -1,9 +1,8 @@
 import swaggerJsdoc from "swagger-jsdoc";
-import swaggerUi from "swagger-ui-express";
 
 const swaggerOptions = {
   definition: {
-    openapi: "3.0.0",
+    openapi: "3.0.3",
     info: {
       title: "EduAPI Documentation",
       version: "1.0.0",
@@ -30,11 +29,11 @@ const swaggerOptions = {
     },
     security: [
       {
-        bearerAuth: [],
+        bearerAuth: [], // Empty array required here
       },
     ],
   },
-  apis: ["./routers/authRouter.js", "./routers/academicRoute.js"], // Path to your route files
+  apis: ["./routers/authRouter.js", "./routers/academicRoute.js"],
 };
 
 export const swaggerSpec = swaggerJsdoc(swaggerOptions);

@@ -3,8 +3,7 @@ import SwaggerUI from "swagger-ui-react";
 import "swagger-ui-react/swagger-ui.css";
 
 const SwaggerDocs: React.FC = () => {
-  // Replace with your backend API docs URL
-  const apiDocsUrl = "http://localhost:5000/api-docs";
+  const apiDocsUrl = "http://localhost:5000/api-docs"; // Ensure this endpoint serves JSON
 
   return (
     <div className="swagger-container">
