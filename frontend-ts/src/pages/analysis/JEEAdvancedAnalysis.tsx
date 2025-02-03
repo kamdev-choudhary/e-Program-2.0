@@ -50,35 +50,37 @@ const JEEAdvancedAnalysis: React.FC = () => {
     total: "360",
   });
 
-  const getAdvancedRank = async (student: DataProps) => {
+  const getAdvancedRank = async () => {
     try {
       const res = await axios.post("/analysis/jeeadvanced/predict-rank", {
-        student,
+        students: jsonData,
+        year: cutoff?.year || 2024,
       });
 
-      setJsonData((prevData: DataProps[]) =>
-        prevData.map((item) =>
-          item.uniqueId === student.uniqueId
-            ? { ...item, airRank: res.data.airRank, catRank: res.data.airRank } // Preserve existing properties
-            : item
-        )
-      );
-    } catch (error) {
-      console.error("Error fetching rank:", error);
-    }
-  };
+      if (res.data && Array.isArray(res.data)) {
+        const rankDataMap = new Map();
+        res.data.forEach((studentResult) => {
+          if (studentResult.student && studentResult.student.uniqueId) {
+            rankDataMap.set(studentResult.student.uniqueId, studentResult);
+          }
+        });
 
-  const handleGetRank = async () => {
-    try {
-      if (jsonData) {
-        await Promise.all(
-          jsonData.map(async (data) => {
-            await getAdvancedRank(data);
-          })
-        );
+        const updatedJsonData = jsonData.map((student) => {
+          const rankData = rankDataMap.get(student.uniqueId);
+          if (rankData) {
+            return {
+              ...student,
+              airRank: rankData.airRank,
+              catRank: rankData.catRank,
+            };
+          }
+          return student;
+        });
+
+        setJsonData(updatedJsonData); // Assuming you're using React state
       }
     } catch (error) {
-      console.error("Error handling download info:", error);
+      console.error("Error fetching rank:", error);
     }
   };
 
@@ -624,7 +626,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
                 type="number"
                 label="Total Mark"
               />
-              <Button onClick={handleGetRank}>Get Rank</Button>
+              <Button onClick={getAdvancedRank}>Get Rank</Button>
             </Box>
           </Grid>
         </Grid>

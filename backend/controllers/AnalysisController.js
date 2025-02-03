@@ -5,6 +5,44 @@ import JEEMainPercentileVsRank from "../models/jeemainPercentileVsRank.js";
 import JEEAdvancedCutoff from "../models/jeeAdvancedCutoff.js";
 import JEEAdvancedMarksVsRank from "../models/jeeAdvancedMarksVsRank.js";
 
+const categoryMap = {
+  // General
+  gen: "general",
+  general: "general",
+
+  // EWS
+  "general-ews": "ews",
+  "gen-ews": "ews",
+  ews: "ews",
+
+  // OBC
+  obc: "obc",
+  "obc-ncl": "obc",
+  obcncl: "obc",
+
+  // SC
+  sc: "sc",
+  SC: "sc",
+
+  // ST
+  st: "st",
+  "ews-ncl": "ews",
+
+  // PWD
+  "general-pwd": "generalPwD",
+  "gen-pwd": "generalPwD",
+  "obc-pwd": "obcPwD",
+  "obc-ncl-pwd": "obcPwD",
+  "obcncl-pwd": "obcPwD",
+  "sc-pwd": "scPwD",
+  "st-pwd": "stPwD",
+  "ews-pwd": "ewsPwD",
+  "ews-ncl-pwd": "ewsPwD",
+
+  // PREPARATORY
+  preparatory: "preparatory",
+};
+
 export async function getORCRbyYear(req, res, next) {
   try {
     const { year } = req.params;
@@ -533,29 +571,6 @@ export async function generateJeeAdvancedPrediction(req, res, next) {
     // Parse student data
     const parsedData = JSON.parse(students);
 
-    const categoryMap = {
-      gen: "general",
-      general: "general",
-      obc: "obc",
-      "obc-ncl": "obc",
-      obcncl: "obc",
-      sc: "sc",
-      st: "st",
-      ews: "ews",
-      "ews-ncl": "ews",
-      ewsc: "ews",
-      "general-pwd": "generalPwD",
-      "gen-pwd": "generalPwD",
-      "obc-pwd": "obcPwD",
-      "obc-ncl-pwd": "obcPwD",
-      "obcncl-pwd": "obcPwD",
-      "sc-pwd": "scPwD",
-      "st-pwd": "stPwD",
-      "ews-pwd": "ewsPwD",
-      "ews-ncl-pwd": "ewsPwD",
-      preparatory: "preparatory",
-    };
-
     let summary = {
       physicsQualified: [],
       chemistryQualified: [],
@@ -719,9 +734,77 @@ export async function getJEEAdvancedCutoffYears(req, res, next) {
   }
 }
 
+// Predict JEE Advanced Rank
 export async function getJeeAdvancedRank(req, res, next) {
   try {
-    res.status(200).json({ airRank: 300, crlRank: 400 });
+    const { students, year } = req.body;
+
+    if (!students || !year || !Array.isArray(students)) {
+      return res.status(400).json({ error: "Invalid input data" });
+    }
+
+    const data = await JEEAdvancedMarksVsRank.find({ year });
+
+    if (!data || data.length === 0) {
+      return res
+        .status(404)
+        .json({ error: "Data not found for the given year" });
+    }
+
+    const results = [];
+
+    for (const student of students) {
+      if (!student || !student.category || student.total === undefined) {
+        results.push({ error: "Invalid student data", student });
+        continue;
+      }
+
+      const marks = student.total;
+      const categoryRankKey = `${categoryMap[student.category]}Rank`;
+
+      // Find the nearest smaller or exact marks
+      let result = data.find((item) => item.marks === marks);
+
+      if (!result) {
+        result = data
+          .filter((item) => item.marks <= marks) // Ensure selecting nearest lower marks
+          .sort((a, b) => b.marks - a.marks)[0];
+      }
+
+      if (!result) {
+        results.push({ error: "No matching data found", student });
+        continue;
+      }
+
+      if (categoryMap[student.category] !== "general") {
+        if (!result[categoryRankKey] || result[categoryRankKey] === null) {
+          result = data
+            .filter(
+              (item) => item.marks <= marks && item[categoryRankKey] !== null
+            )
+            .sort((a, b) => b.marks - a.marks)[0];
+
+          if (!result) {
+            results.push({
+              error: "Valid category rank data not available",
+              student,
+            });
+            continue;
+          }
+        }
+      }
+
+      // Return the ranks
+      results.push({
+        student,
+        airRank: result.generalRank, // Assuming categoryRank is the All India Rank
+        catRank:
+          student.category !== "General" ? result[categoryRankKey] : null, // Rank based on the student's category
+        message: "found",
+      });
+    }
+
+    res.status(200).json(results);
   } catch (error) {
     next(error);
   }
