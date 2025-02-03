@@ -20,6 +20,7 @@ import { PhotoCameraRounded } from "@mui/icons-material";
 
 // Recharts imports
 import { PieChart, Pie, Cell, Legend, ResponsiveContainer } from "recharts";
+import { useNotification } from "../../../contexts/NotificationProvider";
 
 interface AdjustedScores {
   physics?: number;
@@ -87,6 +88,7 @@ const SummaryTable: React.FC<SummaryTableProps> = ({
   summary,
   setShowScholars,
 }) => {
+  const { showNotification } = useNotification();
   if (!summary) {
     return <Box>Summary Not Generated</Box>;
   }
@@ -94,8 +96,8 @@ const SummaryTable: React.FC<SummaryTableProps> = ({
   // Function to render half pie chart
   const renderPieChart = (qualifiedCount: number, dnqCount: number) => {
     const data = [
-      { name: "Qualified", value: qualifiedCount },
-      { name: "Not Qualified", value: dnqCount },
+      { name: "Qualified", value: qualifiedCount, label: "Q" },
+      { name: "Not Qualified", value: dnqCount, label: "DNQ" },
     ];
 
     return (
@@ -105,14 +107,15 @@ const SummaryTable: React.FC<SummaryTableProps> = ({
             data={data}
             cx="50%"
             cy="50%"
-            innerRadius="30%"
-            outerRadius="70%"
+            outerRadius="80%"
+            innerRadius="40%"
             startAngle={90}
             endAngle={-270}
             dataKey="value"
-            paddingAngle={1}
+            paddingAngle={0}
             fill="#8884d8"
-            style={{ paddingTop: 0 }}
+            style={{ paddingTop: 4 }}
+            label={(data) => `${data.label} (${data.value})`}
           >
             <Cell fill="#00C853" />
             <Cell fill="#F44336" />
@@ -131,8 +134,25 @@ const SummaryTable: React.FC<SummaryTableProps> = ({
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Typography variant="h6">Qualification Summary</Typography>
         <IconButton
+          id="photo-camera-button"
           size="small"
-          onClick={() => captureElementAsPNG("summary-table", "Summary.png")}
+          onClick={async () => {
+            await captureElementAsPNG({
+              elementId: "summary-table",
+              filename: "Summary.png",
+              hiddenSelectors: ["#photo-camera-button"],
+              download: false,
+            });
+            showNotification({ message: "Image Copied!!" });
+          }}
+          onDoubleClick={async () => {
+            await captureElementAsPNG({
+              elementId: "summary-table",
+              filename: "Summary.png",
+              hiddenSelectors: ["#photo-camera-button"],
+            });
+            showNotification({ message: "Image Copied and Downloaded." });
+          }}
         >
           <PhotoCameraRounded />
         </IconButton>

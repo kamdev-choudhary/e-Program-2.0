@@ -35,7 +35,7 @@ interface SessionDateWithShiftsProps {
   shift: string;
 }
 
-const JEEMainMarksVsRank: React.FC = () => {
+const JEEMainMarksVsPercentile: React.FC = () => {
   const [data, setData] = useState<JEEMainMarksVsRankProps[]>([]);
   const [showUploadData, setShowUploadData] = useState<boolean>(false);
   const [selectedYear, setSelectedYear] = useState<string>("");
@@ -308,4 +308,4 @@ const JEEMainMarksVsRank: React.FC = () => {
   );
 };
 
-export default JEEMainMarksVsRank;
+export default JEEMainMarksVsPercentile;

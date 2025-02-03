@@ -82,8 +82,15 @@ const SubjectRangeDistribution: React.FC<SubjectRangeDistributionProps> = ({
       <Box sx={{ display: "flex", justifyContent: "space-between" }}>
         <Typography variant="h6">Marks Range Distribution</Typography>
         <IconButton
+          id="photo-camera-button"
           size="small"
-          onClick={() => captureElementAsPNG("range-map", "capture.png")}
+          onClick={() =>
+            captureElementAsPNG({
+              elementId: "range-map",
+              filename: "capture.png",
+              hiddenSelectors: ["#photo-camera-button"],
+            })
+          }
         >
           <PhotoCameraRounded />
         </IconButton>

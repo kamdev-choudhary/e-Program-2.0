@@ -1,18 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import ExcelJs from "exceljs";
-import {
-  Box,
-  SelectChangeEvent,
-  Grid2 as Grid,
-  Button,
-  Paper,
-} from "@mui/material";
+import { Box, SelectChangeEvent, Button, Paper, Grid2 } from "@mui/material";
+
 import FileDropZone from "../../components/FileDropZone";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import CustomDropDown from "../../components/CustomDropDown";
 import axios from "../../hooks/AxiosInterceptor";
 
 interface DataProps {
+  id: number | string;
   drn: string;
   name: string;
   category: string;
@@ -29,23 +25,66 @@ interface DataProps {
   total_positive?: number;
   total_negative?: number;
   total?: number;
-  percetile?: number;
+  percentile?: number;
   rank?: number;
+}
+
+interface YearsProps {
+  name: string;
+  value: string;
+}
+
+interface SessionProps {
+  year: number;
+  session: string;
+}
+
+interface SessionWithDatesProps {
+  year: number;
+  session: string;
+  date: string;
+}
+
+interface SessionDateWithShiftsProps {
+  year: number;
+  session: string;
+  date: string;
+  shift: string;
 }
 
 const JEEmainAnalysis: React.FC = () => {
   const [jsonData, setJsonData] = useState<DataProps[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [selectedYear, setSelectedYear] = useState<string>("");
+  const [years, setYears] = useState<YearsProps[] | null>(null);
+  const [session, setSession] = useState<SessionProps[] | null>(null);
+  const [sessionWithDates, setSessionWithDates] = useState<
+    SessionWithDatesProps[] | null
+  >(null);
+  const [sessionDatesWithShift, setSessionDatesWithShift] = useState<
+    SessionDateWithShiftsProps[] | null
+  >(null);
   const [selectedSession, setSelectedSession] = useState<string>("");
+  const [selectedDate, setSelectedDate] = useState<string>("");
+  const [selectedShift, setSelectedShift] = useState<string>("");
 
-  // const getInitialData = async () => {
-  //   try {
-  //     const response = await axios.get("/analysis/jeemain");
-  //   } catch (error) {
-  //     console.error(error);
-  //   }
-  // };
+  useEffect(() => {
+    const getInitialData = async () => {
+      try {
+        const res = await axios.get(
+          "/analysis/jeemain-marks-vs-percentile/metadata"
+        );
+        setYears(res.data.years);
+        setSession(res.data.sessions);
+        setSessionWithDates(res.data.sessionDates);
+        setSessionDatesWithShift(res.data.sessionDateShifts);
+        console.log(res);
+      } catch (error) {
+        console.error(error);
+      }
+    };
+    getInitialData();
+  }, []);
 
   const calculatePrediction = async (data: DataProps) => {
     if (!selectedSession || !selectedYear) {
@@ -68,14 +107,12 @@ const JEEmainAnalysis: React.FC = () => {
   };
 
   const handleReadyForPrediction = async () => {
-    if (!jsonData) {
+    if (!jsonData || jsonData.length === 0) {
       console.error("No JSON data available for prediction.");
       return;
     }
     try {
-      await Promise.all(
-        jsonData.map((data) => calculatePrediction(data)) // No `await` here; return the promise
-      );
+      await Promise.all(jsonData.map((data) => calculatePrediction(data)));
       console.log("All predictions processed successfully.");
     } catch (error) {
       console.error("Error during batch prediction:", error);
@@ -102,6 +139,7 @@ const JEEmainAnalysis: React.FC = () => {
         const worksheet = workbook.worksheets[0];
         const rows: Array<any[]> = [];
         worksheet.eachRow((row) => {
+          // Remove the first element which is often empty
           const rowValue = Array.isArray(row.values) ? row.values.slice(1) : [];
           rows.push(rowValue);
         });
@@ -123,37 +161,41 @@ const JEEmainAnalysis: React.FC = () => {
         }
 
         const json: DataProps[] = dataRows.map((row, rowIndex) => {
-          const rowData = header.reduce((acc, header, index) => {
-            if (typeof header === "string") {
-              acc[header] = row[index] || "";
+          const rowData = header.reduce((acc, headerKey, index) => {
+            if (typeof headerKey === "string") {
+              acc[headerKey] = row[index] || "";
             }
             return acc;
           }, {} as Partial<DataProps>);
+
           return {
-            id: rowIndex + 1 || "",
-            drn: rowData.drn,
-            name: rowData.name,
-            category: rowData.category,
-            pwd: rowData.pwd,
-            physics_positive: rowData.physics_postive,
-            physics_negative: rowData.physics_positive,
-            physics: rowData.physics,
-            chemistry_positive: rowData.chemistry_positive,
-            chemistry_negative: rowData.chemistry_negative,
-            chemistry: rowData.chemistry,
-            maths_positive: rowData.maths_positive,
-            maths_negative: rowData.maths_negative,
-            maths: rowData.maths,
+            id: rowIndex + 1,
+            drn: rowData.drn as string,
+            name: rowData.name as string,
+            category: rowData.category as string,
+            pwd: rowData.pwd as string,
+            physics_positive: Number(rowData.physics_positive),
+            physics_negative: Number(rowData.physics_negative),
+            physics: Number(rowData.physics),
+            chemistry_positive: Number(rowData.chemistry_positive),
+            chemistry_negative: Number(rowData.chemistry_negative),
+            chemistry: Number(rowData.chemistry),
+            maths_positive: Number(rowData.maths_positive),
+            maths_negative: Number(rowData.maths_negative),
+            maths: Number(rowData.maths),
             total_positive:
-              +rowData.physics_positive +
-              +rowData.chemistry_positive +
-              +rowData.maths_positive,
+              Number(rowData.physics_positive) +
+              Number(rowData.chemistry_positive) +
+              Number(rowData.maths_positive),
             total_negative:
-              +rowData.physics_negative +
-              +rowData.chemistry_negative +
-              +rowData.maths_negative,
-            total: +rowData.physics + +rowData.chemistry + +rowData.maths,
-            percetile: 0,
+              Number(rowData.physics_negative) +
+              Number(rowData.chemistry_negative) +
+              Number(rowData.maths_negative),
+            total:
+              Number(rowData.physics) +
+              Number(rowData.chemistry) +
+              Number(rowData.maths),
+            percentile: 0,
             rank: 0,
           };
         });
@@ -170,35 +212,23 @@ const JEEmainAnalysis: React.FC = () => {
   };
 
   const columns: GridColDef[] = [
-    {
-      field: "id",
-      headerName: "SN",
-    },
-    {
-      field: "drn",
-      headerName: "DRN",
-      flex: 1,
-      minWidth: 120,
-    },
-    {
-      field: "name",
-      headerName: "Name",
-      flex: 1,
-      minWidth: 120,
-    },
+    { field: "id", headerName: "SN", width: 80 },
+    { field: "drn", headerName: "DRN", flex: 1, minWidth: 120 },
+    { field: "name", headerName: "Name", flex: 1, minWidth: 120 },
     {
       field: "category",
       headerName: "Category",
       align: "center",
       headerAlign: "center",
+      width: 120,
     },
     {
       field: "pwd",
       headerName: "PWD",
       align: "center",
       headerAlign: "center",
+      width: 120,
     },
-
     {
       field: "physics_positive",
       headerName: "Physics +ve",
@@ -217,7 +247,7 @@ const JEEmainAnalysis: React.FC = () => {
     },
     {
       field: "physics",
-      headerName: "Physics ",
+      headerName: "Physics",
       flex: 1,
       minWidth: 120,
       align: "center",
@@ -225,7 +255,7 @@ const JEEmainAnalysis: React.FC = () => {
     },
     {
       field: "chemistry_positive",
-      headerName: "chemistry +ve",
+      headerName: "Chemistry +ve",
       flex: 1,
       minWidth: 120,
       align: "center",
@@ -233,7 +263,7 @@ const JEEmainAnalysis: React.FC = () => {
     },
     {
       field: "chemistry_negative",
-      headerName: "chemistry -ve",
+      headerName: "Chemistry -ve",
       flex: 1,
       minWidth: 120,
       align: "center",
@@ -241,7 +271,7 @@ const JEEmainAnalysis: React.FC = () => {
     },
     {
       field: "chemistry",
-      headerName: "chemistry ",
+      headerName: "Chemistry",
       flex: 1,
       minWidth: 120,
       align: "center",
@@ -249,7 +279,7 @@ const JEEmainAnalysis: React.FC = () => {
     },
     {
       field: "maths_positive",
-      headerName: "maths +ve",
+      headerName: "Maths +ve",
       flex: 1,
       minWidth: 120,
       align: "center",
@@ -257,7 +287,7 @@ const JEEmainAnalysis: React.FC = () => {
     },
     {
       field: "maths_negative",
-      headerName: "maths -ve",
+      headerName: "Maths -ve",
       flex: 1,
       minWidth: 120,
       align: "center",
@@ -265,7 +295,7 @@ const JEEmainAnalysis: React.FC = () => {
     },
     {
       field: "maths",
-      headerName: "maths ",
+      headerName: "Maths",
       flex: 1,
       minWidth: 120,
       align: "center",
@@ -273,7 +303,7 @@ const JEEmainAnalysis: React.FC = () => {
     },
     {
       field: "total_positive",
-      headerName: "total +ve",
+      headerName: "Total +ve",
       flex: 1,
       minWidth: 120,
       align: "center",
@@ -281,7 +311,7 @@ const JEEmainAnalysis: React.FC = () => {
     },
     {
       field: "total_negative",
-      headerName: "total -ve",
+      headerName: "Total -ve",
       flex: 1,
       minWidth: 120,
       align: "center",
@@ -289,7 +319,7 @@ const JEEmainAnalysis: React.FC = () => {
     },
     {
       field: "total",
-      headerName: "total ",
+      headerName: "Total",
       flex: 1,
       minWidth: 120,
       align: "center",
@@ -313,9 +343,19 @@ const JEEmainAnalysis: React.FC = () => {
     },
   ];
 
+  // Filter sessions based on selected year
+  const filteredSession = useMemo(() => {
+    if (!session) return [];
+    return session.filter(
+      (ses) => !selectedYear || ses.year === Number(selectedYear)
+    );
+  }, [session, selectedYear]);
+
+  // (The filteredDate and filteredShift are defined but not used in this snippet.)
+
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-      <Paper sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 2, p: 2 }}>
+      <Paper sx={{ display: "flex", flexDirection: "column", gap: 2, p: 2 }}>
         <Box>
           <FileDropZone
             onDrop={onDrop}
@@ -323,43 +363,49 @@ const JEEmainAnalysis: React.FC = () => {
           />
         </Box>
         <Box>
-          <Grid container spacing={2}>
-            <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+          <Grid2 container spacing={2}>
+            <Grid2 size={{ xs: 12, md: 6, lg: 4 }}>
               <CustomDropDown
                 label="Year"
                 value={selectedYear}
-                data={[{ name: 2024, value: 2024 }]}
+                data={years || []}
                 onChange={(e: SelectChangeEvent) =>
                   setSelectedYear(e.target.value)
                 }
                 name="name"
                 dropdownValue="value"
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+            </Grid2>
+            <Grid2 size={{ xs: 12, md: 6, lg: 4 }}>
               <CustomDropDown
                 label="Session"
                 value={selectedSession}
-                data={[{ name: "January", value: "January (01)" }]}
+                data={
+                  // Map filtered sessions into the expected format for CustomDropDown
+                  filteredSession.map((ses) => ({
+                    name: ses.session,
+                    value: ses.session,
+                  }))
+                }
                 onChange={(e: SelectChangeEvent) =>
                   setSelectedSession(e.target.value)
                 }
                 name="name"
                 dropdownValue="value"
               />
-            </Grid>
-            <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+            </Grid2>
+            <Grid2 size={{ xs: 12, md: 6, lg: 4 }}>
               <Button variant="contained" onClick={handleReadyForPrediction}>
                 Calculate Prediction
               </Button>
-            </Grid>
-          </Grid>
+            </Grid2>
+          </Grid2>
         </Box>
       </Paper>
-      <Box>
+      <Box sx={{ height: 600 }}>
         <DataGrid
           loading={isLoading}
-          rows={jsonData || []}
+          rows={jsonData}
           columns={columns}
           initialState={{
             columns: {

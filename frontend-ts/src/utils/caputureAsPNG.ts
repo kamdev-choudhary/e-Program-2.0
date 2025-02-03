@@ -7,11 +7,19 @@ import html2canvas from "html2canvas";
  * @param padding The amount of padding (in pixels).
  */
 
-export const captureElementAsPNG = async (
-  elementId: string,
-  filename: string = "captured-image.png",
-  padding: number = 8 // Default padding of 20px
-) => {
+export const captureElementAsPNG = async ({
+  elementId,
+  filename = "captured-image.png",
+  padding = 8,
+  hiddenSelectors = [],
+  download = true,
+}: {
+  elementId: string;
+  filename?: string;
+  padding?: number;
+  hiddenSelectors?: string[];
+  download?: boolean;
+}) => {
   const element = document.getElementById(elementId);
   if (!element) {
     console.error(`Element with ID '${elementId}' not found.`);
@@ -19,14 +27,22 @@ export const captureElementAsPNG = async (
   }
 
   try {
+    // Clone the target element
+    const clonedElement = element.cloneNode(true) as HTMLElement;
+
+    // Hide specified elements inside the cloned element
+    hiddenSelectors.forEach((selector) => {
+      const elementsToHide = clonedElement.querySelectorAll(selector);
+      elementsToHide.forEach((el) => {
+        (el as HTMLElement).style.display = "none";
+      });
+    });
+
     // Create a wrapper div with padding
     const wrapper = document.createElement("div");
     wrapper.style.padding = `${padding}px`;
-    wrapper.style.backgroundColor = "transparent"; // Ensure the padding area is visible
+    wrapper.style.backgroundColor = "transparent";
     wrapper.style.display = "inline-block";
-
-    // Clone the target element and append it to the wrapper
-    const clonedElement = element.cloneNode(true) as HTMLElement;
     wrapper.appendChild(clonedElement);
 
     // Append the wrapper to the body (temporarily)
@@ -51,13 +67,15 @@ export const captureElementAsPNG = async (
     }
 
     // Convert to image and trigger download
-    const image = canvas.toDataURL("image/png");
-    const link = document.createElement("a");
-    link.href = image;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    if (download) {
+      const image = canvas.toDataURL("image/png");
+      const link = document.createElement("a");
+      link.href = image;
+      link.download = filename;
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+    }
   } catch (error) {
     console.error("Error capturing element:", error);
   }

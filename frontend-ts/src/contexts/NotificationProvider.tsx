@@ -1,6 +1,5 @@
 import React, { createContext, ReactNode, useContext, useState } from "react";
-import { Snackbar, Alert, IconButton } from "@mui/material";
-import { CloseRounded } from "@mui/icons-material";
+import { Snackbar, Alert } from "@mui/material";
 
 // Define the NotificationContext
 interface NotificationContextType {
@@ -64,15 +63,6 @@ export const NotificationProvider: React.FC<NotificationProviderProps> = ({
         anchorOrigin={{ vertical: "top", horizontal: "right" }}
       >
         <Alert
-          action={
-            <IconButton
-              aria-label="close"
-              color="inherit"
-              onClick={hideNotification}
-            >
-              <CloseRounded />
-            </IconButton>
-          }
           sx={{ minWidth: 250 }}
           severity={notification.type}
           variant={notification.variant}
