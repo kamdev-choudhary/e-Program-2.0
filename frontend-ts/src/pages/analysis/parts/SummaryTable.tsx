@@ -10,6 +10,8 @@ import {
   Box,
   Chip,
   Grid2 as Grid,
+  Typography,
+  Divider,
 } from "@mui/material";
 import { motion } from "framer-motion";
 
@@ -86,6 +88,10 @@ const SummaryTable: React.FC<SummaryTableProps> = ({
       id="summary-table"
       sx={{ display: "flex", flexDirection: "column", gap: 2 }}
     >
+      <Box sx={{ p: 1 }}>
+        <Typography variant="h6">Qualification Summary</Typography>
+      </Box>
+      <Divider />
       <Grid container>
         <Grid
           size={{ xs: 12, md: 6 }}
@@ -97,7 +103,7 @@ const SummaryTable: React.FC<SummaryTableProps> = ({
           }}
         >
           <TableContainer component={Paper}>
-            <Table size="small">
+            <Table>
               <TableHead>
                 <TableRow>
                   <TableCell align="center">
@@ -176,10 +182,10 @@ const SummaryTable: React.FC<SummaryTableProps> = ({
                               ? "success"
                               : "error"
                           }
-                          label={(
+                          label={`${(
                             (qualifiedCount / (qualifiedCount + dnqCount)) *
                             100
-                          ).toFixed(2)}
+                          ).toFixed(2)} %`}
                         />
                       </TableCell>
                     </motion.tr>

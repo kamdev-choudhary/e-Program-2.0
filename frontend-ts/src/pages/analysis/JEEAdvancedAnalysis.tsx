@@ -14,7 +14,11 @@ import React, { useEffect, useMemo, useState } from "react";
 import FileDropZone from "../../components/FileDropZone";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import ExcelJs from "exceljs";
-import { DownloadRounded, ExpandMoreRounded } from "@mui/icons-material";
+import {
+  DownloadRounded,
+  EngineeringRounded,
+  ExpandMoreRounded,
+} from "@mui/icons-material";
 import { CustomModal } from "../../components/CustomModal";
 import { CustomToolbar } from "../../components/CustomToolbar";
 import { downloadJsonToExcel } from "../../utils/commonfs";
@@ -494,8 +498,8 @@ const JEEAdvancedAnalysis: React.FC = () => {
       renderCell: (params) => (
         <>
           <Chip
-            label={`${params.row.cutoff?.subject ?? "N/A"}/${
-              params.row.cutoff?.total ?? "N/A"
+            label={`${params.row.cutoff?.subject?.toFixed(1) ?? "N/A"}/${
+              params.row.cutoff?.total?.toFixed(1) ?? "N/A"
             }`}
           />
         </>
@@ -584,7 +588,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
                   )}
                 </Typography>
               </AccordionSummary>
-              <AccordionDetails>
+              <AccordionDetails sx={{ zIndex: 100 }}>
                 <CutoffCreateria
                   cutoff={cutoff}
                   setCutoff={setCutoff}
@@ -595,7 +599,16 @@ const JEEAdvancedAnalysis: React.FC = () => {
             </Accordion>
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
-            <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
+            <Box
+              sx={{
+                display: "flex",
+                gap: 2,
+                flexWrap: "wrap",
+                alignItems: "center",
+                justifyContent: "center",
+                height: 62,
+              }}
+            >
               <TextField
                 value={subjectMarks.physics}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -624,6 +637,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
                 variant="contained"
                 color="success"
                 onClick={() => getAdvancedRank(jsonData)}
+                startIcon={<EngineeringRounded />}
               >
                 Get Rank
               </Button>
@@ -631,71 +645,43 @@ const JEEAdvancedAnalysis: React.FC = () => {
           </Grid>
         </Grid>
       </Paper>
-
-      {/* Qualification Summary */}
-      <Accordion sx={{ p: 0, m: 0 }}>
-        <AccordionSummary expandIcon={<ExpandMoreRounded />}>
-          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
-            <Typography variant="h6">Qualification Summary</Typography>
-          </Box>
-        </AccordionSummary>
-        <AccordionDetails>
+      <Grid container spacing={2}>
+        <Grid component={Paper} size={{ xs: 12 }}>
           <SummaryTable
             jsonData={jsonData}
             setScholars={setScholars}
             setShowScholars={setShowScholars}
             summary={summary}
           />
-        </AccordionDetails>
-      </Accordion>
-
-      {/* Subject Statistics */}
-      <Accordion sx={{ p: 0, m: 0 }}>
-        <AccordionSummary expandIcon={<ExpandMoreRounded />}>
-          <Typography variant="h6">Subject Statistics</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
+        </Grid>
+        <Grid component={Paper} size={{ xs: 12 }}>
           <SubjectStatistics
             jsonData={jsonData}
             subjects={["physics", "chemistry", "maths", "total"]}
             maxMarks={maxMarksObj}
           />
-        </AccordionDetails>
-      </Accordion>
-
-      {/* Marks Range Distrubution */}
-      <Accordion sx={{ p: 0, m: 0 }}>
-        <AccordionSummary expandIcon={<ExpandMoreRounded />}>
-          <Typography variant="h6">Marks Range Distribution</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <SubjectRangeDistribution
-            jsonData={jsonData}
-            subjects={["physics", "chemistry", "maths", "total"]}
-            maxMarks={maxMarksObj}
-          />
-        </AccordionDetails>
-      </Accordion>
-
-      {/* category Wise */}
-      <Accordion sx={{ p: 0, m: 0 }}>
-        <AccordionSummary expandIcon={<ExpandMoreRounded />}>
-          <Typography variant="h6">Category Wise Details</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
-          <CategoryWise jsonData={jsonData} />
-        </AccordionDetails>
-      </Accordion>
-
-      {/* Rank Range Wise */}
-      <Accordion sx={{ p: 0, m: 0 }}>
-        <AccordionSummary expandIcon={<ExpandMoreRounded />}>
-          <Typography variant="h6">Rank Range Wise</Typography>
-        </AccordionSummary>
-        <AccordionDetails>
+        </Grid>
+        <Grid size={{ xs: 12 }}>
+          <Grid component={Paper} size={{ xs: 12 }}>
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 12, md: 6 }}>
+                {/* Marks Range Distrubution */}
+                <SubjectRangeDistribution
+                  jsonData={jsonData}
+                  subjects={["physics", "chemistry", "maths", "total"]}
+                  maxMarks={maxMarksObj}
+                />
+              </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <CategoryWise jsonData={jsonData} />
+              </Grid>
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid component={Paper} size={{ xs: 12 }}>
           <RankRangeWise jsonData={jsonData} />
-        </AccordionDetails>
-      </Accordion>
+        </Grid>
+      </Grid>
 
       {/* Scholar List */}
       <DataGrid

@@ -11,6 +11,7 @@ import {
   Paper,
   Box,
   Chip,
+  Grid2 as Grid,
 } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { CustomModal } from "../../../components/CustomModal";
@@ -341,100 +342,107 @@ const RankRangeWise: React.FC<RankRangeProps> = ({ jsonData }) => {
   };
 
   return (
-    <Box sx={{ p: 3 }}>
+    <Box>
       {/* AirRank Table */}
-      <Typography variant="h5" gutterBottom>
-        Grouped by AIR Rank Range
-      </Typography>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell align="center">AIR Rank Range</TableCell>
-              <TableCell align="center">Total Scholars</TableCell>
-              <TableCell align="center">Qualified</TableCell>
-              <TableCell align="center">Not Qualified</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {Object.entries(rankStats.airRank).map(([airRange, stats]) => (
-              <TableRow key={airRange}>
-                <TableCell align="center">{airRange}</TableCell>
-                <TableCell align="center">
-                  <Chip sx={{ minWidth: 60 }} label={stats.totalScholar} />
-                </TableCell>
-                <TableCell align="center">
-                  <Chip
-                    sx={{ minWidth: 60 }}
-                    onClick={() => {
-                      setSelectedScholars(stats.qualifiedScholars);
-                      setShowScholars(true);
-                    }}
-                    label={stats.qualified}
-                  />
-                </TableCell>
-                <TableCell align="center">
-                  <Chip
-                    sx={{ minWidth: 60 }}
-                    onClick={() => {
-                      setSelectedScholars(stats.notQualifiedScholars);
-                      setShowScholars(true);
-                    }}
-                    label={stats.notQualified}
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Box sx={{ p: 1 }}>
+            <Typography variant="h5">Grouped by AIR Rank Range</Typography>
+          </Box>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">AIR Rank Range</TableCell>
+                  <TableCell align="center">Total Scholars</TableCell>
+                  <TableCell align="center">Qualified</TableCell>
+                  <TableCell align="center">Not Qualified</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {Object.entries(rankStats.airRank).map(([airRange, stats]) => (
+                  <TableRow key={airRange}>
+                    <TableCell align="center">{airRange}</TableCell>
+                    <TableCell align="center">
+                      <Chip sx={{ minWidth: 60 }} label={stats.totalScholar} />
+                    </TableCell>
+                    <TableCell align="center">
+                      <Chip
+                        sx={{ minWidth: 60 }}
+                        onClick={() => {
+                          setSelectedScholars(stats.qualifiedScholars);
+                          setShowScholars(true);
+                        }}
+                        label={stats.qualified}
+                      />
+                    </TableCell>
+                    <TableCell align="center">
+                      <Chip
+                        sx={{ minWidth: 60 }}
+                        onClick={() => {
+                          setSelectedScholars(stats.notQualifiedScholars);
+                          setShowScholars(true);
+                        }}
+                        label={stats.notQualified}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          {/* CAT Rank Table */}
+          <Box sx={{ p: 1 }}>
+            <Typography variant="h5">Grouped by Category Rank Range</Typography>
+          </Box>
+          <TableContainer component={Paper}>
+            <Table>
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">CAT Rank Range</TableCell>
+                  <TableCell align="center">Total Scholars</TableCell>
+                  <TableCell align="center">Qualified</TableCell>
+                  <TableCell align="center">Not Qualified</TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {Object.entries(rankStats.catRank).map(([catRange, stats]) => (
+                  <TableRow key={catRange}>
+                    <TableCell align="center">{catRange}</TableCell>
+                    <TableCell align="center">
+                      <Chip sx={{ minWidth: 60 }} label={stats.totalScholar} />
+                    </TableCell>
+                    <TableCell align="center">
+                      <Chip
+                        sx={{ minWidth: 60 }}
+                        onClick={() => {
+                          setSelectedScholars(stats.qualifiedScholars);
+                          setShowScholars(true);
+                        }}
+                        label={stats.qualified}
+                      />
+                    </TableCell>
+                    <TableCell align="center">
+                      <Chip
+                        sx={{ minWidth: 60 }}
+                        onClick={() => {
+                          setSelectedScholars(stats.notQualifiedScholars);
+                          setShowScholars(true);
+                        }}
+                        label={stats.notQualified}
+                      />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
+      </Grid>
 
-      {/* CAT Rank Table */}
-      <Typography variant="h5" gutterBottom sx={{ mt: 4 }}>
-        Grouped by CAT Rank Range
-      </Typography>
-      <TableContainer component={Paper}>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell align="center">CAT Rank Range</TableCell>
-              <TableCell align="center">Total Scholars</TableCell>
-              <TableCell align="center">Qualified</TableCell>
-              <TableCell align="center">Not Qualified</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {Object.entries(rankStats.catRank).map(([catRange, stats]) => (
-              <TableRow key={catRange}>
-                <TableCell align="center">{catRange}</TableCell>
-                <TableCell align="center">
-                  <Chip sx={{ minWidth: 60 }} label={stats.totalScholar} />
-                </TableCell>
-                <TableCell align="center">
-                  <Chip
-                    sx={{ minWidth: 60 }}
-                    onClick={() => {
-                      setSelectedScholars(stats.qualifiedScholars);
-                      setShowScholars(true);
-                    }}
-                    label={stats.qualified}
-                  />
-                </TableCell>
-                <TableCell align="center">
-                  <Chip
-                    sx={{ minWidth: 60 }}
-                    onClick={() => {
-                      setSelectedScholars(stats.notQualifiedScholars);
-                      setShowScholars(true);
-                    }}
-                    label={stats.notQualified}
-                  />
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+      {/* Students */}
       <CustomModal open={showScholars} onClose={() => setShowScholars(false)}>
         <DataGrid
           initialState={{

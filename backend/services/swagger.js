@@ -4,9 +4,9 @@ const swaggerOptions = {
   definition: {
     openapi: "3.0.3",
     info: {
-      title: "EduAPI Documentation",
+      title: "e-Program Documentation",
       version: "1.0.0",
-      description: "Comprehensive API documentation for the EduAPI platform",
+      description: "Comprehensive API documentation for the E-Program platform",
     },
     servers: [
       {
@@ -33,7 +33,21 @@ const swaggerOptions = {
       },
     ],
   },
-  apis: ["./routers/authRouter.js", "./routers/academicRoute.js"],
+  apis: [
+    "./routers/authRouter.js",
+    "./routers/academicRoute.js",
+    "./routers/adminRoute.js",
+    "./routers/analysisRoute.js",
+    "./routers/automationRouter.js",
+    "./routers/batchRoute.js",
+    "./routers/chatRoute.js",
+    "./routers/doubtRoute.js",
+    "./routers/examRoute.js",
+    "./routers/lectureRoute.js",
+    "./routers/materialRoute.js",
+    "./routers/questionRoute.js",
+    "./routers/userRouter.js",
+  ],
 };
 
 export const swaggerSpec = swaggerJsdoc(swaggerOptions);

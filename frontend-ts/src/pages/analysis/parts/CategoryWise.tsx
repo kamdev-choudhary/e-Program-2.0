@@ -1,7 +1,9 @@
 import React, { useMemo, useState } from "react";
 import { DataProps } from "../types";
 import {
+  Box,
   Chip,
+  Divider,
   Paper,
   Table,
   TableBody,
@@ -9,6 +11,7 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Typography,
 } from "@mui/material";
 import { CustomModal } from "../../../components/CustomModal";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -316,83 +319,91 @@ const CategoryWise: React.FC<CategoryWiseProps> = ({ jsonData }) => {
   };
 
   return (
-    <Paper>
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell sx={{ fontWeight: "bold" }} align="center">
-                Category
-              </TableCell>
-              <TableCell sx={{ fontWeight: "bold" }} align="center">
-                Total Scholar
-              </TableCell>
-              <TableCell sx={{ fontWeight: "bold" }} align="center">
-                Qualified
-              </TableCell>
-              <TableCell sx={{ fontWeight: "bold" }} align="center">
-                Not Qualified
-              </TableCell>
-              <TableCell sx={{ fontWeight: "bold" }} align="center">
-                Qualification %
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {Object.entries(categoryStats).map(([category, stats]) => (
-              <TableRow key={category}>
-                <TableCell align="center">{category?.toUpperCase()}</TableCell>
-                <TableCell align="center">{stats.totalScholar}</TableCell>
-                <TableCell align="center">
-                  <Chip
-                    onClick={() => {
-                      setSelectedScholars(stats.qualifiedScholar);
-                      setShowScholars(true);
-                    }}
-                    color="success"
-                    label={stats.qualified}
-                    sx={{ minWidth: 80 }}
-                  />
+    <Box>
+      <Box sx={{ p: 1 }}>
+        <Typography variant="h6">Qualification Summary</Typography>
+      </Box>
+      <Divider sx={{ mb: 2 }} />
+      <Paper>
+        <TableContainer>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell sx={{ fontWeight: "bold" }} align="center">
+                  Category
                 </TableCell>
-                <TableCell align="center">
-                  <Chip
-                    onClick={() => {
-                      setSelectedScholars(stats.notQualifiedScholars);
-                      setShowScholars(true);
-                    }}
-                    color="error"
-                    sx={{ minWidth: 80 }}
-                    label={stats.notQualified}
-                  />
+                <TableCell sx={{ fontWeight: "bold" }} align="center">
+                  Total Scholar
                 </TableCell>
-                <TableCell align="center">
-                  <Chip
-                    color="warning"
-                    sx={{ minWidth: 80 }}
-                    label={(
-                      (stats.notQualified /
-                        (stats.notQualified + stats.qualified)) *
-                      100
-                    ).toFixed(2)}
-                  />
+                <TableCell sx={{ fontWeight: "bold" }} align="center">
+                  Qualified
+                </TableCell>
+                <TableCell sx={{ fontWeight: "bold" }} align="center">
+                  Not Qualified
+                </TableCell>
+                <TableCell sx={{ fontWeight: "bold" }} align="center">
+                  Qualification %
                 </TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
-      <CustomModal open={showScholars} onClose={() => setShowScholars(false)}>
-        <DataGrid
-          initialState={{
-            columns: { columnVisibilityModel: invisibleColumns },
-            pagination: { paginationModel: { pageSize: 10 } },
-          }}
-          pageSizeOptions={[10, 30, 50]}
-          columns={columns}
-          rows={selectedScholar || []}
-        />
-      </CustomModal>
-    </Paper>
+            </TableHead>
+            <TableBody>
+              {Object.entries(categoryStats).map(([category, stats]) => (
+                <TableRow key={category}>
+                  <TableCell align="center">
+                    {category?.toUpperCase()}
+                  </TableCell>
+                  <TableCell align="center">{stats.totalScholar}</TableCell>
+                  <TableCell align="center">
+                    <Chip
+                      onClick={() => {
+                        setSelectedScholars(stats.qualifiedScholar);
+                        setShowScholars(true);
+                      }}
+                      color="success"
+                      label={stats.qualified}
+                      sx={{ minWidth: 80 }}
+                    />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Chip
+                      onClick={() => {
+                        setSelectedScholars(stats.notQualifiedScholars);
+                        setShowScholars(true);
+                      }}
+                      color="error"
+                      sx={{ minWidth: 80 }}
+                      label={stats.notQualified}
+                    />
+                  </TableCell>
+                  <TableCell align="center">
+                    <Chip
+                      color="warning"
+                      sx={{ minWidth: 80 }}
+                      label={(
+                        (stats.notQualified /
+                          (stats.notQualified + stats.qualified)) *
+                        100
+                      ).toFixed(2)}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <CustomModal open={showScholars} onClose={() => setShowScholars(false)}>
+          <DataGrid
+            initialState={{
+              columns: { columnVisibilityModel: invisibleColumns },
+              pagination: { paginationModel: { pageSize: 10 } },
+            }}
+            pageSizeOptions={[10, 30, 50]}
+            columns={columns}
+            rows={selectedScholar || []}
+          />
+        </CustomModal>
+      </Paper>
+    </Box>
   );
 };
 

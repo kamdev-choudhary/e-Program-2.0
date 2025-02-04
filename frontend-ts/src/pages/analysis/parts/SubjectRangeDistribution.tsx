@@ -7,6 +7,9 @@ import {
   TableRow,
   TableCell,
   Paper,
+  Box,
+  Typography,
+  Divider,
 } from "@mui/material";
 
 interface DataProps {
@@ -72,36 +75,42 @@ const SubjectRangeDistribution: React.FC<SubjectRangeDistributionProps> = ({
   });
 
   return (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell align="center">
-              <b>Range</b>
-            </TableCell>
-            {subjects.map((subject) => (
-              <TableCell align="center" key={subject}>
-                <b>{subject.toUpperCase()}</b>
+    <Box>
+      <Box sx={{ p: 1 }}>
+        <Typography variant="h6">Qualification Summary</Typography>
+      </Box>
+      <Divider sx={{ mb: 2 }} />
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell align="center">
+                <b>Range</b>
               </TableCell>
-            ))}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {percentageRanges.map((range, rangeIndex) => (
-            <TableRow key={range}>
-              <TableCell sx={{ minWidth: 120 }} align="center">
-                {range}
-              </TableCell>
-              {subjectRangeData.map((subject) => (
-                <TableCell align="center" key={subject.name}>
-                  {subject.ranges[rangeIndex]}
+              {subjects.map((subject) => (
+                <TableCell align="center" key={subject}>
+                  <b>{subject.toUpperCase()}</b>
                 </TableCell>
               ))}
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {percentageRanges.map((range, rangeIndex) => (
+              <TableRow key={range}>
+                <TableCell sx={{ minWidth: 120 }} align="center">
+                  {range}
+                </TableCell>
+                {subjectRangeData.map((subject) => (
+                  <TableCell align="center" key={subject.name}>
+                    {subject.ranges[rangeIndex]}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </Box>
   );
 };
 
