@@ -366,3 +366,219 @@ export async function generateAdmitCard(req, res, next) {
     next(error);
   }
 }
+
+export async function downloadProvisionalAnswerKey(req, res, next) {
+  const website =
+    "https://examinationservices.nic.in/JeeMain2025/root/CandidateLogin.aspx?enc=Ei4cajBkK1gZSfgr53ImFVj34FesvYg1WX45sPjGXBpvTjwcqEoJcZ5VnHgmpgmK";
+
+  const SELECTORS = {
+    applicationNumber: 'input[name="ctl00$ContentPlaceHolder1$txtRegno"]',
+    password: 'input[name="ctl00$ContentPlaceHolder1$txtPassword"]',
+    captchaInput: 'input[name="ctl00$ContentPlaceHolder1$txtsecpin"]',
+    captchaImage: "#ctl00_ContentPlaceHolder1_captchaimage",
+    loginButton: '[name="ctl00$ContentPlaceHolder1$btnsignin"]',
+    errorSelector: "#ctl00_ContentPlaceHolder1_lblerror1",
+    showPaper: "#ctl00_LoginContent_rptViewQuestionPaper_ctl01_lnkviewKey",
+  };
+
+  const MAX_RETRIES = 10;
+  const browser = await puppeteer.launch({
+    headless: false,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
+
+  try {
+    const { applicationNumber, password } = req.body;
+    const page = await browser.newPage();
+    await page.setViewport({ width: 1920, height: 1080 });
+    await page.goto(website);
+    let success = false;
+
+    for (let i = 0; i < MAX_RETRIES; i++) {
+      try {
+        await page.type(SELECTORS.applicationNumber, "");
+        await page.type(SELECTORS.applicationNumber, String(applicationNumber));
+        await page.type(SELECTORS.password, "");
+        await page.type(SELECTORS.password, String(password));
+        await page.waitForSelector(SELECTORS.captchaImage, { timeout: 10000 });
+
+        // Capture and solve CAPTCHA
+        const captchaText = await captureAndSolveCaptcha(
+          page,
+          SELECTORS.captchaImage
+        );
+
+        await page.type(SELECTORS.captchaInput, captchaText);
+
+        // Click Login
+        await page.click(SELECTORS.loginButton);
+        await page.waitForNetworkIdle({ idleTime: 500, timeout: 10000 });
+
+        // Check for CAPTCHA error
+        const error = await page
+          .$eval(SELECTORS.errorSelector, (el) => el.innerText)
+          .catch(() => null);
+        if (
+          error &&
+          error.includes("CAPTCHA did not match. Please Re-enter.")
+        ) {
+          console.info(`Attempt ${i + 1}: CAPTCHA did not match. Retrying...`);
+          continue;
+        }
+
+        // Wait for success
+        if (
+          await page.waitForSelector(SELECTORS.showPaper, { timeout: 4000 })
+        ) {
+          success = true;
+          break;
+        }
+      } catch (error) {
+        console.info(`Attempt ${i + 1} failed: ${error.message}`);
+      }
+    }
+
+    if (!success) {
+      return res.status(400).json({ error: "CAPTCHA verification failed" });
+    }
+
+    // Wait for the "Show Paper" button to appear
+    await page.waitForSelector(SELECTORS.showPaper, { timeout: 5000 });
+
+    // Extract the `href` value from the button
+    const paperUrl = await page.$eval(SELECTORS.showPaper, (el) =>
+      el.getAttribute("href")
+    );
+
+    // Send JSON response and PDF file
+    res.setHeader("Content-Type", "application/json");
+    res.status(200).json({
+      success: "Success",
+      paperUrl,
+    });
+  } catch (error) {
+    next(error);
+  } finally {
+    // await browser.close();
+  }
+}
+
+export async function getDetailsFromMainQuestionPaper(req, res, next) {
+  const { website } = req.body;
+
+  if (!website || !website.startsWith("http")) {
+    return res.status(400).json({ error: "Invalid website URL" });
+  }
+
+  const browser = await puppeteer.launch({
+    headless: false,
+    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+  });
+
+  const page = await browser.newPage();
+  await page.setViewport({ width: 1920, height: 1080 });
+
+  try {
+    await page.goto(website, { waitUntil: "networkidle2" });
+
+    // Wait for questions to load
+    await page.waitForSelector(".section-cntnr", { timeout: 30000 });
+
+    const extractedData = await page.evaluate(() => {
+      const sections = Array.from(document.querySelectorAll(".section-cntnr"));
+      return sections.map((section) => {
+        const sectionName =
+          section.querySelector(".section-lbl .bold")?.innerText?.trim() ||
+          "Unknown Section";
+
+        const questions = Array.from(
+          section.querySelectorAll(".question-pnl")
+        ).map((questionDiv, index) => {
+          const mainTable = questionDiv.querySelector("table.questionPnlTbl");
+          if (!mainTable) return null;
+
+          // Extract Question Number
+          const questionNumberElement = mainTable.querySelector(
+            ".questionRowTbl td.bold"
+          );
+          const questionNumber = questionNumberElement
+            ? questionNumberElement.innerText.trim()
+            : "N/A";
+
+          // Extract Given Answer
+          let givenAnswer = "No Answer";
+          const givenAnswerRow = [
+            ...mainTable.querySelectorAll(".questionRowTbl tr"),
+          ].find(
+            (row) =>
+              row.innerText.includes("Given Answer") ||
+              row.innerText.includes("Chosen Option")
+          );
+
+          if (givenAnswerRow) {
+            const answerColumn =
+              givenAnswerRow.querySelector("td:nth-child(2)");
+            if (answerColumn) {
+              givenAnswer = answerColumn.innerText.trim() || "No Answer";
+            }
+          }
+
+          // Extract Metadata
+          const metadataTable = mainTable.querySelector(".menu-tbl");
+          const metadataRows = metadataTable
+            ? metadataTable.querySelectorAll("tr")
+            : [];
+
+          let questionType = "N/A",
+            questionID = "N/A",
+            status = "N/A",
+            optionIDs = {};
+
+          metadataRows.forEach((row) => {
+            const label = row
+              .querySelector("td:nth-child(1)")
+              ?.innerText?.trim();
+            const value = row
+              .querySelector("td:nth-child(2)")
+              ?.innerText?.trim();
+
+            if (label?.includes("Question Type")) questionType = value;
+            if (label?.includes("Question ID")) questionID = value;
+            if (label?.includes("Status")) status = value;
+
+            if (label?.includes("Option")) {
+              optionIDs[label.replace(" :", "")] = value;
+            }
+          });
+
+          return {
+            questionIndex: index + 1,
+            questionNumber,
+            givenAnswer,
+            questionType,
+            questionID,
+            optionIDs,
+            status,
+          };
+        });
+
+        return {
+          sectionName,
+          questions: questions.filter(Boolean),
+        };
+      });
+    });
+
+    console.log("Extracted Questions Data:", extractedData);
+
+    res.status(200).json({
+      success: "Success",
+      extractedData,
+    });
+  } catch (error) {
+    console.error("Scraping error:", error);
+    next(error);
+  } finally {
+    await browser.close();
+  }
+}

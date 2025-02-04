@@ -23,14 +23,9 @@ interface ScholarData {
   drn: string;
   application: string;
   password?: string;
-  city: string;
   status?: string;
-  date?: string;
-  shift?: string;
-  timing?: string;
-  center?: string;
-  address?: string;
   error: string;
+  paperUrl?: string;
 }
 
 const JeeMainProvisionalKey: React.FC = () => {
@@ -38,7 +33,7 @@ const JeeMainProvisionalKey: React.FC = () => {
   const [jsonData, setJsonData] = useState<ScholarData[] | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
 
-  const handleDownloadAdmitCard = async (scholar: ScholarData) => {
+  const handleFetchPaperUrl = async (scholar: ScholarData) => {
     try {
       setJsonData((prevData) => {
         if (!prevData) return null; // If jsonData is null, maintain null state
@@ -53,13 +48,16 @@ const JeeMainProvisionalKey: React.FC = () => {
         );
       });
       // Request to get the PDF file path
-      const response = await axios.post("/automation/jee/admitcard", {
-        drn: scholar.drn,
-        applicationNumber: scholar.application,
-        password: scholar.password,
-      });
+      const response = await axios.post(
+        "/automation/jee/provisional-answer-key",
+        {
+          drn: scholar.drn,
+          applicationNumber: scholar.application,
+          password: scholar.password,
+        }
+      );
 
-      if (response.data.success) {
+      if (response.status === 200) {
         setJsonData((prevData) => {
           if (!prevData) return null; // If jsonData is null, maintain null state
           return prevData.map((item) =>
@@ -69,23 +67,7 @@ const JeeMainProvisionalKey: React.FC = () => {
                   date: response.data.date,
                   error: "",
                   status: "fetched",
-                  shift: response.data.shift,
-                  timing: response.data.timing,
-                  center: response.data.center,
-                  address: response.data.address,
-                }
-              : item
-          );
-        });
-      } else if (response.data?.error) {
-        setJsonData((prevData) => {
-          if (!prevData) return null; // If jsonData is null, maintain null state
-          return prevData.map((item) =>
-            item.drn === scholar.drn
-              ? {
-                  ...item,
-                  error: response.data.error,
-                  status: "idle",
+                  paperUrl: response.data.paperUrl,
                 }
               : item
           );
@@ -113,8 +95,8 @@ const JeeMainProvisionalKey: React.FC = () => {
       if (jsonData) {
         await Promise.all(
           jsonData.map(async (data) => {
-            if (!data.center && data?.status === "idle") {
-              await handleDownloadAdmitCard(data);
+            if (!data.paperUrl && data?.status === "idle") {
+              await handleFetchPaperUrl(data);
             }
           })
         );
@@ -234,40 +216,20 @@ const JeeMainProvisionalKey: React.FC = () => {
       flex: 1,
     },
     {
-      field: "timing",
-      headerName: "Timimg",
+      field: "paperUrl",
+      headerName: "Paper URL",
       minWidth: 200,
       align: "center",
       headerAlign: "center",
       editable: true,
       flex: 1,
-    },
-    {
-      field: "date",
-      headerName: "Date",
-      minWidth: 80,
-      align: "center",
-      headerAlign: "center",
-      editable: true,
-      flex: 1,
-    },
-    {
-      field: "shift",
-      headerName: "Shift",
-      minWidth: 80,
-      align: "center",
-      headerAlign: "center",
-      editable: true,
-      flex: 1,
-    },
-    {
-      field: "address",
-      headerName: "Address",
-      minWidth: 100,
-      align: "center",
-      headerAlign: "center",
-      editable: true,
-      flex: 1,
+      renderCell: (params) => (
+        <>
+          <Button component="a" href={params.row.paperUrl}>
+            Paper
+          </Button>
+        </>
+      ),
     },
     {
       field: "pdfDownload",
@@ -288,7 +250,7 @@ const JeeMainProvisionalKey: React.FC = () => {
             }}
           >
             <Button
-              onClick={() => handleDownloadAdmitCard(params.row)}
+              onClick={() => handleFetchPaperUrl(params.row)}
               startIcon={
                 params.row.status === "loading" ? (
                   <CircularProgress size={20} />
@@ -362,7 +324,7 @@ const JeeMainProvisionalKey: React.FC = () => {
               startIcon={<CloudDownloadRounded sx={{ color: "#fff" }} />}
             >
               {isLoading ? "Loading..." : "Fetch Data"} (
-              {jsonData?.filter((data) => !data.center).length})
+              {jsonData?.filter((data) => !data.paperUrl).length})
             </Button>
             <Button
               startIcon={<TableChartRounded />}
@@ -378,7 +340,8 @@ const JeeMainProvisionalKey: React.FC = () => {
                 }
               }}
             >
-              Download Excel ({jsonData?.filter((data) => data.center).length})
+              Download Excel ({jsonData?.filter((data) => data.paperUrl).length}
+              )
             </Button>
 
             <Button

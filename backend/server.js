@@ -60,8 +60,8 @@ if (isProduction && cluster.isPrimary) {
 
   const startServer = async () => {
     try {
-      await connectDB();
-      setupSocket(server);
+      // await connectDB();
+      // setupSocket(server);
       server.listen(port, () => {
         logger.info(
           `Worker ${process.pid} listening on port ${port} in ${config.NODE_ENV} mode`

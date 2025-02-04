@@ -32,7 +32,7 @@ const routes = (app) => {
   app.use("/api/v1/batch", verifyToken, batchRouter);
   app.use("/api/v1/doubts", verifyToken, doubtRoute);
   app.use("/api/v1/chat", verifyToken, chatRoute);
-  app.use("/api/v1/automation", verifyToken, automationRoute);
+  app.use("/api/v1/automation", automationRoute);
   app.use("/api/v1/analysis", analysisRoute);
 
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
