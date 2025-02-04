@@ -53,11 +53,11 @@ const JEEAdvancedAnalysis: React.FC = () => {
     total: "360",
   });
 
-  const getAdvancedRank = async () => {
+  const getAdvancedRank = async (students: DataProps[]) => {
     setIsLoading(true);
     try {
       const res = await axios.post("/analysis/jeeadvanced/predict-rank", {
-        students: jsonData,
+        students: students,
         year: cutoff?.year || 2024,
       });
 
@@ -595,7 +595,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
             </Accordion>
           </Grid>
           <Grid size={{ xs: 12, md: 6 }}>
-            <Box sx={{ display: "flex", gap: 2 }}>
+            <Box sx={{ display: "flex", gap: 2, flexWrap: "wrap" }}>
               <TextField
                 value={subjectMarks.physics}
                 onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -620,7 +620,13 @@ const JEEAdvancedAnalysis: React.FC = () => {
                 type="number"
                 label="Total Mark"
               />
-              <Button onClick={getAdvancedRank}>Get Rank</Button>
+              <Button
+                variant="contained"
+                color="success"
+                onClick={() => getAdvancedRank(jsonData)}
+              >
+                Get Rank
+              </Button>
             </Box>
           </Grid>
         </Grid>
