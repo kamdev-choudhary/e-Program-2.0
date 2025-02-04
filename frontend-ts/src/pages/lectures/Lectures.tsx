@@ -224,55 +224,55 @@ const Lectures: React.FC = () => {
         gap: 1,
       }}
     >
-      <Box>
-        <Grid container spacing={2}>
-          <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-            <CustomDropDown
-              data={classes || []}
-              value={selectedClass}
-              label="Class"
-              name="name"
-              dropdownValue="value"
-              onChange={(e: SelectChangeEvent) => {
-                setSelectedClass(e.target.value);
-                setSelectedSubject("");
-                setSelectedChapter("");
-              }}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-            <CustomDropDown
-              data={subjects || []}
-              value={selectedSubject}
-              label="Subject"
-              name="name"
-              dropdownValue="name"
-              onChange={(e: SelectChangeEvent) => {
-                setSelectedSubject(e.target.value);
-                setSelectedChapter("");
-              }}
-            />
-          </Grid>
-          <Grid size={{ xs: 12, md: 6, lg: 4 }}>
-            <CustomDropDown
-              data={filteredChapters || []}
-              value={selectedChapter}
-              label="Chapter"
-              name="chapter"
-              dropdownValue="chapter"
-              onChange={(e: SelectChangeEvent) =>
-                setSelectedChapter(e.target.value)
-              }
-            />
-          </Grid>
-        </Grid>
-      </Box>
       <Grid
         direction={isSmallScreen ? "column-reverse" : "row"}
         container
         spacing={2}
       >
         <Grid size={{ xs: 12, md: 6 }}>
+          <Box sx={{ mb: 2 }}>
+            <Grid container spacing={2}>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <CustomDropDown
+                  data={classes || []}
+                  value={selectedClass}
+                  label="Class"
+                  name="name"
+                  dropdownValue="value"
+                  onChange={(e: SelectChangeEvent) => {
+                    setSelectedClass(e.target.value);
+                    setSelectedSubject("");
+                    setSelectedChapter("");
+                  }}
+                />
+              </Grid>
+              <Grid size={{ xs: 12, md: 6 }}>
+                <CustomDropDown
+                  data={subjects || []}
+                  value={selectedSubject}
+                  label="Subject"
+                  name="name"
+                  dropdownValue="name"
+                  onChange={(e: SelectChangeEvent) => {
+                    setSelectedSubject(e.target.value);
+                    setSelectedChapter("");
+                  }}
+                />
+              </Grid>
+              <Grid size={{ xs: 12 }}>
+                <CustomDropDown
+                  data={filteredChapters || []}
+                  value={selectedChapter}
+                  label="Chapter"
+                  name="chapter"
+                  dropdownValue="chapter"
+                  onChange={(e: SelectChangeEvent) =>
+                    setSelectedChapter(e.target.value)
+                  }
+                />
+              </Grid>
+            </Grid>
+          </Box>
           <DataGrid
             columns={columns}
             rows={

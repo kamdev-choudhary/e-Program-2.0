@@ -1,33 +1,37 @@
 import React, { useState } from "react";
+import { Box, useMediaQuery, Drawer, CssBaseline } from "@mui/material";
+import { Outlet } from "react-router-dom";
+import { AnimatePresence, motion } from "framer-motion";
 import Sidebar from "./Sidebar";
 import Appbar from "./Appbar";
-import { Box, useMediaQuery, Drawer } from "@mui/material";
-import { Outlet } from "react-router-dom";
 import PopUpPages from "./PopUpPages";
 
+const drawerWidth = 285; // Sidebar width
+
 const MasterLayout: React.FC = () => {
-  const [expanded, setExpanded] = useState<boolean>(true);
   const isSmallScreen = useMediaQuery("(max-width:500px)");
+  const [expanded, setExpanded] = useState<boolean>(true);
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
 
+  // Toggle Sidebar (Mobile & Desktop)
+  const handleToggleSidebar = () => {
+    isSmallScreen
+      ? setOpenDrawer((prev) => !prev)
+      : setExpanded((prev) => !prev);
+  };
+
   return (
-    <Box
-      sx={{
-        height: "100vh",
-        display: "flex",
-        flexDirection: "column",
-      }}
-    >
+    <Box sx={{ height: "100vh", display: "flex", flexDirection: "column" }}>
+      <CssBaseline />
+
+      {/* AppBar (Top Navbar) */}
       <Appbar
-        handleButtonClick={() => {
-          isSmallScreen
-            ? setOpenDrawer((prev) => !prev)
-            : setExpanded((prev) => !prev);
-        }}
+        handleButtonClick={handleToggleSidebar}
         expanded={expanded}
         isSmallScreen={isSmallScreen}
       />
 
+      {/* Main Content Area */}
       <Box
         sx={{
           display: "flex",
@@ -35,53 +39,60 @@ const MasterLayout: React.FC = () => {
           height: "calc(100vh - 67px)",
         }}
       >
+        {/* Sidebar (Collapsible for Desktop, Drawer for Mobile) */}
         {isSmallScreen ? (
           <Drawer
-            className="no-print"
             open={openDrawer}
             onClose={() => setOpenDrawer(false)}
-            sx={{
-              width: "80%",
-              "& .MuiDrawer-paper": {
-                width: "80%", // Set the drawer paper width to 90%
-                px: 2,
-              },
-            }}
+            sx={{ "& .MuiDrawer-paper": { width: "80%", px: 2 } }}
           >
             <Sidebar expanded={true} />
           </Drawer>
         ) : (
-          <Box
+          <motion.div
+            initial={{ width: expanded ? drawerWidth : 60 }}
+            animate={{ width: expanded ? drawerWidth : 60 }}
+            transition={{ type: "", stiffness: 100 }}
             className="no-print"
-            sx={{
-              width: expanded ? "285px" : "inherit",
-              transition: "width 0.3s ease",
+            style={{
               borderRight: "1px solid rgba(0,0,0,0.2)",
               overflowY: "auto",
-              bgcolor: "background.paper",
-              p: 1,
-              py: expanded ? 2 : 1,
+              background: "background.paper",
+              padding: expanded ? "16px" : "8px",
               height: "100%",
-              "&::-webkit-scrollbar": { display: "none" },
               scrollbarWidth: "none",
             }}
           >
             <Sidebar expanded={expanded} />
-          </Box>
+          </motion.div>
         )}
 
+        {/* Main Content Area */}
         <Box
           sx={{
-            flex: 1, // This will take the remaining space
+            flex: 1,
             overflowY: "scroll",
-            height: "100%", // Ensure it takes full height
+            height: "100%",
             pb: 2,
             p: { xs: 0.5, sm: 1.5 },
           }}
         >
-          <Outlet />
+          <AnimatePresence mode="wait">
+            <motion.div
+              key={location.pathname} // Ensures animation triggers on route change
+              initial={{ opacity: 0, x: 50 }}
+              animate={{ opacity: 1, x: 0 }}
+              exit={{ opacity: 0, x: -50 }}
+              transition={{ duration: 0.4, ease: "easeInOut" }}
+              style={{ height: "100%" }}
+            >
+              <Outlet />
+            </motion.div>
+          </AnimatePresence>
         </Box>
       </Box>
+
+      {/* Floating Popups */}
       <PopUpPages />
     </Box>
   );

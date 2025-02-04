@@ -13,6 +13,7 @@ import {
 import Swal from "sweetalert2";
 import { LogoutRounded } from "@mui/icons-material";
 import axios from "../../../../hooks/AxiosInterceptor";
+import { useNotification } from "../../../../contexts/NotificationProvider";
 
 interface UserProps {
   _id: string;
@@ -38,6 +39,7 @@ interface SessionProps {
 const Sessions: React.FC<UserSessionProps> = ({ user }) => {
   const [sessions, setSessions] = useState<SessionProps[] | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
+  const { showNotification } = useNotification();
 
   const getSession = async () => {
     setIsLoading(true);
@@ -74,8 +76,10 @@ const Sessions: React.FC<UserSessionProps> = ({ user }) => {
           if (!prev) return []; // Ensure an empty array is returned if prev is null or undefined
           return prev.filter((s) => s.deviceId !== id); // Remove the session with the given id
         });
-
-        Swal.fire("Deleted!", "Session has been logged out.", "success");
+        showNotification({
+          message: "Session has been logged out.",
+          type: "success",
+        });
       }
     } catch (error) {
       console.error(error);
