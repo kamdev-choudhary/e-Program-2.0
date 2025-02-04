@@ -12,6 +12,7 @@ import {
   Box,
   Chip,
   Grid2 as Grid,
+  Divider,
 } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { CustomModal } from "../../../components/CustomModal";
@@ -346,9 +347,10 @@ const RankRangeWise: React.FC<RankRangeProps> = ({ jsonData }) => {
       {/* AirRank Table */}
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 6 }}>
-          <Box sx={{ p: 1 }}>
-            <Typography variant="h5">Grouped by AIR Rank Range</Typography>
+          <Box sx={{ p: 2 }}>
+            <Typography variant="h6">Grouped by AIR Rank Range</Typography>
           </Box>
+          <Divider sx={{ mb: 2 }} />
           <TableContainer component={Paper}>
             <Table>
               <TableHead>
@@ -394,9 +396,10 @@ const RankRangeWise: React.FC<RankRangeProps> = ({ jsonData }) => {
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
           {/* CAT Rank Table */}
-          <Box sx={{ p: 1 }}>
-            <Typography variant="h5">Grouped by Category Rank Range</Typography>
+          <Box sx={{ p: 2 }}>
+            <Typography variant="h6">Grouped by Category Rank Range</Typography>
           </Box>
+          <Divider sx={{ mb: 2 }} />
           <TableContainer component={Paper}>
             <Table>
               <TableHead>

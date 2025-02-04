@@ -321,7 +321,7 @@ const CategoryWise: React.FC<CategoryWiseProps> = ({ jsonData }) => {
   return (
     <Box>
       <Box sx={{ p: 1 }}>
-        <Typography variant="h6">Qualification Summary</Typography>
+        <Typography variant="h6">Category Wise Qualification</Typography>
       </Box>
       <Divider sx={{ mb: 2 }} />
       <Paper>

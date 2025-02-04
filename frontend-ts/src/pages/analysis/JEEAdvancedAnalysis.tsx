@@ -5,6 +5,7 @@ import {
   Box,
   Button,
   Chip,
+  CircularProgress,
   Grid2 as Grid,
   Paper,
   TextField,
@@ -18,6 +19,7 @@ import {
   DownloadRounded,
   EngineeringRounded,
   ExpandMoreRounded,
+  SaveAltRounded,
 } from "@mui/icons-material";
 import { CustomModal } from "../../components/CustomModal";
 import { CustomToolbar } from "../../components/CustomToolbar";
@@ -46,6 +48,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
   const [weightage, setWeightage] = useState<string | number>(1);
   const [jsonData, setJsonData] = useState<DataProps[]>([]);
   const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [isLoadinRank, setIsLoadingRank] = useState<boolean>(false);
   const [summary, setSummary] = useState<SummaryProps | null>(null);
   const [cutoff, setCutoff] = useState<CutoffDataProps | null>(null);
   const [showScholars, setShowScholars] = useState<boolean>(false);
@@ -58,7 +61,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
   });
 
   const getAdvancedRank = async (students: DataProps[]) => {
-    setIsLoading(true);
+    setIsLoadingRank(true);
     try {
       const res = await axios.post("/analysis/jeeadvanced/predict-rank", {
         students: students,
@@ -90,7 +93,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
     } catch (error) {
       console.error("Error fetching rank:", error);
     } finally {
-      setIsLoading(false);
+      setIsLoadingRank(false);
     }
   };
 
@@ -520,6 +523,11 @@ const JEEAdvancedAnalysis: React.FC = () => {
       headerAlign: "center",
       flex: 1,
       minWidth: 120,
+      renderCell: (params) => (
+        <>{`${params?.row?.catRank && params.row.category.toUpperCase()} - ${
+          params?.row?.catRank ?? ""
+        }`}</>
+      ),
     },
   ];
 
@@ -561,7 +569,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
             </Button>
           </Box>
           <Button
-            startIcon={<DownloadRounded />}
+            startIcon={<SaveAltRounded />}
             variant="contained"
             sx={{ flexWrap: "none" }}
             onClick={() =>
@@ -572,7 +580,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
             }
             disabled={jsonData.length === 0}
           >
-            Download Analysis
+            Export Analysis
           </Button>
         </Box>
         <Grid container spacing={2}>
@@ -634,12 +642,19 @@ const JEEAdvancedAnalysis: React.FC = () => {
                 label="Total Mark"
               />
               <Button
+                disabled={isLoadinRank || jsonData.length === 0}
                 variant="contained"
                 color="success"
                 onClick={() => getAdvancedRank(jsonData)}
-                startIcon={<EngineeringRounded />}
+                startIcon={
+                  isLoadinRank ? (
+                    <CircularProgress size={24} />
+                  ) : (
+                    <EngineeringRounded />
+                  )
+                }
               >
-                Get Rank
+                {isLoadinRank ? "Fetching Ranks" : "Fetch Ranks"}
               </Button>
             </Box>
           </Grid>
@@ -691,9 +706,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
         rows={jsonData}
         loading={isLoading}
         slots={{
-          toolbar: () => (
-            <CustomToolbar showAddButton={false} showExportButton={true} />
-          ),
+          toolbar: () => <CustomToolbar showAddButton={false} />,
         }}
         disableRowSelectionOnClick
         pageSizeOptions={[10, 30, 50]}

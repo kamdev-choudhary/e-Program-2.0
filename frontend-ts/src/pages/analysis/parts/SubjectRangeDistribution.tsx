@@ -77,7 +77,7 @@ const SubjectRangeDistribution: React.FC<SubjectRangeDistributionProps> = ({
   return (
     <Box>
       <Box sx={{ p: 1 }}>
-        <Typography variant="h6">Qualification Summary</Typography>
+        <Typography variant="h6">Subject Range Distrubution</Typography>
       </Box>
       <Divider sx={{ mb: 2 }} />
       <TableContainer component={Paper}>
