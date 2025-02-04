@@ -1,8 +1,8 @@
-import { lazy, ReactNode } from "react";
+import { lazy, Suspense, ReactNode } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import ProtectedRoute from "./hooks/ProtectedRoute";
 import MasterLayout from "./layout/MasterLayout";
-import withSuspense from "./hooks/WithSuspense";
+import Loader from "./components/Loader";
 
 // Public Pages
 const HomePage = lazy(() => import("./pages/home/HomePage"));
@@ -62,136 +62,112 @@ interface RoutesProps {
 
 const routes: RoutesProps[] = [
   // Public Routes
-  { path: "/", element: withSuspense(HomePage), roles: ["public"] },
-  {
-    path: "/unauthorized",
-    element: withSuspense(Unauthorized),
-    roles: ["public"],
-  },
+  { path: "/", element: <HomePage />, roles: ["public"] },
+  { path: "/unauthorized", element: <Unauthorized />, roles: ["public"] },
   {
     path: "/automation/jeemaincityinfo",
-    element: withSuspense(JEEMainCityInfo),
+    element: <JEEMainCityInfo />,
     roles: ["public"],
   },
   {
     path: "/automation/jeemainadmitcard",
-    element: withSuspense(JEEMainAdmitCard),
+    element: <JEEMainAdmitCard />,
     roles: ["public"],
   },
   {
     path: "/automation/jdstadmitcard",
-    element: withSuspense(GenerateAdmitCard),
+    element: <GenerateAdmitCard />,
     roles: ["public"],
   },
   {
     path: "/automation/jeemainprovisionalanswerkey",
-    element: withSuspense(JeeMainProvisionalKey),
+    element: <JeeMainProvisionalKey />,
     roles: ["public"],
   },
   {
     path: "/analysis/jeemain",
-    element: withSuspense(JEEMainAnalysis),
+    element: <JEEMainAnalysis />,
     roles: ["public"],
   },
   {
     path: "/analysis/jeeadvanced",
-    element: withSuspense(JEEAdvancedAnalysis),
+    element: <JEEAdvancedAnalysis />,
     roles: ["public"],
   },
 
   // Admin Routes
-  {
-    path: "/dashboard",
-    element: withSuspense(Dashboard),
-    roles: ["admin", "moderator"],
-  },
+  { path: "/dashboard", element: <Dashboard />, roles: ["admin", "moderator"] },
   {
     path: "/admin/batch",
-    element: withSuspense(AdminBatch),
+    element: <AdminBatch />,
     roles: ["admin", "moderator"],
   },
-  {
-    path: "/admin/academic",
-    element: withSuspense(Academic),
-    roles: ["admin"],
-  },
+  { path: "/admin/academic", element: <Academic />, roles: ["admin"] },
   {
     path: "/admin/question-bank",
-    element: withSuspense(QuestionBankAdmin),
+    element: <QuestionBankAdmin />,
     roles: ["admin"],
   },
   {
     path: "/admin/lectures",
-    element: withSuspense(LecturesAdmin),
+    element: <LecturesAdmin />,
     roles: ["admin", "moderator"],
   },
   {
     path: "/admin/exams/online",
-    element: withSuspense(ExamMasterOnline),
+    element: <ExamMasterOnline />,
     roles: ["admin"],
   },
   {
     path: "/admin/exams/offline",
-    element: withSuspense(ExamMasterOffline),
+    element: <ExamMasterOffline />,
     roles: ["admin", "moderator"],
   },
-  { path: "/admin/users", element: withSuspense(UserMaster), roles: ["admin"] },
-  {
-    path: "/admin/batch/edit/:id",
-    element: withSuspense(EditBatch),
-    roles: ["admin"],
-  },
+  { path: "/admin/users", element: <UserMaster />, roles: ["admin"] },
+  { path: "/admin/batch/edit/:id", element: <EditBatch />, roles: ["admin"] },
   {
     path: "/admin/jee-data",
-    element: withSuspense(JEEData),
+    element: <JEEData />,
     roles: ["admin", "moderator"],
   },
 
   // User Routes (Scholars, Moderators, Admins)
-  {
-    path: "/lectures",
-    element: withSuspense(Lectures),
-    roles: ["scholar", "admin"],
-  },
-  {
-    path: "/batch",
-    element: withSuspense(Batches),
-    roles: ["scholar", "admin"],
-  },
+  { path: "/lectures", element: <Lectures />, roles: ["scholar", "admin"] },
+  { path: "/batch", element: <Batches />, roles: ["scholar", "admin"] },
   {
     path: "/batch/:id",
-    element: withSuspense(BatchDetails),
+    element: <BatchDetails />,
     roles: ["scholar", "admin"],
   },
-  { path: "/books", element: withSuspense(Books), roles: ["scholar", "admin"] },
+  { path: "/books", element: <Books />, roles: ["scholar", "admin"] },
   {
     path: "/profile",
-    element: withSuspense(Profile),
+    element: <Profile />,
     roles: ["scholar", "admin", "moderator"],
   },
   {
     path: "/doubts",
-    element: withSuspense(Doubts),
+    element: <Doubts />,
     roles: ["scholar", "admin", "moderator"],
   },
   {
     path: "/doubts/:id",
-    element: withSuspense(DoubtDetails),
+    element: <DoubtDetails />,
     roles: ["scholar", "admin", "moderator"],
   },
   {
     path: "/chat",
-    element: withSuspense(Chat),
+    element: <Chat />,
     roles: ["scholar", "admin", "moderator"],
   },
   {
     path: "/question-bank",
-    element: withSuspense(QuestionBank),
+    element: <QuestionBank />,
     roles: ["scholar", "admin", "moderator"],
   },
 
   // Catch-All for Not Found
-  { path: "/*", element: withSuspense(NotFound), roles: ["public"] },
+  { path: "/*", element: <NotFound />, roles: ["public"] },
 ];
 
 const router = createBrowserRouter([
@@ -201,7 +177,7 @@ const router = createBrowserRouter([
       path: route.path,
       element: (
         <ProtectedRoute allowedRoles={route.roles}>
-          {route.element}
+          <Suspense fallback={<Loader open={true} />}>{route.element}</Suspense>
         </ProtectedRoute>
       ),
     })),

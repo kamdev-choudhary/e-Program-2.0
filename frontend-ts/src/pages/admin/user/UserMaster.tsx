@@ -58,6 +58,12 @@ const UserMaster: React.FC = () => {
     name: "",
     role: "admin",
   });
+
+  const roles = [
+    { name: "Admin", value: "admin", count: adminCount },
+    { name: "Scholar", value: "scholar", count: scholarCount },
+    { name: "Moderator", value: "moderator", count: moderatorCount },
+  ];
   const [showSessions, setShowSessions] = useState<boolean>(false);
 
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
@@ -194,7 +200,7 @@ const UserMaster: React.FC = () => {
       headerAlign: "center",
       editable: true,
       type: "singleSelect",
-      valueOptions: ["scholar", "admin", "moderator"],
+      valueOptions: roles.map((role) => role.value),
     },
     {
       field: "status",
@@ -303,9 +309,9 @@ const UserMaster: React.FC = () => {
           setActiveTab(value)
         }
       >
-        <Tab label={`Admin (${adminCount})`} value="admin" />
-        <Tab label={`Scholars (${scholarCount})`} value="scholar" />
-        <Tab label={`Moderator (${moderatorCount})`} value="moderator" />
+        {roles?.map((role) => (
+          <Tab label={`${role.name} (${role.count})`} value={role.value} />
+        ))}
       </Tabs>
       <Box sx={{ mt: 2 }}>
         <DataGrid
@@ -355,11 +361,7 @@ const UserMaster: React.FC = () => {
           }}
         >
           <CustomDropDown
-            data={[
-              { name: "Admin", value: "admin" },
-              { name: "Scholar", value: "scholar" },
-              { name: "Moderator", value: "moderator" },
-            ]}
+            data={roles}
             value={newUser.role}
             name="name"
             dropdownValue="value"

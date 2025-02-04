@@ -9,6 +9,8 @@ import {
   Paper,
   Grid2 as Grid,
   Box,
+  Typography,
+  Divider,
 } from "@mui/material";
 import {
   BarChart,
@@ -72,6 +74,10 @@ const SubjectStatistics: React.FC<SubjectStatisticsProps> = ({
 
   return (
     <Box id="subject-static">
+      <Box sx={{ p: 1 }}>
+        <Typography variant="h6">Subject Wise Statistics</Typography>
+      </Box>
+      <Divider sx={{ mb: 2 }} />
       <Grid container spacing={3}>
         <Grid size={{ xs: 12, md: 6 }}>
           <TableContainer component={Paper}>

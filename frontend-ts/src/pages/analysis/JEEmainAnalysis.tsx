@@ -365,7 +365,7 @@ const JEEmainAnalysis: React.FC = () => {
   }, [sessionDatesWithShift, selectedDate]);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 2, p: 2 }}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
       <Paper sx={{ display: "flex", flexDirection: "column", gap: 2, p: 2 }}>
         <Box>
           <FileDropZone

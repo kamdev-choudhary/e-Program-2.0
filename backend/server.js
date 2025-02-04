@@ -14,6 +14,7 @@ import errorMiddleware from "./middlewares/error-middleware.js";
 import config from "./config/config.js";
 import cluster from "cluster";
 import os from "os";
+import corsOptions from "./config/cors.js";
 
 const numCPUs = os.cpus().length;
 const port = config.PORT || 5000;
@@ -39,7 +40,10 @@ if (isProduction && cluster.isPrimary) {
   // Security middleware
   app.use(helmet({ contentSecurityPolicy: false })); // Disable CSP to avoid blocking frontend scripts
   app.use(
-    cors({ origin: "*", methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"] })
+    cors({
+      origin: "*",
+      methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS", "PATCH"],
+    })
   );
 
   // Middleware

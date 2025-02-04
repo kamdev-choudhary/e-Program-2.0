@@ -49,7 +49,6 @@ const computeDisplayedCutoff = (
   const weight =
     typeof weightage === "string" ? parseFloat(weightage) || 1 : weightage;
 
-  // Create a copy while preserving non-category fields
   const displayed: CutoffDataProps = { ...original };
 
   (Object.keys(categoryMapping) as (keyof typeof categoryMapping)[]).forEach(
@@ -65,11 +64,12 @@ const computeDisplayedCutoff = (
           subject:
             modifiedCategory?.subject !== undefined
               ? Number(modifiedCategory.subject)
-              : Number(originalCategory.subject) * weight,
+              : Math.round(Number(originalCategory.subject) * weight * 100) /
+                100,
           total:
             modifiedCategory?.total !== undefined
               ? Number(modifiedCategory.total)
-              : Number(originalCategory.total) * weight,
+              : Math.round(Number(originalCategory.total) * weight * 100) / 100,
         };
       }
     }
@@ -153,16 +153,9 @@ const CutoffCriteria: React.FC<CutoffCriteriaProps> = ({
 
   const columns: GridColDef[] = [
     {
-      field: "id",
-      headerName: "SN",
-      width: 90,
-      align: "center",
-      headerAlign: "center",
-    },
-    {
       field: "category",
       headerName: "Category",
-      width: 60,
+
       align: "center",
       headerAlign: "center",
       flex: 1,
@@ -170,20 +163,22 @@ const CutoffCriteria: React.FC<CutoffCriteriaProps> = ({
     {
       field: "subjectCutoff",
       headerName: "Subject Cutoff",
-      width: 60,
+
       align: "center",
       headerAlign: "center",
       editable: true,
       flex: 1,
+      renderCell: (params) => <>{params?.row?.subjectCutoff}</>,
     },
     {
       field: "totalCutoff",
       headerName: "Total Cutoff",
-      width: 60,
+
       align: "center",
       headerAlign: "center",
       editable: true,
       flex: 1,
+      renderCell: (params) => <>{params?.row?.totalCutoff}</>,
     },
   ];
 
@@ -251,11 +246,13 @@ const CutoffCriteria: React.FC<CutoffCriteriaProps> = ({
         rows={rows}
         columns={columns}
         initialState={{
-          pagination:{paginationModel:{
-            pageSize:5
-          }}
+          pagination: {
+            paginationModel: {
+              pageSize: 5,
+            },
+          },
         }}
-        pageSizeOptions={[5,10]}
+        pageSizeOptions={[5, 10]}
       />
     </Box>
   );
