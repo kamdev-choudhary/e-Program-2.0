@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import ExcelJs from "exceljs";
-import { Box, SelectChangeEvent, Button, Paper, Grid2 } from "@mui/material";
+import { Box, SelectChangeEvent, Paper, Grid2 as Grid } from "@mui/material";
 
 import FileDropZone from "../../components/FileDropZone";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -74,6 +74,7 @@ const JEEmainAnalysis: React.FC = () => {
         const res = await axios.get(
           "/analysis/jeemain-marks-vs-percentile/metadata"
         );
+        console.log(res);
         setYears(res.data.years);
         setSession(res.data.sessions);
         setSessionWithDates(res.data.sessionDates);
@@ -118,6 +119,8 @@ const JEEmainAnalysis: React.FC = () => {
       console.error("Error during batch prediction:", error);
     }
   };
+
+  console.log(handleReadyForPrediction);
 
   const onDrop = async (acceptedFiles: File[]) => {
     if (acceptedFiles.length === 0) return;
@@ -351,7 +354,15 @@ const JEEmainAnalysis: React.FC = () => {
     );
   }, [session, selectedYear]);
 
-  // (The filteredDate and filteredShift are defined but not used in this snippet.)
+  const filteredDate = useMemo(() => {
+    if (!sessionWithDates) return [];
+    return sessionWithDates.filter((date) => date.session === selectedSession);
+  }, [sessionWithDates, selectedSession]);
+
+  const filteredShift = useMemo(() => {
+    if (!sessionDatesWithShift) return [];
+    return sessionDatesWithShift.filter((shift) => shift.date === selectedDate);
+  }, [sessionDatesWithShift, selectedDate]);
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 2, p: 2 }}>
@@ -363,43 +374,62 @@ const JEEmainAnalysis: React.FC = () => {
           />
         </Box>
         <Box>
-          <Grid2 container spacing={2}>
-            <Grid2 size={{ xs: 12, md: 6, lg: 4 }}>
+          <Grid container spacing={2}>
+            <Grid size={{ xs: 12, md: 6, lg: 3 }}>
               <CustomDropDown
-                label="Year"
-                value={selectedYear}
                 data={years || []}
-                onChange={(e: SelectChangeEvent) =>
-                  setSelectedYear(e.target.value)
-                }
+                value={selectedYear}
+                label="Year"
+                onChange={(e: SelectChangeEvent) => {
+                  setSelectedYear(e.target.value);
+                  setSelectedSession("");
+                  setSelectedDate("");
+                  setSelectedShift("");
+                }}
                 name="name"
                 dropdownValue="value"
               />
-            </Grid2>
-            <Grid2 size={{ xs: 12, md: 6, lg: 4 }}>
+            </Grid>
+            <Grid size={{ xs: 12, md: 6, lg: 3 }}>
               <CustomDropDown
-                label="Session"
+                data={filteredSession}
                 value={selectedSession}
-                data={
-                  // Map filtered sessions into the expected format for CustomDropDown
-                  filteredSession.map((ses) => ({
-                    name: ses.session,
-                    value: ses.session,
-                  }))
-                }
-                onChange={(e: SelectChangeEvent) =>
-                  setSelectedSession(e.target.value)
-                }
-                name="name"
-                dropdownValue="value"
+                label="Session"
+                onChange={(e: SelectChangeEvent) => {
+                  setSelectedSession(e.target.value);
+                  setSelectedDate("");
+                  setSelectedShift("");
+                }}
+                name="session"
+                dropdownValue="session"
               />
-            </Grid2>
-            <Grid2 size={{ xs: 12, md: 6, lg: 4 }}>
-              <Button variant="contained" onClick={handleReadyForPrediction}>
-                Calculate Prediction
-              </Button>
-            </Grid2>
-          </Grid2>
+            </Grid>
+            <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+              <CustomDropDown
+                data={filteredDate}
+                value={selectedDate}
+                label="Date"
+                onChange={(e: SelectChangeEvent) => {
+                  setSelectedDate(e.target.value);
+                  setSelectedShift("");
+                }}
+                name="date"
+                dropdownValue="date"
+              />
+            </Grid>
+            <Grid size={{ xs: 12, md: 6, lg: 3 }}>
+              <CustomDropDown
+                data={filteredShift}
+                value={selectedShift}
+                label="Shift"
+                onChange={(e: SelectChangeEvent) =>
+                  setSelectedShift(e.target.value)
+                }
+                name="shift"
+                dropdownValue="shift"
+              />
+            </Grid>
+          </Grid>
         </Box>
       </Paper>
       <Box sx={{ height: 600 }}>

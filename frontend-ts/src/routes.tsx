@@ -54,8 +54,6 @@ const DoubtDetails = lazy(() => import("./pages/doubts/DoubtDetails"));
 const Chat = lazy(() => import("./pages/chat/Chat"));
 const QuestionBank = lazy(() => import("./pages/question/QuestionBank"));
 
-const SwaggerDocs = lazy(() => import("./pages/api-docs/SwaggerDocs"));
-
 interface RoutesProps {
   path: string;
   element: ReactNode;
@@ -190,11 +188,6 @@ const routes: RoutesProps[] = [
     path: "/question-bank",
     element: withSuspense(QuestionBank),
     roles: ["scholar", "admin", "moderator"],
-  },
-  {
-    path: "/api-docs",
-    element: withSuspense(SwaggerDocs),
-    roles: ["public"],
   },
 
   // Catch-All for Not Found

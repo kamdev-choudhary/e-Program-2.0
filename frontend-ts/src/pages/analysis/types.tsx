@@ -80,3 +80,14 @@ export interface YearsProps {
   name: string | number;
   value: string | number;
 }
+
+export const invisibleColumns = {
+  physics_positive: false,
+  physics_negative: false,
+  chemistry_positive: false,
+  chemistry_negative: false,
+  maths_positive: false,
+  maths_negative: false,
+  total_positive: false,
+  total_negative: false,
+};

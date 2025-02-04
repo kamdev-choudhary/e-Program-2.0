@@ -30,6 +30,7 @@ import {
   SummaryProps,
   CategoryProp,
   CutoffDataProps,
+  invisibleColumns,
 } from "./types";
 import { useNotification } from "../../contexts/NotificationProvider";
 import axios from "../../hooks/AxiosInterceptor";
@@ -53,6 +54,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
   });
 
   const getAdvancedRank = async () => {
+    setIsLoading(true);
     try {
       const res = await axios.post("/analysis/jeeadvanced/predict-rank", {
         students: jsonData,
@@ -79,10 +81,12 @@ const JEEAdvancedAnalysis: React.FC = () => {
           return student;
         });
 
-        setJsonData(updatedJsonData); // Assuming you're using React state
+        setJsonData(updatedJsonData);
       }
     } catch (error) {
       console.error("Error fetching rank:", error);
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -98,31 +102,31 @@ const JEEAdvancedAnalysis: React.FC = () => {
 
   const generatePrediction = async (jsonData: DataProps[]) => {
     setIsLoading(true);
-    try {
-      const categoryMap: Record<string, keyof CutoffDataProps> = {
-        gen: "general",
-        general: "general",
-        obc: "obc",
-        "obc-ncl": "obc",
-        obcncl: "obc",
-        sc: "sc",
-        st: "st",
-        ews: "ews",
-        "ews-ncl": "ews",
-        ewsc: "ews",
-        "general-pwd": "generalPwD",
-        "gen-pwd": "generalPwD",
-        "obc-pwd": "obcPwD",
-        "obc-ncl-pwd": "obcPwD",
-        "obcncl-pwd": "obcPwD",
-        "sc-pwd": "scPwD",
-        "st-pwd": "stPwD",
-        "ews-pwd": "ewsPwD",
-        "ews-ncl-pwd": "ewsPwD",
-        preparatory: "preparatory",
-        "gen-ews": "ews",
-      };
+    const categoryMap: Record<string, keyof CutoffDataProps> = {
+      gen: "general",
+      general: "general",
+      obc: "obc",
+      "obc-ncl": "obc",
+      obcncl: "obc",
+      sc: "sc",
+      st: "st",
+      ews: "ews",
+      "ews-ncl": "ews",
+      ewsc: "ews",
+      "general-pwd": "generalPwD",
+      "gen-pwd": "generalPwD",
+      "obc-pwd": "obcPwD",
+      "obc-ncl-pwd": "obcPwD",
+      "obcncl-pwd": "obcPwD",
+      "sc-pwd": "scPwD",
+      "st-pwd": "stPwD",
+      "ews-pwd": "ewsPwD",
+      "ews-ncl-pwd": "ewsPwD",
+      preparatory: "preparatory",
+      "gen-ews": "ews",
+    };
 
+    try {
       const newSummary: SummaryProps = {
         physicsQualified: [],
         chemistryQualified: [],
@@ -257,7 +261,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
           return {
             id: String(index + 1),
             name: rowData.name,
-            uniqueId: rowData.uc || rowData.drn,
+            uniqueId: rowData.uc || rowData.drn || index + 1,
             category: rowData.category.toLowerCase(),
             pwd: rowData.pwd.toLowerCase(),
             physics_positive: Number(rowData.physics_positive) || 0,
@@ -293,7 +297,6 @@ const JEEAdvancedAnalysis: React.FC = () => {
         setIsLoading(false);
       }
     };
-
     reader.readAsArrayBuffer(file);
   };
 
@@ -516,17 +519,6 @@ const JEEAdvancedAnalysis: React.FC = () => {
     },
   ];
 
-  const invisibleColumns = {
-    physics_positive: false,
-    physics_negative: false,
-    chemistry_positive: false,
-    chemistry_negative: false,
-    maths_positive: false,
-    maths_negative: false,
-    total_positive: false,
-    total_negative: false,
-  };
-
   useEffect(() => {
     generatePrediction(jsonData);
   }, [cutoff]);
@@ -633,6 +625,8 @@ const JEEAdvancedAnalysis: React.FC = () => {
           </Grid>
         </Grid>
       </Paper>
+
+      {/* Qualification Summary */}
       <Accordion sx={{ p: 0, m: 0 }}>
         <AccordionSummary expandIcon={<ExpandMoreRounded />}>
           <Box sx={{ display: "flex", justifyContent: "space-between" }}>
@@ -648,6 +642,8 @@ const JEEAdvancedAnalysis: React.FC = () => {
           />
         </AccordionDetails>
       </Accordion>
+
+      {/* Subject Statistics */}
       <Accordion sx={{ p: 0, m: 0 }}>
         <AccordionSummary expandIcon={<ExpandMoreRounded />}>
           <Typography variant="h6">Subject Statistics</Typography>
@@ -660,6 +656,8 @@ const JEEAdvancedAnalysis: React.FC = () => {
           />
         </AccordionDetails>
       </Accordion>
+
+      {/* Marks Range Distrubution */}
       <Accordion sx={{ p: 0, m: 0 }}>
         <AccordionSummary expandIcon={<ExpandMoreRounded />}>
           <Typography variant="h6">Marks Range Distribution</Typography>
@@ -714,6 +712,8 @@ const JEEAdvancedAnalysis: React.FC = () => {
           },
         }}
       />
+
+      {/* Scholars */}
       <CustomModal
         open={showScholars}
         onClose={() => {
