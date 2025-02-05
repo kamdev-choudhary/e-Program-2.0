@@ -379,6 +379,7 @@ export async function downloadProvisionalAnswerKey(req, res, next) {
     loginButton: '[name="ctl00$ContentPlaceHolder1$btnsignin"]',
     errorSelector: "#ctl00_ContentPlaceHolder1_lblerror1",
     showPaper: "#ctl00_LoginContent_rptViewQuestionPaper_ctl01_lnkviewKey",
+    keyChallenegbtn: "#ctl00_LoginContent_lnkkeychallenge",
   };
 
   const MAX_RETRIES = 10;
@@ -424,6 +425,10 @@ export async function downloadProvisionalAnswerKey(req, res, next) {
         ) {
           console.info(`Attempt ${i + 1}: CAPTCHA did not match. Retrying...`);
           continue;
+        } else if (error.includes("Invalid Application No or Password.")) {
+          return res
+            .status(400)
+            .json({ error: "Invalid Application No or Password." });
         }
 
         // Wait for success
@@ -450,16 +455,45 @@ export async function downloadProvisionalAnswerKey(req, res, next) {
       el.getAttribute("href")
     );
 
+    await page.click(SELECTORS.keyChallenegbtn);
+
+    await page.waitForSelector("#ctl00_LoginContent_pnl_Entry", {
+      timeout: 5000,
+    });
+
+    const tableData = await page.evaluate(() => {
+      let data = [];
+      let rows = document.querySelectorAll(
+        "#ctl00_LoginContent_grAnswerKey tr"
+      );
+
+      for (let i = 1; i < rows.length; i++) {
+        // Skip header row
+        let cells = rows[i].querySelectorAll("td");
+
+        if (cells.length >= 3) {
+          // Ensure there are at least 3 columns
+          data.push({
+            section: cells[0].innerText.trim(),
+            questionID: cells[1].innerText.trim(),
+            correctAnswer: cells[2].innerText.trim(),
+          });
+        }
+      }
+      return data;
+    });
+
     // Send JSON response and PDF file
     res.setHeader("Content-Type", "application/json");
     res.status(200).json({
       success: "Success",
       paperUrl,
+      answerKey: tableData,
     });
   } catch (error) {
     next(error);
   } finally {
-    // await browser.close();
+    await browser.close();
   }
 }
 
@@ -471,7 +505,7 @@ export async function getDetailsFromMainQuestionPaper(req, res, next) {
   }
 
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: false, // Use "new" mode to bypass bot detection
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
@@ -573,7 +607,7 @@ export async function getDetailsFromMainQuestionPaper(req, res, next) {
 
     res.status(200).json({
       success: "Success",
-      extractedData,
+      questionPaper: extractedData,
     });
   } catch (error) {
     console.error("Scraping error:", error);

@@ -19,13 +19,58 @@ import { downloadJsonToExcel } from "../../utils/commonfs";
 import FileDropZone from "../../components/FileDropZone";
 import axios from "../../hooks/AxiosInterceptor";
 
+interface AnswerKey {
+  section: string;
+  questionID: string;
+  correctAnswer: string;
+}
+
+interface Options {
+  "Option 1 ID": string;
+  "Option 2 ID": string;
+  "Option 3 ID": string;
+  "Option 4 ID": string;
+  "Chosen Option": string;
+}
+
+interface Questions {
+  questionIndex: string | number;
+  questionNumber: string;
+  givenAnswer: string;
+  questionType: string;
+  questionID: string;
+  optionIDs: Options[];
+  status: string;
+}
+
+interface QuestionPaper {
+  sectionName: string;
+  questions: Questions[];
+}
+
 interface ScholarData {
   drn: string;
+  name?: string;
   application: string;
   password?: string;
   status?: string;
+  status2?: string;
   error: string;
   paperUrl?: string;
+  answeyKey?: AnswerKey[];
+  questionPaper?: QuestionPaper[];
+  physicsPositive?: number;
+  physicsNegative?: number;
+  physicsTotal?: number;
+  chemistryPositive?: number;
+  chemistryNegative?: number;
+  chemistryTotal?: number;
+  mathsPositive?: number;
+  mathsNegative?: number;
+  mathsTotal?: number;
+  totalPositive?: number;
+  totalNegative?: number;
+  totalTotal?: number;
 }
 
 const JeeMainProvisionalKey: React.FC = () => {
@@ -58,16 +103,17 @@ const JeeMainProvisionalKey: React.FC = () => {
       );
 
       if (response.status === 200) {
+        console.log(response.data);
         setJsonData((prevData) => {
           if (!prevData) return null; // If jsonData is null, maintain null state
           return prevData.map((item) =>
             item.drn === scholar.drn
               ? {
                   ...item,
-                  date: response.data.date,
                   error: "",
                   status: "fetched",
                   paperUrl: response.data.paperUrl,
+                  answeyKey: response.data.answerKey,
                 }
               : item
           );
@@ -97,6 +143,56 @@ const JeeMainProvisionalKey: React.FC = () => {
           jsonData.map(async (data) => {
             if (!data.paperUrl && data?.status === "idle") {
               await handleFetchPaperUrl(data);
+            }
+          })
+        );
+      }
+    } catch (error) {
+      console.error("Error handling download info:", error);
+    }
+  };
+
+  const handleGetQuestionInfo = async (scholar: ScholarData) => {
+    try {
+      const response = await axios.post(
+        "/automation/jee/data-from-provisional-answer-key",
+        {
+          website: scholar.paperUrl,
+          drn: scholar.drn,
+        }
+      );
+      if (response.status === 200) {
+        setJsonData((prevData) => {
+          if (!prevData) return null; // If jsonData is null, maintain null state
+          return prevData.map((item) =>
+            item.drn === scholar.drn
+              ? {
+                  ...item,
+                  date: response.data.date,
+                  error: "",
+                  status2: "fetched",
+                  questionPaper: response.data.questionPaper,
+                }
+              : item
+          );
+        });
+      }
+    } catch (error) {
+      console.error("Error handling download info:", error);
+    }
+  };
+
+  const handleGetBatchQuestionInfo = async () => {
+    try {
+      if (jsonData) {
+        await Promise.all(
+          jsonData.map(async (data) => {
+            if (
+              data.paperUrl &&
+              data?.status === "fetched" &&
+              data.status2 !== "fetched"
+            ) {
+              await handleGetQuestionInfo(data);
             }
           })
         );
@@ -149,16 +245,15 @@ const JeeMainProvisionalKey: React.FC = () => {
 
           return {
             drn: rowData.drn || "",
+            name: rowData.name || "",
             application: rowData.application || "",
             password: rowData.password || "",
-            city: rowData.city || "",
-            date: rowData.date || "",
             error: "",
-            status: "idle",
-            shift: "",
-            timing: "",
-            center: "",
-            address: "",
+            status: rowData.status || "idle",
+            status2: rowData.status2 || "idle",
+            paperUrl: rowData.paperUrl || "",
+            answeyKey: safeParseJSON(rowData.answeyKey, []),
+            questionPaper: safeParseJSON(rowData.questionPaper, []),
           };
         });
 
@@ -172,6 +267,15 @@ const JeeMainProvisionalKey: React.FC = () => {
 
     reader.readAsArrayBuffer(file);
   };
+
+  function safeParseJSON(jsonString: string, fallback: []) {
+    try {
+      return jsonString ? JSON.parse(jsonString) : fallback;
+    } catch (error) {
+      console.error("JSON parse error:", error);
+      return fallback;
+    }
+  }
 
   const handleProcessRowUpdate = (
     newRow: ScholarData,
@@ -188,6 +292,8 @@ const JeeMainProvisionalKey: React.FC = () => {
 
     return newRow;
   };
+
+  console.log(jsonData);
 
   const columns: GridColDef[] = [
     {
@@ -225,7 +331,7 @@ const JeeMainProvisionalKey: React.FC = () => {
       flex: 1,
       renderCell: (params) => (
         <>
-          <Button component="a" href={params.row.paperUrl}>
+          <Button target="_blank" component="a" href={params.row.paperUrl}>
             Paper
           </Button>
         </>
@@ -282,7 +388,41 @@ const JeeMainProvisionalKey: React.FC = () => {
         </>
       ),
     },
+    {
+      field: "questionPaper",
+      headerName: "Question Paper",
+      minWidth: 200,
+      align: "center",
+      headerAlign: "center",
+      renderCell: (params) => (
+        <>
+          <Button
+            onClick={() => handleGetQuestionInfo(params.row)}
+            startIcon={
+              params.row.status2 === "loading" ? (
+                <CircularProgress size={20} />
+              ) : (
+                <CloudDownloadRounded />
+              )
+            }
+            disabled={
+              params.row.status2 === "fetched" ||
+              params.row.status2 === "loading" ||
+              params.row.paperUrl === "" ||
+              params.row.paperUrl === null ||
+              params.row.paperUrl === undefined ||
+              params.row?.questionPaper?.length !== 0
+            }
+            variant="outlined"
+          >
+            {params.row.status2 === "loading" ? "loading" : "Fetch Data"}
+          </Button>
+        </>
+      ),
+    },
   ];
+
+  console.log(jsonData);
 
   const filteredData = useMemo(() => {
     if (!jsonData) return [];
@@ -325,6 +465,9 @@ const JeeMainProvisionalKey: React.FC = () => {
             >
               {isLoading ? "Loading..." : "Fetch Data"} (
               {jsonData?.filter((data) => !data.paperUrl).length})
+            </Button>
+            <Button onClick={handleGetBatchQuestionInfo} variant="contained">
+              Fetch Question Info
             </Button>
             <Button
               startIcon={<TableChartRounded />}
