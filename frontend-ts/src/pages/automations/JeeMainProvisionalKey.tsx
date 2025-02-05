@@ -37,10 +37,10 @@ interface Questions {
   questionIndex: string | number;
   questionNumber: string;
   givenAnswer: string;
-  questionType: string;
+  questionType: "SA" | "MCQ";
   questionID: string;
-  optionIDs: Options[];
-  status: string;
+  optionIDs?: Options[];
+  status: "Not Answered" | "Answered" | "Not Attempted and Marked For Review";
 }
 
 interface QuestionPaper {
@@ -78,6 +78,149 @@ const JeeMainProvisionalKey: React.FC = () => {
   const [jsonData, setJsonData] = useState<ScholarData[] | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
 
+  function calculateExamResults(scholar: ScholarData): ScholarData {
+    // Initialize subject-wise counters
+    let physicsPositive = 0,
+      physicsNegative = 0;
+    let chemistryPositive = 0,
+      chemistryNegative = 0;
+    let mathsPositive = 0,
+      mathsNegative = 0;
+
+    // Process each section in the question paper
+    scholar.questionPaper?.forEach((section) => {
+      const subject = getSubjectFromSection(section.sectionName);
+
+      section.questions.forEach((question) => {
+        // Skip unanswered questions
+        if (
+          question.status === "Not Answered" ||
+          question.status === "Not Attempted and Marked For Review"
+        )
+          return;
+
+        // Find the correct answer from the answer key
+        const answerKey = scholar.answeyKey?.find(
+          (ak) => ak.questionID === question.questionID
+        );
+
+        if (!answerKey) {
+          console.warn(
+            `Missing answer key for ${subject} question ${question.questionID}`
+          );
+          return;
+        }
+
+        // Determine the student's answer
+        let studentAnswerID: string | undefined;
+
+        if (question.questionType === "MCQ" && question.optionIDs) {
+          // Step 1: Get chosen option number (e.g., "3")
+          const chosenOptionNumber = question.optionIDs["Chosen Option"];
+
+          // Step 2: Use chosenOptionNumber to get the correct option ID
+          studentAnswerID =
+            question.optionIDs[`Option ${chosenOptionNumber} ID`];
+        } else if (question.questionType === "SA") {
+          studentAnswerID =
+            question.givenAnswer !== "--" ? question.givenAnswer : undefined;
+        }
+
+        if (!studentAnswerID) return; // Ignore if no valid answer is provided
+
+        const isCorrect = studentAnswerID === answerKey.correctAnswer;
+
+        // Scoring logic
+        if (question.questionType === "MCQ" || question.questionType === "SA") {
+          isCorrect
+            ? addMarks(4, "positive", subject)
+            : addMarks(1, "negative", subject);
+        }
+      });
+    });
+
+    // Calculate total scores
+    const physicsTotal = physicsPositive - physicsNegative;
+    const chemistryTotal = chemistryPositive - chemistryNegative;
+    const mathsTotal = mathsPositive - mathsNegative;
+    const totalPositive = physicsPositive + chemistryPositive + mathsPositive;
+    const totalNegative = physicsNegative + chemistryNegative + mathsNegative;
+    const totalTotal = totalPositive - totalNegative;
+
+    setJsonData((prevData) => {
+      if (!prevData) return null; // If jsonData is null, maintain null state
+      return prevData.map((item) =>
+        item.drn === scholar.drn
+          ? {
+              ...item,
+              physicsPositive,
+              physicsNegative,
+              physicsTotal,
+              chemistryPositive,
+              chemistryNegative,
+              chemistryTotal,
+              mathsPositive,
+              mathsNegative,
+              mathsTotal,
+              totalPositive,
+              totalNegative,
+              totalTotal,
+            }
+          : item
+      );
+    });
+
+    // Return updated scholar object
+    return {
+      ...scholar,
+      physicsPositive,
+      physicsNegative,
+      physicsTotal,
+      chemistryPositive,
+      chemistryNegative,
+      chemistryTotal,
+      mathsPositive,
+      mathsNegative,
+      mathsTotal,
+      totalPositive,
+      totalNegative,
+      totalTotal,
+    };
+
+    // Helper function to determine the subject from section names
+    function getSubjectFromSection(section: string): string {
+      if (section.includes("Mathematics")) return "Maths";
+      if (section.includes("Physics")) return "Physics";
+      if (section.includes("Chemistry")) return "Chemistry";
+      return "Unknown";
+    }
+
+    // Helper function to update subject marks
+    function addMarks(
+      marks: number,
+      type: "positive" | "negative",
+      subject: string
+    ) {
+      switch (subject) {
+        case "Physics":
+          type === "positive"
+            ? (physicsPositive += marks)
+            : (physicsNegative += marks);
+          break;
+        case "Chemistry":
+          type === "positive"
+            ? (chemistryPositive += marks)
+            : (chemistryNegative += marks);
+          break;
+        case "Maths":
+          type === "positive"
+            ? (mathsPositive += marks)
+            : (mathsNegative += marks);
+          break;
+      }
+    }
+  }
+
   const handleFetchPaperUrl = async (scholar: ScholarData) => {
     try {
       setJsonData((prevData) => {
@@ -103,7 +246,6 @@ const JeeMainProvisionalKey: React.FC = () => {
       );
 
       if (response.status === 200) {
-        console.log(response.data);
         setJsonData((prevData) => {
           if (!prevData) return null; // If jsonData is null, maintain null state
           return prevData.map((item) =>
@@ -152,8 +294,34 @@ const JeeMainProvisionalKey: React.FC = () => {
     }
   };
 
+  const generateResult = async () => {
+    try {
+      if (jsonData) {
+        await Promise.all(
+          jsonData.map(async (data) => {
+            calculateExamResults(data);
+          })
+        );
+      }
+    } catch (error) {
+      console.error("Error handling download info:", error);
+    }
+  };
+
   const handleGetQuestionInfo = async (scholar: ScholarData) => {
     try {
+      setJsonData((prevData) => {
+        if (!prevData) return null; // If jsonData is null, maintain null state
+        return prevData.map((item) =>
+          item.drn === scholar.drn
+            ? {
+                ...item,
+                error: "",
+                status2: "loading",
+              }
+            : item
+        );
+      });
       const response = await axios.post(
         "/automation/jee/data-from-provisional-answer-key",
         {
@@ -168,7 +336,7 @@ const JeeMainProvisionalKey: React.FC = () => {
             item.drn === scholar.drn
               ? {
                   ...item,
-                  date: response.data.date,
+
                   error: "",
                   status2: "fetched",
                   questionPaper: response.data.questionPaper,
@@ -177,8 +345,20 @@ const JeeMainProvisionalKey: React.FC = () => {
           );
         });
       }
-    } catch (error) {
-      console.error("Error handling download info:", error);
+    } catch (error: any) {
+      setJsonData((prevData) => {
+        if (!prevData) return null; // If jsonData is null, maintain null state
+        const errorMessage = error?.response?.data?.message || "Unknown error";
+        return prevData.map((item) =>
+          item.drn === scholar.drn
+            ? {
+                ...item,
+                error: errorMessage,
+                status2: "idle",
+              }
+            : item
+        );
+      });
     }
   };
 
@@ -293,8 +473,6 @@ const JeeMainProvisionalKey: React.FC = () => {
     return newRow;
   };
 
-  console.log(jsonData);
-
   const columns: GridColDef[] = [
     {
       field: "drn",
@@ -331,7 +509,13 @@ const JeeMainProvisionalKey: React.FC = () => {
       flex: 1,
       renderCell: (params) => (
         <>
-          <Button target="_blank" component="a" href={params.row.paperUrl}>
+          <Button
+            variant="contained"
+            target="_blank"
+            component="a"
+            href={params.row.paperUrl}
+            disabled={!params.row.paperUrl}
+          >
             Paper
           </Button>
         </>
@@ -413,16 +597,103 @@ const JeeMainProvisionalKey: React.FC = () => {
               params.row.paperUrl === undefined ||
               params.row?.questionPaper?.length !== 0
             }
-            variant="outlined"
+            variant="contained"
           >
             {params.row.status2 === "loading" ? "loading" : "Fetch Data"}
           </Button>
         </>
       ),
     },
+    {
+      field: "calculateResult",
+      headerName: "Calculate",
+      renderCell: (params) => (
+        <>
+          <Button
+            variant="contained"
+            onClick={() => {
+              const result = calculateExamResults(params.row);
+              console.log(result);
+            }}
+          >
+            Result
+          </Button>
+        </>
+      ),
+    },
+    {
+      field: "physicsPositive",
+      headerName: "Physics +ve",
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "physicsNegative",
+      headerName: "Physics +ve",
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "physicsTotal",
+      headerName: "Physics +ve",
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "chemistryPositive",
+      headerName: "chemistry +ve",
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "chemistryNegative",
+      headerName: "chemistry +ve",
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "chemistryTotal",
+      headerName: "chemistry +ve",
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "mathsPositive",
+      headerName: "maths +ve",
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "mathsNegative",
+      headerName: "maths +ve",
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "mathsTotal",
+      headerName: "maths +ve",
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "totalPositive",
+      headerName: "total +ve",
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "totalNegative",
+      headerName: "total +ve",
+      headerAlign: "center",
+      align: "center",
+    },
+    {
+      field: "totalTotal",
+      headerName: "total +ve",
+      headerAlign: "center",
+      align: "center",
+    },
   ];
-
-  console.log(jsonData);
 
   const filteredData = useMemo(() => {
     if (!jsonData) return [];
@@ -469,6 +740,7 @@ const JeeMainProvisionalKey: React.FC = () => {
             <Button onClick={handleGetBatchQuestionInfo} variant="contained">
               Fetch Question Info
             </Button>
+            <Button onClick={generateResult}>Generate Result</Button>
             <Button
               startIcon={<TableChartRounded />}
               sx={{ px: 3 }}
@@ -478,7 +750,7 @@ const JeeMainProvisionalKey: React.FC = () => {
                 if (jsonData) {
                   downloadJsonToExcel({
                     jsonData: jsonData,
-                    fileName: "JEE Main City Info",
+                    fileName: "Provisional Answer Key",
                   });
                 }
               }}

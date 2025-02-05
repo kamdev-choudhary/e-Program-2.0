@@ -425,11 +425,12 @@ export async function downloadProvisionalAnswerKey(req, res, next) {
         ) {
           console.info(`Attempt ${i + 1}: CAPTCHA did not match. Retrying...`);
           continue;
-        } else if (error.includes("Invalid Application No or Password.")) {
-          return res
-            .status(400)
-            .json({ error: "Invalid Application No or Password." });
         }
+        // else if (error.includes("Invalid Application No or Password.")) {
+        //   return res
+        //     .status(400)
+        //     .json({ error: "Invalid Application No or Password." });
+        // }
 
         // Wait for success
         if (
@@ -498,14 +499,14 @@ export async function downloadProvisionalAnswerKey(req, res, next) {
 }
 
 export async function getDetailsFromMainQuestionPaper(req, res, next) {
-  const { website } = req.body;
-
+  const { website, drn } = req.body;
+  const uniqueId = uuid();
   if (!website || !website.startsWith("http")) {
     return res.status(400).json({ error: "Invalid website URL" });
   }
 
   const browser = await puppeteer.launch({
-    headless: false, // Use "new" mode to bypass bot detection
+    headless: false,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
@@ -603,7 +604,16 @@ export async function getDetailsFromMainQuestionPaper(req, res, next) {
       });
     });
 
-    console.log("Extracted Questions Data:", extractedData);
+    // Save the PDF
+    const pdfPath = `./uploads/${drn}_${uniqueId}.pdf`;
+    await page.pdf({
+      path: pdfPath,
+      format: "A4",
+      // printBackground: true,
+      margin: { top: "20mm", right: "20mm", bottom: "20mm", left: "20mm" },
+    });
+
+    // console.log("Extracted Questions Data:", extractedData);
 
     res.status(200).json({
       success: "Success",
