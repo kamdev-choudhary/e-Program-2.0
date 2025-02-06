@@ -636,9 +636,9 @@ const JEEMainResult: React.FC = () => {
   }, [jsonData, selectedStatus]);
 
   return (
-    <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-      <Paper sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
-        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
+    <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+      <Paper sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+        <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
           <FileDropZone onDrop={onDrop} acceptedExtensions={[".xlsx", "xls"]} />
           <Box
             sx={{
@@ -683,7 +683,7 @@ const JEEMainResult: React.FC = () => {
             display: "flex",
             gap: 2,
             justifyContent: "space-between",
-            px: 2,
+            px: 1,
             overflow: "auto",
           }}
         >
