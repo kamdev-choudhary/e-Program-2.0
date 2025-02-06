@@ -621,12 +621,13 @@ export async function jeeMainResultDownload(req, res, next) {
     applicationNumber: 'input[name="ctl00$ContentPlaceHolder1$txtRegno"]',
     password: 'input[name="ctl00$ContentPlaceHolder1$txtPassword"]',
     captchaInput: 'input[name="ctl00$ContentPlaceHolder1$txtsecpin"]',
-    captchaImage: "#ctl00_ContentPlaceHolder1_captchaimage",
+    captcha: "#ctl00_ContentPlaceHolder1_captchaimage",
     loginButton: '[name="ctl00$ContentPlaceHolder1$btnsignin"]',
     errorSelector: "#ctl00_ContentPlaceHolder1_lblerror1",
   };
 
-  const { application, password } = req.body;
+  const { application, password, drn } = req.body;
+  const uniqueId = uuid();
 
   // Return if no application number or password
   if (!application || !password)
@@ -650,17 +651,77 @@ export async function jeeMainResultDownload(req, res, next) {
 
   try {
     await page.goto(website);
-    let success = true;
-    for (let i = 0; i < MAX_RETRIES; i++) {
-      try {
-      } catch (error) {
-        console.log("error");
-      }
-    }
+    let success = false;
+    // for (let i = 0; i < MAX_RETRIES; i++) {
+    //   try {
+    //     if (i > 0) {
+    //       logger.info(`Reloading page for attempt ${i + 1}...`);
+    //       await page.reload(); // More readable than short-circuiting
+    //     }
+    //     await page.waitForSelector(SELECTORS.applicationNumber, {
+    //       timeout: 10000,
+    //     });
+    //     await page.type(SELECTORS.applicationNumber, String(applicationNumber));
+    //     await page.type(SELECTORS.password, String(password));
+    //     await page.waitForSelector(SELECTORS.captcha, { timeout: 10000 });
 
-    if (!success) {
-      return res.status(400).json({ message: "Failed to verify captch." });
-    }
+    //     // Capture and solve CAPTCHA
+    //     const captchaText = await captureAndSolveCaptcha(
+    //       page,
+    //       SELECTORS.captcha
+    //     );
+
+    //     if (captchaText.length < 6) {
+    //       continue;
+    //     }
+
+    //     await page.type(SELECTORS.captchaInput, captchaText);
+
+    //     // Click Login
+    //     await page.click(SELECTORS.loginButton);
+    //     await page.waitForNetworkIdle({ idleTime: 500, timeout: 10000 });
+
+    //     // Check for error message on the page
+    //     const errorElement = await page.$(SELECTORS.errorSelector);
+    //     if (errorElement) {
+    //       const errorText = await page.evaluate(
+    //         (el) => el.innerText,
+    //         errorElement
+    //       );
+
+    //       // Break out of the loop if the error text indicates an invalid application
+    //       if (errorText.toLowerCase().includes("invalid application")) {
+    //         return res
+    //           .status(400)
+    //           .json({ message: "Invalid application or Password number." });
+    //       }
+
+    //       // Continue retrying if the error indicates a CAPTCHA mismatch
+    //       if (errorText.includes("CAPTCHA did not match. Please Re-enter.")) {
+    //         console.warn(
+    //           `Attempt ${i + 1}: CAPTCHA did not match. Retrying...`
+    //         );
+    //         continue;
+    //       }
+    //     }
+
+    //     // Check if login is successful
+    //     const paperElement = await page
+    //       .waitForSelector(SELECTORS.showPaper, { timeout: 4000 })
+    //       .catch(() => null);
+    //     if (paperElement) {
+    //       console.info("Login successful!");
+    //       success = true;
+    //       break;
+    //     }
+    //   } catch (error) {
+    //     logger.info(`Attempt ${i + 1} failed: ${error.message}`);
+    //   }
+    // }
+
+    // if (!success) {
+    //   return res.status(400).json({ message: "Failed to verify captch." });
+    // }
     const data = {};
     res.status(200).json({
       message: "Successfully fetched the Data.",

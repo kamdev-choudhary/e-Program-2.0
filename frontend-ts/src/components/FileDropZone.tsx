@@ -68,15 +68,21 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({
       {...getRootProps()}
       sx={{
         border: `1px dashed ${
-          theme === "dark" ? "rgba(255,255,255,0.4)" : "rgba(0,0,0,0.3)"
+          theme === "dark" ? "rgba(234, 232, 232, 0.68)" : "rgba(0,0,0,0.3)"
         }`,
-        borderRadius: 2,
+        borderRadius: 20,
         cursor: "pointer",
         flexGrow: 1,
+        boxShadow: 2,
         alignContent: "center",
         p: 1.1,
         display: "flex",
         justifyContent: "center",
+        ":hover": {
+          boxShadow: 3,
+          border: "1.5px solid blue",
+        },
+        transition: "all 0.3s ease",
       }}
     >
       <input {...getInputProps()} />

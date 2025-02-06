@@ -102,134 +102,13 @@ const getTheme = (mode: "light" | "dark") => {
 
     components: {
       MuiButton: {
-        variants: [
-          {
-            props: { variant: "contained", color: "secondary" },
-            style: {
-              background: `linear-gradient(135deg, 
-                hsl(${secondaryHue}, 80%, 55%), 
-                hsl(${secondaryHue}, 90%, 65%)
-              )`,
-              "&:hover": {
-                background: `linear-gradient(135deg, 
-                  hsl(${secondaryHue}, 80%, 50%), 
-                  hsl(${secondaryHue}, 90%, 60%)
-                )`,
-              },
-            },
-          },
-          {
-            props: { variant: "contained", color: "error" },
-            style: {
-              background: `linear-gradient(135deg, 
-                hsl(0, 80%, 55%), 
-                hsl(0, 90%, 65%)
-              )`,
-              "&:hover": {
-                background: `linear-gradient(135deg, 
-                  hsl(0, 80%, 50%), 
-                  hsl(0, 90%, 60%)
-                )`,
-              },
-            },
-          },
-          {
-            props: { variant: "contained", color: "success" },
-            style: {
-              background: `linear-gradient(135deg, 
-                hsl(150, 80%, 40%), 
-                hsl(150, 90%, 45%)
-              )`,
-              "&:hover": {
-                background: `linear-gradient(135deg, 
-                  hsl(150, 80%, 35%), 
-                  hsl(150, 90%, 40%)
-                )`,
-              },
-            },
-          },
-          {
-            props: { variant: "contained", color: "warning" },
-            style: {
-              background: `linear-gradient(135deg, 
-                hsl(30, 90%, 55%), 
-                hsl(30, 100%, 65%)
-              )`,
-              "&:hover": {
-                background: `linear-gradient(135deg, 
-                  hsl(30, 90%, 50%), 
-                  hsl(30, 100%, 60%)
-                )`,
-              },
-            },
-          },
-          {
-            props: { disabled: true },
-            style: {
-              background: isLight ? "#F0F0F0" : "#424242",
-              color: isLight ? "#B0B0B0" : "#757575",
-              transform: "none !important",
-              boxShadow: "none !important",
-              cursor: "not-allowed",
-              "&:hover": {
-                background: isLight ? "#F0F0F0" : "#424242",
-              },
-            },
-          },
-        ],
         styleOverrides: {
           root: {
             textTransform: "none",
             borderRadius: 30,
-            padding: "8px 24px",
-            transition: "all 0.2s cubic-bezier(0.4, 0, 0.2, 1)",
-            position: "relative",
-            overflow: "hidden",
-            "&:hover": {
-              transform: "translateY(-1px)",
-              "&::before": {
-                opacity: 0.1,
-              },
-            },
-            "&:active": {
-              transform: "translateY(0)",
-            },
-            "&::before": {
-              content: '""',
-              position: "absolute",
-              inset: 0,
-              background: "currentColor",
-              opacity: 0,
-              transition: "opacity 0.2s",
-            },
-          },
-          contained: {
-            background: `linear-gradient(135deg, 
-              hsl(${primaryHue}, 80%, 55%), 
-              hsl(${primaryHue}, 90%, 65%)
-            )`,
-            color: "#F8FAFC",
-            "&:hover": {
-              background: `linear-gradient(135deg, 
-                hsl(${primaryHue}, 80%, 50%), 
-                hsl(${primaryHue}, 90%, 60%)
-              )`,
-            },
-          },
-          outlined: {
-            borderWidth: 2,
-            color: `hsl(${primaryHue}, 80%, 55%)`,
-            borderColor: `hsl(${primaryHue}, 80%, 75%)`,
-            "&:hover": {
-              borderWidth: 2,
-              backgroundColor: `hsl(${primaryHue}, 80%, 95%)`,
-            },
-          },
-          text: {
-            color: `hsl(${primaryHue}, 80%, 55%)`,
-            "&:hover": {
-              backgroundColor: `hsl(${primaryHue}, 80%, 95%)`,
-            },
+            paddingLeft: 24,
+            paddingRight: 24,
+            color: isLight ? "" : "#F8FAFC",
           },
         },
       },
@@ -442,6 +321,22 @@ const getTheme = (mode: "light" | "dark") => {
         styleOverrides: {
           root: {
             borderRadius: 8,
+          },
+        },
+      },
+
+      MuiToggleButton: {
+        defaultProps: {
+          size: "small",
+        },
+        styleOverrides: {
+          root: {
+            borderRadius: 30,
+            padding: "8px 16px",
+
+            border: isLight
+              ? "1px solid rgba(0, 0, 0, 0.45)"
+              : "1px solid rgba(255, 255, 255, 0.77)",
           },
         },
       },

@@ -131,7 +131,6 @@ const Appbar: React.FC<HeaderProps> = React.memo(
               startIcon={<LockRounded />}
               aria-label="login"
               sx={{ borderRadius: 20 }}
-              size="small"
             >
               Login
             </Button>

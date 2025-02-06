@@ -58,7 +58,6 @@ const MasterLayout: React.FC = () => {
             style={{
               borderRight: "1px solid rgba(0,0,0,0.2)",
               overflowY: "auto",
-              background: "#fff",
               padding: expanded ? "16px" : "8px",
               height: "100%",
               scrollbarWidth: "none",

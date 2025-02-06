@@ -644,23 +644,20 @@ const JEEMainResult: React.FC = () => {
             sx={{
               display: "flex",
               gap: 1,
-
               flexWrap: "wrap",
             }}
           >
             <Button
-              sx={{ px: 3 }}
               variant="contained"
               onClick={handleDownloadInfo}
               disabled={isLoading || !jsonData}
-              startIcon={<CloudDownloadRounded sx={{ color: "#fff" }} />}
+              startIcon={<CloudDownloadRounded />}
             >
               {isLoading ? "Loading..." : "Fetch Data"} (
-              {/* {jsonData?.filter((data) => !data?.center).length}) */}
+              {jsonData?.filter((data) => data?.status === "idle").length || 0})
             </Button>
             <Button
               startIcon={<TableChartRounded />}
-              sx={{ px: 3 }}
               variant="contained"
               disabled={!jsonData}
               onClick={() => {
@@ -671,9 +668,12 @@ const JEEMainResult: React.FC = () => {
                   });
                 }
               }}
+              color="success"
             >
-              Download Excel
-              {/* ({jsonData?.filter((data) => data?.center).length}) */}
+              Download Excel (
+              {jsonData?.filter((data) => data?.status === "fetched").length ||
+                0}
+              )
             </Button>
           </Box>
         </Box>
@@ -681,7 +681,6 @@ const JEEMainResult: React.FC = () => {
         <Box
           sx={{
             display: "flex",
-
             gap: 2,
             justifyContent: "space-between",
             px: 2,
@@ -690,20 +689,22 @@ const JEEMainResult: React.FC = () => {
         >
           <ToggleButton
             value="total"
-            color="success"
+            color="primary"
             aria-label="Platform"
             selected={selectedStatus === ""}
             onClick={() => setSelectedStatus("")}
             sx={{ px: 4, minWidth: 150 }}
+            size="small"
           >
             <strong>Total &nbsp;&nbsp;</strong> ({jsonData?.length || 0})
           </ToggleButton>
           <ToggleButton
             value="total"
-            color="primary"
+            color="success"
             aria-label="Platform"
             selected={selectedStatus === "fetched"}
             onClick={() => setSelectedStatus("fetched")}
+            size="small"
             sx={{ px: 4, minWidth: 150 }}
           >
             <strong>fetched &nbsp;&nbsp;</strong> (
@@ -714,12 +715,14 @@ const JEEMainResult: React.FC = () => {
             aria-label="Platform"
             selected={selectedStatus === "loading"}
             onClick={() => setSelectedStatus("loading")}
+            size="small"
             sx={{ px: 4, minWidth: 150 }}
           >
             <strong>Loading &nbsp;&nbsp;</strong> (
             {jsonData?.filter((item) => item.status === "loading").length || 0})
           </ToggleButton>
           <ToggleButton
+            size="small"
             value="total"
             color="error"
             aria-label="Platform"
