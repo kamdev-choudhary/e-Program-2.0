@@ -2,17 +2,11 @@ import puppeteer from "puppeteer";
 import { v4 as uuid } from "uuid";
 import { captureAndSolveCaptcha } from "../utils/captchaResolver.js";
 import logger from "../utils/logger.js";
-import { fileURLToPath } from "url";
 import path from "path";
 import fs from "fs-extra";
 import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
 import { convertDocxToPdf } from "../utils/docToPdf.js";
-import message from "../models/message.js";
-
-// Define __dirname for ES modules
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
 
 const MAX_RETRIES = 10;
 
@@ -384,7 +378,7 @@ export async function downloadProvisionalAnswerKey(req, res, next) {
 
   const MAX_RETRIES = 10;
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: true,
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
@@ -392,14 +386,17 @@ export async function downloadProvisionalAnswerKey(req, res, next) {
     const { applicationNumber, password } = req.body;
     const page = await browser.newPage();
     await page.setViewport({ width: 1920, height: 1080 });
-    await page.goto(website);
+    await page.goto(website, { waitUntil: "networkidle2" });
+
     let success = false;
 
     for (let i = 0; i < MAX_RETRIES; i++) {
       try {
-        await page.type(SELECTORS.applicationNumber, "");
+        await page.reload();
+        await page.waitForSelector(SELECTORS.applicationNumber, {
+          timeout: 10000,
+        });
         await page.type(SELECTORS.applicationNumber, String(applicationNumber));
-        await page.type(SELECTORS.password, "");
         await page.type(SELECTORS.password, String(password));
         await page.waitForSelector(SELECTORS.captchaImage, { timeout: 10000 });
 
@@ -426,13 +423,6 @@ export async function downloadProvisionalAnswerKey(req, res, next) {
           console.info(`Attempt ${i + 1}: CAPTCHA did not match. Retrying...`);
           continue;
         }
-        // else if (error.includes("Invalid Application No or Password.")) {
-        //   return res
-        //     .status(400)
-        //     .json({ error: "Invalid Application No or Password." });
-        // }
-
-        // Wait for success
         if (
           await page.waitForSelector(SELECTORS.showPaper, { timeout: 4000 })
         ) {
@@ -501,12 +491,13 @@ export async function downloadProvisionalAnswerKey(req, res, next) {
 export async function getDetailsFromMainQuestionPaper(req, res, next) {
   const { website, drn } = req.body;
   const uniqueId = uuid();
+
   if (!website || !website.startsWith("http")) {
     return res.status(400).json({ error: "Invalid website URL" });
   }
 
   const browser = await puppeteer.launch({
-    headless: false,
+    headless: false, // Use "new" mode to bypass bot detection
     args: ["--no-sandbox", "--disable-setuid-sandbox"],
   });
 
@@ -604,16 +595,13 @@ export async function getDetailsFromMainQuestionPaper(req, res, next) {
       });
     });
 
-    // Save the PDF
     const pdfPath = `./uploads/${drn}_${uniqueId}.pdf`;
     await page.pdf({
       path: pdfPath,
       format: "A4",
-      // printBackground: true,
+
       margin: { top: "20mm", right: "20mm", bottom: "20mm", left: "20mm" },
     });
-
-    // console.log("Extracted Questions Data:", extractedData);
 
     res.status(200).json({
       success: "Success",
@@ -621,6 +609,97 @@ export async function getDetailsFromMainQuestionPaper(req, res, next) {
     });
   } catch (error) {
     console.error("Scraping error:", error);
+    next(error);
+  } finally {
+    await browser.close();
+  }
+}
+
+export async function jeeMainResultDownload(req, res, next) {
+  const website = "https://www.google.com";
+  const SELECTORS = {
+    applicationNumber: 'input[name="ctl00$ContentPlaceHolder1$txtRegno"]',
+    password: 'input[name="ctl00$ContentPlaceHolder1$txtPassword"]',
+    captchaInput: 'input[name="ctl00$ContentPlaceHolder1$txtsecpin"]',
+    captchaImage: "#ctl00_ContentPlaceHolder1_captchaimage",
+    loginButton: '[name="ctl00$ContentPlaceHolder1$btnsignin"]',
+    errorSelector: "#ctl00_ContentPlaceHolder1_lblerror1",
+  };
+
+  const { application, password } = req.body;
+
+  // Return if no application number or password
+  if (!application || !password)
+    return res
+      .status(400)
+      .json({ message: "Application number or password missing" });
+
+  const browser = await puppeteer.launch({
+    headless: "new", // Use "new" mode to bypass bot detection
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage", // Prevents crashes in Docker
+      "--disable-gpu", // Disables GPU hardware acceleration
+      "--disable-features=IsolateOrigins,site-per-process", // Reduces process overhead
+    ],
+    defaultViewport: { width: 1920, height: 1080 },
+  });
+
+  const [page] = await browser.pages();
+
+  try {
+    await page.goto(website);
+    let success = true;
+    for (let i = 0; i < MAX_RETRIES; i++) {
+      try {
+      } catch (error) {
+        console.log("error");
+      }
+    }
+
+    if (!success) {
+      return res.status(400).json({ message: "Failed to verify captch." });
+    }
+    const data = {};
+    res.status(200).json({
+      message: "Successfully fetched the Data.",
+      rollNumber1: data?.rollNumber || "",
+      rollNumber2: data?.rollNumber || "",
+      candidateName: data?.candidateName || "",
+      motherName: data?.motherName || "",
+      fatherName: data?.fatherName || "",
+      category: data?.category || "",
+      personWithDisability: data?.personWithDisability || "",
+      gender: data?.gender || "",
+      dateOfBirth: data?.dateOfBirth || "",
+      stateOfEligibility: data?.stateOfEligibility || "",
+      nationality: data?.nationality,
+      mathematics1: data?.mathematics1 || "",
+      mathematics2: data?.mathematics2 || "",
+      mathematics: data?.mathematics || "",
+      physics1: data?.physics1 || "",
+      physics2: data?.physics2 || "",
+      physics: data?.physics || "",
+      chemistry1: data?.chemistry1 || "",
+      chemistry2: data?.chemistry2 || "",
+      chemistry: data?.chemistry || "",
+      total1: data?.total1 || "",
+      total2: data?.total2 || "",
+      total: data?.total || "",
+      ntaScoreInWords: data?.ntaScoreInWords || "",
+      crlRank: data?.crlRank || "",
+      genEwsRank: data?.genEwsRank || "",
+      obcNclRank: data?.obcNclRank || "",
+      scRank: data?.scRank || "",
+      stRank: data?.stRank || "",
+      crlPwDRank: data?.crlPwDRank || "",
+      genEwsPwDRank: data?.genEwsPwDRank || "",
+      obcNclPwDRank: data?.obcNclPwDRank || "",
+      scPwDRank: data?.scPwDRank || "",
+      stPwDRank: data?.stPwDRank || "",
+    });
+  } catch (error) {
     next(error);
   } finally {
     await browser.close();

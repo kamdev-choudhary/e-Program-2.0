@@ -29,7 +29,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import DummyImageUrl from "../assets/user.jpg";
 import ThemeSwitch from "../components/ThemeSwitch";
-import SearchBar from "./Searchbar";
 import { RootState } from "../store/store";
 
 interface HeaderProps {
@@ -39,7 +38,7 @@ interface HeaderProps {
 }
 
 const Appbar: React.FC<HeaderProps> = React.memo(
-  ({ handleButtonClick, expanded, isSmallScreen }) => {
+  ({ handleButtonClick, expanded }) => {
     const { user, handleLogout, isLoggedIn, profilePicUrl } =
       useGlobalContext();
     const theme = useSelector((state: RootState) => state.theme);
@@ -115,12 +114,6 @@ const Appbar: React.FC<HeaderProps> = React.memo(
               e-Program
             </Typography>
           </Box>
-
-          {!isSmallScreen && (
-            <Box sx={{ mr: 2 }}>
-              <SearchBar />
-            </Box>
-          )}
 
           <ThemeSwitch />
 

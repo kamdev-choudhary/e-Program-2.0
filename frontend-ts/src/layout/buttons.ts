@@ -18,6 +18,7 @@ import {
   BarChartRounded,
   SettingsSuggestRounded,
   GradingRounded,
+  AssignmentTurnedInRounded,
 } from "@mui/icons-material";
 import React from "react";
 
@@ -202,6 +203,13 @@ export const buttons: Button[] = [
         icon: GradingRounded,
         loginRequired: false,
         color: "#1976D2",
+      },
+      {
+        label: "JEE Main Result",
+        path: "/automation/jeemainresult",
+        icon: AssignmentTurnedInRounded,
+        loginRequired: false,
+        color: "#a12374",
       },
     ],
   },

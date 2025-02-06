@@ -53,6 +53,7 @@ const Doubts = lazy(() => import("./pages/doubts/Doubts"));
 const DoubtDetails = lazy(() => import("./pages/doubts/DoubtDetails"));
 const Chat = lazy(() => import("./pages/chat/Chat"));
 const QuestionBank = lazy(() => import("./pages/question/QuestionBank"));
+const JEEMainResult = lazy(() => import("./pages/automations/JEEMainResult"));
 
 interface RoutesProps {
   path: string;
@@ -82,6 +83,11 @@ const routes: RoutesProps[] = [
   {
     path: "/automation/jeemainprovisionalanswerkey",
     element: <JeeMainProvisionalKey />,
+    roles: ["public"],
+  },
+  {
+    path: "/automation/jeemainresult",
+    element: <JEEMainResult />,
     roles: ["public"],
   },
   {

@@ -9,11 +9,7 @@ import {
 import React, { useMemo, useState } from "react";
 import ExcelJS from "exceljs";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import {
-  CloudDownloadRounded,
-  DownloadRounded,
-  TableChartRounded,
-} from "@mui/icons-material";
+import { CloudDownloadRounded, TableChartRounded } from "@mui/icons-material";
 import { CustomToolbar } from "../../components/CustomToolbar";
 import { downloadJsonToExcel } from "../../utils/commonfs";
 import FileDropZone from "../../components/FileDropZone";
@@ -116,11 +112,14 @@ const JeeMainProvisionalKey: React.FC = () => {
 
         if (question.questionType === "MCQ" && question.optionIDs) {
           // Step 1: Get chosen option number (e.g., "3")
-          const chosenOptionNumber = question.optionIDs["Chosen Option"];
+          const chosenOptionNumber = (question.optionIDs as any)[
+            "Chosen Option"
+          ];
 
           // Step 2: Use chosenOptionNumber to get the correct option ID
-          studentAnswerID =
-            question.optionIDs[`Option ${chosenOptionNumber} ID`];
+          studentAnswerID = (question.optionIDs as any)[
+            `Option ${chosenOptionNumber} ID`
+          ];
         } else if (question.questionType === "SA") {
           studentAnswerID =
             question.givenAnswer !== "--" ? question.givenAnswer : undefined;
@@ -128,7 +127,16 @@ const JeeMainProvisionalKey: React.FC = () => {
 
         if (!studentAnswerID) return; // Ignore if no valid answer is provided
 
-        const isCorrect = studentAnswerID === answerKey.correctAnswer;
+        let isCorrect = false;
+        if (question.questionType === "SA") {
+          isCorrect =
+            parseInt(studentAnswerID) === parseInt(answerKey.correctAnswer);
+          if (subject === "Chemistry") {
+            console.log(isCorrect);
+          }
+        } else {
+          isCorrect = studentAnswerID === answerKey.correctAnswer;
+        }
 
         // Scoring logic
         if (question.questionType === "MCQ" || question.questionType === "SA") {
@@ -327,6 +335,7 @@ const JeeMainProvisionalKey: React.FC = () => {
         {
           website: scholar.paperUrl,
           drn: scholar.drn,
+          application: scholar.application,
         }
       );
       if (response.status === 200) {
@@ -612,8 +621,7 @@ const JeeMainProvisionalKey: React.FC = () => {
           <Button
             variant="contained"
             onClick={() => {
-              const result = calculateExamResults(params.row);
-              console.log(result);
+              calculateExamResults(params.row);
             }}
           >
             Result
@@ -737,10 +745,12 @@ const JeeMainProvisionalKey: React.FC = () => {
               {isLoading ? "Loading..." : "Fetch Data"} (
               {jsonData?.filter((data) => !data.paperUrl).length})
             </Button>
-            <Button onClick={handleGetBatchQuestionInfo} variant="contained">
+            <Button variant="contained" onClick={handleGetBatchQuestionInfo}>
               Fetch Question Info
             </Button>
-            <Button onClick={generateResult}>Generate Result</Button>
+            <Button variant="contained" onClick={generateResult}>
+              Generate Result
+            </Button>
             <Button
               startIcon={<TableChartRounded />}
               sx={{ px: 3 }}
@@ -754,19 +764,10 @@ const JeeMainProvisionalKey: React.FC = () => {
                   });
                 }
               }}
+              color="success"
             >
               Download Excel ({jsonData?.filter((data) => data.paperUrl).length}
               )
-            </Button>
-
-            <Button
-              startIcon={<DownloadRounded />}
-              variant="contained"
-              component="a"
-              href="/jee_main_admit_card_sample.xlsx"
-              download
-            >
-              Sample
             </Button>
           </Box>
         </Box>

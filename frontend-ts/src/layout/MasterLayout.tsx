@@ -37,6 +37,7 @@ const MasterLayout: React.FC = () => {
           display: "flex",
           flexDirection: "row",
           height: "calc(100vh - 67px)",
+          p: 0,
         }}
       >
         {/* Sidebar (Collapsible for Desktop, Drawer for Mobile) */}
@@ -57,7 +58,7 @@ const MasterLayout: React.FC = () => {
             style={{
               borderRight: "1px solid rgba(0,0,0,0.2)",
               overflowY: "auto",
-              background: "background.paper",
+              background: "#fff",
               padding: expanded ? "16px" : "8px",
               height: "100%",
               scrollbarWidth: "none",

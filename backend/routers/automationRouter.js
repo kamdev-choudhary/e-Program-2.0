@@ -7,6 +7,7 @@ import {
   generateAdmitCard,
   downloadProvisionalAnswerKey,
   getDetailsFromMainQuestionPaper,
+  jeeMainResultDownload,
 } from "../controllers/automationController.js";
 
 // Define routes
@@ -16,6 +17,8 @@ router.route("/jee/admitcard").post(downloadAdmitCard);
 router.route("/generate/admitcard").post(generateAdmitCard);
 
 router.route("/jee/provisional-answer-key").post(downloadProvisionalAnswerKey);
+
+router.route("/jee/main-result").post(jeeMainResultDownload);
 
 router
   .route("/jee/data-from-provisional-answer-key")
