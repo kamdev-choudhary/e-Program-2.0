@@ -41,7 +41,7 @@ export async function downloadCityInformation(req, res, next) {
 
   const browser = await puppeteer.launch({
     headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-gpu"],
   });
 
   try {
@@ -152,7 +152,7 @@ export async function downloadAdmitCard(req, res, next) {
   const MAX_RETRIES = 10; // Define a maximum number of retries for captcha attempts.
   const browser = await puppeteer.launch({
     headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-gpu"],
   });
   try {
     const { applicationNumber, password } = req.body;
@@ -378,8 +378,8 @@ export async function downloadProvisionalAnswerKey(req, res, next) {
 
   const MAX_RETRIES = 10;
   const browser = await puppeteer.launch({
-    headless: true,
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    headless: false,
+    args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-gpu"],
   });
 
   try {
@@ -498,10 +498,10 @@ export async function getDetailsFromMainQuestionPaper(req, res, next) {
 
   const browser = await puppeteer.launch({
     headless: false, // Use "new" mode to bypass bot detection
-    args: ["--no-sandbox", "--disable-setuid-sandbox"],
+    args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-gpu"],
   });
 
-  const page = await browser.newPage();
+  const [page] = await browser.pages();
   await page.setViewport({ width: 1920, height: 1080 });
 
   try {
@@ -636,7 +636,7 @@ export async function jeeMainResultDownload(req, res, next) {
       .json({ message: "Application number or password missing" });
 
   const browser = await puppeteer.launch({
-    headless: "new", // Use "new" mode to bypass bot detection
+    headless: false, // Use "new" mode to bypass bot detection
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
@@ -648,10 +648,25 @@ export async function jeeMainResultDownload(req, res, next) {
   });
 
   const [page] = await browser.pages();
+  await page.setRequestInterception(true);
+  page.on("request", (request) => {
+    if (request.resourceType() === "image") {
+      request.abort();
+    } else {
+      request.continue();
+    }
+  });
 
   try {
     await page.goto(website);
     let success = false;
+
+    // Testing
+    await page.pdf({
+      path: `./uploads/${drn}_${uniqueId}_1.pdf`,
+      format: "A4",
+    });
+
     // for (let i = 0; i < MAX_RETRIES; i++) {
     //   try {
     //     if (i > 0) {
