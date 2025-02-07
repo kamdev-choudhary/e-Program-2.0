@@ -72,7 +72,6 @@ const Login: React.FC<LoginProps> = ({ setActiveTab }) => {
         justifyContent: "center",
         alignItems: "center",
         flexDirection: "column",
-        padding: 2,
         maxWidth: 400,
         margin: "auto",
         borderRadius: 2,

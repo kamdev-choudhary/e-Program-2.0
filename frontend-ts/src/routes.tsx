@@ -26,6 +26,7 @@ const JeeMainProvisionalKey = lazy(
 const JEEAdvancedAnalysis = lazy(
   () => import("./pages/analysis/JEEAdvancedAnalysis")
 );
+const JEEMainResult = lazy(() => import("./pages/automations/JEEMainResult"));
 
 // Admin Pages
 const Dashboard = lazy(() => import("./pages/dashboard/Dashboard"));
@@ -53,15 +54,17 @@ const Doubts = lazy(() => import("./pages/doubts/Doubts"));
 const DoubtDetails = lazy(() => import("./pages/doubts/DoubtDetails"));
 const Chat = lazy(() => import("./pages/chat/Chat"));
 const QuestionBank = lazy(() => import("./pages/question/QuestionBank"));
-const JEEMainResult = lazy(() => import("./pages/automations/JEEMainResult"));
 
-interface RoutesProps {
+import { UserRole, ROLES } from "./constant/roles";
+
+interface RouteType {
   path: string;
   element: ReactNode;
-  roles: string[];
+  roles: UserRole[]; // Optional to allow public access
 }
 
-const routes: RoutesProps[] = [
+// 🔹 Centralized Route Definitions 🔹
+const routes: RouteType[] = [
   // Public Routes
   { path: "/", element: <HomePage />, roles: ["public"] },
   { path: "/unauthorized", element: <Unauthorized />, roles: ["public"] },
@@ -102,88 +105,101 @@ const routes: RoutesProps[] = [
   },
 
   // Admin Routes
-  { path: "/dashboard", element: <Dashboard />, roles: ["admin", "moderator"] },
+  {
+    path: "/dashboard",
+    element: <Dashboard />,
+    roles: [ROLES.ADMIN, ROLES.MODERATOR],
+  },
   {
     path: "/admin/batch",
     element: <AdminBatch />,
-    roles: ["admin", "moderator"],
+    roles: [ROLES.ADMIN, ROLES.MODERATOR],
   },
-  { path: "/admin/academic", element: <Academic />, roles: ["admin"] },
+  { path: "/admin/academic", element: <Academic />, roles: [ROLES.ADMIN] },
   {
     path: "/admin/question-bank",
     element: <QuestionBankAdmin />,
-    roles: ["admin"],
+    roles: [ROLES.ADMIN],
   },
   {
     path: "/admin/lectures",
     element: <LecturesAdmin />,
-    roles: ["admin", "moderator"],
+    roles: [ROLES.ADMIN, ROLES.MODERATOR],
   },
   {
     path: "/admin/exams/online",
     element: <ExamMasterOnline />,
-    roles: ["admin"],
+    roles: [ROLES.ADMIN],
   },
   {
     path: "/admin/exams/offline",
     element: <ExamMasterOffline />,
-    roles: ["admin", "moderator"],
+    roles: [ROLES.ADMIN, ROLES.MODERATOR],
   },
-  { path: "/admin/users", element: <UserMaster />, roles: ["admin"] },
-  { path: "/admin/batch/edit/:id", element: <EditBatch />, roles: ["admin"] },
+  { path: "/admin/users", element: <UserMaster />, roles: [ROLES.ADMIN] },
+  {
+    path: "/admin/batch/edit/:id",
+    element: <EditBatch />,
+    roles: [ROLES.ADMIN],
+  },
   {
     path: "/admin/jee-data",
     element: <JEEData />,
-    roles: ["admin", "moderator"],
+    roles: [ROLES.ADMIN, ROLES.MODERATOR],
   },
 
-  // User Routes (Scholars, Moderators, Admins)
-  { path: "/lectures", element: <Lectures />, roles: ["scholar", "admin"] },
-  { path: "/batch", element: <Batches />, roles: ["scholar", "admin"] },
+  // User Routes
+  {
+    path: "/lectures",
+    element: <Lectures />,
+    roles: [ROLES.STUDENT, ROLES.ADMIN],
+  },
+  { path: "/batch", element: <Batches />, roles: [ROLES.STUDENT, ROLES.ADMIN] },
   {
     path: "/batch/:id",
     element: <BatchDetails />,
-    roles: ["scholar", "admin"],
+    roles: [ROLES.STUDENT, ROLES.ADMIN],
   },
-  { path: "/books", element: <Books />, roles: ["scholar", "admin"] },
+  { path: "/books", element: <Books />, roles: [ROLES.STUDENT, ROLES.ADMIN] },
   {
     path: "/profile",
     element: <Profile />,
-    roles: ["scholar", "admin", "moderator"],
+    roles: [ROLES.STUDENT, ROLES.ADMIN, ROLES.MODERATOR],
   },
   {
     path: "/doubts",
     element: <Doubts />,
-    roles: ["scholar", "admin", "moderator"],
+    roles: [ROLES.STUDENT, ROLES.ADMIN, ROLES.MODERATOR],
   },
   {
     path: "/doubts/:id",
     element: <DoubtDetails />,
-    roles: ["scholar", "admin", "moderator"],
+    roles: [ROLES.STUDENT, ROLES.ADMIN, ROLES.MODERATOR],
   },
   {
     path: "/chat",
     element: <Chat />,
-    roles: ["scholar", "admin", "moderator"],
+    roles: [ROLES.STUDENT, ROLES.ADMIN, ROLES.MODERATOR],
   },
   {
     path: "/question-bank",
     element: <QuestionBank />,
-    roles: ["scholar", "admin", "moderator"],
+    roles: [ROLES.STUDENT, ROLES.ADMIN, ROLES.MODERATOR],
   },
 
-  // Catch-All for Not Found
+  // Catch-All Route
   { path: "/*", element: <NotFound />, roles: ["public"] },
 ];
 
+// 🔹 Optimized Router Setup 🔹
 const router = createBrowserRouter([
   {
     element: <MasterLayout />,
-    children: routes.map((route) => ({
-      path: route.path,
+    children: routes.map(({ path, element, roles }) => ({
+      path,
       element: (
-        <ProtectedRoute allowedRoles={route.roles}>
-          <Suspense fallback={<Loader open={true} />}>{route.element}</Suspense>
+        <ProtectedRoute allowedRoles={roles}>
+          <Suspense fallback={<Loader />}>{element}</Suspense>
         </ProtectedRoute>
       ),
     })),

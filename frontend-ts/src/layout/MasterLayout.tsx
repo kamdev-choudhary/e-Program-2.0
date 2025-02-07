@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, useMediaQuery, Drawer, CssBaseline } from "@mui/material";
+import { Box, useMediaQuery, Drawer } from "@mui/material";
 import { Outlet } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import Sidebar from "./Sidebar";
@@ -9,7 +9,7 @@ import PopUpPages from "./PopUpPages";
 const drawerWidth = 285; // Sidebar width
 
 const MasterLayout: React.FC = () => {
-  const isSmallScreen = useMediaQuery("(max-width:500px)");
+  const isSmallScreen = useMediaQuery("(max-width:475px)");
   const [expanded, setExpanded] = useState<boolean>(true);
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
 
@@ -22,8 +22,6 @@ const MasterLayout: React.FC = () => {
 
   return (
     <Box sx={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-      <CssBaseline />
-
       {/* AppBar (Top Navbar) */}
       <Appbar
         handleButtonClick={handleToggleSidebar}
@@ -38,6 +36,7 @@ const MasterLayout: React.FC = () => {
           flexDirection: "row",
           height: "calc(100vh - 67px)",
           p: 0,
+          background: "background.surface",
         }}
       >
         {/* Sidebar (Collapsible for Desktop, Drawer for Mobile) */}

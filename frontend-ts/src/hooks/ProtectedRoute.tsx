@@ -13,6 +13,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 }) => {
   const { isLoggedIn, user } = useGlobalContext();
   const location = useLocation();
+  const userRole = user?.role;
 
   if (allowedRoles?.includes("public")) {
     return <>{children}</>;
@@ -24,7 +25,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
 
   if (
     allowedRoles &&
-    (!user || !user.role || !allowedRoles.includes(user.role))
+    (!user || !userRole || !allowedRoles.includes(userRole))
   ) {
     return <Navigate to="/unauthorized" replace />;
   }

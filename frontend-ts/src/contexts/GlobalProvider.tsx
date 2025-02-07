@@ -12,6 +12,7 @@ import { LS_KEYS } from "../constant/constants";
 import axios from "../hooks/AxiosInterceptor";
 import { useNotification } from "./NotificationProvider";
 import dummyImage from "../assets/user.jpg";
+import { UserRole } from "../constant/roles";
 
 interface GlobalProviderProps {
   children: ReactNode;
@@ -22,7 +23,7 @@ interface User {
   email: string;
   name: string;
   mobile: string;
-  role: string;
+  role: UserRole;
 }
 
 interface LoginResponse {
@@ -129,10 +130,8 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
         email: decodedToken.email,
         mobile: decodedToken.mobile,
       };
-
       setAuthState({ isLoggedIn: true, user, token });
       setProfilePicUrl(photo || dummyImage);
-
       localStorage.setItem(LS_KEYS.PHOTO, photo || "");
       localStorage.setItem(LS_KEYS.TOKEN, token);
     } catch (error) {

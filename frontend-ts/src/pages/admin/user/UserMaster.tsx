@@ -24,13 +24,14 @@ import ScholarDetails from "./parts/ScholarDetails";
 import Sessions from "./parts/Sessions";
 import axios from "../../../hooks/AxiosInterceptor";
 import { useNotification } from "../../../contexts/NotificationProvider";
+import { UserRole } from "../../../constant/roles";
 
 interface UserProps {
   _id: string;
   email: string;
   name: string;
   mobile: string;
-  role: string;
+  role: UserRole;
 }
 
 interface newUser {
@@ -41,7 +42,7 @@ interface newUser {
 }
 
 const UserMaster: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<string>("admin");
+  const [activeTab, setActiveTab] = useState<UserRole>("admin");
   const { showNotification } = useNotification();
 
   const [users, setUsers] = useState<UserProps[] | null>(null);
@@ -305,7 +306,7 @@ const UserMaster: React.FC = () => {
     <Box>
       <Tabs
         value={activeTab}
-        onChange={(_: React.SyntheticEvent, value: string) =>
+        onChange={(_: React.SyntheticEvent, value: UserRole) =>
           setActiveTab(value)
         }
       >

@@ -1,20 +1,17 @@
 import "@mui/material/styles";
 
 declare module "@mui/material/styles" {
-  interface PaletteColor {
-    extraLight?: string;
-    light?: string;
-    dark?: string;
+  interface TypeBackground {
     surface?: string;
+    soft?: string;
+    muted?: string;
+    contrast?: string;
+    glass?: string;
   }
 
-  interface SimplePaletteColorOptions {
-    extraLight?: string;
-    light?: string;
-    dark?: string;
-    surface?: string;
+  interface PaletteOptions {
+    background?: Partial<TypeBackground>;
   }
-
   interface Components {
     MuiDataGrid?: {
       styleOverrides?: {

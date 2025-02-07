@@ -1,9 +1,8 @@
-import { Backdrop, Box, Typography } from "@mui/material";
 import React from "react";
-import { MoonLoader } from "react-spinners";
+import { Backdrop, CircularProgress, Box, Typography } from "@mui/material";
 
 interface LoaderProps {
-  open?: boolean;
+  open?: boolean; // Optional, default is false
 }
 
 const Loader: React.FC<LoaderProps> = ({ open = true }) => {
@@ -11,14 +10,20 @@ const Loader: React.FC<LoaderProps> = ({ open = true }) => {
     <Backdrop
       open={open}
       sx={{
-        zIndex: 15000,
-        backdropFilter: "blur(5px)", // Adjust the blur level here
-        backgroundColor: "rgba(0, 0, 0, 0.5)", // Optional: Add some transparency to the background
+        zIndex: (theme) => theme.zIndex.modal + 1, // Ensures loader is above all components
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        backdropFilter: "blur(5px)", // Blurred background
+        backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent dark overlay
       }}
     >
-      <Box>
-        <MoonLoader speedMultiplier={0.5} color="#fff" />
-        <Typography sx={{ mt: 1, color: "#fff" }}>Please wait ...</Typography>
+      <Box display="flex" flexDirection="column" alignItems="center">
+        <CircularProgress size={50} sx={{ color: "#fff" }} />
+        <Typography sx={{ mt: 2, color: "#fff", fontWeight: 500 }}>
+          Please wait...
+        </Typography>
       </Box>
     </Backdrop>
   );

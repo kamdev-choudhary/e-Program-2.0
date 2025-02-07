@@ -8,7 +8,7 @@ const AuthPage = () => {
   const [activeTab, setActiveTab] = useState<number>(0);
 
   return (
-    <Box style={{ maxWidth: 400 }}>
+    <Box sx={{ maxWidth: 400, m: 1 }}>
       <Tabs
         allowScrollButtonsMobile
         centered

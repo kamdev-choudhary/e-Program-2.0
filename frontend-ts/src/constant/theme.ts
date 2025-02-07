@@ -39,6 +39,9 @@ const getTheme = (mode: "light" | "dark") => {
       background: {
         default: isLight ? "#F8FAFC" : "#292a2d",
         paper: isLight ? "#FFFFFF" : "#212327",
+        surface: isLight
+          ? "rgba(15, 23, 42, 0.08)"
+          : "rgba(248, 250, 252, 0.08)",
       },
       text: {
         primary: isLight ? "#0F172A" : "#F8FAFC",
@@ -49,7 +52,7 @@ const getTheme = (mode: "light" | "dark") => {
     },
 
     shape: {
-      borderRadius: 6,
+      borderRadius: 5,
     },
 
     typography: {
