@@ -9,12 +9,21 @@ import {
 import React, { useMemo, useState } from "react";
 import ExcelJS from "exceljs";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { CloudDownloadRounded, TableChartRounded } from "@mui/icons-material";
+import {
+  CheckCircleRounded,
+  CloudDownloadRounded,
+  TableChartRounded,
+} from "@mui/icons-material";
 import { CustomToolbar } from "../../components/CustomToolbar";
 import { downloadJsonToExcel } from "../../utils/commonfs";
 import FileDropZone from "../../components/FileDropZone";
 import axios from "../../hooks/AxiosInterceptor";
 import { useNotification } from "../../contexts/NotificationProvider";
+import { toProperCase } from "../../utils/commonfs";
+import Rank from "./jee-main/Rank";
+import RangeDistribution from "./jee-main/RangeDistribution";
+import AverageScore from "./jee-main/AverageScore";
+import QualificationStatus from "./jee-main/QulificationStatus";
 
 interface ScholarData {
   drn: string;
@@ -156,7 +165,7 @@ const JEEMainResult: React.FC = () => {
       });
       showNotification({
         message: `Error fetching data for ${scholar.drn}`,
-        type: "success",
+        type: "error",
       });
     }
   };
@@ -189,7 +198,10 @@ const JEEMainResult: React.FC = () => {
       const buffer = e.target?.result;
       if (!(buffer instanceof ArrayBuffer)) {
         setIsLoading(false);
-        console.error("FileReader result is not an ArrayBuffer.");
+        showNotification({
+          message: "FileReader result is not an ArrayBuffer.",
+          type: "error",
+        });
         return;
       }
 
@@ -199,10 +211,21 @@ const JEEMainResult: React.FC = () => {
 
         const rows: Array<any[]> = [];
         worksheet.eachRow((row) => {
+          if (!row.values) return; // Ensure row.values is defined
+
           const rowValues = Array.isArray(row.values)
             ? row.values.slice(1)
             : [];
-          rows.push(rowValues);
+
+          // Convert hyperlink/email cells to plain text if needed
+          const processedRow = rowValues.map((cell) => {
+            if (typeof cell === "object" && cell !== null && "text" in cell) {
+              return cell.text; // Extract the plain text from a hyperlink/email
+            }
+            return cell ?? ""; // Ensure no `undefined` values
+          });
+
+          rows.push(processedRow);
         });
 
         if (rows.length === 0) {
@@ -214,7 +237,19 @@ const JEEMainResult: React.FC = () => {
         const [headers, ...dataRows] = rows;
         const json: ScholarData[] = dataRows.map((row) => {
           const rowData = headers.reduce((acc, header, index) => {
-            acc[header] = row[index] || "";
+            let value = row[index] ?? "";
+
+            if (
+              typeof value === "object" &&
+              value !== null &&
+              "text" in value
+            ) {
+              value = value.text; // Extract text from hyperlinks or formatted cells
+            } else if (typeof value !== "string") {
+              value = String(value); // Convert to string to ensure uniformity
+            }
+
+            acc[header] = value;
             return acc;
           }, {} as Partial<ScholarData>);
 
@@ -227,7 +262,10 @@ const JEEMainResult: React.FC = () => {
             status: "idle",
           };
         });
-
+        showNotification({
+          message: "Excel file Processed Successfully",
+          type: "success",
+        });
         setJsonData(json);
       } catch (error) {
         showNotification({
@@ -313,6 +351,8 @@ const JEEMainResult: React.FC = () => {
             startIcon={
               params.row.status === "loading" ? (
                 <CircularProgress size={20} />
+              ) : params.row.status === "fetched" ? (
+                <CheckCircleRounded color="success" />
               ) : (
                 <CloudDownloadRounded />
               )
@@ -322,11 +362,15 @@ const JEEMainResult: React.FC = () => {
             }
             variant="outlined"
           >
-            {params.row.status === "loading" ? "Loading" : "Fetch Data"}
+            {params.row.status === "idle"
+              ? "Fetch Data"
+              : toProperCase(params.row.status)}
           </Button>
         </Box>
       ),
       editable: true,
+      type: "singleSelect",
+      valueOptions: ["Idle", "Loading", "Fetched"],
     },
     {
       field: "error",
@@ -637,7 +681,7 @@ const JEEMainResult: React.FC = () => {
 
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
-      <Paper sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+      <Paper sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 1 }}>
           <FileDropZone onDrop={onDrop} acceptedExtensions={[".xlsx", "xls"]} />
           <Box
@@ -664,7 +708,7 @@ const JEEMainResult: React.FC = () => {
                 if (jsonData) {
                   downloadJsonToExcel({
                     jsonData: jsonData,
-                    fileName: "JEE Main AdmitCard Info",
+                    fileName: "JEE Main Result Session 01",
                   });
                 }
               }}
@@ -683,17 +727,16 @@ const JEEMainResult: React.FC = () => {
             display: "flex",
             gap: 2,
             justifyContent: "space-between",
-            px: 1,
             overflow: "auto",
+            flexWrap: "wrap",
           }}
         >
           <ToggleButton
             value="total"
-            color="primary"
             aria-label="Platform"
             selected={selectedStatus === ""}
             onClick={() => setSelectedStatus("")}
-            sx={{ px: 4, minWidth: 150 }}
+            sx={{ px: 4, minWidth: 150, flexGrow: 1, maxWidth: 200 }}
             size="small"
           >
             <strong>Total &nbsp;&nbsp;</strong> ({jsonData?.length || 0})
@@ -705,18 +748,19 @@ const JEEMainResult: React.FC = () => {
             selected={selectedStatus === "fetched"}
             onClick={() => setSelectedStatus("fetched")}
             size="small"
-            sx={{ px: 4, minWidth: 150 }}
+            sx={{ px: 4, minWidth: 150, flexGrow: 1, maxWidth: 200 }}
           >
             <strong>fetched &nbsp;&nbsp;</strong> (
             {jsonData?.filter((item) => item.status === "fetched").length || 0})
           </ToggleButton>
           <ToggleButton
+            color="primary"
             value="total"
             aria-label="Platform"
             selected={selectedStatus === "loading"}
             onClick={() => setSelectedStatus("loading")}
             size="small"
-            sx={{ px: 4, minWidth: 150 }}
+            sx={{ px: 4, minWidth: 150, flexGrow: 1, maxWidth: 200 }}
           >
             <strong>Loading &nbsp;&nbsp;</strong> (
             {jsonData?.filter((item) => item.status === "loading").length || 0})
@@ -728,7 +772,7 @@ const JEEMainResult: React.FC = () => {
             aria-label="Platform"
             selected={selectedStatus === "error"}
             onClick={() => setSelectedStatus("error")}
-            sx={{ px: 4, minWidth: 150 }}
+            sx={{ px: 4, minWidth: 150, flexGrow: 1, maxWidth: 200 }}
           >
             <strong>Error &nbsp;&nbsp;</strong> (
             {jsonData?.filter((item) => item?.error !== "").length || 0})
@@ -749,6 +793,10 @@ const JEEMainResult: React.FC = () => {
           pageSizeOptions={[10, 30, 50, 100, 200]}
         />
       </Box>
+      <Rank jsonData={jsonData} />
+      <RangeDistribution jsonData={jsonData} />
+      <AverageScore jsonData={jsonData} />
+      <QualificationStatus jsonData={jsonData} />
     </Box>
   );
 };

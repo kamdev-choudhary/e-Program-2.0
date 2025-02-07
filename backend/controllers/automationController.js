@@ -7,6 +7,7 @@ import fs from "fs-extra";
 import PizZip from "pizzip";
 import Docxtemplater from "docxtemplater";
 import { convertDocxToPdf } from "../utils/docToPdf.js";
+import { generateMockData } from "../utils/functions.js";
 
 const MAX_RETRIES = 10;
 
@@ -636,7 +637,7 @@ export async function jeeMainResultDownload(req, res, next) {
       .json({ message: "Application number or password missing" });
 
   const browser = await puppeteer.launch({
-    headless: false, // Use "new" mode to bypass bot detection
+    headless: "new", // Use "new" mode to bypass bot detection
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
@@ -737,7 +738,7 @@ export async function jeeMainResultDownload(req, res, next) {
     // if (!success) {
     //   return res.status(400).json({ message: "Failed to verify captch." });
     // }
-    const data = {};
+    const data = generateMockData();
     res.status(200).json({
       message: "Successfully fetched the Data.",
       rollNumber1: data?.rollNumber || "",

@@ -151,3 +151,16 @@ export const getYouTubeThumbnail = (url: string) => {
 
   return "https://upload.wikimedia.org/wikipedia/commons/4/42/YouTube_icon_%282013-2017%29.png";
 };
+
+// To Propercase
+export function toProperCase(str: string) {
+  // Check if input is a valid string
+  if (typeof str !== "string") {
+    console.error("Invalid input: Expected a string but received", typeof str);
+    return ""; // Return empty string for invalid input
+  }
+
+  return str
+    .toLowerCase()
+    .replace(/(?:^|\s|[-'])\w/g, (match) => match.toUpperCase());
+}

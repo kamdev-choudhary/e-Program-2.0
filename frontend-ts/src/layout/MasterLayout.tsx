@@ -51,8 +51,8 @@ const MasterLayout: React.FC = () => {
           </Drawer>
         ) : (
           <motion.div
-            initial={{ width: expanded ? drawerWidth : 60 }}
-            animate={{ width: expanded ? drawerWidth : 60 }}
+            initial={{ width: expanded ? drawerWidth : 75 }}
+            animate={{ width: expanded ? drawerWidth : 75 }}
             transition={{ type: "", stiffness: 100 }}
             className="no-print"
             style={{
