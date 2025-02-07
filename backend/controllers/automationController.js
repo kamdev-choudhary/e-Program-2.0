@@ -738,11 +738,12 @@ export async function jeeMainResultDownload(req, res, next) {
     // if (!success) {
     //   return res.status(400).json({ message: "Failed to verify captch." });
     // }
+
     const data = generateMockData();
     res.status(200).json({
       message: "Successfully fetched the Data.",
-      rollNumber1: data?.rollNumber || "",
-      rollNumber2: data?.rollNumber || "",
+      rollNumber1: data?.rollNumber1 || "",
+      rollNumber2: data?.rollNumber2 || "",
       candidateName: data?.candidateName || "",
       motherName: data?.motherName || "",
       fatherName: data?.fatherName || "",
