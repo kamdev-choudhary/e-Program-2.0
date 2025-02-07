@@ -2,7 +2,6 @@ import {
   Box,
   Button,
   CircularProgress,
-  Divider,
   Paper,
   ToggleButton,
 } from "@mui/material";
@@ -24,6 +23,7 @@ import Rank from "./jee-main/Rank";
 import RangeDistribution from "./jee-main/RangeDistribution";
 import AverageScore from "./jee-main/AverageScore";
 import QualificationStatus from "./jee-main/QulificationStatus";
+import BorderLinearProgress from "../../components/BorderLineProgress";
 
 interface ScholarData {
   drn: string;
@@ -171,16 +171,14 @@ const JEEMainResult: React.FC = () => {
   };
 
   const handleDownloadInfo = async () => {
+    if (!jsonData) return;
+
     try {
-      if (jsonData) {
-        await Promise.all(
-          jsonData.map(async (data) => {
-            if (data?.status === "idle") {
-              await handleDownloadMainScorecard(data);
-            }
-          })
-        );
-      }
+      await Promise.all(
+        jsonData
+          .filter((data) => data?.status === "idle")
+          .map(handleDownloadMainScorecard)
+      );
     } catch (error) {
       console.error("Error handling download info:", error);
     }
@@ -296,369 +294,373 @@ const JEEMainResult: React.FC = () => {
     return newRow;
   };
 
-  const columns: GridColDef[] = [
-    {
-      field: "drn",
-      headerName: "Dakshana Roll #",
-      width: 150,
-      align: "center",
-      headerAlign: "center",
-    },
-    {
-      field: "name",
-      headerName: "Name",
-      minWidth: 200,
-      align: "center",
-      headerAlign: "center",
-    },
-    {
-      field: "application",
-      headerName: "Application #",
-      minWidth: 150,
-      align: "center",
-      headerAlign: "center",
-      editable: true,
-      flex: 1,
-    },
-    {
-      field: "password",
-      headerName: "Password",
-      minWidth: 150,
-      align: "center",
-      headerAlign: "center",
-      editable: true,
-      flex: 1,
-    },
-    {
-      field: "status",
-      headerName: "Data",
-      align: "center",
-      headerAlign: "center",
-      minWidth: 200,
-      flex: 1,
-      renderCell: (params) => (
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            width: "100%",
-            height: "100%",
-          }}
-        >
-          <Button
-            onClick={() => handleDownloadMainScorecard(params.row)}
-            startIcon={
-              params.row.status === "loading" ? (
-                <CircularProgress size={20} />
-              ) : params.row.status === "fetched" ? (
-                <CheckCircleRounded color="success" />
-              ) : (
-                <CloudDownloadRounded />
-              )
-            }
-            disabled={
-              params.row.status === "fetched" || params.row.status === "loading"
-            }
-            variant="outlined"
+  const columns: GridColDef[] = useMemo(
+    () => [
+      {
+        field: "drn",
+        headerName: "Dakshana Roll #",
+        width: 150,
+        align: "center",
+        headerAlign: "center",
+      },
+      {
+        field: "name",
+        headerName: "Name",
+        minWidth: 200,
+        align: "center",
+        headerAlign: "center",
+      },
+      {
+        field: "application",
+        headerName: "Application #",
+        minWidth: 150,
+        align: "center",
+        headerAlign: "center",
+        editable: true,
+        flex: 1,
+      },
+      {
+        field: "password",
+        headerName: "Password",
+        minWidth: 150,
+        align: "center",
+        headerAlign: "center",
+        editable: true,
+        flex: 1,
+      },
+      {
+        field: "status",
+        headerName: "Data",
+        align: "center",
+        headerAlign: "center",
+        minWidth: 200,
+        flex: 1,
+        renderCell: (params) => (
+          <Box
+            sx={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+              width: "100%",
+              height: "100%",
+            }}
           >
-            {params.row.status === "idle"
-              ? "Fetch Data"
-              : toProperCase(params.row.status)}
-          </Button>
-        </Box>
-      ),
-      editable: true,
-      type: "singleSelect",
-      valueOptions: ["Idle", "Loading", "Fetched"],
-    },
-    {
-      field: "error",
-      headerName: "Error",
-      flex: 1,
-      minWidth: 250,
-      headerAlign: "center",
-      renderCell: (params) => (
-        <span style={{ color: "red" }}>{params.row.error}</span>
-      ),
-    },
-    {
-      field: "rollNumber1",
-      headerName: "Roll Number 1",
-      flex: 1,
-      minWidth: 150,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "rollNumber2",
-      headerName: "Roll Number 2",
-      flex: 1,
-      minWidth: 150,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "candidateName",
-      headerName: "Candidate Name",
-      flex: 1.5,
-      minWidth: 200,
-      headerAlign: "center",
-    },
-    {
-      field: "motherName",
-      headerName: "Mother's Name",
-      flex: 1.5,
-      minWidth: 200,
-      headerAlign: "center",
-    },
-    {
-      field: "fatherName",
-      headerName: "Father's Name",
-      flex: 1.5,
-      minWidth: 200,
-      headerAlign: "center",
-    },
-    {
-      field: "category",
-      headerName: "Category",
-      flex: 1,
-      minWidth: 150,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "personWithDisability",
-      headerName: "PwD",
-      flex: 1,
-      minWidth: 100,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "gender",
-      headerName: "Gender",
-      flex: 1,
-      minWidth: 100,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "dateOfBirth",
-      headerName: "Date of Birth",
-      flex: 1,
-      minWidth: 150,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "stateOfEligibility",
-      headerName: "State of Eligibility",
-      flex: 1.5,
-      minWidth: 200,
-      headerAlign: "center",
-    },
-    {
-      field: "nationality",
-      headerName: "Nationality",
-      flex: 1,
-      minWidth: 150,
-      headerAlign: "center",
-    },
+            <Button
+              onClick={() => handleDownloadMainScorecard(params.row)}
+              startIcon={
+                params.row.status === "loading" ? (
+                  <CircularProgress size={20} />
+                ) : params.row.status === "fetched" ? (
+                  <CheckCircleRounded color="success" />
+                ) : (
+                  <CloudDownloadRounded />
+                )
+              }
+              disabled={
+                params.row.status === "fetched" ||
+                params.row.status === "loading"
+              }
+              variant="outlined"
+            >
+              {params.row.status === "idle"
+                ? "Fetch Data"
+                : toProperCase(params.row.status)}
+            </Button>
+          </Box>
+        ),
+        editable: true,
+        type: "singleSelect",
+        valueOptions: ["Idle", "Loading", "Fetched"],
+      },
+      {
+        field: "error",
+        headerName: "Error",
+        flex: 1,
+        minWidth: 250,
+        headerAlign: "center",
+        renderCell: (params) => (
+          <span style={{ color: "red" }}>{params.row.error}</span>
+        ),
+      },
+      {
+        field: "rollNumber1",
+        headerName: "Roll Number 1",
+        flex: 1,
+        minWidth: 150,
+        headerAlign: "center",
+        align: "center",
+      },
+      {
+        field: "rollNumber2",
+        headerName: "Roll Number 2",
+        flex: 1,
+        minWidth: 150,
+        headerAlign: "center",
+        align: "center",
+      },
+      {
+        field: "candidateName",
+        headerName: "Candidate Name",
+        flex: 1.5,
+        minWidth: 200,
+        headerAlign: "center",
+      },
+      {
+        field: "motherName",
+        headerName: "Mother's Name",
+        flex: 1.5,
+        minWidth: 200,
+        headerAlign: "center",
+      },
+      {
+        field: "fatherName",
+        headerName: "Father's Name",
+        flex: 1.5,
+        minWidth: 200,
+        headerAlign: "center",
+      },
+      {
+        field: "category",
+        headerName: "Category",
+        flex: 1,
+        minWidth: 150,
+        headerAlign: "center",
+        align: "center",
+      },
+      {
+        field: "personWithDisability",
+        headerName: "PwD",
+        flex: 1,
+        minWidth: 100,
+        headerAlign: "center",
+        align: "center",
+      },
+      {
+        field: "gender",
+        headerName: "Gender",
+        flex: 1,
+        minWidth: 100,
+        headerAlign: "center",
+        align: "center",
+      },
+      {
+        field: "dateOfBirth",
+        headerName: "Date of Birth",
+        flex: 1,
+        minWidth: 150,
+        headerAlign: "center",
+        align: "center",
+      },
+      {
+        field: "stateOfEligibility",
+        headerName: "State of Eligibility",
+        flex: 1.5,
+        minWidth: 200,
+        headerAlign: "center",
+      },
+      {
+        field: "nationality",
+        headerName: "Nationality",
+        flex: 1,
+        minWidth: 150,
+        headerAlign: "center",
+      },
 
-    // Scores
-    {
-      field: "mathematics1",
-      headerName: "Math 1",
-      flex: 1,
-      minWidth: 100,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "mathematics2",
-      headerName: "Math 2",
-      flex: 1,
-      minWidth: 100,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "mathematics",
-      headerName: "Math Total",
-      flex: 1,
-      minWidth: 120,
-      headerAlign: "center",
-      align: "center",
-    },
+      // Scores
+      {
+        field: "mathematics1",
+        headerName: "Math 1",
+        flex: 1,
+        minWidth: 100,
+        headerAlign: "center",
+        align: "center",
+      },
+      {
+        field: "mathematics2",
+        headerName: "Math 2",
+        flex: 1,
+        minWidth: 100,
+        headerAlign: "center",
+        align: "center",
+      },
+      {
+        field: "mathematics",
+        headerName: "Math Total",
+        flex: 1,
+        minWidth: 120,
+        headerAlign: "center",
+        align: "center",
+      },
 
-    {
-      field: "physics1",
-      headerName: "Physics 1",
-      flex: 1,
-      minWidth: 100,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "physics2",
-      headerName: "Physics 2",
-      flex: 1,
-      minWidth: 100,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "physics",
-      headerName: "Physics Total",
-      flex: 1,
-      minWidth: 120,
-      headerAlign: "center",
-      align: "center",
-    },
+      {
+        field: "physics1",
+        headerName: "Physics 1",
+        flex: 1,
+        minWidth: 100,
+        headerAlign: "center",
+        align: "center",
+      },
+      {
+        field: "physics2",
+        headerName: "Physics 2",
+        flex: 1,
+        minWidth: 100,
+        headerAlign: "center",
+        align: "center",
+      },
+      {
+        field: "physics",
+        headerName: "Physics Total",
+        flex: 1,
+        minWidth: 120,
+        headerAlign: "center",
+        align: "center",
+      },
 
-    {
-      field: "chemistry1",
-      headerName: "Chemistry 1",
-      flex: 1,
-      minWidth: 100,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "chemistry2",
-      headerName: "Chemistry 2",
-      flex: 1,
-      minWidth: 100,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "chemistry",
-      headerName: "Chemistry Total",
-      flex: 1,
-      minWidth: 120,
-      headerAlign: "center",
-      align: "center",
-    },
+      {
+        field: "chemistry1",
+        headerName: "Chemistry 1",
+        flex: 1,
+        minWidth: 100,
+        headerAlign: "center",
+        align: "center",
+      },
+      {
+        field: "chemistry2",
+        headerName: "Chemistry 2",
+        flex: 1,
+        minWidth: 100,
+        headerAlign: "center",
+        align: "center",
+      },
+      {
+        field: "chemistry",
+        headerName: "Chemistry Total",
+        flex: 1,
+        minWidth: 120,
+        headerAlign: "center",
+        align: "center",
+      },
 
-    {
-      field: "total1",
-      headerName: "Total 1",
-      flex: 1,
-      minWidth: 120,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "total2",
-      headerName: "Total 2",
-      flex: 1,
-      minWidth: 120,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "total",
-      headerName: "Grand Total",
-      flex: 1,
-      minWidth: 150,
-      headerAlign: "center",
-      align: "center",
-    },
+      {
+        field: "total1",
+        headerName: "Total 1",
+        flex: 1,
+        minWidth: 120,
+        headerAlign: "center",
+        align: "center",
+      },
+      {
+        field: "total2",
+        headerName: "Total 2",
+        flex: 1,
+        minWidth: 120,
+        headerAlign: "center",
+        align: "center",
+      },
+      {
+        field: "total",
+        headerName: "Grand Total",
+        flex: 1,
+        minWidth: 150,
+        headerAlign: "center",
+        align: "center",
+      },
 
-    {
-      field: "ntaScoreInWords",
-      headerName: "NTA Score",
-      flex: 1,
-      minWidth: 200,
-      headerAlign: "center",
-    },
+      {
+        field: "ntaScoreInWords",
+        headerName: "NTA Score",
+        flex: 1,
+        minWidth: 200,
+        headerAlign: "center",
+      },
 
-    // Ranks
-    {
-      field: "crlRank",
-      headerName: "CRL Rank",
-      flex: 1,
-      minWidth: 120,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "genEwsRank",
-      headerName: "GEN-EWS Rank",
-      flex: 1,
-      minWidth: 120,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "obcNclRank",
-      headerName: "OBC-NCL Rank",
-      flex: 1,
-      minWidth: 120,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "scRank",
-      headerName: "SC Rank",
-      flex: 1,
-      minWidth: 120,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "stRank",
-      headerName: "ST Rank",
-      flex: 1,
-      minWidth: 120,
-      headerAlign: "center",
-      align: "center",
-    },
+      // Ranks
+      {
+        field: "crlRank",
+        headerName: "CRL Rank",
+        flex: 1,
+        minWidth: 120,
+        headerAlign: "center",
+        align: "center",
+      },
+      {
+        field: "genEwsRank",
+        headerName: "GEN-EWS Rank",
+        flex: 1,
+        minWidth: 120,
+        headerAlign: "center",
+        align: "center",
+      },
+      {
+        field: "obcNclRank",
+        headerName: "OBC-NCL Rank",
+        flex: 1,
+        minWidth: 120,
+        headerAlign: "center",
+        align: "center",
+      },
+      {
+        field: "scRank",
+        headerName: "SC Rank",
+        flex: 1,
+        minWidth: 120,
+        headerAlign: "center",
+        align: "center",
+      },
+      {
+        field: "stRank",
+        headerName: "ST Rank",
+        flex: 1,
+        minWidth: 120,
+        headerAlign: "center",
+        align: "center",
+      },
 
-    // PwD Ranks
-    {
-      field: "crlPwDRank",
-      headerName: "CRL PwD Rank",
-      flex: 1,
-      minWidth: 150,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "genEwsPwDRank",
-      headerName: "GEN-EWS PwD Rank",
-      flex: 1,
-      minWidth: 150,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "obcNclPwDRank",
-      headerName: "OBC-NCL PwD Rank",
-      flex: 1,
-      minWidth: 150,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "scPwDRank",
-      headerName: "SC PwD Rank",
-      flex: 1,
-      minWidth: 150,
-      headerAlign: "center",
-      align: "center",
-    },
-    {
-      field: "stPwDRank",
-      headerName: "ST PwD Rank",
-      flex: 1,
-      minWidth: 150,
-      headerAlign: "center",
-      align: "center",
-    },
-  ];
+      // PwD Ranks
+      {
+        field: "crlPwDRank",
+        headerName: "CRL PwD Rank",
+        flex: 1,
+        minWidth: 150,
+        headerAlign: "center",
+        align: "center",
+      },
+      {
+        field: "genEwsPwDRank",
+        headerName: "GEN-EWS PwD Rank",
+        flex: 1,
+        minWidth: 150,
+        headerAlign: "center",
+        align: "center",
+      },
+      {
+        field: "obcNclPwDRank",
+        headerName: "OBC-NCL PwD Rank",
+        flex: 1,
+        minWidth: 150,
+        headerAlign: "center",
+        align: "center",
+      },
+      {
+        field: "scPwDRank",
+        headerName: "SC PwD Rank",
+        flex: 1,
+        minWidth: 150,
+        headerAlign: "center",
+        align: "center",
+      },
+      {
+        field: "stPwDRank",
+        headerName: "ST PwD Rank",
+        flex: 1,
+        minWidth: 150,
+        headerAlign: "center",
+        align: "center",
+      },
+    ],
+    []
+  );
 
   const filteredData = useMemo(() => {
     if (!jsonData) return [];
@@ -679,6 +681,14 @@ const JEEMainResult: React.FC = () => {
       }));
   }, [jsonData, selectedStatus]);
 
+  const fetchedCount = useMemo(() => {
+    if (!jsonData) return 0;
+    const count =
+      jsonData?.filter((data) => data.status === "fetched").length || 0;
+
+    return (count / jsonData.length) * 100;
+  }, [jsonData]);
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
       <Paper sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -694,12 +704,17 @@ const JEEMainResult: React.FC = () => {
             <Button
               variant="contained"
               onClick={handleDownloadInfo}
-              disabled={isLoading || !jsonData}
+              disabled={
+                isLoading ||
+                !jsonData ||
+                jsonData.every((data) => data.status !== "idle")
+              }
               startIcon={<CloudDownloadRounded />}
             >
               {isLoading ? "Loading..." : "Fetch Data"} (
               {jsonData?.filter((data) => data?.status === "idle").length || 0})
             </Button>
+
             <Button
               startIcon={<TableChartRounded />}
               variant="contained"
@@ -721,7 +736,7 @@ const JEEMainResult: React.FC = () => {
             </Button>
           </Box>
         </Box>
-        <Divider />
+        <BorderLinearProgress value={fetchedCount} />
         <Box
           sx={{
             display: "flex",
