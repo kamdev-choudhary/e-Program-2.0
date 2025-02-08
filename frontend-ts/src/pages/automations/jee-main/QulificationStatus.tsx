@@ -8,16 +8,17 @@ import {
   TableRow,
   Paper,
   Typography,
-  Grid2 as Grid,
   Dialog,
   DialogTitle,
   DialogContent,
   Box,
+  Grid2 as Grid,
+  Divider,
 } from "@mui/material";
 import { Pie, Bar } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
 
-// Register Chart.js components
+// Register all necessary Chart.js components
 Chart.register(...registerables);
 
 interface ScholarData {
@@ -77,11 +78,16 @@ const QualificationStatus: React.FC<QualificationStatusProps> = ({
     return null;
   }
 
+  // Filter out scholars with missing category or personWithDisability
+  const filteredData = jsonData.filter(
+    (scholar) => scholar.category && scholar.personWithDisability
+  );
+
   // Classify scholars into qualified and disqualified
-  const qualified = jsonData.filter((scholar) =>
+  const qualified = filteredData.filter((scholar) =>
     isQualified(scholar.category, scholar.personWithDisability, scholar.total)
   );
-  const disqualified = jsonData.filter(
+  const disqualified = filteredData.filter(
     (scholar) =>
       !isQualified(
         scholar.category,
@@ -90,11 +96,11 @@ const QualificationStatus: React.FC<QualificationStatusProps> = ({
       )
   );
 
-  // Toggle states for showing tables
+  // Toggle states for showing detailed tables
   const [showQualified, setShowQualified] = useState(false);
   const [showDisqualified, setShowDisqualified] = useState(false);
 
-  // Prepare data for charts
+  // Prepare data for the Pie chart
   const pieChartData = {
     labels: ["Qualified", "Disqualified"],
     datasets: [
@@ -134,6 +140,7 @@ const QualificationStatus: React.FC<QualificationStatusProps> = ({
     categoryWiseData[effectiveCategory].disqualified++;
   });
 
+  // Prepare data for the Bar chart
   const barChartData = {
     labels: Object.keys(categoryWiseData),
     datasets: [
@@ -143,7 +150,7 @@ const QualificationStatus: React.FC<QualificationStatusProps> = ({
         backgroundColor: "rgba(54, 162, 235, 0.6)",
       },
       {
-        label: "DisQualified Students",
+        label: "Disqualified Students",
         data: Object.values(categoryWiseData).map((data) => data.disqualified),
         backgroundColor: "rgba(235, 54, 54, 0.6)",
       },
@@ -157,17 +164,18 @@ const QualificationStatus: React.FC<QualificationStatusProps> = ({
       </Typography>
 
       <Grid container spacing={2}>
-        <Grid
-          size={{ xs: 12, md: 6 }}
-          sx={{
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            alignItems: "center",
-          }}
-        >
+        {/* Left Section: Pie Chart & Summary Table */}
+        <Grid size={{ xs: 12, md: 6 }}>
           {/* Pie Chart */}
-          <Box sx={{ height: 300 }}>
+          <Box
+            sx={{
+              height: 300,
+              width: "100%",
+              display: "flex",
+              justifyContent: "center",
+            }}
+            component={Paper}
+          >
             <Pie
               data={pieChartData}
               options={{
@@ -176,16 +184,23 @@ const QualificationStatus: React.FC<QualificationStatusProps> = ({
               }}
             />
           </Box>
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
           {/* Summary Table */}
-          <TableContainer component={Paper} sx={{ mt: 3, flexGrow: 1 }}>
+          <TableContainer component={Paper} sx={{ flexGrow: 1 }}>
+            <Typography variant="h6">Qualification Status</Typography>
+            <Divider sx={{ my: 1 }} />
             <Table>
               <TableHead>
                 <TableRow>
                   <TableCell>
                     <strong>Status</strong>
                   </TableCell>
-                  <TableCell>
+                  <TableCell align="center">
                     <strong>Count</strong>
+                  </TableCell>
+                  <TableCell align="center">
+                    <strong>Count (in %)</strong>
                   </TableCell>
                 </TableRow>
               </TableHead>
@@ -195,34 +210,85 @@ const QualificationStatus: React.FC<QualificationStatusProps> = ({
                   sx={{ cursor: "pointer" }}
                 >
                   <TableCell>Qualified</TableCell>
-                  <TableCell>{qualified.length}</TableCell>
+                  <TableCell align="center">{qualified.length}</TableCell>
+                  <TableCell align="center">
+                    {(
+                      (qualified.length /
+                        (disqualified.length + qualified.length)) *
+                      100
+                    ).toFixed(2)}{" "}
+                    %
+                  </TableCell>
                 </TableRow>
                 <TableRow
                   onClick={() => setShowDisqualified(!showDisqualified)}
                   sx={{ cursor: "pointer" }}
                 >
                   <TableCell>Disqualified</TableCell>
-                  <TableCell>{disqualified.length}</TableCell>
+                  <TableCell align="center">{disqualified.length}</TableCell>
+                  <TableCell align="center">
+                    {(
+                      (disqualified.length /
+                        (disqualified.length + qualified.length)) *
+                      100
+                    ).toFixed(2)}{" "}
+                    %
+                  </TableCell>
                 </TableRow>
               </TableBody>
             </Table>
           </TableContainer>
         </Grid>
+
+        <Grid size={{ xs: 12, md: 6 }}>
+          {/* Category-Wise Qualification Table */}
+          <TableContainer component={Paper}>
+            <Typography variant="h6">
+              Category-Wise Qualification Status
+            </Typography>
+            <Divider sx={{ my: 1 }} />
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell align="center">
+                    <strong>Category</strong>
+                  </TableCell>
+                  <TableCell align="center">
+                    <strong>Qualified</strong>
+                  </TableCell>
+                  <TableCell align="center">
+                    <strong>Disqualified</strong>
+                  </TableCell>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {Object.entries(categoryWiseData).map(([category, data]) => (
+                  <TableRow key={category}>
+                    <TableCell align="center">{category}</TableCell>
+                    <TableCell align="center">{data.qualified}</TableCell>
+                    <TableCell align="center">{data.disqualified}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
+
+        {/* Right Section: Bar Chart */}
         <Grid
           size={{ xs: 12, md: 6 }}
           sx={{
-            height: 350,
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
           }}
+          component={Paper}
         >
-          {/* Bar Chart */}
           <Bar
             data={barChartData}
             options={{
               responsive: true,
-              plugins: { legend: { position: "top" } },
+              plugins: { legend: { position: "bottom" } },
             }}
           />
         </Grid>
@@ -263,7 +329,6 @@ const QualificationStatus: React.FC<QualificationStatusProps> = ({
                   <TableRow key={scholar.drn}>
                     <TableCell>{scholar.drn}</TableCell>
                     <TableCell>{scholar.name}</TableCell>
-                    {/* Show effective category */}
                     <TableCell>{getEffectiveCategory(scholar)}</TableCell>
                     <TableCell>{scholar.total}</TableCell>
                   </TableRow>
@@ -306,7 +371,6 @@ const QualificationStatus: React.FC<QualificationStatusProps> = ({
                   <TableRow key={scholar.drn}>
                     <TableCell>{scholar.drn}</TableCell>
                     <TableCell>{scholar.name}</TableCell>
-                    {/* Show effective category */}
                     <TableCell>{getEffectiveCategory(scholar)}</TableCell>
                     <TableCell>{scholar.total}</TableCell>
                   </TableRow>
@@ -316,37 +380,6 @@ const QualificationStatus: React.FC<QualificationStatusProps> = ({
           </TableContainer>
         </DialogContent>
       </Dialog>
-
-      {/* Category-Wise Qualification Table */}
-      <TableContainer component={Paper} sx={{ mt: 3 }}>
-        <Typography variant="h6" sx={{ p: 2 }}>
-          Category-Wise Qualification Status
-        </Typography>
-        <Table>
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <strong>Category</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Qualified</strong>
-              </TableCell>
-              <TableCell>
-                <strong>Disqualified</strong>
-              </TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {Object.entries(categoryWiseData).map(([category, data]) => (
-              <TableRow key={category}>
-                <TableCell>{category}</TableCell>
-                <TableCell>{data.qualified}</TableCell>
-                <TableCell>{data.disqualified}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
     </Paper>
   );
 };

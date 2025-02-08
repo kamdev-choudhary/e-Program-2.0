@@ -6,6 +6,18 @@ interface LoaderProps {
 }
 
 const Loader: React.FC<LoaderProps> = ({ open = true }) => {
+  const [dotCount, setDotCount] = React.useState(0);
+
+  React.useEffect(() => {
+    const interval = setInterval(() => {
+      setDotCount((prev) => (prev + 1) % 4); // Cycles through 0,1,2,3
+    }, 500); // Adjust the timing as needed
+
+    return () => clearInterval(interval);
+  }, []);
+
+  const dots = ".".repeat(dotCount);
+
   return (
     <Backdrop
       open={open}
@@ -22,7 +34,7 @@ const Loader: React.FC<LoaderProps> = ({ open = true }) => {
       <Box display="flex" flexDirection="column" alignItems="center">
         <CircularProgress size={50} sx={{ color: "#fff" }} />
         <Typography sx={{ mt: 2, color: "#fff", fontWeight: 500 }}>
-          Please wait...
+          Please wait{dots}
         </Typography>
       </Box>
     </Backdrop>

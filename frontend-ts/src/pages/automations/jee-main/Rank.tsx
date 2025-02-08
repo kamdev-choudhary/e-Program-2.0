@@ -99,9 +99,7 @@ const Rank: React.FC<RankProps> = ({ jsonData }) => {
 
   return (
     <TableContainer component={Paper}>
-      <Typography variant="h6" sx={{ p: 2 }}>
-        Minimum Rank Students by Category
-      </Typography>
+      <Typography variant="h6">Minimum Rank Students by Category</Typography>
       <Table>
         <TableHead>
           <TableRow>
@@ -112,7 +110,16 @@ const Rank: React.FC<RankProps> = ({ jsonData }) => {
               <strong>Name</strong>
             </TableCell>
             <TableCell>
+              <strong>Gender</strong>
+            </TableCell>
+            <TableCell>
+              <strong>Disability</strong>
+            </TableCell>
+            <TableCell>
               <strong>Rank</strong>
+            </TableCell>
+            <TableCell>
+              <strong>Total </strong>
             </TableCell>
           </TableRow>
         </TableHead>
@@ -124,7 +131,10 @@ const Rank: React.FC<RankProps> = ({ jsonData }) => {
                 <TableCell>
                   {student.name || student.candidateName || "N/A"}
                 </TableCell>
+                <TableCell>{student.gender}</TableCell>
+                <TableCell>{student.personWithDisability}</TableCell>
                 <TableCell>{rank}</TableCell>
+                <TableCell>{student.total}</TableCell>
               </TableRow>
             ) : null
           )}

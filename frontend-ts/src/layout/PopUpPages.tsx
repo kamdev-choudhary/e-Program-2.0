@@ -1,5 +1,5 @@
 import React from "react";
-import OnlineStatusIndicator from "../hooks/OnlineStatusIndicator";
+import OnlineStatusIndicator from "./OnlineStatusIndicator";
 // import ChatbotWithFAB from "../pages/chatbot/ChatBotWithFab";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "../store/store";

@@ -164,10 +164,19 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded = true }) => {
             animate={{ opacity: 1, y: 0 }}
             initial={{ opacity: 0, y: -20 }}
             transition={{ duration: 0.4 }}
-            style={{ marginTop: "10px" }}
+            style={{
+              marginTop: "10px",
+              display: "flex",
+              justifyItems: "center",
+              flexDirection: "column",
+              alignItems: "center",
+              margin: "15px 0px",
+            }}
           >
             <Typography variant="subtitle1">{user?.name}</Typography>
-            <Typography variant="body2">({user?.role})</Typography>
+            <Typography variant="body2" sx={{ color: "text.secondary" }}>
+              ({user?.role})
+            </Typography>
           </motion.div>
         )}
       </Box>

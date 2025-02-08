@@ -1,6 +1,7 @@
 import React, { ReactNode } from "react";
 import { Navigate, useLocation } from "react-router-dom";
 import { useGlobalContext } from "../contexts/GlobalProvider";
+import Unauthorized from "./Unauthorized";
 
 interface ProtectedRouteProps {
   children: ReactNode;
@@ -27,7 +28,7 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
     allowedRoles &&
     (!user || !userRole || !allowedRoles.includes(userRole))
   ) {
-    return <Navigate to="/unauthorized" replace />;
+    return <Unauthorized />;
   }
 
   return children;

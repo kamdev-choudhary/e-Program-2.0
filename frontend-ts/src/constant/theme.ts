@@ -95,7 +95,7 @@ const getTheme = (mode: "light" | "dark") => {
             borderColor: isLight
               ? "rgba(15, 23, 42, 0.08)"
               : "rgba(248, 250, 252, 0.08)",
-            boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
+            boxShadow: "0 0px 0px rgba(0,0,0,0.1)",
           },
         },
       },
@@ -180,37 +180,92 @@ const getTheme = (mode: "light" | "dark") => {
       },
 
       MuiToggleButton: {
+        defaultProps: {
+          size: "small",
+        },
         styleOverrides: {
           root: {
             borderRadius: 30,
+            padding: "8px 16px",
+            border: isLight
+              ? "1px solid rgba(0, 0, 0, 0.45)"
+              : "1px solid rgba(255, 255, 255, 0.77)",
           },
-        },
-        defaultProps: {
-          size: "small",
         },
       },
 
       MuiListItemButton: {
         styleOverrides: {
           root: {
-            // Set the overall border radius
-            borderRadius: 80,
-            // Customize the selected state
-            "&.Mui-selected": {
-              backgroundColor: isLight
-                ? "rgba(195, 199, 255, 0.81)" // Light mode selected color
-                : "rgba(108, 142, 255, 0.16)", // Dark mode selected color
-
-              "&:hover": {
-                backgroundColor: isLight
-                  ? "rgba(229, 165, 239, 0.5)" // Light mode hover on selected
-                  : "rgba(108, 142, 255, 0.24)", // Dark mode hover on selected
-              },
-            },
+            borderRadius: 8,
           },
         },
       },
 
+      MuiTextField: {
+        defaultProps: {
+          size: "small",
+        },
+      },
+
+      // Add chip styling
+      MuiChip: {
+        styleOverrides: {
+          root: {
+            borderRadius: 40,
+            fontWeight: 500,
+          },
+          colorSuccess: {
+            background: isLight
+              ? "rgba(0, 200, 117, 0.12)"
+              : "rgba(0, 225, 138, 0.16)",
+            color: isLight ? "#006644" : "#00E18A",
+          },
+          colorError: {
+            background: isLight
+              ? "rgba(255, 59, 91, 0.12)"
+              : "rgba(255, 107, 127, 0.16)",
+            color: isLight ? "#CC0025" : "#FF6B7F",
+          },
+        },
+      },
+
+      // Tabs
+      MuiTabs: {
+        styleOverrides: {
+          root: {
+            borderRadius: 30,
+            background: isLight
+              ? "rgba(10, 15, 36, 0.04)"
+              : "rgba(249, 250, 255, 0.04)",
+            padding: 8,
+          },
+          indicator: {
+            height: "100%",
+            borderRadius: 32,
+            background: isLight
+              ? "rgba(42, 92, 255, 0.12)"
+              : "rgba(108, 142, 255, 0.24)",
+          },
+        },
+      },
+
+      // Tabs
+      MuiTab: {
+        styleOverrides: {
+          root: {
+            zIndex: 1,
+            textTransform: "none",
+            fontWeight: 600,
+            padding: "1px 24px",
+            borderRadius: 32,
+            transition: "all 0.2s",
+            "&.Mui-selected": {
+              color: isLight ? "#2A5CFF" : "#6C8EFF",
+            },
+          },
+        },
+      },
       // Other components can be added or simplified as needed
     },
 

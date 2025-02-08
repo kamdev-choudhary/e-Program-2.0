@@ -19,17 +19,18 @@ import {
   SettingsSuggestRounded,
   GradingRounded,
   AssignmentTurnedInRounded,
+  ShuffleRounded,
 } from "@mui/icons-material";
 import React from "react";
 
-type roles = "admin" | "moderator" | "scholar" | "teacher";
+import { UserRole, ROLES } from "../constant/roles";
 
 type Option = {
   label: string;
   path: string;
   icon: React.ElementType;
   color?: string;
-  role?: roles[];
+  role?: UserRole[];
   loginRequired?: boolean;
 };
 
@@ -52,15 +53,15 @@ export const buttons: Button[] = [
     color: "#0073E6",
     type: "button",
     loginRequired: true,
-    role: ["admin", "moderator"],
+    role: [ROLES.ADMIN, ROLES.MODERATOR],
   },
   {
-    label: "Admin",
+    label: ROLES.ADMIN,
     icon: SecurityRounded,
     type: "menu",
     color: "#673AB7",
     loginRequired: true,
-    role: ["admin"],
+    role: [ROLES.ADMIN],
     options: [
       {
         label: "User Master",
@@ -68,13 +69,6 @@ export const buttons: Button[] = [
         loginRequired: true,
         color: "#009688",
         icon: GroupRounded,
-      },
-      {
-        label: "Academic Info",
-        path: "/admin/academic",
-        loginRequired: true,
-        icon: MenuBookRounded,
-        color: "#FF5722",
       },
       // {
       //   label: "Books",
@@ -105,28 +99,35 @@ export const buttons: Button[] = [
     icon: CloudRounded,
     loginRequired: true,
     color: "#8D6E63",
-    role: ["admin", "moderator"],
+    role: [ROLES.ADMIN, ROLES.MODERATOR],
     options: [
       {
-        label: "JEE Data",
-        path: "/admin/jee-data",
+        label: "Academic Info",
+        path: "/manage/academic",
         loginRequired: true,
-        icon: TableChartRounded,
-        color: "#FF7043",
+        icon: MenuBookRounded,
+        color: "#FF5722",
       },
       {
         label: "Batch",
-        path: "/admin/batch",
+        path: "/manage/batch",
         loginRequired: true,
         icon: GroupsRounded,
         color: "#4DB6AC",
       },
       {
         label: "Lectures",
-        path: "/admin/lectures",
+        path: "/manage/lectures",
         loginRequired: true,
         icon: PlayLessonRounded,
         color: "#42A5F5",
+      },
+      {
+        label: "JEE Data",
+        path: "/manage/jee-data",
+        loginRequired: true,
+        icon: TableChartRounded,
+        color: "#FF7043",
       },
     ],
   },
@@ -137,7 +138,7 @@ export const buttons: Button[] = [
     type: "button",
     loginRequired: true,
     color: "#1E88E5",
-    role: ["admin", "scholar"],
+    role: [ROLES.ADMIN, ROLES.STUDENT],
   },
   {
     label: "Batch",
@@ -146,13 +147,13 @@ export const buttons: Button[] = [
     type: "button",
     loginRequired: true,
     color: "#26A69A",
-    role: ["scholar"],
+    role: [ROLES.STUDENT],
   },
   {
     label: "Exams",
     icon: QuizRounded,
     type: "menu",
-    role: ["admin"],
+    role: [ROLES.ADMIN],
     loginRequired: true,
     color: "#FF7043",
     options: [
@@ -174,7 +175,7 @@ export const buttons: Button[] = [
     label: "Automation",
     icon: SettingsSuggestRounded,
     type: "menu",
-    role: ["admin"],
+    role: [ROLES.ADMIN],
     loginRequired: false,
     color: "#FF8A65",
     options: [
@@ -236,6 +237,24 @@ export const buttons: Button[] = [
         icon: BarChartRounded,
         loginRequired: false,
         color: "#8E24AA",
+      },
+    ],
+  },
+  {
+    label: "Tools",
+    icon: ComputerRounded,
+    path: "",
+    loginRequired: true,
+    type: "menu",
+    color: "#2514da",
+    role: [ROLES.ADMIN],
+    options: [
+      {
+        label: "Suffle JSON",
+        path: "/tools/suffle-question",
+        icon: ShuffleRounded,
+        loginRequired: true,
+        color: "#fa7485",
       },
     ],
   },

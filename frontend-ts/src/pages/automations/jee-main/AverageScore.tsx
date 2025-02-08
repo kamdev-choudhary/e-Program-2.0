@@ -91,13 +91,16 @@ const AverageScore: React.FC<AverageScoreProps> = ({ jsonData }) => {
               data={chartData}
               options={{
                 responsive: true,
-                plugins: { legend: { position: "top" } },
+                plugins: {
+                  legend: { position: "bottom" },
+                  title: { display: true, text: "Average Scores" },
+                },
               }}
             />
           </Paper>
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
-          <TableContainer component={Paper} sx={{ mt: 3 }}>
+          <TableContainer component={Paper}>
             <Table>
               <TableHead>
                 <TableRow>

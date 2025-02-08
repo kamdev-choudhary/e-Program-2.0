@@ -66,7 +66,7 @@ const MasterLayout: React.FC = () => {
               borderColor: isLight
                 ? "rgba(15, 23, 42, 0.08)"
                 : "rgba(248, 250, 252, 0.08)",
-              boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
+              boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
             }}
           >
             <Sidebar expanded={expanded} />

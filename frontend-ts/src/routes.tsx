@@ -1,13 +1,13 @@
 import { lazy, Suspense, ReactNode } from "react";
 import { createBrowserRouter } from "react-router-dom";
-import ProtectedRoute from "./hooks/ProtectedRoute";
+import ProtectedRoute from "./layout/ProtectedRoute";
 import MasterLayout from "./layout/MasterLayout";
 import Loader from "./components/Loader";
 
 // Public Pages
 const HomePage = lazy(() => import("./pages/home/HomePage"));
-const NotFound = lazy(() => import("./pages/error/NotFound"));
-const Unauthorized = lazy(() => import("./pages/error/Unauthorized"));
+const NotFound = lazy(() => import("./layout/NotFound"));
+const Unauthorized = lazy(() => import("./layout/Unauthorized"));
 
 // Automation & Analysis
 const JEEMainCityInfo = lazy(
@@ -54,7 +54,9 @@ const Doubts = lazy(() => import("./pages/doubts/Doubts"));
 const DoubtDetails = lazy(() => import("./pages/doubts/DoubtDetails"));
 const Chat = lazy(() => import("./pages/chat/Chat"));
 const QuestionBank = lazy(() => import("./pages/question/QuestionBank"));
-const SuffleJson = lazy(() => import("./pages/tools/SuffleJson"));
+const SuffleQuestionInWord = lazy(
+  () => import("./pages/tools/SuffleQuestionInWord")
+);
 
 import { UserRole, ROLES } from "./constant/roles";
 
@@ -112,39 +114,44 @@ const routes: RouteType[] = [
     roles: [ROLES.ADMIN, ROLES.MODERATOR],
   },
   {
-    path: "/admin/batch",
+    path: "/manage/batch",
     element: <AdminBatch />,
     roles: [ROLES.ADMIN, ROLES.MODERATOR],
   },
-  { path: "/admin/academic", element: <Academic />, roles: [ROLES.ADMIN] },
   {
-    path: "/admin/question-bank",
-    element: <QuestionBankAdmin />,
-    roles: [ROLES.ADMIN],
-  },
-  {
-    path: "/admin/lectures",
-    element: <LecturesAdmin />,
+    path: "/manage/academic",
+    element: <Academic />,
     roles: [ROLES.ADMIN, ROLES.MODERATOR],
   },
   {
-    path: "/admin/exams/online",
+    path: "/manage/question-bank",
+    element: <QuestionBankAdmin />,
+    roles: [ROLES.ADMIN],
+  },
+
+  {
+    path: "/manage/exams/online",
     element: <ExamMasterOnline />,
     roles: [ROLES.ADMIN],
   },
   {
-    path: "/admin/exams/offline",
+    path: "/manage/exams/offline",
     element: <ExamMasterOffline />,
     roles: [ROLES.ADMIN, ROLES.MODERATOR],
   },
   { path: "/admin/users", element: <UserMaster />, roles: [ROLES.ADMIN] },
   {
-    path: "/admin/batch/edit/:id",
+    path: "/manage/lectures",
+    element: <LecturesAdmin />,
+    roles: [ROLES.ADMIN, ROLES.MODERATOR],
+  },
+  {
+    path: "/manage/batch/edit/:id",
     element: <EditBatch />,
     roles: [ROLES.ADMIN],
   },
   {
-    path: "/admin/jee-data",
+    path: "/manage/jee-data",
     element: <JEEData />,
     roles: [ROLES.ADMIN, ROLES.MODERATOR],
   },
@@ -188,8 +195,8 @@ const routes: RouteType[] = [
     roles: [ROLES.STUDENT, ROLES.ADMIN, ROLES.MODERATOR],
   },
   {
-    path: "/tools/suffle-json",
-    element: <SuffleJson />,
+    path: "/tools/suffle-question",
+    element: <SuffleQuestionInWord />,
     roles: [ROLES.ADMIN, ROLES.MODERATOR],
   },
 

@@ -14,8 +14,10 @@ import {
   DialogActions,
   Button,
   Chip,
+  Grid2 as Grid,
+  Box,
 } from "@mui/material";
-import { Bar } from "react-chartjs-2";
+import { Line } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
 
 // Register Chart.js components
@@ -141,15 +143,18 @@ const RangeDistribution: React.FC<RangeDistributionProps> = ({ jsonData }) => {
     datasets: subjectDistributions.map(({ subject, distribution }) => ({
       label: subject.charAt(0).toUpperCase() + subject.slice(1),
       data: distribution,
-      backgroundColor:
+      borderColor:
         subject === "mathematics"
-          ? "rgba(75,192,192,0.6)"
+          ? "rgba(75,192,192,1)"
           : subject === "physics"
-          ? "rgba(255,99,132,0.6)"
+          ? "rgba(255,99,132,1)"
           : subject === "chemistry"
-          ? "rgba(255,206,86,0.6)"
-          : "rgba(153,102,255,0.6)",
-      borderWidth: 1,
+          ? "rgba(255,206,86,1)"
+          : "rgba(153,102,255,1)",
+      borderWidth: 2,
+      fill: false, // No area fill
+      pointRadius: 4, // Add points for better visibility
+      tension: 0.3, // Smooth curves
     })),
   };
 
@@ -171,49 +176,64 @@ const RangeDistribution: React.FC<RangeDistributionProps> = ({ jsonData }) => {
       <Typography variant="h6" sx={{ mb: 2 }}>
         Percentile Range Distribution
       </Typography>
-      <Bar
-        data={chartData}
-        options={{
-          responsive: true,
-          plugins: { legend: { position: "bottom" } },
-        }}
-      />
-      <TableContainer component={Paper} sx={{ mt: 3 }}>
-        <Table size="small">
-          <TableHead>
-            <TableRow>
-              <TableCell>
-                <strong>Percentile Range</strong>
-              </TableCell>
-              {subjects.map((subject) => (
-                <TableCell key={subject}>
-                  <strong>
-                    {subject.charAt(0).toUpperCase() + subject.slice(1)}
-                  </strong>
-                </TableCell>
-              ))}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {scoreRanges.map((range, index) => (
-              <TableRow key={range.label}>
-                <TableCell>{range.label}</TableCell>
-                {subjectDistributions.map(({ subject, distribution }) => (
-                  <TableCell
-                    key={subject}
-                    sx={{
-                      cursor: "pointer",
-                    }}
-                    onClick={() => handleCellClick(subject, index)}
-                  >
-                    <Chip label={distribution[index]} sx={{ minWidth: 70 }} />
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <Box sx={{ height: "100%", display: "flex", flexGrow: 1 }}>
+            <Line
+              data={chartData}
+              options={{
+                responsive: true,
+                plugins: {
+                  legend: { position: "bottom" },
+                  title: { text: "Range Distribution", display: true },
+                },
+                elements: { line: { tension: 0.3 } },
+              }}
+            />
+          </Box>
+        </Grid>
+        <Grid size={{ xs: 12, md: 6 }}>
+          <TableContainer component={Paper}>
+            <Table size="small">
+              <TableHead>
+                <TableRow>
+                  <TableCell>
+                    <strong> Range</strong>
                   </TableCell>
+                  {subjects.map((subject) => (
+                    <TableCell key={subject}>
+                      <strong>
+                        {subject.charAt(0).toUpperCase() + subject.slice(1)}
+                      </strong>
+                    </TableCell>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {scoreRanges.map((range, index) => (
+                  <TableRow key={range.label}>
+                    <TableCell>{range.label}</TableCell>
+                    {subjectDistributions.map(({ subject, distribution }) => (
+                      <TableCell
+                        key={subject}
+                        sx={{
+                          cursor: "pointer",
+                        }}
+                        onClick={() => handleCellClick(subject, index)}
+                      >
+                        <Chip
+                          label={distribution[index]}
+                          sx={{ minWidth: 70 }}
+                        />
+                      </TableCell>
+                    ))}
+                  </TableRow>
                 ))}
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </Grid>
+      </Grid>
 
       {/* Modal for showing students */}
       <Dialog
