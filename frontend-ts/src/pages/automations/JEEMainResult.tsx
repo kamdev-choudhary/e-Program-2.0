@@ -2,6 +2,7 @@ import {
   Box,
   Button,
   CircularProgress,
+  IconButton,
   Paper,
   ToggleButton,
 } from "@mui/material";
@@ -12,6 +13,7 @@ import {
   CheckCircleRounded,
   CloudDownloadRounded,
   TableChartRounded,
+  VisibilityRounded,
 } from "@mui/icons-material";
 import { CustomToolbar } from "../../components/CustomToolbar";
 import { downloadJsonToExcel } from "../../utils/commonfs";
@@ -24,6 +26,8 @@ import RangeDistribution from "./jee-main/RangeDistribution";
 import AverageScore from "./jee-main/AverageScore";
 import QualificationStatus from "./jee-main/QulificationStatus";
 import BorderLinearProgress from "../../components/BorderLineProgress";
+import { CustomModal } from "../../components/CustomModal";
+import ScholarCard from "./jee-main/ScholarCard";
 
 interface ScholarData {
   drn: string;
@@ -73,6 +77,10 @@ const JEEMainResult: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [jsonData, setJsonData] = useState<ScholarData[] | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
+  const [selectedScholar, setSelectedScholar] = useState<ScholarData | null>(
+    null
+  );
+  const [showScholarCard, setShowScholarCard] = useState<boolean>(false);
   const { showNotification } = useNotification();
 
   const handleDownloadMainScorecard = async (scholar: ScholarData) => {
@@ -327,6 +335,19 @@ const JEEMainResult: React.FC = () => {
         headerAlign: "center",
         editable: true,
         flex: 1,
+      },
+      {
+        field: "view",
+        headerName: "View",
+        align: "center",
+        headerAlign: "center",
+        renderCell: (params) => (
+          <>
+            <IconButton onClick={() => handleShowScholarCard(params.row)}>
+              <VisibilityRounded />
+            </IconButton>
+          </>
+        ),
       },
       {
         field: "status",
@@ -662,6 +683,11 @@ const JEEMainResult: React.FC = () => {
     []
   );
 
+  const handleShowScholarCard = (scholar: ScholarData) => {
+    setSelectedScholar(scholar);
+    setShowScholarCard(true);
+  };
+
   const filteredData = useMemo(() => {
     if (!jsonData) return [];
 
@@ -812,6 +838,13 @@ const JEEMainResult: React.FC = () => {
       <RangeDistribution jsonData={jsonData} />
       <AverageScore jsonData={jsonData} />
       <QualificationStatus jsonData={jsonData} />
+
+      <CustomModal
+        open={showScholarCard}
+        onClose={() => setShowScholarCard(false)}
+      >
+        <ScholarCard data={selectedScholar} />
+      </CustomModal>
     </Box>
   );
 };
