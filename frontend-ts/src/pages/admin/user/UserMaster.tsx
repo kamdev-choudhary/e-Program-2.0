@@ -51,6 +51,7 @@ const UserMaster: React.FC = () => {
   const [adminCount, setAdminCount] = useState<number | null>(0);
   const [scholarCount, setScholarCount] = useState<number | null>(0);
   const [moderatorCount, setModeratorCount] = useState<number | null>(0);
+  const [teacherCount, setTeacherCount] = useState<number | null>(0);
   const [selectedUser, setSelectedUser] = useState<UserProps | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [newUser, setNewUser] = useState<newUser>({
@@ -64,6 +65,7 @@ const UserMaster: React.FC = () => {
     { name: "Admin", value: "admin", count: adminCount },
     { name: "Scholar", value: "scholar", count: scholarCount },
     { name: "Moderator", value: "moderator", count: moderatorCount },
+    { name: "Teacher", value: "teacher", count: teacherCount },
   ];
   const [showSessions, setShowSessions] = useState<boolean>(false);
 
@@ -88,6 +90,7 @@ const UserMaster: React.FC = () => {
       setAdminCount(response.data.adminCount);
       setScholarCount(response.data.scholarCount);
       setModeratorCount(response.data.moderatorCount);
+      setTeacherCount(response.data.teacherCount);
     } catch (error) {
       console.error(error);
     } finally {
@@ -330,7 +333,10 @@ const UserMaster: React.FC = () => {
             toolbar: () => (
               <CustomToolbar
                 showAddButton={true}
-                onAddButtonClick={() => setAddAdminModal(true)}
+                onAddButtonClick={() => {
+                  setNewUser((prev) => ({ ...prev, role: activeTab }));
+                  setAddAdminModal(true);
+                }}
               />
             ),
           }}
