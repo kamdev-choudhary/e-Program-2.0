@@ -22,14 +22,16 @@ import {
 } from "@mui/icons-material";
 import React from "react";
 
-interface Option {
+type roles = "admin" | "moderator" | "scholar" | "teacher";
+
+type Option = {
   label: string;
   path: string;
   icon: React.ElementType;
   color?: string;
-  role?: string[];
+  role?: roles[];
   loginRequired?: boolean;
-}
+};
 
 interface Button {
   label: string;
@@ -135,7 +137,7 @@ export const buttons: Button[] = [
     type: "button",
     loginRequired: true,
     color: "#1E88E5",
-    role: ["admin", "scholar", "moderator"],
+    role: ["admin", "scholar"],
   },
   {
     label: "Batch",
@@ -191,14 +193,14 @@ export const buttons: Button[] = [
         color: "#D32F2F",
       },
       {
-        label: "Generate Admit Card",
+        label: "JDST Admit Card",
         path: "/automation/jdstadmitcard",
         icon: CreateRounded,
         loginRequired: false,
         color: "#1976D2",
       },
       {
-        label: "Provisional Answer Key",
+        label: "Provisional Key",
         path: "/automation/jeemainprovisionalanswerkey",
         icon: GradingRounded,
         loginRequired: false,

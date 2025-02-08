@@ -14,10 +14,11 @@ interface FileDropZoneProps {
 const FileDropZone: React.FC<FileDropZoneProps> = ({
   onDrop,
   title = "Drag & drop files here, or click to select files",
-  acceptedExtensions = [], // Default to empty array for no restrictions
-  multiple = false, // Allow multiple files by default
+  acceptedExtensions = [],
+  multiple = false,
 }) => {
   const { theme } = useTheme();
+
   // Convert the array of extensions to the accept object
   const getAcceptObject = (extensions: string[]) => {
     const mimeTypes: { [key: string]: string[] } = {};
@@ -68,21 +69,27 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({
       {...getRootProps()}
       sx={{
         border: `1px dashed ${
-          theme === "dark" ? "rgba(234, 232, 232, 0.68)" : "rgba(0,0,0,0.3)"
+          theme === "dark" ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.15)"
         }`,
         borderRadius: 20,
         cursor: "pointer",
         flexGrow: 1,
-        boxShadow: 2,
-        alignContent: "center",
-        p: 1.1,
+        // Use modern, subtle shadows
+        boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.08)",
         display: "flex",
+        alignItems: "center",
         justifyContent: "center",
-        ":hover": {
-          boxShadow: 3,
-          border: "1.5px solid blue",
-        },
+        p: 1.1,
         transition: "all 0.3s ease",
+        "&:hover": {
+          // On hover, elevate the shadow and change the border to a solid accent
+          boxShadow: "0px 4px 16px rgba(0, 0, 0, 0.16)",
+          border: `0.5px solid ${
+            theme === "dark"
+              ? "rgba(255,255,255,0.85)"
+              : "rgba(115, 203, 227, 0.65)"
+          }`,
+        },
       }}
     >
       <input {...getInputProps()} />

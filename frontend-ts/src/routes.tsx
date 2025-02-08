@@ -54,6 +54,7 @@ const Doubts = lazy(() => import("./pages/doubts/Doubts"));
 const DoubtDetails = lazy(() => import("./pages/doubts/DoubtDetails"));
 const Chat = lazy(() => import("./pages/chat/Chat"));
 const QuestionBank = lazy(() => import("./pages/question/QuestionBank"));
+const SuffleJson = lazy(() => import("./pages/tools/SuffleJson"));
 
 import { UserRole, ROLES } from "./constant/roles";
 
@@ -185,6 +186,11 @@ const routes: RouteType[] = [
     path: "/question-bank",
     element: <QuestionBank />,
     roles: [ROLES.STUDENT, ROLES.ADMIN, ROLES.MODERATOR],
+  },
+  {
+    path: "/tools/suffle-json",
+    element: <SuffleJson />,
+    roles: [ROLES.ADMIN, ROLES.MODERATOR],
   },
 
   // Catch-All Route

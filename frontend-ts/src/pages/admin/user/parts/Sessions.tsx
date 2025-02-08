@@ -9,9 +9,16 @@ import {
   ListItemText,
   Box,
   CircularProgress,
+  ListItemIcon,
 } from "@mui/material";
 import Swal from "sweetalert2";
-import { LogoutRounded } from "@mui/icons-material";
+import {
+  AndroidRounded,
+  DesktopWindowsRounded,
+  IsoRounded,
+  LaptopWindowsRounded,
+  LogoutRounded,
+} from "@mui/icons-material";
 import axios from "../../../../hooks/AxiosInterceptor";
 import { useNotification } from "../../../../contexts/NotificationProvider";
 
@@ -91,6 +98,21 @@ const Sessions: React.FC<UserSessionProps> = ({ user }) => {
     }
   };
 
+  const getIconForSession = (platform: string) => {
+    switch (platform) {
+      case "Windows":
+      case "Linux":
+      case "Mac":
+        return <LaptopWindowsRounded sx={{ color: "#28844f" }} />;
+      case "Android":
+        return <AndroidRounded sx={{ color: "#914D7E" }} />;
+      case "iOS":
+        return <IsoRounded />;
+      default:
+        return <DesktopWindowsRounded />;
+    }
+  };
+
   return (
     <Card
       sx={{
@@ -121,6 +143,9 @@ const Sessions: React.FC<UserSessionProps> = ({ user }) => {
                       p: { xs: 0.5, sm: 1 },
                     }}
                   >
+                    <ListItemIcon>
+                      {getIconForSession(session.platform)}
+                    </ListItemIcon>
                     <ListItemText
                       primary={`${session.browser} (${session.platform})`}
                       secondary={session.ip}
@@ -130,7 +155,6 @@ const Sessions: React.FC<UserSessionProps> = ({ user }) => {
                       color="error"
                       variant="contained"
                       onClick={() => handleDeleteSession(session.deviceId)}
-                      size="small"
                     >
                       Logout
                     </Button>

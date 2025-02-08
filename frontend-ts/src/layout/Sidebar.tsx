@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Box,
   Typography,
@@ -105,6 +105,24 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded = true }) => {
     }));
   };
 
+  // New useEffect: Open submenu if current route matches any submenu path
+  useEffect(() => {
+    buttons.forEach((page) => {
+      if (page.options) {
+        // Check if any submenu option path matches the current location
+        const shouldOpen = page.options.some(
+          (option) => option.path === location.pathname
+        );
+        if (shouldOpen) {
+          setOpenMenus((prev) => ({
+            ...prev,
+            [page.label]: true,
+          }));
+        }
+      }
+    });
+  }, [location.pathname]);
+
   return (
     <Box sx={{ width: "100%" }}>
       <Box
@@ -113,16 +131,17 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded = true }) => {
           flexDirection: "column",
           alignItems: "center",
           justifyContent: "center",
-          m: 1,
-          gap: 2,
+          mt: 2,
         }}
       >
         <motion.div
-          whileHover={{ scale: 1.3, marginBottom: "15px" }}
-          transition={{ duration: 0.3 }}
+          animate={{
+            scale: expanded ? 1.1 : 0.5,
+          }}
+          transition={{ duration: 0.4 }}
           style={{
-            height: expanded ? "95px" : "38px",
-            width: expanded ? "95px" : "38px",
+            height: "80px",
+            width: "80px",
           }}
         >
           <Box
@@ -131,26 +150,25 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded = true }) => {
               width: "100%",
               borderRadius: "50%",
               backgroundImage: `url(${profilePicUrl})`,
-              backgroundSize: "cover", // Ensures the image covers the box
-              backgroundPosition: "center", // Centers the image within the box
-              backgroundRepeat: "no-repeat", // Prevents tiling of the image
-              mb: 4,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              backgroundRepeat: "no-repeat",
+              mb: 2,
+              transition: "all 0.4s ease",
             }}
           />
         </motion.div>
 
         {isLoggedIn && expanded && (
-          <Box
-            sx={{
-              display: "flex",
-              justifyContent: "center",
-              flexDirection: "column",
-              alignItems: "center",
-            }}
+          <motion.div
+            animate={{ opacity: 1, y: 0 }}
+            initial={{ opacity: 0, y: -20 }}
+            transition={{ duration: 0.4 }}
+            style={{ marginTop: "10px" }}
           >
-            <Typography>{user?.name}</Typography>
-            <Typography>({user?.role})</Typography>
-          </Box>
+            <Typography variant="subtitle1">{user?.name}</Typography>
+            <Typography variant="body2">({user?.role})</Typography>
+          </motion.div>
         )}
       </Box>
       <List>

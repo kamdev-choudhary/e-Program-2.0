@@ -5,13 +5,16 @@ import { AnimatePresence, motion } from "framer-motion";
 import Sidebar from "./Sidebar";
 import Appbar from "./Appbar";
 import PopUpPages from "./PopUpPages";
+import useTheme from "../utils/useTheme";
 
 const drawerWidth = 285; // Sidebar width
 
 const MasterLayout: React.FC = () => {
+  const { theme } = useTheme();
   const isSmallScreen = useMediaQuery("(max-width:475px)");
   const [expanded, setExpanded] = useState<boolean>(true);
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
+  const isLight = theme === "light";
 
   // Toggle Sidebar (Mobile & Desktop)
   const handleToggleSidebar = () => {
@@ -22,7 +25,6 @@ const MasterLayout: React.FC = () => {
 
   return (
     <Box sx={{ height: "100vh", display: "flex", flexDirection: "column" }}>
-      {/* AppBar (Top Navbar) */}
       <Appbar
         handleButtonClick={handleToggleSidebar}
         expanded={expanded}
@@ -36,7 +38,6 @@ const MasterLayout: React.FC = () => {
           flexDirection: "row",
           height: "calc(100vh - 67px)",
           p: 0,
-          background: "background.surface",
         }}
       >
         {/* Sidebar (Collapsible for Desktop, Drawer for Mobile) */}
@@ -60,6 +61,12 @@ const MasterLayout: React.FC = () => {
               padding: expanded ? "16px" : "8px",
               height: "100%",
               scrollbarWidth: "none",
+              background: isLight ? "rgba(255, 255, 255, 0.7)" : "#212327",
+              borderBottom: "1px solid",
+              borderColor: isLight
+                ? "rgba(15, 23, 42, 0.08)"
+                : "rgba(248, 250, 252, 0.08)",
+              boxShadow: "0 8px 32px rgba(0,0,0,0.1)",
             }}
           >
             <Sidebar expanded={expanded} />

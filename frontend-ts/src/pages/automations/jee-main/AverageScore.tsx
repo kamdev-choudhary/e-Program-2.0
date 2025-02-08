@@ -86,13 +86,15 @@ const AverageScore: React.FC<AverageScoreProps> = ({ jsonData }) => {
       </Typography>
       <Grid container spacing={2} sx={{ mb: 2 }}>
         <Grid size={{ xs: 12, md: 6 }}>
-          <Bar
-            data={chartData}
-            options={{
-              responsive: true,
-              plugins: { legend: { position: "top" } },
-            }}
-          />
+          <Paper>
+            <Bar
+              data={chartData}
+              options={{
+                responsive: true,
+                plugins: { legend: { position: "top" } },
+              }}
+            />
+          </Paper>
         </Grid>
         <Grid size={{ xs: 12, md: 6 }}>
           <TableContainer component={Paper} sx={{ mt: 3 }}>
