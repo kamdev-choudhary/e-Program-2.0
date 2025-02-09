@@ -102,7 +102,7 @@ const ScholarCard: React.FC<ScholarCardProps> = ({ data }) => {
     title: string,
     fields: [string, string | undefined][]
   ) => (
-    <Card sx={{ marginBottom: 2 }}>
+    <Card>
       <CardContent>
         <Typography variant="h6" gutterBottom>
           {title}
@@ -150,6 +150,10 @@ const ScholarCard: React.FC<ScholarCardProps> = ({ data }) => {
 
       <MuiGrid size={{ xs: 12 }}>
         <TableContainer component={Paper}>
+          <Typography variant="h6" gutterBottom>
+            Marks
+          </Typography>
+          <Divider />
           <Table>
             <TableHead>
               <TableRow>
