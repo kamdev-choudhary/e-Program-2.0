@@ -8,7 +8,9 @@ import {
   TableRow,
   Paper,
   Typography,
+  IconButton,
 } from "@mui/material";
+import { VisibilityRounded } from "@mui/icons-material";
 
 interface ScholarData {
   drn: string;
@@ -55,6 +57,7 @@ interface ScholarData {
 
 interface RankProps {
   jsonData: ScholarData[] | null;
+  handleShowScholarCard: (value: ScholarData) => void;
 }
 
 const rankCategories: { key: keyof ScholarData; label: string }[] = [
@@ -83,7 +86,7 @@ const getMinRankStudent = (
     );
 };
 
-const Rank: React.FC<RankProps> = ({ jsonData }) => {
+const Rank: React.FC<RankProps> = ({ jsonData, handleShowScholarCard }) => {
   if (!jsonData || jsonData.length === 0) {
     return null;
   }
@@ -121,6 +124,9 @@ const Rank: React.FC<RankProps> = ({ jsonData }) => {
             <TableCell>
               <strong>Total </strong>
             </TableCell>
+            <TableCell>
+              <strong>View</strong>
+            </TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
@@ -135,6 +141,11 @@ const Rank: React.FC<RankProps> = ({ jsonData }) => {
                 <TableCell>{student.personWithDisability}</TableCell>
                 <TableCell>{rank}</TableCell>
                 <TableCell>{student.total}</TableCell>
+                <TableCell>
+                  <IconButton onClick={() => handleShowScholarCard(student)}>
+                    <VisibilityRounded />
+                  </IconButton>
+                </TableCell>
               </TableRow>
             ) : null
           )}

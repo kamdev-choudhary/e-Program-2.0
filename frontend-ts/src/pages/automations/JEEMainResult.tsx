@@ -834,7 +834,7 @@ const JEEMainResult: React.FC = () => {
           pageSizeOptions={[10, 30, 50, 100, 200]}
         />
       </Box>
-      <Rank jsonData={jsonData} />
+      <Rank jsonData={jsonData} handleShowScholarCard={handleShowScholarCard} />
       <RangeDistribution jsonData={jsonData} />
       <AverageScore jsonData={jsonData} />
       <QualificationStatus jsonData={jsonData} />
@@ -842,6 +842,7 @@ const JEEMainResult: React.FC = () => {
       <CustomModal
         open={showScholarCard}
         onClose={() => setShowScholarCard(false)}
+        width="auto"
       >
         <ScholarCard data={selectedScholar} />
       </CustomModal>

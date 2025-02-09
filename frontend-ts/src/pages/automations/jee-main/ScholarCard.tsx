@@ -1,5 +1,18 @@
 import React from "react";
-import { Card, CardContent, Typography, Grid } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  Typography,
+  Grid2 as MuiGrid,
+  Divider,
+  TableContainer,
+  Paper,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+} from "@mui/material";
 import { Bar } from "react-chartjs-2";
 import {
   Chart as ChartJS,
@@ -26,7 +39,7 @@ interface ScholarData {
   application: string;
   password?: string;
   status?: "idle" | "loading" | "fetched";
-  error?: string;
+  error: string;
   rollNumber1?: string;
   rollNumber2?: string;
   candidateName?: string;
@@ -38,9 +51,17 @@ interface ScholarData {
   dateOfBirth?: string;
   stateOfEligibility?: string;
   nationality?: string;
+  mathematics1?: string;
+  mathematics2?: string;
   mathematics?: string;
+  physics1?: string;
+  physics2?: string;
   physics?: string;
+  chemistry1?: string;
+  chemistry2?: string;
   chemistry?: string;
+  total1?: string;
+  total2?: string;
   total?: string;
   ntaScoreInWords?: string;
   crlRank?: string;
@@ -48,6 +69,11 @@ interface ScholarData {
   obcNclRank?: string;
   scRank?: string;
   stRank?: string;
+  crlPwDRank?: string;
+  genEwsPwDRank?: string;
+  obcNclPwDRank?: string;
+  scPwDRank?: string;
+  stPwDRank?: string;
 }
 
 interface ScholarCardProps {
@@ -57,105 +83,147 @@ interface ScholarCardProps {
 const ScholarCard: React.FC<ScholarCardProps> = ({ data }) => {
   if (!data) return <Typography variant="h6">No Data Available</Typography>;
 
-  const {
-    drn,
-    name,
-    application,
-    status,
-    error,
-    rollNumber1,
-    rollNumber2,
-    candidateName,
-    motherName,
-    fatherName,
-    category,
-    personWithDisability,
-    gender,
-    dateOfBirth,
-    stateOfEligibility,
-    nationality,
-    mathematics,
-    physics,
-    chemistry,
-    total,
-    ntaScoreInWords,
-    crlRank,
-    genEwsRank,
-    obcNclRank,
-    scRank,
-    stRank,
-  } = data;
-
   const chartData = {
     labels: ["Mathematics", "Physics", "Chemistry"],
     datasets: [
       {
         label: "Scores",
         data: [
-          mathematics ? parseFloat(mathematics) : 0,
-          physics ? parseFloat(physics) : 0,
-          chemistry ? parseFloat(chemistry) : 0,
+          data.mathematics ? parseFloat(data.mathematics) : 0,
+          data.physics ? parseFloat(data.physics) : 0,
+          data.chemistry ? parseFloat(data.chemistry) : 0,
         ],
         backgroundColor: ["#3f51b5", "#ff9800", "#f44336"],
       },
     ],
   };
 
-  return (
-    <Card sx={{ maxWidth: 800, margin: "auto", padding: 2 }}>
+  const renderCard = (
+    title: string,
+    fields: [string, string | undefined][]
+  ) => (
+    <Card sx={{ marginBottom: 2 }}>
       <CardContent>
-        <Typography variant="h5" gutterBottom>
-          Scholar Information
+        <Typography variant="h6" gutterBottom>
+          {title}
         </Typography>
-        <Grid container spacing={2}>
-          {(
-            [
-              ["DRN", drn],
-              ["Name", name],
-              ["Application", application],
-              ["Status", status],
-              ["Error", error],
-              ["Roll Number 1", rollNumber1],
-              ["Roll Number 2", rollNumber2],
-              ["Candidate Name", candidateName],
-              ["Mother's Name", motherName],
-              ["Father's Name", fatherName],
-              ["Category", category],
-              ["PWD", personWithDisability],
-              ["Gender", gender],
-              ["DOB", dateOfBirth],
-              ["State Eligibility", stateOfEligibility],
-              ["Nationality", nationality],
-              ["Mathematics", mathematics],
-              ["Physics", physics],
-              ["Chemistry", chemistry],
-              ["Total", total],
-              ["NTA Score", ntaScoreInWords],
-              ["CRL Rank", crlRank],
-              ["GEN EWS Rank", genEwsRank],
-              ["OBC NCL Rank", obcNclRank],
-              ["SC Rank", scRank],
-              ["ST Rank", stRank],
-            ] as const
-          ).map(([label, value], index) => (
-            <Grid item xs={12} sm={6} key={index}>
+        <Divider sx={{ mb: 1 }} />
+        <MuiGrid container spacing={2}>
+          {fields.map(([label, value], index) => (
+            <MuiGrid size={{ xs: 12, md: 6 }} key={index}>
               <Typography variant="body1">
                 <strong>{label}:</strong> {value || "N/A"}
               </Typography>
-            </Grid>
+            </MuiGrid>
           ))}
-        </Grid>
-        <div style={{ marginTop: 20, maxHeight: 300 }}>
-          <Bar
-            data={chartData}
-            options={{
-              responsive: true,
-              plugins: { legend: { display: false } },
-            }}
-          />
-        </div>
+        </MuiGrid>
       </CardContent>
     </Card>
+  );
+
+  return (
+    <MuiGrid
+      container
+      spacing={2}
+      sx={{ maxWidth: 800, margin: "auto", padding: 2 }}
+    >
+      <MuiGrid size={{ xs: 12 }}>
+        {renderCard("Basic Information", [
+          ["DRN", data.drn],
+          ["Name", data.name],
+          ["Application", data.application],
+          ["Status", data.status],
+          ["Error", data.error],
+          ["Roll Number 1", data.rollNumber1],
+          ["Roll Number 2", data.rollNumber2],
+          ["Candidate Name", data.candidateName],
+          ["Mother's Name", data.motherName],
+          ["Father's Name", data.fatherName],
+          ["Category", data.category],
+          ["PWD", data.personWithDisability],
+          ["Gender", data.gender],
+          ["DOB", data.dateOfBirth],
+          ["State Eligibility", data.stateOfEligibility],
+          ["Nationality", data.nationality],
+        ])}
+      </MuiGrid>
+
+      <MuiGrid size={{ xs: 12 }}>
+        <TableContainer component={Paper}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell>Subject</TableCell>
+                <TableCell>Session 1</TableCell>
+                <TableCell>Session 2</TableCell>
+                <TableCell>Total</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              <TableRow>
+                <TableCell>Maths</TableCell>
+                <TableCell>{data.mathematics1}</TableCell>
+                <TableCell>{data.mathematics2}</TableCell>
+                <TableCell>{data.mathematics}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Physics</TableCell>
+                <TableCell>{data.physics1}</TableCell>
+                <TableCell>{data.physics2}</TableCell>
+                <TableCell>{data.physics}</TableCell>
+              </TableRow>
+              <TableRow>
+                <TableCell>Chemistry</TableCell>
+                <TableCell>{data.chemistry1}</TableCell>
+                <TableCell>{data.chemistry2}</TableCell>
+                <TableCell>{data.chemistry}</TableCell>
+              </TableRow>
+
+              <TableRow>
+                <TableCell>Total</TableCell>
+                <TableCell>{data.total1}</TableCell>
+                <TableCell>{data.total2}</TableCell>
+                <TableCell>{data.total}</TableCell>
+              </TableRow>
+            </TableBody>
+          </Table>
+        </TableContainer>
+      </MuiGrid>
+
+      <MuiGrid size={{ xs: 12 }}>
+        {renderCard("Ranks", [
+          ["CRL Rank", data.crlRank],
+          ["GEN EWS Rank", data.genEwsRank],
+          ["OBC NCL Rank", data.obcNclRank],
+          ["SC Rank", data.scRank],
+          ["ST Rank", data.stRank],
+          ["CRL PWD Rank", data.crlPwDRank],
+          ["Gen-EWS PWD Rank", data.genEwsPwDRank],
+          ["OBC-NCL PWD Rank", data.obcNclPwDRank],
+          ["SC PWD Rank", data.scPwDRank],
+          ["ST PWD Rank", data.stPwDRank],
+        ])}
+      </MuiGrid>
+
+      <MuiGrid size={{ xs: 12 }}>
+        <Card>
+          <CardContent>
+            <Typography variant="h6" gutterBottom>
+              Score Distribution
+            </Typography>
+            <div style={{ marginTop: 20, maxHeight: 300 }}>
+              <Bar
+                data={chartData}
+                options={{
+                  responsive: true,
+                  plugins: { legend: { display: false } },
+                }}
+              />
+            </div>
+          </CardContent>
+        </Card>
+      </MuiGrid>
+    </MuiGrid>
   );
 };
 
