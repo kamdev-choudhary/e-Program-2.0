@@ -43,7 +43,7 @@ const OnlineStatusIndicator: React.FC = () => {
               </>
             }
           >
-            Backend is online. Everything is working fine!
+            Backend is Offline. Please try again after some time!
           </Alert>
         </Slide>
       </Fade>

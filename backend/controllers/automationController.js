@@ -625,6 +625,7 @@ export async function jeeMainResultDownload(req, res, next) {
     captcha: "#ctl00_ContentPlaceHolder1_captchaimage",
     loginButton: '[name="ctl00$ContentPlaceHolder1$btnsignin"]',
     errorSelector: "#ctl00_ContentPlaceHolder1_lblerror1",
+    refreshCaptcha: "#ctl00_ContentPlaceHolder1_bttRegCaptcha",
   };
 
   const { application, password, drn } = req.body;
@@ -636,37 +637,37 @@ export async function jeeMainResultDownload(req, res, next) {
       .status(400)
       .json({ message: "Application number or password missing" });
 
-  const browser = await puppeteer.launch({
-    headless: "new", // Use "new" mode to bypass bot detection
-    args: [
-      "--no-sandbox",
-      "--disable-setuid-sandbox",
-      "--disable-dev-shm-usage", // Prevents crashes in Docker
-      "--disable-gpu", // Disables GPU hardware acceleration
-      "--disable-features=IsolateOrigins,site-per-process", // Reduces process overhead
-    ],
-    defaultViewport: { width: 1920, height: 1080 },
-  });
+  // const browser = await puppeteer.launch({
+  //   headless: "new", // Use "new" mode to bypass bot detection
+  //   args: [
+  //     "--no-sandbox",
+  //     "--disable-setuid-sandbox",
+  //     "--disable-dev-shm-usage", // Prevents crashes in Docker
+  //     "--disable-gpu", // Disables GPU hardware acceleration
+  //     "--disable-features=IsolateOrigins,site-per-process", // Reduces process overhead
+  //   ],
+  //   defaultViewport: { width: 1920, height: 1080 },
+  // });
 
-  const [page] = await browser.pages();
-  await page.setRequestInterception(true);
-  page.on("request", (request) => {
-    if (request.resourceType() === "image") {
-      request.abort();
-    } else {
-      request.continue();
-    }
-  });
+  // const [page] = await browser.pages();
+  // await page.setRequestInterception(true);
+  // page.on("request", (request) => {
+  //   if (request.resourceType() === "image") {
+  //     request.abort();
+  //   } else {
+  //     request.continue();
+  //   }
+  // });
 
   try {
-    await page.goto(website);
-    let success = false;
+    // await page.goto(website);
+    // let success = false;
 
-    // Testing
-    await page.pdf({
-      path: `./uploads/${drn}_${uniqueId}_1.pdf`,
-      format: "A4",
-    });
+    // // Testing
+    // await page.pdf({
+    //   path: `./uploads/${drn}_${uniqueId}_1.pdf`,
+    //   format: "A4",
+    // });
 
     // for (let i = 0; i < MAX_RETRIES; i++) {
     //   try {
@@ -780,6 +781,6 @@ export async function jeeMainResultDownload(req, res, next) {
   } catch (error) {
     next(error);
   } finally {
-    await browser.close();
+    // await browser.close();
   }
 }

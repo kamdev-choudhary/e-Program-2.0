@@ -15,10 +15,12 @@ const userSchema = new Schema(
     email: {
       type: String,
       required: true,
+      unique: true, // Ensuring email is unique
     },
     mobile: {
       type: String,
       required: true,
+      unique: true, // Ensuring mobile is unique
     },
     password: {
       type: String,
@@ -35,7 +37,7 @@ const userSchema = new Schema(
     },
     status: {
       type: Number,
-      emum: [0, 1],
+      enum: [0, 1], // Fixed typo
       default: 1,
     },
     apiToken: String,
@@ -56,8 +58,8 @@ userSchema.methods.generateToken = async function () {
         name: this.name,
         mobile: this.mobile,
       },
-      config.ACCESS_TOKEN_SECRET,
-      { expiresIn: "1d" }
+      jwtSecret, // Using the correct secret variable
+      { expiresIn: "5m" }
     );
   } catch (err) {
     logger.error(err.message);
@@ -65,15 +67,13 @@ userSchema.methods.generateToken = async function () {
   }
 };
 
-userSchema.methods.generateRefreshToken = async () => {
+// Generate Refresh Token
+userSchema.methods.generateRefreshToken = async function () {
   try {
     return jwt.sign(
       {
         _id: this._id.toString(),
         email: this.email,
-        role: this.role,
-        name: this.name,
-        mobile: this.mobile,
       },
       config.REFRESH_TOKEN_SECRET,
       { expiresIn: "5h" }

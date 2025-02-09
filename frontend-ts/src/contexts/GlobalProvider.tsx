@@ -28,6 +28,7 @@ interface User {
 
 interface LoginResponse {
   token: string;
+  refreshToken: string;
   user: User;
   photo?: string | null;
 }
@@ -120,7 +121,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
 
   // Handle user login
   const handleUserLogin = (data: LoginResponse) => {
-    const { token, photo } = data;
+    const { token, photo, refreshToken } = data;
     try {
       const decodedToken = jwtDecode<JwtPayload & User>(token);
       const user = {
@@ -134,6 +135,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
       setProfilePicUrl(photo || dummyImage);
       localStorage.setItem(LS_KEYS.PHOTO, photo || "");
       localStorage.setItem(LS_KEYS.TOKEN, token);
+      localStorage.setItem(LS_KEYS.REFRESH_TOKEN, refreshToken);
     } catch (error) {
       console.error("Invalid token:", error);
       showNotification({

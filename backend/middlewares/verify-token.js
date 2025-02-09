@@ -17,6 +17,10 @@ const verifyToken = async (req, res, next) => {
     return res.status(401).json({ message: "Authorization token missing." });
   }
 
+  if (!deviceid) {
+    return res.status(400).json({ message: "Device ID missing." });
+  }
+
   try {
     const decoded = verify(token, jwtSecret);
     const session = await Session.findOne({

@@ -178,7 +178,10 @@ const RangeDistribution: React.FC<RangeDistributionProps> = ({ jsonData }) => {
       </Typography>
       <Grid container spacing={2}>
         <Grid size={{ xs: 12, md: 6 }}>
-          <Box sx={{ height: "100%", display: "flex", flexGrow: 1 }}>
+          <Box
+            component={Paper}
+            sx={{ height: "100%", display: "flex", flexGrow: 1 }}
+          >
             <Line
               data={chartData}
               options={{

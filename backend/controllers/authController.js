@@ -31,9 +31,11 @@ export async function login(req, res, next) {
     }
 
     const token = await userExist.generateToken();
+    const refreshToken = await userExist.generateRefreshToken();
 
     const newSession = new Session({
       token,
+      refreshToken,
       userId: userExist._id,
       deviceId: sessionDetails?.deviceId || "unknown",
       platform: sessionDetails?.platform || "unknown",
@@ -44,6 +46,7 @@ export async function login(req, res, next) {
     await newSession.save();
 
     return res.status(200).json({
+      refreshToken,
       token,
       photo: userExist.photo || null,
       message: "Login Successful",
@@ -94,8 +97,10 @@ export async function register(req, res, next) {
       return res.status(201).json({ message: "Registration successful." });
     } else {
       const token = await newUser.generateToken();
+      const refreshToken = await newUser.generateRefreshToken();
       return res.status(201).json({
         token,
+        refreshToken,
         userId: newUser._id.toString(),
         message: "Registration successful.",
       });
@@ -188,27 +193,43 @@ export async function deleteAllSession(req, res, next) {
 
 export async function refreshToken(req, res, next) {
   try {
-    const { refreshToken } = req.body;
+    // Retrieve the refresh token from the "x-refresh-token" header
+    const refreshToken = req.headers["x-refresh-token"];
 
+    // Check that a refresh token is provided
     if (!refreshToken) {
       return res.status(400).json({ message: "Refresh token is required." });
     }
 
+    // Look up the session associated with the provided refresh token
     const session = await Session.findOne({ refreshToken });
-
     if (!session) {
-      return res.status(404).json({ message: "Invalid refresh token." });
+      return res.status(401).json({ message: "Invalid refresh token." });
     }
 
-    const user = await User.findById(session.userId);
+    // Optionally: Check if the session has expired
+    // if (session.expiresAt && session.expiresAt < Date.now()) {
+    //   return res.status(401).json({ message: "Refresh token has expired." });
+    // }
 
+    // Find the user associated with the session
+    const user = await User.findById(session.userId);
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
 
-    const token = await user.generateToken();
+    // Generate a new access token for the user.
+    // This assumes that your User model has a method `generateToken()` that returns a promise.
+    const accessToken = await user.generateToken();
 
-    return res.status(200).json({ token });
+    // Optionally, if you wish to rotate the refresh token, generate a new one, update the session, and return it:
+    // const newRefreshToken = await user.generateRefreshToken();
+    // session.refreshToken = newRefreshToken;
+    // await session.save();
+    // return res.status(200).json({ accessToken, refreshToken: newRefreshToken });
+
+    // Return the new access token
+    return res.status(200).json({ accessToken });
   } catch (error) {
     return next(error);
   }

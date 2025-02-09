@@ -134,6 +134,15 @@ const AdvancedMarksVsRank: React.FC = () => {
       minWidth: 120,
     },
     {
+      field: "marks",
+      headerName: "Marks",
+      flex: 1,
+      headerAlign: "center",
+      align: "center",
+      editable: true,
+      minWidth: 120,
+    },
+    {
       field: "generalRank",
       headerName: "General Rank",
       align: "center",
@@ -264,6 +273,7 @@ const AdvancedMarksVsRank: React.FC = () => {
               stPwDRank: false,
               scPwDRank: false,
               ewsPwDRank: false,
+              maxMarks: false,
             },
           },
         }}

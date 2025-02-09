@@ -8,7 +8,7 @@ import {
   TableRow,
   Paper,
   Typography,
-  Grid as MuiGrid,
+  Grid2 as MuiGrid,
 } from "@mui/material";
 import { Bar } from "react-chartjs-2";
 import { Chart, registerables } from "chart.js";
@@ -96,7 +96,7 @@ const AverageScore: React.FC<AverageScoreProps> = ({ jsonData }) => {
         Score Statistics per Subject
       </Typography>
       <MuiGrid container spacing={2} sx={{ mb: 2 }}>
-        <MuiGrid item xs={12} md={6}>
+        <MuiGrid size={{ xs: 12, md: 6 }}>
           <Paper>
             <Bar
               data={chartData}
@@ -110,7 +110,7 @@ const AverageScore: React.FC<AverageScoreProps> = ({ jsonData }) => {
             />
           </Paper>
         </MuiGrid>
-        <MuiGrid item xs={12} md={6}>
+        <MuiGrid size={{ xs: 12, md: 6 }}>
           <TableContainer component={Paper}>
             <Table>
               <TableHead>

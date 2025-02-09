@@ -20,7 +20,7 @@ router.route("/session/:id").get(getLoginSession).delete(deleteSession);
 
 router.route("/session/clear-all/:id").delete(deleteAllSession);
 
-router.route("/refresh-token").post(refreshToken);
+router.route("/token/refresh").post(refreshToken);
 
 export default router;
 

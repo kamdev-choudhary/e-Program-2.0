@@ -4,12 +4,10 @@ import {
   GroupRounded,
   MenuBookRounded,
   ComputerRounded,
-  DescriptionRounded,
   CloudRounded,
   TableChartRounded,
   GroupsRounded,
   PlayLessonRounded,
-  QuizRounded,
   LocationOnRounded,
   AssignmentIndRounded,
   CreateRounded,
@@ -149,28 +147,7 @@ export const buttons: Button[] = [
     color: "#26A69A",
     role: [ROLES.STUDENT],
   },
-  {
-    label: "Exams",
-    icon: QuizRounded,
-    type: "menu",
-    role: [ROLES.ADMIN],
-    loginRequired: true,
-    color: "#FF7043",
-    options: [
-      {
-        label: "Online Exam",
-        path: "/exams/online",
-        icon: ComputerRounded,
-        color: "#29B6F6",
-      },
-      {
-        label: "Offline Exam",
-        path: "/exams/offline",
-        icon: DescriptionRounded,
-        color: "#FFD54F",
-      },
-    ],
-  },
+
   {
     label: "Automation",
     icon: SettingsSuggestRounded,
@@ -247,7 +224,7 @@ export const buttons: Button[] = [
     loginRequired: true,
     type: "menu",
     color: "#2514da",
-    role: [ROLES.ADMIN],
+    role: [ROLES.ADMIN, ROLES.MODERATOR],
     options: [
       {
         label: "Suffle JSON",

@@ -180,7 +180,7 @@ const QualificationStatus: React.FC<QualificationStatusProps> = ({
               data={pieChartData}
               options={{
                 responsive: true,
-                plugins: { legend: { position: "top" } },
+                plugins: { legend: { position: "bottom" } },
               }}
             />
           </Box>
@@ -247,7 +247,7 @@ const QualificationStatus: React.FC<QualificationStatusProps> = ({
               Category-Wise Qualification Status
             </Typography>
             <Divider sx={{ my: 1 }} />
-            <Table size="small">
+            <Table>
               <TableHead>
                 <TableRow>
                   <TableCell align="center">
