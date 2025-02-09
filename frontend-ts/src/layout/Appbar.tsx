@@ -102,7 +102,7 @@ const Appbar: React.FC<HeaderProps> = React.memo(
           <Box
             sx={{
               mr: 2,
-              display: { xs: "none", md: "flex" },
+              display: "flex",
               flexGrow: 1,
               zIndex: 100,
             }}

@@ -64,7 +64,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
   // Initialize authentication state
   useEffect(() => {
     const initializeAuthState = () => {
-      const storedToken = localStorage.getItem(LS_KEYS.TOKEN);
+      const storedToken = localStorage.getItem(LS_KEYS.ACCESS_TOKEN);
       const logoutError = localStorage.getItem(LS_KEYS.LOGOUT);
 
       // Handle logout error notification
@@ -89,7 +89,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
 
         if (isTokenExpired) {
           showNotification({ message: "Token expired", type: "error" });
-          localStorage.removeItem(LS_KEYS.TOKEN);
+          localStorage.removeItem(LS_KEYS.ACCESS_TOKEN);
         } else {
           const user = {
             _id: decodedToken._id,
@@ -134,7 +134,7 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
       setAuthState({ isLoggedIn: true, user, token });
       setProfilePicUrl(photo || dummyImage);
       localStorage.setItem(LS_KEYS.PHOTO, photo || "");
-      localStorage.setItem(LS_KEYS.TOKEN, token);
+      localStorage.setItem(LS_KEYS.ACCESS_TOKEN, token);
       localStorage.setItem(LS_KEYS.REFRESH_TOKEN, refreshToken);
     } catch (error) {
       console.error("Invalid token:", error);
@@ -152,8 +152,9 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
 
     setAuthState({ isLoggedIn: false, user: null, token: "" });
     setProfilePicUrl(dummyImage);
-    localStorage.clear();
-
+    localStorage.removeItem(LS_KEYS.ACCESS_TOKEN);
+    localStorage.removeItem(LS_KEYS.REFRESH_TOKEN);
+    localStorage.removeItem(LS_KEYS.PHOTO);
     try {
       if (deviceId) {
         await axios.delete(`/auth/session/${deviceId}`);

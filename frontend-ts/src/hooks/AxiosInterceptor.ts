@@ -32,7 +32,7 @@ const processQueue = (error: any, token = null) => {
 // Request interceptor: attach access token and device id (if available)
 instance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem(LS_KEYS.TOKEN);
+    const token = localStorage.getItem(LS_KEYS.ACCESS_TOKEN);
     const deviceId = localStorage.getItem(LS_KEYS.DEVICE_ID);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
@@ -87,7 +87,7 @@ instance.interceptors.response.use(
           );
           const newAccessToken = data.accessToken;
           // Update local storage and axios defaults with the new token
-          localStorage.setItem(LS_KEYS.TOKEN, newAccessToken);
+          localStorage.setItem(LS_KEYS.ACCESS_TOKEN, newAccessToken);
           instance.defaults.headers.common[
             "Authorization"
           ] = `Bearer ${newAccessToken}`;
@@ -102,7 +102,9 @@ instance.interceptors.response.use(
           // If refresh fails, process the queue with an error, clear local storage, and logout.
           processQueue(refreshError, null);
           console.error("Refresh token error:", refreshError);
-          localStorage.clear();
+          localStorage.removeItem(LS_KEYS.ACCESS_TOKEN);
+          localStorage.removeItem(LS_KEYS.REFRESH_TOKEN);
+          localStorage.removeItem(LS_KEYS.PHOTO);
           localStorage.setItem(LS_KEYS.LOGOUT, "Session Expired. Logged out.");
           window.location.reload();
           return Promise.reject(refreshError);
@@ -111,7 +113,9 @@ instance.interceptors.response.use(
         }
       } else {
         // No refresh token available; log the user out.
-        localStorage.clear();
+        localStorage.removeItem(LS_KEYS.ACCESS_TOKEN);
+        localStorage.removeItem(LS_KEYS.REFRESH_TOKEN);
+        localStorage.removeItem(LS_KEYS.PHOTO);
         localStorage.setItem(LS_KEYS.LOGOUT, "Session Expired. Logged out.");
         window.location.reload();
         return Promise.reject(error);

@@ -1,9 +1,9 @@
 export const LS_KEYS = {
   THEME: "theme",
-  TOKEN: "token",
+  ACCESS_TOKEN: "token",
+  REFRESH_TOKEN: "rt",
   USER: "user",
   PHOTO: "photo",
   DEVICE_ID: "deviceId",
   LOGOUT: "logout",
-  REFRESH_TOKEN: "rt",
 };

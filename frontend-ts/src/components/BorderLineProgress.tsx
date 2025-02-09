@@ -20,16 +20,20 @@ const StyledBorderLinearProgress = styled(LinearProgress)(({ theme }) => ({
 
 interface BorderLinearProgressProps {
   value: number;
+  height?: number;
 }
 
 const BorderLinearProgress: React.FC<BorderLinearProgressProps> = ({
   value,
+  height = 3,
 }) => {
   return (
     <StyledBorderLinearProgress
       variant="determinate"
       value={value}
       sx={{
+        height: height,
+        borderRadius: 10,
         "& .MuiLinearProgress-bar": {
           background:
             value < 30
