@@ -18,6 +18,7 @@ import {
   GradingRounded,
   AssignmentTurnedInRounded,
   ShuffleRounded,
+  ChatBubbleRounded,
 } from "@mui/icons-material";
 import React from "react";
 
@@ -28,7 +29,7 @@ type Option = {
   path: string;
   icon: React.ElementType;
   color?: string;
-  role?: UserRole[];
+  roles?: UserRole[];
   loginRequired?: boolean;
 };
 
@@ -39,7 +40,7 @@ interface Button {
   color?: string;
   type: "button" | "menu";
   options?: Option[];
-  role?: string[];
+  roles?: string[];
   loginRequired?: boolean;
 }
 
@@ -51,7 +52,7 @@ export const buttons: Button[] = [
     color: "#0073E6",
     type: "button",
     loginRequired: true,
-    role: [ROLES.ADMIN, ROLES.MODERATOR],
+    roles: [ROLES.ADMIN, ROLES.MODERATOR],
   },
   {
     label: ROLES.ADMIN,
@@ -59,7 +60,7 @@ export const buttons: Button[] = [
     type: "menu",
     color: "#673AB7",
     loginRequired: true,
-    role: [ROLES.ADMIN],
+    roles: [ROLES.ADMIN],
     options: [
       {
         label: "User Master",
@@ -97,7 +98,7 @@ export const buttons: Button[] = [
     icon: CloudRounded,
     loginRequired: true,
     color: "#8D6E63",
-    role: [ROLES.ADMIN, ROLES.MODERATOR],
+    roles: [ROLES.ADMIN, ROLES.MODERATOR],
     options: [
       {
         label: "Academic Info",
@@ -136,7 +137,7 @@ export const buttons: Button[] = [
     type: "button",
     loginRequired: true,
     color: "#1E88E5",
-    role: [ROLES.ADMIN, ROLES.STUDENT],
+    roles: [ROLES.ADMIN, ROLES.STUDENT],
   },
   {
     label: "Batch",
@@ -145,14 +146,22 @@ export const buttons: Button[] = [
     type: "button",
     loginRequired: true,
     color: "#26A69A",
-    role: [ROLES.STUDENT],
+    roles: [ROLES.STUDENT],
   },
-
+  {
+    label: "Chat",
+    path: "/chats",
+    icon: ChatBubbleRounded,
+    type: "button",
+    loginRequired: true,
+    color: "#142536",
+    roles: [ROLES.ADMIN, ROLES.MODERATOR, ROLES.STUDENT, ROLES.TEACHER],
+  },
   {
     label: "Automation",
     icon: SettingsSuggestRounded,
     type: "menu",
-    role: [ROLES.ADMIN],
+    roles: [ROLES.ADMIN],
     loginRequired: false,
     color: "#FF8A65",
     options: [
@@ -224,7 +233,7 @@ export const buttons: Button[] = [
     loginRequired: true,
     type: "menu",
     color: "#2514da",
-    role: [ROLES.ADMIN, ROLES.MODERATOR],
+    roles: [ROLES.ADMIN, ROLES.MODERATOR],
     options: [
       {
         label: "Suffle JSON",

@@ -1,8 +1,33 @@
-import { AddRounded, SearchRounded } from "@mui/icons-material";
-import { Box, Fab, InputAdornment, OutlinedInput } from "@mui/material";
-import React from "react";
+import {
+  BorderColorRounded,
+  FilterListRounded,
+  SearchRounded,
+} from "@mui/icons-material";
+import {
+  Avatar,
+  Box,
+  IconButton,
+  InputAdornment,
+  List,
+  ListItemAvatar,
+  ListItemButton,
+  ListItemText,
+  OutlinedInput,
+  Typography,
+} from "@mui/material";
+import React, { useState } from "react";
+import { CustomModal } from "../../components/CustomModal";
+import { UserChatListProps } from "./types";
 
-const ChatList: React.FC = () => {
+interface ChatListProps {
+  chatList: UserChatListProps[] | null;
+  setSelectedChat: (value: UserChatListProps) => void;
+}
+
+const ChatList: React.FC<ChatListProps> = ({ chatList, setSelectedChat }) => {
+  const [showUserList, setShowUserList] = useState<boolean>(false);
+  const [searchText, setSearchText] = useState<string>("");
+
   return (
     <Box
       sx={{
@@ -10,9 +35,27 @@ const ChatList: React.FC = () => {
         display: "flex",
         flexDirection: "column",
         position: "relative",
-        p: 2,
+        width: "100%",
       }}
     >
+      <Box
+        sx={{
+          display: "flex",
+          width: "100%",
+          justifyContent: "space-between",
+          py: 2,
+        }}
+      >
+        <Typography variant="h6">Chats</Typography>
+        <Box sx={{ display: "flex" }}>
+          <IconButton onClick={() => setShowUserList(true)}>
+            <BorderColorRounded />
+          </IconButton>
+          <IconButton>
+            <FilterListRounded />
+          </IconButton>
+        </Box>
+      </Box>
       {/* Search Input */}
       <OutlinedInput
         startAdornment={
@@ -22,20 +65,30 @@ const ChatList: React.FC = () => {
         }
         placeholder="Search Chat"
         fullWidth
-        sx={{ mb: 2 }}
+        value={searchText}
+        onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+          setSearchText(e.target.value)
+        }
       />
+      <List sx={{ height: "100%", overflow: "auto" }}>
+        {chatList && chatList.length > 0 ? (
+          chatList?.map((user) => (
+            <ListItemButton onClick={() => setSelectedChat(user)}>
+              <ListItemAvatar>
+                <Avatar src={user.profilePic} />
+              </ListItemAvatar>
+              <ListItemText primary={user.name} secondary={user.lastMessage} />
+            </ListItemButton>
+          ))
+        ) : (
+          <Typography>No Chat List Found.</Typography>
+        )}
+      </List>
 
-      {/* Floating Action Button */}
-      <Fab
-        color="primary"
-        sx={{
-          position: "absolute",
-          bottom: 16,
-          right: 16,
-        }}
-      >
-        <AddRounded />
-      </Fab>
+      {/* User LIst */}
+      <CustomModal open={showUserList} onClose={() => setShowUserList(false)}>
+        <Box></Box>
+      </CustomModal>
     </Box>
   );
 };

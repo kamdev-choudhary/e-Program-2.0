@@ -3,25 +3,41 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 import User from "./user.js";
 
-const messageSchema = new mongoose.Schema(
+// Message Schema
+const MessageSchema = new mongoose.Schema(
   {
     sender: {
-      type: Schema.Types.ObjectId,
+      type: mongoose.Schema.Types.ObjectId,
       ref: "User",
       required: true,
     },
-    receiver: { type: Schema.Types.ObjectId, ref: "User" },
-    groupId: { type: Schema.Types.ObjectId, ref: "Chat" },
-    content: { type: String, required: true },
+    chat: { type: mongoose.Schema.Types.ObjectId, ref: "Chat" },
+    group: { type: mongoose.Schema.Types.ObjectId, ref: "Group" },
+    type: {
+      type: String,
+      enum: [
+        "text",
+        "image",
+        "video",
+        "audio",
+        "document",
+        "contact",
+        "location",
+        "sticker",
+      ],
+      required: true,
+    },
+    content: { type: String }, // message text or file URL
+    repliedTo: { type: mongoose.Schema.Types.ObjectId, ref: "Message" },
+    isDeleted: { type: Boolean, default: false },
     status: {
       type: String,
       enum: ["sent", "delivered", "read"],
       default: "sent",
     },
+    seenBy: [{ type: mongoose.Schema.Types.ObjectId, ref: "User" }],
   },
-  {
-    timestamps: true,
-  }
+  { timestamps: true }
 );
 
 export default mongoose.model("Message", messageSchema);

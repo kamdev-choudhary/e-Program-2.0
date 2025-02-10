@@ -185,7 +185,7 @@ const routes: RouteType[] = [
     roles: [ROLES.STUDENT, ROLES.ADMIN, ROLES.MODERATOR],
   },
   {
-    path: "/chat",
+    path: "/chats",
     element: <Chat />,
     roles: [ROLES.STUDENT, ROLES.ADMIN, ROLES.MODERATOR],
   },
