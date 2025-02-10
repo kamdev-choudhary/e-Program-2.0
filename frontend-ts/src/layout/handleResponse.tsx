@@ -7,7 +7,6 @@ interface Response {
   status: number;
   data: {
     message?: string;
-    status_code?: number;
     [key: string]: any;
   };
 }

@@ -7,7 +7,6 @@ import Loader from "./components/Loader";
 // Public Pages
 const HomePage = lazy(() => import("./pages/home/HomePage"));
 const NotFound = lazy(() => import("./layout/NotFound"));
-const Unauthorized = lazy(() => import("./layout/Unauthorized"));
 
 // Automation & Analysis
 const JEEMainCityInfo = lazy(
@@ -74,42 +73,41 @@ interface RouteType {
 // 🔹 Centralized Route Definitions 🔹
 const routes: RouteType[] = [
   // Public Routes
-  { path: "/", element: <HomePage />, roles: ["public"] },
-  { path: "/unauthorized", element: <Unauthorized />, roles: ["public"] },
+  { path: "/", element: <HomePage />, roles: [ROLES.PUBLIC] },
   {
     path: "/automation/jeemaincityinfo",
     element: <JEEMainCityInfo />,
-    roles: ["public"],
+    roles: [ROLES.PUBLIC],
   },
   {
     path: "/automation/jeemainadmitcard",
     element: <JEEMainAdmitCard />,
-    roles: ["public"],
+    roles: [ROLES.PUBLIC],
   },
   {
     path: "/automation/jdstadmitcard",
     element: <GenerateAdmitCard />,
-    roles: ["public"],
+    roles: [ROLES.PUBLIC],
   },
   {
     path: "/automation/jeemainprovisionalanswerkey",
     element: <JeeMainProvisionalKey />,
-    roles: ["public"],
+    roles: [ROLES.PUBLIC],
   },
   {
     path: "/automation/jeemainresult",
     element: <JEEMainResult />,
-    roles: ["public"],
+    roles: [ROLES.PUBLIC],
   },
   {
     path: "/analysis/jeemain",
     element: <JEEMainAnalysis />,
-    roles: ["public"],
+    roles: [ROLES.PUBLIC],
   },
   {
     path: "/analysis/jeeadvanced",
     element: <JEEAdvancedAnalysis />,
-    roles: ["public"],
+    roles: [ROLES.PUBLIC],
   },
 
   // Admin Routes
@@ -204,15 +202,15 @@ const routes: RouteType[] = [
   {
     path: "/tools/suffle-question",
     element: <SuffleQuestionInWord />,
-    roles: [ROLES.ADMIN, ROLES.MODERATOR],
+    roles: [ROLES.PUBLIC],
   },
   {
     path: "/tools/pdf-compressor",
     element: <PDFCompressor />,
-    roles: [ROLES.ADMIN, ROLES.MODERATOR],
+    roles: [ROLES.PUBLIC],
   },
   // Catch-All Route
-  { path: "/*", element: <NotFound />, roles: ["public"] },
+  { path: "/*", element: <NotFound />, roles: [ROLES.PUBLIC] },
 ];
 
 // 🔹 Optimized Router Setup 🔹
@@ -223,7 +221,7 @@ const router = createBrowserRouter([
       path,
       element: (
         <ProtectedRoute allowedRoles={roles}>
-          <Suspense fallback={<Loader />}>{element}</Suspense>
+          <Suspense fallback={<Loader open={true} />}>{element}</Suspense>
         </ProtectedRoute>
       ),
     })),

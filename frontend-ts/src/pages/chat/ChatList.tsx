@@ -15,9 +15,10 @@ import {
   OutlinedInput,
   Typography,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { CustomModal } from "../../components/CustomModal";
 import { UserChatListProps } from "./types";
+import ChatListUser from "./ChatListUser";
 
 interface ChatListProps {
   chatList: UserChatListProps[] | null;
@@ -27,6 +28,16 @@ interface ChatListProps {
 const ChatList: React.FC<ChatListProps> = ({ chatList, setSelectedChat }) => {
   const [showUserList, setShowUserList] = useState<boolean>(false);
   const [searchText, setSearchText] = useState<string>("");
+
+  const filteredChatList = useMemo(() => {
+    return chatList?.filter((chat) =>
+      Object.values(chat).some(
+        (value) =>
+          typeof value === "string" &&
+          value.toLowerCase().includes(searchText.toLowerCase())
+      )
+    );
+  }, [chatList, searchText]);
 
   return (
     <Box
@@ -71,8 +82,8 @@ const ChatList: React.FC<ChatListProps> = ({ chatList, setSelectedChat }) => {
         }
       />
       <List sx={{ height: "100%", overflow: "auto" }}>
-        {chatList && chatList.length > 0 ? (
-          chatList?.map((user) => (
+        {filteredChatList && filteredChatList.length > 0 ? (
+          filteredChatList?.map((user) => (
             <ListItemButton onClick={() => setSelectedChat(user)}>
               <ListItemAvatar>
                 <Avatar src={user.profilePic} />
@@ -87,7 +98,7 @@ const ChatList: React.FC<ChatListProps> = ({ chatList, setSelectedChat }) => {
 
       {/* User LIst */}
       <CustomModal open={showUserList} onClose={() => setShowUserList(false)}>
-        <Box></Box>
+        <ChatListUser />
       </CustomModal>
     </Box>
   );
