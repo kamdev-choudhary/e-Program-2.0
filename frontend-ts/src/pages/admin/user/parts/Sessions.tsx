@@ -15,6 +15,7 @@ import {
 import Swal from "sweetalert2";
 import {
   AndroidRounded,
+  DeleteRounded,
   DesktopWindowsRounded,
   IsoRounded,
   LaptopWindowsRounded,
@@ -118,9 +119,20 @@ const Sessions: React.FC<UserSessionProps> = ({ user }) => {
         boxShadow: 4,
       }}
     >
-      <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
-        Active Sessions
-      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
+          Active Sessions
+        </Typography>
+        <Button variant="contained" color="error" startIcon={<DeleteRounded />}>
+          Clear All Session
+        </Button>
+      </Box>
       <Divider sx={{ mb: 2 }} />
       {isLoading ? (
         <Box sx={{ display: "flex", justifyContent: "center", my: 3 }}>
@@ -133,7 +145,11 @@ const Sessions: React.FC<UserSessionProps> = ({ user }) => {
               <Paper
                 key={session.deviceId}
                 elevation={3}
-                sx={{ mb: 2, p: 2, borderRadius: 2 }}
+                sx={{
+                  mb: 2,
+                  borderRadius: 2,
+                  border: "1px solid rgba(0,0,0,0.2)",
+                }}
               >
                 <Stack
                   direction="row"

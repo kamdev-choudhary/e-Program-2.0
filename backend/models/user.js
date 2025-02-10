@@ -41,7 +41,6 @@ const userSchema = new Schema(
       enum: [0, 1], // Fixed typo
       default: 1,
     },
-    apiToken: String,
   },
   {
     timestamps: true,
