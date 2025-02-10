@@ -19,6 +19,7 @@ import {
   AssignmentTurnedInRounded,
   ShuffleRounded,
   ChatBubbleRounded,
+  PictureAsPdfRounded,
 } from "@mui/icons-material";
 import React from "react";
 
@@ -230,16 +231,23 @@ export const buttons: Button[] = [
     label: "Tools",
     icon: ComputerRounded,
     path: "",
-    loginRequired: true,
+    loginRequired: false,
     type: "menu",
     color: "#2514da",
-    roles: [ROLES.ADMIN, ROLES.MODERATOR],
+    roles: [ROLES.PUBLIC],
     options: [
       {
         label: "Suffle JSON",
         path: "/tools/suffle-question",
         icon: ShuffleRounded,
-        loginRequired: true,
+        loginRequired: false,
+        color: "#fa7485",
+      },
+      {
+        label: "PDF Compressor",
+        path: "/tools/pdf-compressor",
+        icon: PictureAsPdfRounded,
+        loginRequired: false,
         color: "#fa7485",
       },
     ],

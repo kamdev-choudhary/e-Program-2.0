@@ -54,8 +54,13 @@ const Doubts = lazy(() => import("./pages/doubts/Doubts"));
 const DoubtDetails = lazy(() => import("./pages/doubts/DoubtDetails"));
 const Chat = lazy(() => import("./pages/chat/Chat"));
 const QuestionBank = lazy(() => import("./pages/question/QuestionBank"));
+
+// Tools
 const SuffleQuestionInWord = lazy(
-  () => import("./pages/tools/SuffleQuestionInWord")
+  () => import("./pages/tools/suffle-questions/SuffleQuestionInWord")
+);
+const PDFCompressor = lazy(
+  () => import("./pages/tools/pdf-compressor/PdfCompressor")
 );
 
 import { UserRole, ROLES } from "./constant/roles";
@@ -194,12 +199,18 @@ const routes: RouteType[] = [
     element: <QuestionBank />,
     roles: [ROLES.STUDENT, ROLES.ADMIN, ROLES.MODERATOR],
   },
+
+  // Tools
   {
     path: "/tools/suffle-question",
     element: <SuffleQuestionInWord />,
     roles: [ROLES.ADMIN, ROLES.MODERATOR],
   },
-
+  {
+    path: "/tools/pdf-compressor",
+    element: <PDFCompressor />,
+    roles: [ROLES.ADMIN, ROLES.MODERATOR],
+  },
   // Catch-All Route
   { path: "/*", element: <NotFound />, roles: ["public"] },
 ];

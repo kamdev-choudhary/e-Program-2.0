@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { Box, Button, Card, CardContent, Divider, Paper } from "@mui/material";
-import FileDropZone from "../../components/FileDropZone";
+import FileDropZone from "../../../components/FileDropZone";
 import mammoth from "mammoth";
 import { DownloadRounded, ShuffleRounded } from "@mui/icons-material";
-import { downloadQuestionsAsWordInTableFormat } from "./functions";
+import { downloadQuestionsAsWordInTableFormat } from "../functions";
 
 interface Option {
   optionText: string;

@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 import User from "./user.js";
 
 // Message Schema
-const MessageSchema = new mongoose.Schema(
+const messageSchema = new mongoose.Schema(
   {
     sender: {
       type: mongoose.Schema.Types.ObjectId,

@@ -14,6 +14,7 @@ import chatRoute from "./routers/chatRoute.js";
 import automationRoute from "./routers/automationRouter.js";
 import analysisRoute from "./routers/analysisRoute.js";
 import adminRoute from "./routers/adminRoute.js";
+import toolsRoute from "./routers/toolsRoute.js";
 
 import verifyToken from "./middlewares/verify-token.js";
 
@@ -34,6 +35,7 @@ const routes = (app) => {
   app.use("/api/v1/chat", verifyToken, chatRoute);
   app.use("/api/v1/automation", automationRoute);
   app.use("/api/v1/analysis", analysisRoute);
+  app.use("/api/v1/tools", toolsRoute);
 
   app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 

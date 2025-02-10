@@ -110,7 +110,9 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
         }
       } catch (error) {
         console.error("Invalid token:", error);
-        localStorage.clear();
+        localStorage.removeItem(LS_KEYS.ACCESS_TOKEN);
+        localStorage.removeItem(LS_KEYS.PHOTO);
+        localStorage.removeItem(LS_KEYS.REFRESH_TOKEN);
       } finally {
         setIsLoaded(true);
       }

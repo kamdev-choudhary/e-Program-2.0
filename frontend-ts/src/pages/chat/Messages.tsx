@@ -26,6 +26,7 @@ const Messages: React.FC<MessagesProps> = ({ selectedChat }) => {
 
   useEffect(() => {
     setLastSeen("Recently");
+    setMessages(null);
   }, []);
 
   return (
