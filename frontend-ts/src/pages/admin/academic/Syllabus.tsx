@@ -73,7 +73,7 @@ const Subjects: React.FC = () => {
   return (
     <Box>
       <Grid container spacing={1}>
-        <Grid size={{ xs: 12, md: 4, lg: 3 }}>
+        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
           <Paper elevation={3}>
             <SubjectsComponent
               subjects={subjects}
@@ -83,7 +83,7 @@ const Subjects: React.FC = () => {
             />
           </Paper>
         </Grid>
-        <Grid size={{ xs: 12, md: 4, lg: 3 }}>
+        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
           <Paper elevation={3}>
             <SubSubjects
               subjects={subjects}
@@ -96,7 +96,7 @@ const Subjects: React.FC = () => {
             />
           </Paper>
         </Grid>
-        <Grid size={{ xs: 12, md: 4, lg: 3 }}>
+        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
           <Paper elevation={3}>
             <Topics
               subjects={subjects}
@@ -112,7 +112,7 @@ const Subjects: React.FC = () => {
             />
           </Paper>
         </Grid>
-        <Grid size={{ xs: 12, md: 4, lg: 3 }}>
+        <Grid size={{ xs: 12, md: 6, lg: 4 }}>
           <Paper elevation={3}>
             <SubTopics
               subjects={subjects}

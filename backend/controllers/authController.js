@@ -1,6 +1,7 @@
 import User from "../models/user.js";
 import bcrypt from "bcryptjs";
 import Session from "../models/session.js";
+import logger from "../utils/logger.js";
 
 export async function login(req, res, next) {
   try {
@@ -21,7 +22,7 @@ export async function login(req, res, next) {
       return res.status(404).json({ message: "User not found." });
     }
 
-    const isPasswordValid = await bcrypt.compare(password, userExist.password);
+    const isPasswordValid = await userExist.comparePassword(password);
     if (!isPasswordValid) {
       return res.status(401).json({ message: "Invalid ID or Password" });
     }
@@ -111,34 +112,6 @@ export async function register(req, res, next) {
   }
 }
 
-export async function registerByAdmin(req, res, next) {
-  try {
-    const { name, email, mobile, password = "Password", role } = req.body;
-
-    if (!role || !["admin", "scholar", "moderator"].includes(role)) {
-      return res.status(400).json({ message: "Invalid or missing role." });
-    }
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-    const newAdmin = new User({
-      name,
-      email,
-      mobile,
-      password: hashedPassword,
-      role,
-    });
-
-    await newAdmin.save();
-    const users = await User.find({ role });
-
-    return res
-      .status(201)
-      .json({ message: "User created successfully.", users });
-  } catch (error) {
-    return next(error);
-  }
-}
-
 export async function getLoginSession(req, res, next) {
   try {
     const { id } = req.params;
@@ -193,42 +166,25 @@ export async function deleteAllSession(req, res, next) {
 
 export async function refreshToken(req, res, next) {
   try {
-    // Retrieve the refresh token from the "x-refresh-token" header
     const refreshToken = req.headers["x-refresh-token"];
 
-    // Check that a refresh token is provided
     if (!refreshToken) {
       return res.status(400).json({ message: "Refresh token is required." });
     }
 
-    // Look up the session associated with the provided refresh token
     const session = await Session.findOne({ refreshToken });
     if (!session) {
       return res.status(401).json({ message: "Invalid refresh token." });
     }
 
-    // Optionally: Check if the session has expired
-    // if (session.expiresAt && session.expiresAt < Date.now()) {
-    //   return res.status(401).json({ message: "Refresh token has expired." });
-    // }
-
-    // Find the user associated with the session
     const user = await User.findById(session.userId);
     if (!user) {
       return res.status(404).json({ message: "User not found." });
     }
+    logger.log(`Token generated for ${user._id}`);
 
-    // Generate a new access token for the user.
-    // This assumes that your User model has a method `generateToken()` that returns a promise.
     const accessToken = await user.generateToken();
 
-    // Optionally, if you wish to rotate the refresh token, generate a new one, update the session, and return it:
-    // const newRefreshToken = await user.generateRefreshToken();
-    // session.refreshToken = newRefreshToken;
-    // await session.save();
-    // return res.status(200).json({ accessToken, refreshToken: newRefreshToken });
-
-    // Return the new access token
     return res.status(200).json({ accessToken });
   } catch (error) {
     return next(error);

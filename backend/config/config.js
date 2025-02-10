@@ -10,6 +10,8 @@ const config = {
   // JWT
   ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET || "supersecretkey",
   REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET || "citrus",
+  ACCESS_TOKEN_EXPIRY: process.env.ACCESS_TOKEN_EXPIRY || "1h",
+  REFRESH_TOKEN_EXPIRY: process.env.REFRESH_TOKEN_EXPIRY || "15d",
 
   NODE_ENV: process.env.NODE_ENV || "development",
   API_KEY: process.env.API_KEY || "kd",

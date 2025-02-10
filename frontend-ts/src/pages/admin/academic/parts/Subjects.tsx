@@ -116,7 +116,7 @@ const Subjects: React.FC<SubjectComponentProps> = ({
           </ListSubheader>
         }
         component="nav"
-        sx={{ height: 350, overflow: "auto", m: 0, pt: 1 }}
+        sx={{ height: 350, overflow: "hidden", m: 0, pt: 1 }}
       >
         {subjects.map((subject) => (
           <ListItem

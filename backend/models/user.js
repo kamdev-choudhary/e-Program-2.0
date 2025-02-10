@@ -2,6 +2,7 @@ import mongoose from "mongoose";
 const Schema = mongoose.Schema;
 import config from "../config/config.js";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 
 const jwtSecret = config.ACCESS_TOKEN_SECRET;
 import logger from "../utils/logger.js";
@@ -59,7 +60,7 @@ userSchema.methods.generateToken = async function () {
         mobile: this.mobile,
       },
       jwtSecret, // Using the correct secret variable
-      { expiresIn: "5m" }
+      { expiresIn: config.ACCESS_TOKEN_EXPIRY }
     );
   } catch (err) {
     logger.error(err.message);
@@ -76,11 +77,20 @@ userSchema.methods.generateRefreshToken = async function () {
         email: this.email,
       },
       config.REFRESH_TOKEN_SECRET,
-      { expiresIn: "5h" }
+      { expiresIn: config.REFRESH_TOKEN_EXPIRY }
     );
   } catch (error) {
     logger.error(error.message);
     throw new Error("Refresh token generation failed.");
+  }
+};
+
+userSchema.methods.comparePassword = async function (enteredPassword) {
+  try {
+    return bcrypt.compare(enteredPassword, this.password);
+  } catch (error) {
+    logger.error("Error in comparing the password.");
+    throw new Error("Error in comparing password");
   }
 };
 

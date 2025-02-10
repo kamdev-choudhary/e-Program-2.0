@@ -3,13 +3,14 @@ import {
   Card,
   Typography,
   Button,
-  ListItemButton,
   Divider,
   List,
   ListItemText,
   Box,
   CircularProgress,
   ListItemIcon,
+  Stack,
+  Paper,
 } from "@mui/material";
 import Swal from "sweetalert2";
 import {
@@ -48,20 +49,19 @@ const Sessions: React.FC<UserSessionProps> = ({ user }) => {
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const { showNotification } = useNotification();
 
-  const getSession = async () => {
-    setIsLoading(true);
-    try {
-      const response = await axios.get(`/auth/session/${user?._id}`);
-      setSessions(response.data.sessions);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
   useEffect(() => {
     if (!user?._id) return;
+    const getSession = async () => {
+      setIsLoading(true);
+      try {
+        const response = await axios.get(`/auth/session/${user?._id}`);
+        setSessions(response.data.sessions);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
     getSession();
   }, [user]);
 
@@ -72,17 +72,13 @@ const Sessions: React.FC<UserSessionProps> = ({ user }) => {
         text: "You won't be able to revert this!",
         icon: "warning",
         showCancelButton: true,
-        confirmButtonColor: "#3085d6",
-        cancelButtonColor: "#d33",
-        confirmButtonText: "Yes, delete it!",
+        confirmButtonColor: "#d32f2f",
+        cancelButtonColor: "#757575",
+        confirmButtonText: "Yes, log out",
       });
       if (result.isConfirmed) {
         await axios.delete(`/auth/session/${id}`);
-        if (!sessions) return;
-        setSessions((prev) => {
-          if (!prev) return []; // Ensure an empty array is returned if prev is null or undefined
-          return prev.filter((s) => s.deviceId !== id); // Remove the session with the given id
-        });
+        setSessions((prev) => prev?.filter((s) => s.deviceId !== id) || []);
         showNotification({
           message: "Session has been logged out.",
           type: "success",
@@ -103,13 +99,13 @@ const Sessions: React.FC<UserSessionProps> = ({ user }) => {
       case "Windows":
       case "Linux":
       case "Mac":
-        return <LaptopWindowsRounded sx={{ color: "#28844f" }} />;
+        return <LaptopWindowsRounded sx={{ color: "#1E88E5" }} />;
       case "Android":
-        return <AndroidRounded sx={{ color: "#914D7E" }} />;
+        return <AndroidRounded sx={{ color: "#4CAF50" }} />;
       case "iOS":
-        return <IsoRounded />;
+        return <IsoRounded sx={{ color: "#E91E63" }} />;
       default:
-        return <DesktopWindowsRounded />;
+        return <DesktopWindowsRounded sx={{ color: "#757575" }} />;
     }
   };
 
@@ -118,59 +114,59 @@ const Sessions: React.FC<UserSessionProps> = ({ user }) => {
       sx={{
         width: "100%",
         p: 2,
-        borderRadius: 2,
-        boxShadow: 3,
+        borderRadius: 3,
+        boxShadow: 4,
       }}
     >
-      <Typography variant="h6" sx={{ p: 1, fontWeight: "bold" }}>
-        Sessions
+      <Typography variant="h6" sx={{ mb: 2, fontWeight: "bold" }}>
+        Active Sessions
       </Typography>
-      <Divider />
-      <Box>
-        {isLoading ? (
-          <Box sx={{ display: "flex", justifyContent: "center", my: 2 }}>
-            <CircularProgress size={25} />
-          </Box>
-        ) : (
-          <List sx={{ p: 1, m: 0 }}>
-            {sessions && sessions.length > 0 ? (
-              sessions.map((session, index) => (
-                <React.Fragment key={index}>
-                  <ListItemButton
-                    sx={{
-                      borderRadius: 2,
-                      mb: 1,
-                      p: { xs: 0.5, sm: 1 },
-                    }}
-                  >
+      <Divider sx={{ mb: 2 }} />
+      {isLoading ? (
+        <Box sx={{ display: "flex", justifyContent: "center", my: 3 }}>
+          <CircularProgress size={30} />
+        </Box>
+      ) : (
+        <List>
+          {sessions && sessions.length > 0 ? (
+            sessions?.map((session) => (
+              <Paper
+                key={session.deviceId}
+                elevation={3}
+                sx={{ mb: 2, p: 2, borderRadius: 2 }}
+              >
+                <Stack
+                  direction="row"
+                  alignItems="center"
+                  justifyContent="space-between"
+                >
+                  <Stack direction="row" alignItems="center" spacing={2}>
                     <ListItemIcon>
                       {getIconForSession(session.platform)}
                     </ListItemIcon>
                     <ListItemText
                       primary={`${session.browser} (${session.platform})`}
-                      secondary={session.ip}
+                      secondary={`IP: ${session.ip}`}
                     />
-                    <Button
-                      startIcon={<LogoutRounded />}
-                      color="error"
-                      variant="contained"
-                      onClick={() => handleDeleteSession(session.deviceId)}
-                    >
-                      Logout
-                    </Button>
-                  </ListItemButton>
-                  {index < sessions.length - 1 && <Divider />}{" "}
-                  {/* Divider between items */}
-                </React.Fragment>
-              ))
-            ) : (
-              <Box>
-                <Typography>No session available.</Typography>
-              </Box>
-            )}
-          </List>
-        )}
-      </Box>
+                  </Stack>
+                  <Button
+                    startIcon={<LogoutRounded />}
+                    color="error"
+                    variant="outlined"
+                    onClick={() => handleDeleteSession(session.deviceId)}
+                  >
+                    Logout
+                  </Button>
+                </Stack>
+              </Paper>
+            ))
+          ) : (
+            <Typography sx={{ textAlign: "center", color: "gray" }}>
+              No active sessions.
+            </Typography>
+          )}
+        </List>
+      )}
     </Card>
   );
 };
