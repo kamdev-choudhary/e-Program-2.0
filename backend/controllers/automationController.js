@@ -676,12 +676,13 @@ export async function jeeMainResultDownload(req, res, next) {
 
     for (let i = 0; i < MAX_RETRIES; i++) {
       try {
-        if (i > 0) {
-          logger.info(`Reloading page for attempt ${i + 1}...`);
-          await page.reload(); // More readable than short-circuiting
-        }
         await page.waitForSelector(SELECTORS.applicationNumber, {
           timeout: 300000,
+        });
+        await page.evaluate(() => {
+          document
+            .querySelectorAll("input")
+            .forEach((input) => (input.value = ""));
         });
         await page.type(SELECTORS.applicationNumber, String(application), {
           delay: 100,
@@ -698,7 +699,6 @@ export async function jeeMainResultDownload(req, res, next) {
         if (captchaText.length < 6) {
           continue;
         }
-
         await page.type(SELECTORS.captchaInput, captchaText);
 
         // Click Login
@@ -773,12 +773,14 @@ export async function jeeMainResultDownload(req, res, next) {
       return data;
     });
 
+    console.log(marks);
+
     res.status(200).json({
       message: "Successfully fetched the Data.",
-      mathematics: marks?.mathematics || "",
-      physics: marks?.physics || "",
-      chemistry: marks?.chemistry || "",
-      total: marks?.totalMarks || "",
+      mathematics: marks?.Mathematics || "",
+      physics: marks?.Physics || "",
+      chemistry: marks?.Chemistry || "",
+      total: marks?.TotalMarks || "",
     });
   } catch (error) {
     next(error);
