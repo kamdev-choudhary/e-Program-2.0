@@ -631,13 +631,15 @@ export async function jeeMainResultDownload(req, res, next) {
     return categoryMapping[ntaCategory] || ntaCategory;
   }
 
-  const website = "https://www.google.com";
+  const website =
+    "https://examinationservices.nic.in/resultservices/JEEMAIN2025S1P1/Login";
+
   const SELECTORS = {
-    applicationNumber: 'input[name="ctl00$ContentPlaceHolder1$txtRegno"]',
-    password: 'input[name="ctl00$ContentPlaceHolder1$txtPassword"]',
-    captchaInput: 'input[name="ctl00$ContentPlaceHolder1$txtsecpin"]',
-    captcha: "#ctl00_ContentPlaceHolder1_captchaimage",
-    loginButton: '[name="ctl00$ContentPlaceHolder1$btnsignin"]',
+    applicationNumber: "#txtAppNo",
+    password: "#txtPassword",
+    captchaInput: "#Captcha1",
+    captcha: "#capimage",
+    loginButton: "#Submit",
     errorSelector: "#ctl00_ContentPlaceHolder1_lblerror1",
     refreshCaptcha: "#ctl00_ContentPlaceHolder1_bttRegCaptcha",
   };
@@ -651,108 +653,102 @@ export async function jeeMainResultDownload(req, res, next) {
       .status(400)
       .json({ message: "Application number or password missing" });
 
-  // const browser = await puppeteer.launch({
-  //   headless: "new", // Use "new" mode to bypass bot detection
-  //   args: [
-  //     "--no-sandbox",
-  //     "--disable-setuid-sandbox",
-  //     "--disable-dev-shm-usage", // Prevents crashes in Docker
-  //     "--disable-gpu", // Disables GPU hardware acceleration
-  //     "--disable-features=IsolateOrigins,site-per-process", // Reduces process overhead
-  //   ],
-  //   defaultViewport: { width: 1920, height: 1080 },
-  // });
+  const browser = await puppeteer.launch({
+    headless: false, // Use "new" mode to bypass bot detection
+    args: [
+      "--no-sandbox",
+      "--disable-setuid-sandbox",
+      "--disable-dev-shm-usage", // Prevents crashes in Docker
+      "--disable-gpu", // Disables GPU hardware acceleration
+      "--disable-features=IsolateOrigins,site-per-process", // Reduces process overhead
+    ],
+    defaultViewport: { width: 1920, height: 1080 },
+  });
 
-  // const [page] = await browser.pages();
-  // await page.setRequestInterception(true);
-  // page.on("request", (request) => {
-  //   if (request.resourceType() === "image") {
-  //     request.abort();
-  //   } else {
-  //     request.continue();
-  //   }
-  // });
+  const [page] = await browser.pages();
+  await page.setRequestInterception(true);
+  page.on("request", (request) => {
+    if (request.resourceType() === "image") {
+      request.abort();
+    } else {
+      request.continue();
+    }
+  });
 
   try {
-    // await page.goto(website);
-    // let success = false;
+    await page.goto(website);
+    let success = false;
 
-    // // Testing
-    // await page.pdf({
-    //   path: `./uploads/${drn}_${uniqueId}_1.pdf`,
-    //   format: "A4",
-    // });
+    for (let i = 0; i < MAX_RETRIES; i++) {
+      try {
+        if (i > 0) {
+          logger.info(`Reloading page for attempt ${i + 1}...`);
+          await page.reload(); // More readable than short-circuiting
+        }
+        await page.waitForSelector(SELECTORS.applicationNumber, {
+          timeout: 10000,
+        });
+        await page.type(SELECTORS.applicationNumber, String(applicationNumber));
+        await page.type(SELECTORS.password, String(password));
+        await page.waitForSelector(SELECTORS.captcha, { timeout: 10000 });
 
-    // for (let i = 0; i < MAX_RETRIES; i++) {
-    //   try {
-    //     if (i > 0) {
-    //       logger.info(`Reloading page for attempt ${i + 1}...`);
-    //       await page.reload(); // More readable than short-circuiting
-    //     }
-    //     await page.waitForSelector(SELECTORS.applicationNumber, {
-    //       timeout: 10000,
-    //     });
-    //     await page.type(SELECTORS.applicationNumber, String(applicationNumber));
-    //     await page.type(SELECTORS.password, String(password));
-    //     await page.waitForSelector(SELECTORS.captcha, { timeout: 10000 });
+        // Capture and solve CAPTCHA
+        const captchaText = await captureAndSolveCaptcha(
+          page,
+          SELECTORS.captcha
+        );
 
-    //     // Capture and solve CAPTCHA
-    //     const captchaText = await captureAndSolveCaptcha(
-    //       page,
-    //       SELECTORS.captcha
-    //     );
+        if (captchaText.length < 6) {
+          continue;
+        }
 
-    //     if (captchaText.length < 6) {
-    //       continue;
-    //     }
+        await page.type(SELECTORS.captchaInput, captchaText);
 
-    //     await page.type(SELECTORS.captchaInput, captchaText);
+        // Click Login
+        await page.click(SELECTORS.loginButton);
+        await page.waitForNetworkIdle({ idleTime: 500, timeout: 10000 });
 
-    //     // Click Login
-    //     await page.click(SELECTORS.loginButton);
-    //     await page.waitForNetworkIdle({ idleTime: 500, timeout: 10000 });
+        // Check for error message on the page
+        const errorElement = await page.$(SELECTORS.errorSelector);
+        if (errorElement) {
+          const errorText = await page.evaluate(
+            (el) => el.innerText,
+            errorElement
+          );
 
-    //     // Check for error message on the page
-    //     const errorElement = await page.$(SELECTORS.errorSelector);
-    //     if (errorElement) {
-    //       const errorText = await page.evaluate(
-    //         (el) => el.innerText,
-    //         errorElement
-    //       );
+          // Break out of the loop if the error text indicates an invalid application
+          if (errorText.toLowerCase().includes("invalid application")) {
+            return res
+              .status(400)
+              .json({ message: "Invalid application or Password number." });
+          }
 
-    //       // Break out of the loop if the error text indicates an invalid application
-    //       if (errorText.toLowerCase().includes("invalid application")) {
-    //         return res
-    //           .status(400)
-    //           .json({ message: "Invalid application or Password number." });
-    //       }
+          // Continue retrying if the error indicates a CAPTCHA mismatch
+          if (errorText.includes("CAPTCHA did not match. Please Re-enter.")) {
+            console.warn(
+              `Attempt ${i + 1}: CAPTCHA did not match. Retrying...`
+            );
+            continue;
+          }
+        }
 
-    //       // Continue retrying if the error indicates a CAPTCHA mismatch
-    //       if (errorText.includes("CAPTCHA did not match. Please Re-enter.")) {
-    //         console.warn(
-    //           `Attempt ${i + 1}: CAPTCHA did not match. Retrying...`
-    //         );
-    //         continue;
-    //       }
-    //     }
+        // Check if login is successful
+        const paperElement = await page
+          .waitForSelector(SELECTORS.showPaper, { timeout: 4000 })
+          .catch(() => null);
+        if (paperElement) {
+          console.info("Login successful!");
+          success = true;
+          break;
+        }
+      } catch (error) {
+        logger.info(`Attempt ${i + 1} failed: ${error.message}`);
+      }
+    }
 
-    //     // Check if login is successful
-    //     const paperElement = await page
-    //       .waitForSelector(SELECTORS.showPaper, { timeout: 4000 })
-    //       .catch(() => null);
-    //     if (paperElement) {
-    //       console.info("Login successful!");
-    //       success = true;
-    //       break;
-    //     }
-    //   } catch (error) {
-    //     logger.info(`Attempt ${i + 1} failed: ${error.message}`);
-    //   }
-    // }
-
-    // if (!success) {
-    //   return res.status(400).json({ message: "Failed to verify captch." });
-    // }
+    if (!success) {
+      return res.status(400).json({ message: "Failed to verify captch." });
+    }
 
     const data = generateMockData();
     res.status(200).json({
