@@ -53,7 +53,7 @@ const MasterLayout: React.FC = () => {
           <motion.div
             initial={{ width: expanded ? drawerWidth : 70 }}
             animate={{ width: expanded || hovering ? drawerWidth : 70 }}
-            transition={{ type: "tween", duration: 0.6, ease: "easeOut" }}
+            transition={{ type: "tween", duration: 0.4, ease: "easeIn" }}
             className="no-print"
             style={{
               borderRight: "1px solid rgba(0,0,0,0.2)",
