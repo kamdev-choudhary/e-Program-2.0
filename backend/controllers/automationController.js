@@ -680,7 +680,7 @@ export async function jeeMainResultDownload(req, res, next) {
           await page.reload(); // More readable than short-circuiting
         }
         await page.waitForSelector(SELECTORS.applicationNumber, {
-          timeout: 10000,
+          timeout: 300000,
         });
         await page.type(SELECTORS.applicationNumber, String(application), {
           delay: 100,
