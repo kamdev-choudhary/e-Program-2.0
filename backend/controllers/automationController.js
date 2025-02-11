@@ -773,28 +773,16 @@ export async function jeeMainResultDownload(req, res, next) {
       return data;
     });
 
-    console.log(marks);
-
-    const data = generateMockData();
     res.status(200).json({
       message: "Successfully fetched the Data.",
-      candidateName: data?.candidateName || "",
-      category: data?.category || "",
-      personWithDisability: data?.personWithDisability || "",
-      gender: data?.gender || "",
-      dateOfBirth: data?.dateOfBirth || "",
-      stateOfEligibility: data?.stateOfEligibility || "",
-      mathematics1: data?.mathematics1 || "",
-      mathematics2: data?.mathematics2 || "",
-      mathematics: data?.mathematics || "",
-      physics: data?.physics || "",
-      chemistry: data?.chemistry || "",
-      total: data?.total || "",
-      ntaScoreInWords: data?.ntaScoreInWords || "",
+      mathematics: marks?.mathematics || "",
+      physics: marks?.physics || "",
+      chemistry: marks?.chemistry || "",
+      total: marks?.totalMarks || "",
     });
   } catch (error) {
     next(error);
   } finally {
-    // await browser.close();
+    await browser.close();
   }
 }

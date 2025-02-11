@@ -95,22 +95,10 @@ const JEEMainResult: React.FC = () => {
                   ...item,
                   error: "",
                   status: "fetched",
-                  rollNumber1: data?.rollNumber || "",
-                  rollNumber2: data?.rollNumber || "",
-                  candidateName: data?.candidateName || "",
-                  motherName: data?.motherName || "",
-                  fatherName: data?.fatherName || "",
-                  category: data?.category || "",
-                  personWithDisability: data?.personWithDisability || "",
-                  gender: data?.gender || "",
-                  dateOfBirth: data?.dateOfBirth || "",
-                  stateOfEligibility: data?.stateOfEligibility || "",
-                  nationality: data?.nationality,
                   mathematics: data?.mathematics || "",
                   physics: data?.physics || "",
                   chemistry: data?.chemistry || "",
                   total: data?.total || "",
-                  ntaScoreInWords: data?.ntaScoreInWords || "",
                 }
               : item
           );
@@ -360,74 +348,6 @@ const JEEMainResult: React.FC = () => {
         ),
       },
 
-      {
-        field: "candidateName",
-        headerName: "Candidate Name",
-        flex: 1.5,
-        minWidth: 200,
-        headerAlign: "center",
-      },
-      {
-        field: "motherName",
-        headerName: "Mother's Name",
-        flex: 1.5,
-        minWidth: 200,
-        headerAlign: "center",
-      },
-      {
-        field: "fatherName",
-        headerName: "Father's Name",
-        flex: 1.5,
-        minWidth: 200,
-        headerAlign: "center",
-      },
-      {
-        field: "category",
-        headerName: "Category",
-        flex: 1,
-        minWidth: 150,
-        headerAlign: "center",
-        align: "center",
-      },
-      {
-        field: "personWithDisability",
-        headerName: "PwD",
-        flex: 1,
-        minWidth: 100,
-        headerAlign: "center",
-        align: "center",
-      },
-      {
-        field: "gender",
-        headerName: "Gender",
-        flex: 1,
-        minWidth: 100,
-        headerAlign: "center",
-        align: "center",
-      },
-      {
-        field: "dateOfBirth",
-        headerName: "Date of Birth",
-        flex: 1,
-        minWidth: 150,
-        headerAlign: "center",
-        align: "center",
-      },
-      {
-        field: "stateOfEligibility",
-        headerName: "State of Eligibility",
-        flex: 1.5,
-        minWidth: 200,
-        headerAlign: "center",
-      },
-      {
-        field: "nationality",
-        headerName: "Nationality",
-        flex: 1,
-        minWidth: 150,
-        headerAlign: "center",
-      },
-
       // Scores
 
       {
@@ -464,14 +384,6 @@ const JEEMainResult: React.FC = () => {
         minWidth: 150,
         headerAlign: "center",
         align: "center",
-      },
-
-      {
-        field: "ntaScoreInWords",
-        headerName: "NTA Score",
-        flex: 1,
-        minWidth: 200,
-        headerAlign: "center",
       },
 
       // PwD Ranks
