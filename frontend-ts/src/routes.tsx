@@ -26,6 +26,9 @@ const JEEAdvancedAnalysis = lazy(
   () => import("./pages/analysis/JEEAdvancedAnalysis")
 );
 const JEEMainResult = lazy(() => import("./pages/automations/JEEMainResult"));
+const JEEMainResult01 = lazy(
+  () => import("./pages/automations/JEEMainResult01")
+);
 
 // Admin Pages
 const Dashboard = lazy(() => import("./pages/dashboard/Dashboard"));
@@ -97,6 +100,11 @@ const routes: RouteType[] = [
   {
     path: "/automation/jeemainresult",
     element: <JEEMainResult />,
+    roles: [ROLES.PUBLIC],
+  },
+  {
+    path: "/automation/jeemainresult-01",
+    element: <JEEMainResult01 />,
     roles: [ROLES.PUBLIC],
   },
   {

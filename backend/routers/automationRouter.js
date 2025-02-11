@@ -18,7 +18,7 @@ router.route("/generate/admitcard").post(generateAdmitCard);
 
 router.route("/jee/provisional-answer-key").post(downloadProvisionalAnswerKey);
 
-router.route("/jee/main-result").post(jeeMainResultDownload);
+router.route("/jee/main-result-01").post(jeeMainResultDownload);
 
 router
   .route("/jee/data-from-provisional-answer-key")

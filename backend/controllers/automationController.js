@@ -645,6 +645,8 @@ export async function jeeMainResultDownload(req, res, next) {
   };
 
   const { application, password, drn } = req.body;
+
+  console.log(application, password);
   const uniqueId = uuid();
 
   // Return if no application number or password
@@ -666,14 +668,6 @@ export async function jeeMainResultDownload(req, res, next) {
   });
 
   const [page] = await browser.pages();
-  await page.setRequestInterception(true);
-  page.on("request", (request) => {
-    if (request.resourceType() === "image") {
-      request.abort();
-    } else {
-      request.continue();
-    }
-  });
 
   try {
     await page.goto(website);
@@ -681,15 +675,17 @@ export async function jeeMainResultDownload(req, res, next) {
 
     for (let i = 0; i < MAX_RETRIES; i++) {
       try {
-        if (i > 0) {
-          logger.info(`Reloading page for attempt ${i + 1}...`);
-          await page.reload(); // More readable than short-circuiting
-        }
+        // if (i > 0) {
+        //   logger.info(`Reloading page for attempt ${i + 1}...`);
+        //   await page.reload(); // More readable than short-circuiting
+        // }
         await page.waitForSelector(SELECTORS.applicationNumber, {
           timeout: 10000,
         });
-        await page.type(SELECTORS.applicationNumber, String(applicationNumber));
-        await page.type(SELECTORS.password, String(password));
+        await page.type(SELECTORS.applicationNumber, String(application), {
+          delay: 100,
+        });
+        await page.type(SELECTORS.password, String(password), { delay: 100 });
         await page.waitForSelector(SELECTORS.captcha, { timeout: 10000 });
 
         // Capture and solve CAPTCHA
@@ -750,43 +746,50 @@ export async function jeeMainResultDownload(req, res, next) {
       return res.status(400).json({ message: "Failed to verify captch." });
     }
 
+    const marks = await page.evaluate(() => {
+      const rows = document.querySelectorAll(".table-bordered tr");
+      let data = {};
+
+      rows.forEach((row) => {
+        const cols = row.querySelectorAll("td");
+
+        if (cols.length === 2) {
+          const subject = cols[0].innerText.trim();
+          const score = cols[1].innerText.trim();
+
+          if (subject.includes("Physics")) {
+            data.Physics = score;
+          } else if (subject.includes("Chemistry")) {
+            data.Chemistry = score;
+          } else if (subject.includes("Mathematics")) {
+            data.Mathematics = score;
+          } else if (subject.includes("Total (in figures)")) {
+            data.TotalMarks = score;
+          }
+        }
+      });
+
+      return data;
+    });
+
+    console.log(marks);
+
     const data = generateMockData();
     res.status(200).json({
       message: "Successfully fetched the Data.",
-      rollNumber1: data?.rollNumber1 || "",
-      rollNumber2: data?.rollNumber2 || "",
       candidateName: data?.candidateName || "",
-      motherName: data?.motherName || "",
-      fatherName: data?.fatherName || "",
       category: data?.category || "",
       personWithDisability: data?.personWithDisability || "",
       gender: data?.gender || "",
       dateOfBirth: data?.dateOfBirth || "",
       stateOfEligibility: data?.stateOfEligibility || "",
-      nationality: data?.nationality,
       mathematics1: data?.mathematics1 || "",
       mathematics2: data?.mathematics2 || "",
       mathematics: data?.mathematics || "",
-      physics1: data?.physics1 || "",
-      physics2: data?.physics2 || "",
       physics: data?.physics || "",
-      chemistry1: data?.chemistry1 || "",
-      chemistry2: data?.chemistry2 || "",
       chemistry: data?.chemistry || "",
-      total1: data?.total1 || "",
-      total2: data?.total2 || "",
       total: data?.total || "",
       ntaScoreInWords: data?.ntaScoreInWords || "",
-      crlRank: data?.crlRank || "",
-      genEwsRank: data?.genEwsRank || "",
-      obcNclRank: data?.obcNclRank || "",
-      scRank: data?.scRank || "",
-      stRank: data?.stRank || "",
-      crlPwDRank: data?.crlPwDRank || "",
-      genEwsPwDRank: data?.genEwsPwDRank || "",
-      obcNclPwDRank: data?.obcNclPwDRank || "",
-      scPwDRank: data?.scPwDRank || "",
-      stPwDRank: data?.stPwDRank || "",
     });
   } catch (error) {
     next(error);

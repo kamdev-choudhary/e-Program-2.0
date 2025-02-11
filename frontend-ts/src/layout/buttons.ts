@@ -195,8 +195,15 @@ export const buttons: Button[] = [
         color: "#1976D2",
       },
       {
-        label: "JEE Main Result",
-        path: "/automation/jeemainresult",
+        label: "JEE Main Result 01 ",
+        path: "/automation/jeemainresult-01",
+        icon: AssignmentTurnedInRounded,
+        loginRequired: false,
+        color: "#a12374",
+      },
+      {
+        label: "JEE Main Result (F)",
+        path: "/automation/jeemainresult-final",
         icon: AssignmentTurnedInRounded,
         loginRequired: false,
         color: "#a12374",
