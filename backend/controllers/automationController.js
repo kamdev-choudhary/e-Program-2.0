@@ -675,10 +675,10 @@ export async function jeeMainResultDownload(req, res, next) {
 
     for (let i = 0; i < MAX_RETRIES; i++) {
       try {
-        // if (i > 0) {
-        //   logger.info(`Reloading page for attempt ${i + 1}...`);
-        //   await page.reload(); // More readable than short-circuiting
-        // }
+        if (i > 0) {
+          logger.info(`Reloading page for attempt ${i + 1}...`);
+          await page.reload(); // More readable than short-circuiting
+        }
         await page.waitForSelector(SELECTORS.applicationNumber, {
           timeout: 10000,
         });
