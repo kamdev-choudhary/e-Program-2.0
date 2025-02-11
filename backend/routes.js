@@ -19,7 +19,7 @@ import toolsRoute from "./routers/toolsRoute.js";
 import verifyToken from "./middlewares/verify-token.js";
 
 const routes = (app) => {
-  app.get("/", (req, res) =>
+  app.get("/api/v1/", (req, res) =>
     res.status(200).json({ status: "OK", uptime: process.uptime() })
   );
   app.use("/api/v1/auth", authRouter);
@@ -32,7 +32,7 @@ const routes = (app) => {
   app.use("/api/v1/exams", verifyToken, examRouter);
   app.use("/api/v1/batch", verifyToken, batchRouter);
   app.use("/api/v1/doubts", verifyToken, doubtRoute);
-  app.use("/api/v1/chat", verifyToken, chatRoute);
+  app.use("/api/v1/chat", chatRoute);
   app.use("/api/v1/automation", automationRoute);
   app.use("/api/v1/analysis", analysisRoute);
   app.use("/api/v1/tools", toolsRoute);

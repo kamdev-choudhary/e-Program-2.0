@@ -75,8 +75,7 @@ userSchema.methods.generateRefreshToken = async function () {
         _id: this._id.toString(),
         email: this.email,
       },
-      config.REFRESH_TOKEN_SECRET,
-      { expiresIn: config.REFRESH_TOKEN_EXPIRY }
+      config.REFRESH_TOKEN_SECRET
     );
   } catch (error) {
     logger.error(error.message);

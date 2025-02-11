@@ -617,6 +617,20 @@ export async function getDetailsFromMainQuestionPaper(req, res, next) {
 }
 
 export async function jeeMainResultDownload(req, res, next) {
+  function mapCategory(ntaCategory) {
+    const categoryMapping = {
+      "OBC-NCL": "OBC-NCL",
+      "GEN-EWS": "GEN-EWS",
+      SC: "SC",
+      ST: "ST",
+      "GEN-EWS": "GEN-EWS",
+      "OBC-(NCL) AsPer Central List": "OBC-NCL",
+      "OBC-(NCL) As Per Central List": "OBC-NCL",
+    };
+
+    return categoryMapping[ntaCategory] || ntaCategory;
+  }
+
   const website = "https://www.google.com";
   const SELECTORS = {
     applicationNumber: 'input[name="ctl00$ContentPlaceHolder1$txtRegno"]',

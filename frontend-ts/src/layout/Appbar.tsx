@@ -25,11 +25,11 @@ import {
   PhoneRounded,
 } from "@mui/icons-material";
 import { useGlobalContext } from "../contexts/GlobalProvider";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import DummyImageUrl from "../assets/user.jpg";
 import ThemeSwitch from "../components/ThemeSwitch";
-import { RootState } from "../store/store";
+import { useAppTheme } from "../contexts/ThemeContext";
 
 interface HeaderProps {
   handleButtonClick: () => void;
@@ -41,7 +41,7 @@ const Appbar: React.FC<HeaderProps> = React.memo(
   ({ handleButtonClick, expanded }) => {
     const { user, handleLogout, isLoggedIn, profilePicUrl } =
       useGlobalContext();
-    const theme = useSelector((state: RootState) => state.theme);
+    const { theme } = useAppTheme();
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const openMenu = Boolean(anchorEl);
     const dispatch = useDispatch();

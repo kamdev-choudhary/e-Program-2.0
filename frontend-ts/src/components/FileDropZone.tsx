@@ -2,7 +2,7 @@ import React from "react";
 import { useDropzone } from "react-dropzone";
 import { CloudUploadRounded } from "@mui/icons-material";
 import { Typography, Box } from "@mui/material";
-import useTheme from "../utils/useTheme";
+import { useAppTheme } from "../contexts/ThemeContext";
 
 interface FileDropZoneProps {
   onDrop: (files: File[]) => void;
@@ -17,68 +17,59 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({
   acceptedExtensions = [],
   multiple = false,
 }) => {
-  const { theme } = useTheme();
+  const { theme } = useAppTheme();
 
   // Convert the array of extensions to the accept object
   const getAcceptObject = (extensions: string[]) => {
     const mimeTypes: { [key: string]: string[] } = {};
 
-    if (extensions.length === 0) {
-      mimeTypes["*/*"] = [];
-    } else {
-      extensions.forEach((ext) => {
-        switch (ext) {
-          case ".xlsx":
-            mimeTypes[
+    extensions.forEach((ext) => {
+      switch (ext) {
+        case ".xlsx":
+          mimeTypes[
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          ] = [
+            ...(mimeTypes[
               "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-            ] = [
-              ...(mimeTypes[
-                "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-              ] || []),
-              ext,
-            ];
-            break;
-          case ".xls":
-            mimeTypes["application/vnd.ms-excel"] = [
-              ...(mimeTypes["application/vnd.ms-excel"] || []),
-              ext,
-            ];
-            break;
-          case ".pdf":
-            mimeTypes["application/pdf"] = [
-              ...(mimeTypes["application/pdf"] || []),
-              ext,
-            ];
-            break;
-          case ".doc":
-            mimeTypes["application/msword"] = [
-              ...(mimeTypes["application/msword"] || []),
-              ext,
-            ];
-            break;
-          case ".docx":
-            mimeTypes[
+            ] || []),
+            ext,
+          ];
+          break;
+        case ".xls":
+          mimeTypes["application/vnd.ms-excel"] = [
+            ...(mimeTypes["application/vnd.ms-excel"] || []),
+            ext,
+          ];
+          break;
+        case ".pdf":
+          mimeTypes["application/pdf"] = [
+            ...(mimeTypes["application/pdf"] || []),
+            ext,
+          ];
+          break;
+        case ".doc":
+          mimeTypes["application/msword"] = [
+            ...(mimeTypes["application/msword"] || []),
+            ext,
+          ];
+          break;
+        case ".docx":
+          mimeTypes[
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+          ] = [
+            ...(mimeTypes[
               "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-            ] = [
-              ...(mimeTypes[
-                "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-              ] || []),
-              ext,
-            ];
-            break;
-          case ".png":
-          case ".jpg":
-          case ".jpeg":
-            mimeTypes["image/*"] = [...(mimeTypes["image/*"] || []), ext];
-            break;
-          case "all":
-            mimeTypes["*/*"] = []; // Accept all files when "all" is included
-            break;
-          default:
-            mimeTypes["*/*"] = [...(mimeTypes["*/*"] || []), ext]; // Catch-all for unknown extensions
-        }
-      });
-    }
+            ] || []),
+            ext,
+          ];
+          break;
+        case ".png":
+        case ".jpg":
+        case ".jpeg":
+          mimeTypes["image/*"] = [...(mimeTypes["image/*"] || []), ext];
+          break;
+      }
+    });
 
     return mimeTypes;
   };

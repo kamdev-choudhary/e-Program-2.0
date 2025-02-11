@@ -1,7 +1,7 @@
 import { styled } from "@mui/material/styles";
 import Switch from "@mui/material/Switch";
 import React from "react";
-import useTheme from "../utils/useTheme";
+import { useAppTheme } from "../contexts/ThemeContext";
 
 const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   width: 62,
@@ -60,12 +60,12 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
 }));
 
 const CustomizedSwitches: React.FC = () => {
-  const { theme, toggleTheme } = useTheme();
+  const { theme, toggleTheme } = useAppTheme();
   return (
     <MaterialUISwitch
       sx={{ m: 1 }}
       checked={theme === "dark"}
-      onClick={() => toggleTheme(theme === "dark" ? "light" : "dark")}
+      onClick={() => toggleTheme()}
     />
   );
 };

@@ -10,7 +10,6 @@ export async function getAllChats(req, res, next) {
         .json({ message: "validation error", message: "User ID is required" });
     }
 
-    // Find chats where the user is a participant and populate participants
     const chats = await Chat.find({ participants: { $in: [id] } })
       .populate("participants", "name email _id") // Populate fields as needed
       .lean();

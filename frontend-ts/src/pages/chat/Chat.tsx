@@ -69,7 +69,14 @@ const Chat: React.FC = () => {
   return (
     <Card sx={{ height: "100%" }}>
       <Grid sx={{ height: "100%" }} container spacing={2}>
-        <Grid sx={{ height: "100%" }} size={{ xs: 12, md: 4 }}>
+        <Grid
+          sx={{
+            height: "100%",
+            borderRight: "1px solid rgba(0,0,0,0.2)",
+            pr: 2,
+          }}
+          size={{ xs: 12, md: 4 }}
+        >
           <ChatList setSelectedChat={setSelectedChat} chatList={chatList} />
         </Grid>
         <Grid size={{ xs: 12, md: 8 }}>

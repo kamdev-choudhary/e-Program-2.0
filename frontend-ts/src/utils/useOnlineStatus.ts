@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { BASE_URL } from "../config/config";
 import { RootState } from "../store/store";
+import axios from "../hooks/AxiosInterceptor";
 
 const useOnlineStatus = () => {
   const dispatch = useDispatch();
@@ -11,9 +11,10 @@ const useOnlineStatus = () => {
   const fetchStatus = async () => {
     setLoading(true);
     try {
-      const response = await fetch(BASE_URL);
-      const status = response.ok;
-      dispatch({ type: "SET_ONLINE", payload: status });
+      const response = await axios.get("/");
+      if (response.status === 200) {
+        dispatch({ type: "SET_ONLINE", payload: true });
+      }
     } catch (error) {
       console.error("Error fetching status:", error);
       dispatch({ type: "SET_ONLINE", payload: false });

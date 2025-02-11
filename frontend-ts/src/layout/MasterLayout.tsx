@@ -5,12 +5,12 @@ import { AnimatePresence, motion } from "framer-motion";
 import Sidebar from "./Sidebar";
 import Appbar from "./Appbar";
 import PopUpPages from "./PopUpPages";
-import useTheme from "../utils/useTheme";
+import { useAppTheme } from "../contexts/ThemeContext";
 
 const drawerWidth = 285; // Sidebar width
 
 const MasterLayout: React.FC = () => {
-  const { theme } = useTheme();
+  const { theme } = useAppTheme();
   const isSmallScreen = useMediaQuery("(max-width:475px)");
   const [expanded, setExpanded] = useState<boolean>(true);
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);

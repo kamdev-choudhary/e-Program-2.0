@@ -7,6 +7,7 @@ import { GlobalProvider } from "./contexts/GlobalProvider.tsx";
 import { WebSocketProvider } from "./contexts/WebSocket.tsx";
 import App from "./App.tsx";
 import { NotificationProvider } from "./contexts/NotificationProvider.tsx";
+import { ThemeProviderComponent } from "./contexts/ThemeContext.tsx";
 
 const isDevelopment = import.meta.env.MODE === "development";
 
@@ -15,7 +16,9 @@ const AppWrapper = (
     <GlobalProvider>
       <WebSocketProvider>
         <Provider store={store}>
-          <App />
+          <ThemeProviderComponent>
+            <App />
+          </ThemeProviderComponent>
         </Provider>
       </WebSocketProvider>
     </GlobalProvider>
