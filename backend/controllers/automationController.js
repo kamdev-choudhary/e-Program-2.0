@@ -642,6 +642,7 @@ export async function jeeMainResultDownload(req, res, next) {
     loginButton: "#Submit",
     errorSelector: "#ctl00_ContentPlaceHolder1_lblerror1",
     refreshCaptcha: "#ctl00_ContentPlaceHolder1_bttRegCaptcha",
+    tableResponsive: ".table-responsive",
   };
 
   const { application, password, drn } = req.body;
@@ -730,7 +731,7 @@ export async function jeeMainResultDownload(req, res, next) {
 
         // Check if login is successful
         const paperElement = await page
-          .waitForSelector(SELECTORS.showPaper, { timeout: 4000 })
+          .waitForSelector(SELECTORS.tableResponsive, { timeout: 30000 })
           .catch(() => null);
         if (paperElement) {
           console.info("Login successful!");
