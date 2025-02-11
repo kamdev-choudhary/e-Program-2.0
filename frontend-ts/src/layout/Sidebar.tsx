@@ -203,7 +203,12 @@ const Sidebar: React.FC<SidebarProps> = ({ expanded = true }) => {
 
                 {expanded && (
                   <>
-                    <ListItemText sx={{ ml: 2 }} primary={page.label} />
+                    <ListItemText
+                      sx={{
+                        ml: 2,
+                      }}
+                      primary={page.label}
+                    />
                     {page.options &&
                       (openMenus[page.label] ? <ExpandLess /> : <ExpandMore />)}
                   </>

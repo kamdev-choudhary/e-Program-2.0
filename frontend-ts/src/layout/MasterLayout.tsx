@@ -4,7 +4,6 @@ import { Outlet } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
 import Sidebar from "./Sidebar";
 import Appbar from "./Appbar";
-import PopUpPages from "./PopUpPages";
 import { useAppTheme } from "../contexts/ThemeContext";
 
 const drawerWidth = 285; // Sidebar width
@@ -14,6 +13,7 @@ const MasterLayout: React.FC = () => {
   const isSmallScreen = useMediaQuery("(max-width:475px)");
   const [expanded, setExpanded] = useState<boolean>(true);
   const [openDrawer, setOpenDrawer] = useState<boolean>(false);
+  const [hovering, setHovering] = useState<boolean>(false); // New state for hover effect
   const isLight = theme === "light";
 
   // Toggle Sidebar (Mobile & Desktop)
@@ -52,13 +52,13 @@ const MasterLayout: React.FC = () => {
         ) : (
           <motion.div
             initial={{ width: expanded ? drawerWidth : 70 }}
-            animate={{ width: expanded ? drawerWidth : 70 }}
-            transition={{ type: "", stiffness: 100 }}
+            animate={{ width: expanded || hovering ? drawerWidth : 70 }}
+            transition={{ type: "tween", duration: 0.6, ease: "easeOut" }}
             className="no-print"
             style={{
               borderRight: "1px solid rgba(0,0,0,0.2)",
               overflowY: "auto",
-              padding: expanded ? "16px" : "8px",
+              padding: expanded || hovering ? "16px" : "8px",
               height: "100%",
               scrollbarWidth: "none",
               background: isLight ? "rgba(255, 255, 255, 0.7)" : "#212327",
@@ -68,8 +68,10 @@ const MasterLayout: React.FC = () => {
                 : "rgba(248, 250, 252, 0.08)",
               boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
             }}
+            onMouseEnter={() => !expanded && setHovering(true)}
+            onMouseLeave={() => setHovering(false)}
           >
-            <Sidebar expanded={expanded} />
+            <Sidebar expanded={expanded || hovering} />
           </motion.div>
         )}
 
@@ -99,7 +101,6 @@ const MasterLayout: React.FC = () => {
       </Box>
 
       {/* Floating Popups */}
-      <PopUpPages />
     </Box>
   );
 };
