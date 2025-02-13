@@ -657,7 +657,7 @@ export async function jeeMainResultDownload(req, res, next) {
       .json({ message: "Application number or password missing" });
 
   const browser = await puppeteer.launch({
-    headless: false, // Use "new" mode to bypass bot detection
+    headless: "new", // Use "new" mode to bypass bot detection
     args: [
       "--no-sandbox",
       "--disable-setuid-sandbox",
@@ -684,10 +684,8 @@ export async function jeeMainResultDownload(req, res, next) {
             .querySelectorAll("input")
             .forEach((input) => (input.value = ""));
         });
-        await page.type(SELECTORS.applicationNumber, String(application), {
-          delay: 100,
-        });
-        await page.type(SELECTORS.password, String(password), { delay: 100 });
+        await page.type(SELECTORS.applicationNumber, String(application));
+        await page.type(SELECTORS.password, String(password));
         await page.waitForSelector(SELECTORS.captcha, { timeout: 10000 });
 
         // Capture and solve CAPTCHA
@@ -731,7 +729,7 @@ export async function jeeMainResultDownload(req, res, next) {
 
         // Check if login is successful
         const paperElement = await page
-          .waitForSelector(SELECTORS.tableResponsive, { timeout: 30000 })
+          .waitForSelector(SELECTORS.tableResponsive, { timeout: 3000 })
           .catch(() => null);
         if (paperElement) {
           console.info("Login successful!");
@@ -773,7 +771,14 @@ export async function jeeMainResultDownload(req, res, next) {
       return data;
     });
 
-    console.log(marks);
+    // Save the PDF
+    const pdfPath = `./uploads/${application}_${drn}.pdf`;
+    await page.pdf({
+      path: pdfPath,
+      format: "A4",
+      printBackground: true,
+      margin: { top: "20mm", right: "20mm", bottom: "20mm", left: "20mm" },
+    });
 
     res.status(200).json({
       message: "Successfully fetched the Data.",

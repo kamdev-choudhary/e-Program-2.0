@@ -20,12 +20,8 @@ import axios from "../../hooks/AxiosInterceptor";
 import { useNotification } from "../../contexts/NotificationProvider";
 import { toProperCase } from "../../utils/commonfs";
 import BorderLinearProgress from "../../components/BorderLineProgress";
-import Rank from "./jee-main/Rank";
 import RangeDistribution from "./jee-main/RangeDistribution";
 import AverageScore from "./jee-main/AverageScore";
-import { CustomModal } from "../../components/CustomModal";
-import ScholarCard from "./jee-main/ScholarCard";
-
 interface ScholarData {
   drn: string;
   name: string;
@@ -56,14 +52,7 @@ const JEEMainResult: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [jsonData, setJsonData] = useState<ScholarData[] | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
-
   const { showNotification } = useNotification();
-
-  const [selectedScholar, setSelectedScholar] = useState<ScholarData | null>(
-    null
-  );
-  const [showScholarCard, setShowScholarCard] = useState<boolean>(false);
-
   const handleDownloadMainScorecard = async (scholar: ScholarData) => {
     try {
       setJsonData((prevData) => {
@@ -235,11 +224,6 @@ const JEEMainResult: React.FC = () => {
     };
 
     reader.readAsArrayBuffer(file);
-  };
-
-  const handleShowScholarCard = (scholar: ScholarData) => {
-    setSelectedScholar(scholar);
-    setShowScholarCard(true);
   };
 
   const handleProcessRowUpdate = (
@@ -418,6 +402,21 @@ const JEEMainResult: React.FC = () => {
     return (count / jsonData.length) * 100;
   }, [jsonData]);
 
+  const downloadJsonFile = () => {
+    const jsonString = JSON.stringify(jsonData, null, 2);
+    const blob = new Blob([jsonString], { type: "application/json" });
+    const url = URL.createObjectURL(blob);
+
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "data.json";
+    document.body.appendChild(a);
+    a.click();
+
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
   return (
     <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
       <Paper sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
@@ -454,6 +453,7 @@ const JEEMainResult: React.FC = () => {
                     jsonData: jsonData,
                     fileName: "JEE Main Result Session 01",
                   });
+                  downloadJsonFile();
                 }
               }}
               color="success"
@@ -538,17 +538,8 @@ const JEEMainResult: React.FC = () => {
         />
       </Box>
 
-      <Rank jsonData={jsonData} handleShowScholarCard={handleShowScholarCard} />
       <RangeDistribution jsonData={jsonData} />
       <AverageScore jsonData={jsonData} />
-
-      <CustomModal
-        open={showScholarCard}
-        onClose={() => setShowScholarCard(false)}
-        width="auto"
-      >
-        <ScholarCard data={selectedScholar} />
-      </CustomModal>
     </Box>
   );
 };
