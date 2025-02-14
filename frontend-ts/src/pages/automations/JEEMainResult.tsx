@@ -824,7 +824,7 @@ const JEEMainResult: React.FC = () => {
       <Box>
         <DataGrid
           slots={{
-            toolbar: () => <CustomToolbar showAddButton={false} />,
+            toolbar: () => <CustomToolbar />,
           }}
           columns={columns}
           rows={filteredData || []}

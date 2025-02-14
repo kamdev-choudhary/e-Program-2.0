@@ -33,8 +33,6 @@ export const ThemeProviderComponent = ({
 
   const appTheme = useMemo(() => getTheme(theme), [theme]);
 
-  console.log(appTheme);
-
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme }}>
       <ThemeProvider theme={appTheme}>

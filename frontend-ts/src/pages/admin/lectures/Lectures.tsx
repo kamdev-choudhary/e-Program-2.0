@@ -379,11 +379,7 @@ const Lectures: React.FC = () => {
           disableRowSelectionOnClick
           slots={{
             toolbar: () => (
-              <CustomToolbar
-                showAddButton={true}
-                showRefreshButton={true}
-                onAddButtonClick={() => setShowAddSingleLecture(true)}
-              />
+              <CustomToolbar onAdd={() => setShowAddSingleLecture(true)} />
             ),
           }}
           paginationModel={paginationModel} // Controlled pagination

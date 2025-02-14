@@ -50,27 +50,21 @@ export async function getUsersWithPagination(req, res, next) {
     const pageNumber = parseInt(page, 10);
     const pageSize = parseInt(limit, 10);
 
+    const roles = ["admin", "scholar", "moderator", "teacher"];
+    const rolesWithCount = await Promise.all(
+      roles.map(async (r) => ({
+        name: r.charAt(0).toUpperCase() + r.slice(1),
+        value: r,
+        count: await User.countDocuments({ role: r }),
+      }))
+    );
+
     const users = await User.find({ role }, { password: 0 })
       .skip((pageNumber - 1) * pageSize)
       .limit(pageSize)
       .lean();
 
-    const usersCount = await User.countDocuments({ role });
-
-    const adminCount = await User.countDocuments({ role: "admin" });
-    const scholarCount = await User.countDocuments({ role: "scholar" });
-    const moderatorCount = await User.countDocuments({ role: "moderator" });
-    const teacherCount = await User.countDocuments({ role: "teacher" });
-
-    res.status(200).json({
-      message: "Users retrieved successfully.",
-      users,
-      usersCount,
-      adminCount,
-      scholarCount,
-      moderatorCount,
-      teacherCount,
-    });
+    res.status(200).json({ rolesWithCount, users });
   } catch (error) {
     next(error);
   }

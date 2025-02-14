@@ -34,7 +34,6 @@ export async function captureAndSolveCaptcha(page, captchaSelector) {
   if (!/^[A-Z0-9]+$/.test(captchaText)) {
     throw new Error("CAPTCHA text is invalid.");
   }
-  logger.info(`CAPTCHA : ${captchaText}`);
   return captchaText;
 }
 

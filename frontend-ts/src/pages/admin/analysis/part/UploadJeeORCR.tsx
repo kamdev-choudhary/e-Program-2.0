@@ -238,7 +238,7 @@ const UploadJeeMainORCR: React.FC<UploadJeeMainORCRProps> = ({
       <Box sx={{ mt: 2 }}>
         <DataGrid
           slots={{
-            toolbar: () => <CustomToolbar showAddButton={false} />,
+            toolbar: () => <CustomToolbar />,
           }}
           columns={columns}
           rows={rows}

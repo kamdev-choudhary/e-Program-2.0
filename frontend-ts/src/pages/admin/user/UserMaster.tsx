@@ -25,6 +25,7 @@ import Sessions from "./parts/Sessions";
 import axios from "../../../hooks/AxiosInterceptor";
 import { useNotification } from "../../../contexts/NotificationProvider";
 import { UserRole } from "../../../constant/roles";
+import UploadScholar from "./parts/UploadScholar";
 
 interface UserProps {
   _id: string;
@@ -41,6 +42,12 @@ interface newUser {
   role: string;
 }
 
+interface RolesWithCountProps {
+  name: string;
+  value: string;
+  count: number;
+}
+
 const UserMaster: React.FC = () => {
   const [activeTab, setActiveTab] = useState<UserRole>("admin");
   const { showNotification } = useNotification();
@@ -48,10 +55,10 @@ const UserMaster: React.FC = () => {
   const [users, setUsers] = useState<UserProps[] | null>(null);
   const [addAdminModal, setAddAdminModal] = useState<boolean>(false);
   const [showScholarDetails, setShowScholarDetails] = useState<boolean>(false);
-  const [adminCount, setAdminCount] = useState<number | null>(0);
-  const [scholarCount, setScholarCount] = useState<number | null>(0);
-  const [moderatorCount, setModeratorCount] = useState<number | null>(0);
-  const [teacherCount, setTeacherCount] = useState<number | null>(0);
+  const [showUploadScholars, setShowUploadScholars] = useState<boolean>(false);
+  const [rolesWithCount, setRolesWithCount] = useState<
+    RolesWithCountProps[] | null
+  >(null);
   const [selectedUser, setSelectedUser] = useState<UserProps | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [newUser, setNewUser] = useState<newUser>({
@@ -60,20 +67,12 @@ const UserMaster: React.FC = () => {
     name: "",
     role: "admin",
   });
-
-  const roles = [
-    { name: "Admin", value: "admin", count: adminCount },
-    { name: "Scholar", value: "scholar", count: scholarCount },
-    { name: "Moderator", value: "moderator", count: moderatorCount },
-    { name: "Teacher", value: "teacher", count: teacherCount },
-  ];
   const [showSessions, setShowSessions] = useState<boolean>(false);
 
   const [paginationModel, setPaginationModel] = useState<GridPaginationModel>({
     page: 0,
     pageSize: 10,
   });
-  const [totalUsers, setTotalUsers] = useState<number>(0);
 
   const fetchUsers = async (page: number, pageSize: number) => {
     setLoading(true);
@@ -86,11 +85,7 @@ const UserMaster: React.FC = () => {
         },
       });
       setUsers(response.data.users);
-      setTotalUsers(response.data.usersCount);
-      setAdminCount(response.data.adminCount);
-      setScholarCount(response.data.scholarCount);
-      setModeratorCount(response.data.moderatorCount);
-      setTeacherCount(response.data.teacherCount);
+      setRolesWithCount(response.data.rolesWithCount);
     } catch (error) {
       console.error(error);
     } finally {
@@ -204,7 +199,7 @@ const UserMaster: React.FC = () => {
       headerAlign: "center",
       editable: true,
       type: "singleSelect",
-      valueOptions: roles.map((role) => role.value),
+      valueOptions: rolesWithCount?.map((role) => role.value),
     },
     {
       field: "status",
@@ -318,7 +313,7 @@ const UserMaster: React.FC = () => {
         textColor="secondary"
         indicatorColor="secondary"
       >
-        {roles?.map((role) => (
+        {rolesWithCount?.map((role) => (
           <Tab label={`${role.name} (${role.count})`} value={role.value} />
         ))}
       </Tabs>
@@ -337,11 +332,11 @@ const UserMaster: React.FC = () => {
           slots={{
             toolbar: () => (
               <CustomToolbar
-                showAddButton={true}
-                onAddButtonClick={() => {
+                onAdd={() => {
                   setNewUser((prev) => ({ ...prev, role: activeTab }));
                   setAddAdminModal(true);
                 }}
+                onUpload={() => setShowUploadScholars(true)}
               />
             ),
           }}
@@ -350,7 +345,9 @@ const UserMaster: React.FC = () => {
           paginationModel={paginationModel}
           pageSizeOptions={[10, 30, 50]}
           loading={loading}
-          rowCount={totalUsers}
+          rowCount={
+            rolesWithCount?.find((r) => r.name === activeTab)?.count || 0
+          }
           paginationMode="server"
           disableRowSelectionOnClick
           disableColumnMenu
@@ -373,7 +370,7 @@ const UserMaster: React.FC = () => {
           }}
         >
           <CustomDropDown
-            data={roles}
+            data={rolesWithCount || []}
             value={newUser.role}
             name="name"
             dropdownValue="value"
@@ -424,6 +421,14 @@ const UserMaster: React.FC = () => {
       {/* Sessions */}
       <CustomModal open={showSessions} onClose={() => setShowSessions(false)}>
         <Sessions user={selectedUser} />
+      </CustomModal>
+
+      {/* Upload Scholar */}
+      <CustomModal
+        open={showUploadScholars}
+        onClose={() => setShowUploadScholars(false)}
+      >
+        <UploadScholar />
       </CustomModal>
     </Box>
   );

@@ -10,33 +10,32 @@ import {
   AddRounded,
   DownloadRounded,
   RefreshRounded,
+  UploadRounded,
 } from "@mui/icons-material";
-import { Button } from "@mui/material";
+import { Button, Stack } from "@mui/material";
 
 interface CustomToolbarProps {
-  showAddButton: boolean;
-  onAddButtonClick?: () => void;
-  showDownloadButton?: boolean;
-  onDowloadButtonClick?: () => void;
-  showRefreshButton?: boolean;
-  onRefreshButtonClick?: () => void;
-  disabledDownloadButton?: boolean;
-  disabledRefreshButton?: boolean;
-  showExportButton?: boolean;
-  showGridToolbarColumnButton?: boolean;
+  onAdd?: () => void;
+  onDownload?: () => void;
+  onRefresh?: () => void;
+  onUpload?: () => void;
+  disableDownload?: boolean;
+  disableRefresh?: boolean;
+  searchPlaceholder?: string;
+  showExport?: boolean;
+  showColumns?: boolean;
 }
 
 export const CustomToolbar: React.FC<CustomToolbarProps> = ({
-  showAddButton = true,
-  onAddButtonClick,
-  showDownloadButton = false,
-  onDowloadButtonClick,
-  showRefreshButton = false,
-  onRefreshButtonClick,
-  disabledDownloadButton = false,
-  disabledRefreshButton = false,
-  showExportButton = false,
-  showGridToolbarColumnButton = true,
+  onAdd,
+  onDownload,
+  onRefresh,
+  onUpload,
+  disableDownload = false,
+  disableRefresh = false,
+  searchPlaceholder = "Search...",
+  showExport = false,
+  showColumns = true,
 }) => {
   return (
     <GridToolbarContainer
@@ -44,52 +43,51 @@ export const CustomToolbar: React.FC<CustomToolbarProps> = ({
         display: "flex",
         justifyContent: "space-between",
         alignItems: "center",
-        backgroundColor: "background.paper",
-        px: 2,
-        py: 1,
+        gap: 2,
         flexWrap: "wrap",
+        p: 1,
+        backgroundColor: "background.paper",
       }}
     >
-      <div style={{ display: "flex", gap: 2, overflow: "auto" }}>
-        {showGridToolbarColumnButton && <GridToolbarColumnsButton />}
-        {showExportButton && (
-          <GridToolbarExport
-            printOptions={{ allColumns: true, disableToolbarButton: true }}
-          />
-        )}
+      <Stack direction="row" gap={1} alignItems="center">
+        {showColumns && <GridToolbarColumnsButton />}
+        {showExport && <GridToolbarExport />}
         <GridToolbarFilterButton />
-        {showAddButton && (
-          <Button onClick={onAddButtonClick} startIcon={<AddRounded />}>
+        {onAdd && (
+          <Button onClick={onAdd} startIcon={<AddRounded />}>
             Add
           </Button>
         )}
-        {showDownloadButton && (
+        {onUpload && (
           <Button
-            onClick={onDowloadButtonClick}
+            onClick={onUpload}
+            startIcon={<UploadRounded />}
+            disabled={disableDownload}
+          >
+            Upload
+          </Button>
+        )}
+        {onDownload && (
+          <Button
+            onClick={onDownload}
             startIcon={<DownloadRounded />}
-            disabled={disabledDownloadButton}
+            disabled={disableDownload}
           >
             Download
           </Button>
         )}
-        {showRefreshButton && (
+        {onRefresh && (
           <Button
-            disabled={disabledRefreshButton}
-            onClick={onRefreshButtonClick}
+            onClick={onRefresh}
             startIcon={<RefreshRounded />}
+            disabled={disableRefresh}
           >
             Refresh
           </Button>
         )}
-      </div>
-      <GridToolbarQuickFilter
-        sx={{
-          borderRadius: 1,
-          p: 1,
-          backgroundColor: "background.paper",
-          px: 2,
-        }}
-      />
+      </Stack>
+
+      <GridToolbarQuickFilter placeholder={searchPlaceholder} />
     </GridToolbarContainer>
   );
 };

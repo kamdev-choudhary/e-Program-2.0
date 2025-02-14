@@ -480,7 +480,7 @@ const JEEMainCityInfo: React.FC = () => {
       <Box sx={{ mt: 2 }}>
         <DataGrid
           slots={{
-            toolbar: () => <CustomToolbar showAddButton={false} />,
+            toolbar: () => <CustomToolbar />,
           }}
           columns={columns}
           rows={jsonData || []}

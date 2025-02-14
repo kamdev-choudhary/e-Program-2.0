@@ -286,10 +286,7 @@ const JEEMainMarksVsPercentile: React.FC = () => {
         columns={columns}
         slots={{
           toolbar: () => (
-            <CustomToolbar
-              showAddButton
-              onAddButtonClick={() => setShowUploadData(true)}
-            />
+            <CustomToolbar onAdd={() => setShowUploadData(true)} />
           ),
         }}
         loading={isLoading}

@@ -6,19 +6,28 @@ import {
   IconButton,
   ListItem,
   ListItemAvatar,
+  ListItemIcon,
   ListItemText,
   Menu,
   MenuItem,
 } from "@mui/material";
-import { MoreVertRounded } from "@mui/icons-material";
+import {
+  AccountCircleRounded,
+  CloseRounded,
+  MoreVertRounded,
+} from "@mui/icons-material";
 
 import { MessagesListProps } from "./types";
 
 interface MessagesProps {
   selectedChat: UserChatListProps | null;
+  setSelectedChat: (value: null) => void;
 }
 
-const Messages: React.FC<MessagesProps> = ({ selectedChat }) => {
+const Messages: React.FC<MessagesProps> = ({
+  selectedChat,
+  setSelectedChat,
+}) => {
   const [lastSeen, setLastSeen] = useState<string>("");
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
   const open = Boolean(anchorEl);
@@ -28,6 +37,10 @@ const Messages: React.FC<MessagesProps> = ({ selectedChat }) => {
     setLastSeen("Recently");
     setMessages(null);
   }, []);
+
+  if (!selectedChat) {
+    return null;
+  }
 
   return (
     <div>
@@ -68,7 +81,23 @@ const Messages: React.FC<MessagesProps> = ({ selectedChat }) => {
           horizontal: "right",
         }}
       >
-        <MenuItem onClick={() => setAnchorEl(null)}>Profile</MenuItem>
+        <MenuItem onClick={() => setAnchorEl(null)}>
+          <ListItemIcon>
+            <AccountCircleRounded />
+          </ListItemIcon>
+          Profile
+        </MenuItem>
+        <MenuItem
+          onClick={() => {
+            setSelectedChat(null);
+            setAnchorEl(null);
+          }}
+        >
+          <ListItemIcon>
+            <CloseRounded />
+          </ListItemIcon>
+          Close Chat
+        </MenuItem>
       </Menu>
       <Box>
         {messages && messages?.map((message) => <Box>{message.content}</Box>)}

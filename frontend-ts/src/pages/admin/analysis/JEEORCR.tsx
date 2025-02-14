@@ -315,10 +315,7 @@ const JEEORCR: React.FC = () => {
         rows={rows}
         slots={{
           toolbar: () => (
-            <CustomToolbar
-              showAddButton={true}
-              onAddButtonClick={() => setShowUploadData(true)}
-            />
+            <CustomToolbar onAdd={() => setShowUploadData(true)} />
           ),
         }}
         loading={loading}

@@ -80,7 +80,10 @@ const Chat: React.FC = () => {
           <ChatList setSelectedChat={setSelectedChat} chatList={chatList} />
         </Grid>
         <Grid size={{ xs: 12, md: 8 }}>
-          <Messages selectedChat={selectedChat} />
+          <Messages
+            setSelectedChat={setSelectedChat}
+            selectedChat={selectedChat}
+          />
         </Grid>
       </Grid>
     </Card>

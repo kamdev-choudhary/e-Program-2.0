@@ -706,7 +706,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
         rows={jsonData}
         loading={isLoading}
         slots={{
-          toolbar: () => <CustomToolbar showAddButton={false} />,
+          toolbar: () => <CustomToolbar />,
         }}
         disableRowSelectionOnClick
         pageSizeOptions={[10, 30, 50]}
@@ -731,9 +731,7 @@ const JEEAdvancedAnalysis: React.FC = () => {
           rows={scholars}
           pageSizeOptions={[10, 30, 50]}
           slots={{
-            toolbar: () => (
-              <CustomToolbar showAddButton={false} showExportButton={true} />
-            ),
+            toolbar: () => <CustomToolbar />,
           }}
           initialState={{
             pagination: { paginationModel: { pageSize: 10 } },

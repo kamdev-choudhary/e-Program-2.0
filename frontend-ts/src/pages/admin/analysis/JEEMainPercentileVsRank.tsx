@@ -231,10 +231,8 @@ const JEEMainMarksVsRank: React.FC = () => {
         slots={{
           toolbar: () => (
             <CustomToolbar
-              showAddButton
-              onAddButtonClick={() => setShowUploadData(true)}
-              showRefreshButton={true}
-              onRefreshButtonClick={fetchData}
+              onAdd={() => setShowUploadData(true)}
+              onRefresh={fetchData}
             />
           ),
         }}

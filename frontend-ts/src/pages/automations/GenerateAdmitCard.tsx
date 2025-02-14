@@ -371,7 +371,7 @@ const GenerateAdmitCard: React.FC = () => {
 
       <DataGrid
         slots={{
-          toolbar: () => <CustomToolbar showAddButton={false} />,
+          toolbar: () => <CustomToolbar />,
         }}
         columns={columns}
         rows={filteredData}
