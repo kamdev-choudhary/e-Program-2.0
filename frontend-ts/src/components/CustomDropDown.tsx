@@ -67,8 +67,10 @@ const CustomDropDown = <T extends Record<string, any>>({
             let itemLabel =
               typeof item === "string" ? item : String(item[name]);
 
-            // Check if itemLabel is an actual date (contains "-" or "/" or "T")
-            if (typeof itemLabel === "string" && /[-/T]/.test(itemLabel)) {
+            if (
+              typeof itemLabel === "string" &&
+              moment(itemLabel, moment.ISO_8601, true).isValid()
+            ) {
               itemLabel = moment(itemLabel).format("DD-MM-YYYY");
             }
 
