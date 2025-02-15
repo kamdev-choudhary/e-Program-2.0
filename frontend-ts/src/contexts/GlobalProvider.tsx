@@ -5,6 +5,7 @@ import React, {
   useEffect,
   useMemo,
   useState,
+  useCallback,
 } from "react";
 import { JwtPayload, jwtDecode } from "jwt-decode";
 import Loader from "../components/Loader";
@@ -43,144 +44,142 @@ interface GlobalContextType {
   setProfilePicUrl: (value: string) => void;
 }
 
-// Create GlobalContext
 const GlobalContext = createContext<GlobalContextType | undefined>(undefined);
 
 export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
-  const [authState, setAuthState] = useState<{
-    isLoggedIn: boolean;
-    user: User | null;
-    token: string;
-  }>({
+  const [authState, setAuthState] = useState({
     isLoggedIn: false,
-    user: null,
+    user: null as User | null,
     token: "",
   });
-
   const [isLoaded, setIsLoaded] = useState(false);
   const [profilePicUrl, setProfilePicUrl] = useState(dummyImage);
   const { showNotification } = useNotification();
 
-  // Initialize authentication state
-  useEffect(() => {
-    const initializeAuthState = () => {
-      const storedToken = localStorage.getItem(LS_KEYS.ACCESS_TOKEN);
-      const logoutError = localStorage.getItem(LS_KEYS.LOGOUT);
-
-      // Handle logout error notification
-      if (logoutError) {
-        showNotification({
-          message: logoutError,
-          type: "error",
-          variant: "standard",
-        });
-        localStorage.removeItem(LS_KEYS.LOGOUT);
-      }
-
-      if (!storedToken) {
-        setIsLoaded(true);
-        return;
-      }
-
-      try {
-        const decodedToken = jwtDecode<JwtPayload & User>(storedToken);
-        const isTokenExpired =
-          decodedToken.exp && decodedToken.exp * 1000 < Date.now();
-
-        if (isTokenExpired) {
-          showNotification({ message: "Token expired", type: "error" });
-          localStorage.removeItem(LS_KEYS.ACCESS_TOKEN);
-        } else {
-          const user = {
-            _id: decodedToken._id,
-            name: decodedToken.name,
-            role: decodedToken.role,
-            email: decodedToken.email,
-            mobile: decodedToken.mobile,
-          };
-
-          setAuthState({ isLoggedIn: true, user, token: storedToken });
-
-          const storedPhoto = localStorage.getItem(LS_KEYS.PHOTO) || dummyImage;
-          setProfilePicUrl(
-            storedPhoto !== "null" && storedPhoto !== "undefined"
-              ? storedPhoto
-              : dummyImage
-          );
-        }
-      } catch (error) {
-        console.error("Invalid token:", error);
-        localStorage.removeItem(LS_KEYS.ACCESS_TOKEN);
-        localStorage.removeItem(LS_KEYS.PHOTO);
-        localStorage.removeItem(LS_KEYS.REFRESH_TOKEN);
-      } finally {
-        setIsLoaded(true);
-      }
-    };
-
-    initializeAuthState();
-  }, [showNotification]);
-
-  // Handle user login
-  const handleUserLogin = (data: LoginResponse) => {
-    const { token, photo, refreshToken } = data;
+  const refreshAccessToken = async () => {
     try {
-      const decodedToken = jwtDecode<JwtPayload & User>(token);
-      const user = {
-        _id: decodedToken._id,
-        name: decodedToken.name,
-        role: decodedToken.role,
-        email: decodedToken.email,
-        mobile: decodedToken.mobile,
-      };
-      setAuthState({ isLoggedIn: true, user, token });
-      setProfilePicUrl(photo || dummyImage);
-      localStorage.setItem(LS_KEYS.PHOTO, photo || "");
-      localStorage.setItem(LS_KEYS.ACCESS_TOKEN, token);
-      localStorage.setItem(LS_KEYS.REFRESH_TOKEN, refreshToken);
-    } catch (error) {
-      console.error("Invalid token:", error);
-      showNotification({
-        message: "Login failed. Invalid token.",
-        type: "error",
-        variant: "filled",
+      const refreshToken = localStorage.getItem(LS_KEYS.REFRESH_TOKEN);
+      if (!refreshToken) throw new Error("No refresh token available");
+
+      const { data } = await axios.post("/auth/token/refresh", null, {
+        headers: { "x-refresh-token": refreshToken },
       });
+      const token = data.accessToken;
+      localStorage.setItem(LS_KEYS.ACCESS_TOKEN, token);
+      return token;
+    } catch (error) {
+      console.error("Failed to refresh token:", error);
+      handleLogout();
     }
   };
 
-  // Handle user logout
-  const handleLogout = async () => {
-    const deviceId = localStorage.getItem(LS_KEYS.DEVICE_ID);
+  const initializeAuthState = useCallback(async () => {
+    const storedToken = localStorage.getItem(LS_KEYS.ACCESS_TOKEN);
+    const logoutError = localStorage.getItem(LS_KEYS.LOGOUT);
 
+    if (logoutError) {
+      showNotification({
+        message: logoutError,
+        type: "error",
+        variant: "standard",
+      });
+      localStorage.removeItem(LS_KEYS.LOGOUT);
+    }
+
+    if (!storedToken) {
+      setIsLoaded(true);
+      return;
+    }
+
+    try {
+      let decodedToken = jwtDecode<JwtPayload & User>(storedToken);
+      const isTokenExpired =
+        decodedToken.exp && decodedToken.exp * 1000 < Date.now();
+
+      if (isTokenExpired) {
+        const newToken = await refreshAccessToken();
+        if (!newToken) return;
+        decodedToken = jwtDecode<JwtPayload & User>(newToken);
+      }
+
+      setAuthState({
+        isLoggedIn: true,
+        user: {
+          _id: decodedToken._id,
+          name: decodedToken.name,
+          role: decodedToken.role,
+          email: decodedToken.email,
+          mobile: decodedToken.mobile,
+        },
+        token: storedToken,
+      });
+      setProfilePicUrl(localStorage.getItem(LS_KEYS.PHOTO) || dummyImage);
+    } catch (error) {
+      console.error("Invalid token:", error);
+      handleLogout();
+    } finally {
+      setIsLoaded(true);
+    }
+  }, [showNotification]);
+
+  useEffect(() => {
+    initializeAuthState();
+  }, [initializeAuthState]);
+
+  const handleUserLogin = useCallback(
+    (data: LoginResponse) => {
+      const { token, photo, refreshToken } = data;
+      try {
+        const decodedToken = jwtDecode<JwtPayload & User>(token);
+        setAuthState({
+          isLoggedIn: true,
+          user: decodedToken,
+          token,
+        });
+        setProfilePicUrl(photo || dummyImage);
+        localStorage.setItem(LS_KEYS.ACCESS_TOKEN, token);
+        localStorage.setItem(LS_KEYS.REFRESH_TOKEN, refreshToken);
+        if (photo) localStorage.setItem(LS_KEYS.PHOTO, photo);
+      } catch (error) {
+        console.error("Invalid token:", error);
+        showNotification({
+          message: "Login failed. Invalid token.",
+          type: "error",
+          variant: "filled",
+        });
+      }
+    },
+    [showNotification]
+  );
+
+  const handleLogout = useCallback(async () => {
     setAuthState({ isLoggedIn: false, user: null, token: "" });
     setProfilePicUrl(dummyImage);
     localStorage.removeItem(LS_KEYS.ACCESS_TOKEN);
     localStorage.removeItem(LS_KEYS.REFRESH_TOKEN);
     localStorage.removeItem(LS_KEYS.PHOTO);
+
+    const deviceId = localStorage.getItem(LS_KEYS.DEVICE_ID);
+    if (!deviceId) return;
+
     try {
-      if (deviceId) {
-        await axios.delete(`/auth/session/${deviceId}`);
-      }
+      await axios.delete(`/auth/session/${deviceId}`);
     } catch (error) {
       console.error("Failed to log out:", error);
     }
-  };
+  }, []);
 
-  // Memoize context value
   const contextValue = useMemo(
     () => ({
-      isLoggedIn: authState.isLoggedIn,
-      user: authState.user,
-      token: authState.token,
+      ...authState,
       handleUserLogin,
       handleLogout,
       setProfilePicUrl,
       profilePicUrl,
     }),
-    [authState, profilePicUrl]
+    [authState, profilePicUrl, handleUserLogin, handleLogout]
   );
 
-  // Show loader while initializing
   if (!isLoaded) return <Loader />;
 
   return (
@@ -190,7 +189,6 @@ export const GlobalProvider: React.FC<GlobalProviderProps> = ({ children }) => {
   );
 };
 
-// Custom hook to use the GlobalContext
 export const useGlobalContext = (): GlobalContextType => {
   const context = useContext(GlobalContext);
   if (!context) {

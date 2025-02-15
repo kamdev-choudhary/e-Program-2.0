@@ -16,7 +16,9 @@ export async function login(req, res, next) {
 
     const userExist = await User.findOne({
       $or: [{ email: id }, { mobile: id }],
-    });
+    }).select("_id role name email mobile password ");
+
+    console.log(userExist);
 
     if (!userExist) {
       return res.status(404).json({ message: "User not found." });
@@ -33,6 +35,17 @@ export async function login(req, res, next) {
 
     const token = await userExist.generateToken();
     const refreshToken = await userExist.generateRefreshToken();
+
+    const activeSessions = await Session.countDocuments({
+      userId: userExist._id,
+    });
+
+    if (activeSessions >= 5) {
+      await Session.deleteOne(
+        { userId: userExist._id },
+        { sort: { loginTime: 1 } }
+      );
+    }
 
     const newSession = new Session({
       token,

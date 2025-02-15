@@ -178,3 +178,6 @@ export async function getProfilePic(req, res, next) {
     next(error);
   }
 }
+
+// Add Bulk User
+export async function addBulkUser(req, res, next) {}

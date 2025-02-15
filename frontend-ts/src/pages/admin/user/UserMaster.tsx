@@ -427,6 +427,7 @@ const UserMaster: React.FC = () => {
       <CustomModal
         open={showUploadScholars}
         onClose={() => setShowUploadScholars(false)}
+        autoClose={false}
       >
         <UploadScholar />
       </CustomModal>

@@ -87,20 +87,18 @@ const FileDropZone: React.FC<FileDropZoneProps> = ({
       {...getRootProps()}
       sx={{
         border: `1px dashed ${
-          theme === "dark" ? "rgba(255,255,255,0.3)" : "rgba(0,0,0,0.15)"
+          theme === "dark" ? "rgba(255, 255, 255, 0.57)" : "rgba(0, 0, 0, 0.64)"
         }`,
         borderRadius: 20,
         cursor: "pointer",
         flexGrow: 1,
         // Use modern, subtle shadows
-        boxShadow: "0px 2px 8px rgba(0, 0, 0, 0.08)",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
         p: 1.1,
         transition: "all 0.3s ease",
         "&:hover": {
-          // On hover, elevate the shadow and change the border to a solid accent
           boxShadow: "0px 4px 16px rgba(0, 0, 0, 0.16)",
           border: `0.5px solid ${
             theme === "dark"
