@@ -10,6 +10,7 @@ import React, { useMemo, useState } from "react";
 import ExcelJS from "exceljs";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import {
+  CheckRounded,
   ManageHistoryRounded,
   StackedBarChartRounded,
 } from "@mui/icons-material";
@@ -61,12 +62,14 @@ const UploadScholars: React.FC = () => {
           >
             <Button
               disabled={
-                params.row.status === "generated" ||
+                params.row.status === "created" ||
                 params.row.status === "loading"
               }
               startIcon={
                 params.row.status === "loading" ? (
                   <CircularProgress size={20} />
+                ) : params.row.status === "created" ? (
+                  <CheckRounded />
                 ) : (
                   <ManageHistoryRounded />
                 )
@@ -74,7 +77,7 @@ const UploadScholars: React.FC = () => {
               variant="contained"
               onClick={() => handleDownloadAdmitCard(params.row)}
             >
-              {params.row.status === "generated" ? "Generated" : "Generate"}
+              {params.row.status === "created" ? "created" : "Create"}
             </Button>
           </Box>
         ),
@@ -105,7 +108,7 @@ const UploadScholars: React.FC = () => {
       setJsonData((prevData) => {
         if (!prevData) return [];
         return prevData.map((item) =>
-          item.drn === scholar.drn
+          item.id === scholar.id
             ? {
                 ...item,
                 status: "loading", // Update status to loading
@@ -115,20 +118,21 @@ const UploadScholars: React.FC = () => {
         );
       });
 
-      const response = await axios.post("/automation/generate/admitcard", {
-        scholar: scholar,
+      const response = await axios.post("/auth/register", {
+        ...scholar,
+        method: "admin",
       });
 
-      if (response.data?.status_code === 1) {
+      if (response.status === 201) {
         setJsonData((prevData) => {
           if (!prevData) return [];
           return prevData.map((item) =>
-            item.drn === scholar.drn
+            item.id === scholar.id
               ? {
                   ...item,
                   date: response.data.date,
                   error: "",
-                  status: "generated", // Update status to generated
+                  status: "created", // Update status to generated
                 }
               : item
           );
@@ -137,7 +141,7 @@ const UploadScholars: React.FC = () => {
         setJsonData((prevData) => {
           if (!prevData) return [];
           return prevData.map((item) =>
-            item.drn === scholar.drn
+            item.id === scholar.id
               ? {
                   ...item,
                   error: response.data.error,
@@ -153,7 +157,7 @@ const UploadScholars: React.FC = () => {
         if (!prevData) return [];
         const errorMessage = error?.response?.data?.message || "Unknown error";
         return prevData.map((item) =>
-          item.drn === scholar.drn
+          item.id === scholar.id
             ? {
                 ...item,
                 error: errorMessage,
@@ -199,6 +203,13 @@ const UploadScholars: React.FC = () => {
 
       try {
         await workbook.xlsx.load(buffer);
+
+        if (workbook.worksheets.length === 0) {
+          console.error("No worksheets found in the uploaded file.");
+          setIsLoading(false);
+          return;
+        }
+
         const worksheet = workbook.worksheets[0];
 
         const rows: Array<any[]> = [];
@@ -215,18 +226,29 @@ const UploadScholars: React.FC = () => {
           return;
         }
 
-        const [headers, ...dataRows] = rows;
+        const [headersRaw, ...dataRows] = rows;
+        const headers = headersRaw.filter(
+          (header) => header !== undefined && header !== ""
+        );
 
-        // Dynamically create ScholarData from the rows
         const json: ScholarData[] = dataRows.map((row, index) => {
-          const rowData = headers.reduce((acc, header, index) => {
-            acc[header] = row[index] || "";
+          const rowData = headers.reduce((acc, header, idx) => {
+            let cellValue = row[idx] || "";
+
+            if (cellValue && typeof cellValue === "object") {
+              cellValue =
+                "text" in cellValue
+                  ? cellValue.text
+                  : JSON.stringify(cellValue);
+            }
+
+            acc[header] = cellValue;
             return acc;
-          }, {} as ScholarData); // Using ScholarData as Record
+          }, {} as ScholarData);
 
           return {
             ...rowData,
-            status: "idle", // Default status
+            status: "idle",
             error: "",
             id: index + 1,
           };
@@ -234,13 +256,14 @@ const UploadScholars: React.FC = () => {
 
         setJsonData(json);
 
-        // Set columns dynamically based on the first row's headers
+        // Set columns dynamically based on headers
         const dynamicColumns = getColumnsFromHeaders(headers);
         setColumns(dynamicColumns);
       } catch (error) {
         console.error("Error reading the Excel file:", error);
       } finally {
         setIsLoading(false);
+        reader.onload = null; // Prevent memory leaks
       }
     };
 
@@ -254,7 +277,7 @@ const UploadScholars: React.FC = () => {
     setJsonData((prevData) => {
       if (!prevData) return [];
       return prevData.map((item) =>
-        item.drn === oldRow.drn ? { ...item, ...newRow } : item
+        item.id === oldRow.id ? { ...item, ...newRow } : item
       );
     });
 

@@ -13,6 +13,8 @@ const config = {
   ACCESS_TOKEN_EXPIRY: process.env.ACCESS_TOKEN_EXPIRY || "1h",
   REFRESH_TOKEN_EXPIRY: process.env.REFRESH_TOKEN_EXPIRY || "15d",
 
+  SALT_ROUND: process.env.SALT_ROUND || 10,
+
   NODE_ENV: process.env.NODE_ENV || "development",
   API_KEY: process.env.API_KEY || "kd",
   CLOUD_NAME: process.env.CLOUD_NAME || "ddiv6clt7",

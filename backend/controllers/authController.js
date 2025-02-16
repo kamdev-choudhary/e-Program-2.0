@@ -2,6 +2,7 @@ import User from "../models/user.js";
 import bcrypt from "bcryptjs";
 import Session from "../models/session.js";
 import logger from "../utils/logger.js";
+import config from "../config/config.js";
 
 export async function login(req, res, next) {
   try {
@@ -16,9 +17,7 @@ export async function login(req, res, next) {
 
     const userExist = await User.findOne({
       $or: [{ email: id }, { mobile: id }],
-    }).select("_id role name email mobile password ");
-
-    console.log(userExist);
+    }).select("_id role name email mobile password photo");
 
     if (!userExist) {
       return res.status(404).json({ message: "User not found." });
@@ -96,7 +95,7 @@ export async function register(req, res, next) {
     if (checkMobile)
       return res.status(400).json({ message: "Mobile already registered." });
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, config.SALT_ROUND);
 
     const newUser = new User({
       name,
