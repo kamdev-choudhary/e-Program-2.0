@@ -1,67 +1,74 @@
-import { lazy, Suspense, ReactNode } from "react";
+import { Suspense, ReactNode } from "react";
 import { createBrowserRouter } from "react-router-dom";
 import ProtectedRoute from "./layout/ProtectedRoute";
 import MasterLayout from "./layout/MasterLayout";
 import Loader from "./components/Loader";
+import lazyLoad from "./utils/lazyload";
 
 // Public Pages
-const HomePage = lazy(() => import("./pages/home/HomePage"));
-const NotFound = lazy(() => import("./layout/NotFound"));
+const HomePage = lazyLoad(() => import("./pages/home/HomePage"));
+const NotFound = lazyLoad(() => import("./layout/NotFound"));
 
 // Automation & Analysis
-const JEEMainCityInfo = lazy(
+const JEEMainCityInfo = lazyLoad(
   () => import("./pages/automations/JEEMainCityInformation")
 );
-const JEEMainAdmitCard = lazy(
+const JEEMainAdmitCard = lazyLoad(
   () => import("./pages/automations/JeeMainAdmitCard")
 );
-const GenerateAdmitCard = lazy(
+const GenerateAdmitCard = lazyLoad(
   () => import("./pages/automations/GenerateAdmitCard")
 );
-const JEEMainAnalysis = lazy(() => import("./pages/analysis/JEEmainAnalysis"));
-const JeeMainProvisionalKey = lazy(
+const JEEMainAnalysis = lazyLoad(
+  () => import("./pages/analysis/JEEmainAnalysis")
+);
+const JeeMainProvisionalKey = lazyLoad(
   () => import("./pages/automations/JeeMainProvisionalKey")
 );
-const JEEAdvancedAnalysis = lazy(
+const JEEAdvancedAnalysis = lazyLoad(
   () => import("./pages/analysis/JEEAdvancedAnalysis")
 );
-const JEEMainResult = lazy(() => import("./pages/automations/JEEMainResult"));
-const JEEMainResult01 = lazy(
+const JEEMainResult = lazyLoad(
+  () => import("./pages/automations/JEEMainResult")
+);
+const JEEMainResult01 = lazyLoad(
   () => import("./pages/automations/JEEMainResult01")
 );
 
 // Admin Pages
-const Dashboard = lazy(() => import("./pages/dashboard/Dashboard"));
-const AdminBatch = lazy(() => import("./pages/admin/batch/Batch"));
-const Academic = lazy(() => import("./pages/admin/academic/Academic"));
-const QuestionBankAdmin = lazy(() => import("./pages/question/QuestionBank"));
-const LecturesAdmin = lazy(() => import("./pages/admin/lectures/Lectures"));
-const ExamMasterOnline = lazy(
+const Dashboard = lazyLoad(() => import("./pages/dashboard/Dashboard"));
+const AdminBatch = lazyLoad(() => import("./pages/admin/batch/Batch"));
+const Academic = lazyLoad(() => import("./pages/admin/academic/Academic"));
+const QuestionBankAdmin = lazyLoad(
+  () => import("./pages/question/QuestionBank")
+);
+const LecturesAdmin = lazyLoad(() => import("./pages/admin/lectures/Lectures"));
+const ExamMasterOnline = lazyLoad(
   () => import("./pages/admin/exams/ExamMasterOnline")
 );
-const ExamMasterOffline = lazy(
+const ExamMasterOffline = lazyLoad(
   () => import("./pages/admin/exams/ExamMasterOffline")
 );
-const UserMaster = lazy(() => import("./pages/admin/user/UserMaster"));
-const EditBatch = lazy(() => import("./pages/admin/batch/EditBatch"));
-const JEEData = lazy(() => import("./pages/admin/analysis/JEEData"));
+const UserMaster = lazyLoad(() => import("./pages/admin/user/UserMaster"));
+const EditBatch = lazyLoad(() => import("./pages/admin/batch/EditBatch"));
+const JEEData = lazyLoad(() => import("./pages/admin/analysis/JEEData"));
 
 // User Pages (Scholars, Moderators, Admins)
-const Lectures = lazy(() => import("./pages/lectures/Lectures"));
-const Batches = lazy(() => import("./pages/batch/Batches"));
-const BatchDetails = lazy(() => import("./pages/batch/BatchDetails"));
-const Books = lazy(() => import("./pages/books/Books"));
-const Profile = lazy(() => import("./pages/auth/Profile"));
-const Doubts = lazy(() => import("./pages/doubts/Doubts"));
-const DoubtDetails = lazy(() => import("./pages/doubts/DoubtDetails"));
-const Chat = lazy(() => import("./pages/chat/Chat"));
-const QuestionBank = lazy(() => import("./pages/question/QuestionBank"));
+const Lectures = lazyLoad(() => import("./pages/lectures/Lectures"));
+const Batches = lazyLoad(() => import("./pages/batch/Batches"));
+const BatchDetails = lazyLoad(() => import("./pages/batch/BatchDetails"));
+const Books = lazyLoad(() => import("./pages/books/Books"));
+const Profile = lazyLoad(() => import("./pages/auth/Profile"));
+const Doubts = lazyLoad(() => import("./pages/doubts/Doubts"));
+const DoubtDetails = lazyLoad(() => import("./pages/doubts/DoubtDetails"));
+const Chat = lazyLoad(() => import("./pages/chat/Chat"));
+const QuestionBank = lazyLoad(() => import("./pages/question/QuestionBank"));
 
 // Tools
-const SuffleQuestionInWord = lazy(
+const SuffleQuestionInWord = lazyLoad(
   () => import("./pages/tools/suffle-questions/SuffleQuestionInWord")
 );
-const PDFCompressor = lazy(
+const PDFCompressor = lazyLoad(
   () => import("./pages/tools/pdf-compressor/PdfCompressor")
 );
 
@@ -224,14 +231,14 @@ const routes: RouteType[] = [
 // 🔹 Optimized Router Setup 🔹
 const router = createBrowserRouter([
   {
-    element: <MasterLayout />,
+    element: (
+      <Suspense fallback={<Loader open={true} />}>
+        <MasterLayout />
+      </Suspense>
+    ),
     children: routes.map(({ path, element, roles }) => ({
       path,
-      element: (
-        <ProtectedRoute allowedRoles={roles}>
-          <Suspense fallback={<Loader open={true} />}>{element}</Suspense>
-        </ProtectedRoute>
-      ),
+      element: <ProtectedRoute allowedRoles={roles}>{element}</ProtectedRoute>,
     })),
   },
 ]);
