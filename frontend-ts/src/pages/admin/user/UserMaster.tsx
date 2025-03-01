@@ -346,7 +346,7 @@ const UserMaster: React.FC = () => {
           pageSizeOptions={[10, 30, 50]}
           loading={loading}
           rowCount={
-            rolesWithCount?.find((r) => r.name === activeTab)?.count || 0
+            rolesWithCount?.find((r) => r.value === activeTab)?.count || 0
           }
           paginationMode="server"
           disableRowSelectionOnClick

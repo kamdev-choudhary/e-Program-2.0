@@ -5,6 +5,8 @@ import MasterLayout from "./layout/MasterLayout";
 import Loader from "./components/Loader";
 import lazyLoad from "./utils/lazyload";
 
+import { UserRole, ROLES } from "./constant/roles";
+
 // Public Pages
 const HomePage = lazyLoad(() => import("./pages/home/HomePage"));
 const NotFound = lazyLoad(() => import("./layout/NotFound"));
@@ -34,6 +36,7 @@ const JEEMainResult = lazyLoad(
 const JEEMainResult01 = lazyLoad(
   () => import("./pages/automations/JEEMainResult01")
 );
+const TestPage = lazyLoad(() => import("./pages/test/Test"));
 
 // Admin Pages
 const Dashboard = lazyLoad(() => import("./pages/dashboard/Dashboard"));
@@ -71,8 +74,6 @@ const SuffleQuestionInWord = lazyLoad(
 const PDFCompressor = lazyLoad(
   () => import("./pages/tools/pdf-compressor/PdfCompressor")
 );
-
-import { UserRole, ROLES } from "./constant/roles";
 
 interface RouteType {
   path: string;
@@ -222,6 +223,11 @@ const routes: RouteType[] = [
   {
     path: "/tools/pdf-compressor",
     element: <PDFCompressor />,
+    roles: [ROLES.PUBLIC],
+  },
+  {
+    path: "/test",
+    element: <TestPage />,
     roles: [ROLES.PUBLIC],
   },
   // Catch-All Route
