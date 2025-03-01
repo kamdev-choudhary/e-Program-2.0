@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 import { Document, Page } from "react-pdf";
 
 interface FilePreview {
@@ -8,51 +8,9 @@ interface FilePreview {
   url: string;
 }
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
-const ACCEPTED_TYPES = [
-  "image/*",
-  "video/*",
-  "audio/*",
-  "text/*",
-  "application/pdf",
-];
-
 const FilePreviewer: React.FC = () => {
   const [files, setFiles] = useState<FilePreview[]>([]);
-  const [error, setError] = useState<string | null>(null);
-
-  const onDrop = useCallback((acceptedFiles: File[], rejectedFiles: File[]) => {
-    setError(null);
-
-    // Handle rejected files
-    if (rejectedFiles.length > 0) {
-      const rejectedReasons = rejectedFiles
-        .map((file) => {
-          if (file.size > MAX_FILE_SIZE)
-            return `${file.name}: File is too large (Max: 5MB)`;
-          if (!ACCEPTED_TYPES.includes(file.type))
-            return `${file.name}: Unsupported file type`;
-          return null;
-        })
-        .filter(Boolean)
-        .join("\n");
-
-      setError(`Some files were rejected:\n${rejectedReasons}`);
-    }
-
-    // Process accepted files
-    const validFiles = acceptedFiles.filter(
-      (file) => file.size <= MAX_FILE_SIZE
-    );
-    const filePreviews: FilePreview[] = validFiles.map((file) => ({
-      name: file.name,
-      type: file.type,
-      size: file.size,
-      url: URL.createObjectURL(file),
-    }));
-
-    setFiles((prevFiles) => [...prevFiles, ...filePreviews]);
-  }, []);
+  const [error] = useState<string | null>(null);
 
   const removeFile = (index: number) => {
     setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
