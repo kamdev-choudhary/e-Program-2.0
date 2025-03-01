@@ -1,5 +1,4 @@
 import React, { useState, useCallback } from "react";
-import { useDropzone } from "react-dropzone";
 import { Document, Page } from "react-pdf";
 
 interface FilePreview {
@@ -55,36 +54,12 @@ const FilePreviewer: React.FC = () => {
     setFiles((prevFiles) => [...prevFiles, ...filePreviews]);
   }, []);
 
-  const { getRootProps, getInputProps, isDragActive } = useDropzone({
-    onDrop,
-    multiple: true,
-    accept: ACCEPTED_TYPES.reduce((acc, type) => ({ ...acc, [type]: [] }), {}),
-    maxSize: MAX_FILE_SIZE,
-  });
-
   const removeFile = (index: number) => {
     setFiles((prevFiles) => prevFiles.filter((_, i) => i !== index));
   };
 
   return (
     <div className="p-6 border rounded-lg shadow-md max-w-2xl mx-auto bg-white">
-      {/* Drag & Drop Area */}
-      <div
-        {...getRootProps()}
-        className={`border-dashed border-2 p-6 text-center cursor-pointer rounded-lg ${
-          isDragActive ? "border-blue-500 bg-blue-50" : "border-gray-300"
-        }`}
-      >
-        <input {...getInputProps()} />
-        {isDragActive ? (
-          <p className="text-blue-600">Drop the files here...</p>
-        ) : (
-          <p className="text-gray-600">
-            Drag & drop files here, or click to select
-          </p>
-        )}
-      </div>
-
       {/* Error Message */}
       {error && (
         <div className="mt-2 p-2 bg-red-100 text-red-600 border border-red-500 rounded">
