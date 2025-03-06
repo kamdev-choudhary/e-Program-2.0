@@ -69,6 +69,15 @@ interface ScholarData {
   totalTotal?: number;
 }
 
+const droppedQuestions = [
+  "656445270",
+  "7364751025",
+  "656445728",
+  "656445566",
+  "6564451142",
+  "6564451161",
+];
+
 const JeeMainProvisionalKey: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [jsonData, setJsonData] = useState<ScholarData[] | null>(null);
@@ -89,6 +98,11 @@ const JeeMainProvisionalKey: React.FC = () => {
 
       section.questions.forEach((question) => {
         // Skip unanswered questions
+
+        if (droppedQuestions.includes(question.questionID)) {
+          return addMarks(4, "positive", subject);
+        }
+
         if (
           question.status === "Not Answered" ||
           question.status === "Not Attempted and Marked For Review"
@@ -131,11 +145,15 @@ const JeeMainProvisionalKey: React.FC = () => {
         if (question.questionType === "SA") {
           isCorrect =
             parseInt(studentAnswerID) === parseInt(answerKey.correctAnswer);
-          if (subject === "Chemistry") {
-            console.log(isCorrect);
-          }
         } else {
-          isCorrect = studentAnswerID === answerKey.correctAnswer;
+          if (answerKey.correctAnswer.includes(",")) {
+            let answers = answerKey.correctAnswer.split(",");
+            if (answers.includes(studentAnswerID)) {
+              isCorrect = true;
+            }
+          } else {
+            isCorrect = studentAnswerID === answerKey.correctAnswer;
+          }
         }
 
         // Scoring logic

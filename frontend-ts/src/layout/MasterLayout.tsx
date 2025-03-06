@@ -62,11 +62,6 @@ const MasterLayout: React.FC = () => {
               height: "100%",
               scrollbarWidth: "none",
               background: isLight ? "rgba(255, 255, 255, 0.7)" : "#212327",
-              borderBottom: "1px solid",
-              borderColor: isLight
-                ? "rgba(15, 23, 42, 0.08)"
-                : "rgba(248, 250, 252, 0.08)",
-              boxShadow: "0 4px 8px rgba(0,0,0,0.1)",
             }}
             onMouseEnter={() => !expanded && setHovering(true)}
             onMouseLeave={() => setHovering(false)}

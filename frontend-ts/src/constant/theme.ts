@@ -33,24 +33,20 @@ const getTheme = (mode: "light" | "dark") => {
             borderColor: isLight
               ? "rgba(15, 23, 42, 0.08)"
               : "rgba(248, 250, 252, 0.08)",
-            boxShadow: "0 0px 0px rgba(0,0,0,0.1)",
+            boxShadow: "0 2px 2px rgba(0,0,0,0.1)",
+            borderBottom: "1px solid rgba(0,0,0,0.2)",
           },
         },
       },
 
       MuiPaper: {
+        defaultProps: { elevation: 3 },
         styleOverrides: {
           root: {
             padding: 16,
             borderRadius: 12,
-            boxShadow: isLight
-              ? "0 4px 12px rgba(0, 0, 0, 0.08)"
-              : "0 4px 12px rgba(0, 0, 0, 0.24)",
             transition: "all 0.3s ease-in-out",
             backdropFilter: "saturate(180%) blur(20px)",
-            border: isLight
-              ? "1px solid rgba(0, 0, 0, 0.05)"
-              : "1px solid rgba(255, 255, 255, 0.1)",
           },
         },
       },

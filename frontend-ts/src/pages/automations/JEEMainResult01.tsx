@@ -53,6 +53,7 @@ const JEEMainResult: React.FC = () => {
   const [jsonData, setJsonData] = useState<ScholarData[] | null>(null);
   const [selectedStatus, setSelectedStatus] = useState<string>("");
   const { showNotification } = useNotification();
+
   const handleDownloadMainScorecard = async (scholar: ScholarData) => {
     try {
       setJsonData((prevData) => {
