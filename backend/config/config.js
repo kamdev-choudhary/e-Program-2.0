@@ -3,13 +3,11 @@ dotenv.config();
 
 const config = {
   PORT: process.env.PORT || 5000,
-  MONGO_URL:
-    process.env.MONGO_URL ||
-    "mongodb+srv://kamdevchoudhary:mongopassword@cluster0.mrszysb.mongodb.net/eprogram?retryWrites=true&w=majority",
+  MONGO_URL: process.env.MONGO_URL,
 
   // JWT
-  ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET || "supersecretkey",
-  REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET || "citrus",
+  ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET,
+  REFRESH_TOKEN_SECRET: process.env.REFRESH_TOKEN_SECRET,
   ACCESS_TOKEN_EXPIRY: process.env.ACCESS_TOKEN_EXPIRY || "1h",
   REFRESH_TOKEN_EXPIRY: process.env.REFRESH_TOKEN_EXPIRY || "15d",
 
@@ -17,12 +15,12 @@ const config = {
 
   NODE_ENV: process.env.NODE_ENV || "development",
   API_KEY: process.env.API_KEY || "kd",
-  CLOUD_NAME: process.env.CLOUD_NAME || "ddiv6clt7",
-  CLOUD_API_KEY: process.env.CLOUD_API_KEY || "987815181534656",
-  CLOUD_SECRET: process.env.CLOUD_SECRET || "Q-_JQltrHLmvAmgmqPLoTB5n47c",
-  OCR_SPACE_KEY: process.env.OCR_SPACE_KEY || "K88503223788957",
-  GMAIL_USER: process.env.GMAIL_USER || "kamdevchoudhary@gmail.com",
-  GMAIL_APP_PASSWORD: process.env.GMAIL_APP_PASSWORD || "igvjaxopgsmixnur",
+  CLOUD_NAME: process.env.CLOUD_NAME,
+  CLOUD_API_KEY: process.env.CLOUD_API_KEY,
+  CLOUD_SECRET: process.env.CLOUD_SECRET,
+  OCR_SPACE_KEY: process.env.OCR_SPACE_KEY,
+  GMAIL_USER: process.env.GMAIL_USER,
+  GMAIL_APP_PASSWORD: process.env.GMAIL_APP_PASSWORD,
 };
 
 export default config;
