@@ -34,7 +34,7 @@ interface ScholarData {
   name: string;
   application: string;
   password?: string;
-  status?: "idle" | "loading" | "fetched";
+  status?: "idle" | "loading" | "success";
   error: string;
   // data
   rollNumber1?: string;
@@ -113,7 +113,7 @@ const JEEMainResult: React.FC = () => {
               ? {
                   ...item,
                   error: "",
-                  status: "fetched",
+                  status: "success",
                   rollNumber1: data?.rollNumber || "",
                   rollNumber2: data?.rollNumber || "",
                   candidateName: data?.candidateName || "",
@@ -371,14 +371,14 @@ const JEEMainResult: React.FC = () => {
               startIcon={
                 params.row.status === "loading" ? (
                   <CircularProgress size={20} />
-                ) : params.row.status === "fetched" ? (
+                ) : params.row.status === "success" ? (
                   <CheckCircleRounded color="success" />
                 ) : (
                   <CloudDownloadRounded />
                 )
               }
               disabled={
-                params.row.status === "fetched" ||
+                params.row.status === "success" ||
                 params.row.status === "loading"
               }
               variant="outlined"
@@ -693,7 +693,7 @@ const JEEMainResult: React.FC = () => {
 
     return jsonData
       .filter((data) => {
-        if (selectedStatus === "loading" || selectedStatus === "fetched") {
+        if (selectedStatus === "loading" || selectedStatus === "success") {
           return data.status === selectedStatus;
         } else if (selectedStatus === "error") {
           return data.error !== "";
@@ -710,7 +710,7 @@ const JEEMainResult: React.FC = () => {
   const fetchedCount = useMemo(() => {
     if (!jsonData) return 0;
     const count =
-      jsonData?.filter((data) => data.status === "fetched").length || 0;
+      jsonData?.filter((data) => data.status === "success").length || 0;
 
     return (count / jsonData.length) * 100;
   }, [jsonData]);
@@ -756,7 +756,7 @@ const JEEMainResult: React.FC = () => {
               color="success"
             >
               Download Excel (
-              {jsonData?.filter((data) => data?.status === "fetched").length ||
+              {jsonData?.filter((data) => data?.status === "success").length ||
                 0}
               )
             </Button>
@@ -786,13 +786,13 @@ const JEEMainResult: React.FC = () => {
             value="total"
             color="success"
             aria-label="Platform"
-            selected={selectedStatus === "fetched"}
-            onClick={() => setSelectedStatus("fetched")}
+            selected={selectedStatus === "success"}
+            onClick={() => setSelectedStatus("success")}
             size="small"
             sx={{ px: 4, minWidth: 150, flexGrow: 1, maxWidth: 200 }}
           >
-            <strong>fetched &nbsp;&nbsp;</strong> (
-            {jsonData?.filter((item) => item.status === "fetched").length || 0})
+            <strong>success &nbsp;&nbsp;</strong> (
+            {jsonData?.filter((item) => item.status === "success").length || 0})
           </ToggleButton>
           <ToggleButton
             color="primary"

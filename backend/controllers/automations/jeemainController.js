@@ -7,35 +7,30 @@ const MAX_RETRIES = 10;
 
 export async function downloadCityInformation(req, res, next) {
   const cityInfoSite =
-    "https://examinationservices.nic.in/jeemain2025/DownloadAdmitCard/frmAuthforCity.aspx?enc=WPJ5WSCVWOMNiXoyyomJgDUffqDdG1LTsAPBKFcEC9W88CTkt2ITzilIsFR7gKxO";
-
+    "https://examinationservices.nic.in/JeeMain2025/downloadadmitcard/frmAuthforCity.aspx?enc=Ei4cajBkK1gZSfgr53ImFVj34FesvYg1WX45sPjGXBqTRkzOFoiGPd1JFIpDHbov";
+  // const cityInfoSite = "https://cnr.nic.in/emsadmitcard/downloadadmitcard/frmAuthforCity.aspx?enc=Ei4cajBkK1gZSfgr53ImFVj34FesvYg1WX45sPjGXBqTRkzOFoiGPd1JFIpDHbov"
   const SELECTORS = {
-    applicationNumber: 'input[name="ctl00$ContentPlaceHolder1$txtRegno"]',
-    day: "#ctl00_ContentPlaceHolder1_ddlday",
-    month: "#ctl00_ContentPlaceHolder1_ddlmonth",
-    year: "#ctl00_ContentPlaceHolder1_ddlyear",
+    application: 'input[name="ctl00$ContentPlaceHolder1$txtRegno"]',
+    password: 'input[name="ctl00$ContentPlaceHolder1$txtPassword"]',
     captchaInput: 'input[name="ctl00$ContentPlaceHolder1$txtsecpin"]',
     loginButton: '[name="ctl00$ContentPlaceHolder1$btnsignin"]',
     captchaImage: "#ctl00_ContentPlaceHolder1_captchaimage",
-    successPanel: "#ctl00_ContentPlaceHolder1_pnlAdmitcard",
+    successPanel: "#ctl00_ContentPlaceHolder1_lblTitle",
     examDate: "#ctl00_ContentPlaceHolder1_dateofexamP1",
     examCity: "#ctl00_ContentPlaceHolder1_cityofexamP1",
     errorSelector: "#ctl00_ContentPlaceHolder1_lblerror1",
   };
 
-  const { applicationNumber, day, month, year } = req.body;
+  const { application, drn, password } = req.body;
 
   // Validate input
-  if (!applicationNumber || !day || !month || !year) {
+  if (!application || !password) {
     return res.status(400).json({ message: "Missing required fields." });
   }
-
-  const formattedDay = String(day).padStart(2, "0");
-  const formattedMonth = String(month).padStart(2, "0");
   const uniqueId = uuid();
 
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: "new",
     args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-gpu"],
   });
 
@@ -47,16 +42,21 @@ export async function downloadCityInformation(req, res, next) {
     await page.goto(cityInfoSite);
 
     // Fill in the form
-    await page.type(SELECTORS.applicationNumber, String(applicationNumber));
-    await page.select(SELECTORS.day, formattedDay);
-    await page.select(SELECTORS.month, formattedMonth);
-    await page.select(SELECTORS.year, String(year));
+
+    await page.type(SELECTORS.application, String(application));
 
     // Handle CAPTCHA with retries
     let success = false;
     for (let i = 0; i < MAX_RETRIES; i++) {
       try {
-        await page.waitForSelector(SELECTORS.captchaImage, { timeout: 5000 });
+        await page.type(SELECTORS.password, password);
+        const captchSelector = await page.waitForSelector(
+          SELECTORS.captchaImage,
+          { timeout: 5000 }
+        );
+        if (!captchSelector) {
+          break;
+        }
         const captchaText = await captureAndSolveCaptcha(
           page,
           SELECTORS.captchaImage
@@ -70,7 +70,6 @@ export async function downloadCityInformation(req, res, next) {
         if (error && error === "Invalid Application No or Date of Birth.") {
           return res.status(200).json({ error });
         }
-        await page.waitForNetworkIdle({ timeout: 10000 });
         // Wait for success panel
         const successSelector = await page.waitForSelector(
           SELECTORS.successPanel,
@@ -99,7 +98,7 @@ export async function downloadCityInformation(req, res, next) {
     const city = await page.$eval(SELECTORS.examCity, (el) => el.innerText);
 
     // Save the PDF
-    const pdfPath = `./uploads/${applicationNumber}_${uniqueId}.pdf`;
+    const pdfPath = `./uploads/${application}_${uniqueId}.pdf`;
     await page.pdf({
       path: pdfPath,
       format: "A4",
@@ -109,8 +108,10 @@ export async function downloadCityInformation(req, res, next) {
 
     const fullPdfUrl = `${req.protocol}://${req.get(
       "host"
-    )}/uploads/${applicationNumber}_${uniqueId}.pdf`;
+    )}/uploads/${application}_${drn}.pdf`;
+
     res.status(200).json({
+      success: true,
       pdfUrl: fullPdfUrl,
       date,
       city,
@@ -118,7 +119,7 @@ export async function downloadCityInformation(req, res, next) {
   } catch (error) {
     next(error);
   } finally {
-    // await browser.close();
+    await browser.close();
   }
 }
 
@@ -127,7 +128,7 @@ export async function downloadAdmitCard(req, res, next) {
     "https://examinationservices.nic.in/JEEMain2025/downloadadmitcard/LoginPWD.aspx?enc=Ei4cajBkK1gZSfgr53ImFVj34FesvYg1WX45sPjGXBpvTjwcqEoJcZ5VnHgmpgmK";
 
   const SELECTORS = {
-    applicationNumber: 'input[name="ctl00$ContentPlaceHolder1$txtRegno"]',
+    application: 'input[name="ctl00$ContentPlaceHolder1$txtRegno"]',
     password: 'input[name="ctl00$ContentPlaceHolder1$txtPassword"]',
     captchaInput: 'input[name="ctl00$ContentPlaceHolder1$txtsecpin"]',
     captchaImage: "#ctl00_ContentPlaceHolder1_captchaimage",
@@ -150,12 +151,12 @@ export async function downloadAdmitCard(req, res, next) {
     args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-gpu"],
   });
   try {
-    const { applicationNumber, password } = req.body;
+    const { application, password } = req.body;
 
     const page = await browser.newPage();
     await page.setViewport({ width: 1920, height: 1080 });
     await page.goto(website);
-    await page.type(SELECTORS.applicationNumber, String(applicationNumber));
+    await page.type(SELECTORS.application, String(application));
     let success = false;
     for (let i = 0; i < MAX_RETRIES; i++) {
       try {
@@ -299,7 +300,7 @@ export async function downloadProvisionalAnswerKey(req, res, next) {
     "https://examinationservices.nic.in/JeeMain2025/root/CandidateLogin.aspx?enc=Ei4cajBkK1gZSfgr53ImFVj34FesvYg1WX45sPjGXBpvTjwcqEoJcZ5VnHgmpgmK";
 
   const SELECTORS = {
-    applicationNumber: 'input[name="ctl00$ContentPlaceHolder1$txtRegno"]',
+    application: 'input[name="ctl00$ContentPlaceHolder1$txtRegno"]',
     password: 'input[name="ctl00$ContentPlaceHolder1$txtPassword"]',
     captchaInput: 'input[name="ctl00$ContentPlaceHolder1$txtsecpin"]',
     captchaImage: "#ctl00_ContentPlaceHolder1_captchaimage",
@@ -316,7 +317,7 @@ export async function downloadProvisionalAnswerKey(req, res, next) {
   });
 
   try {
-    const { applicationNumber, password } = req.body;
+    const { application, password } = req.body;
     const page = await browser.newPage();
     await page.setViewport({ width: 1920, height: 1080 });
     await page.goto(website, { waitUntil: "networkidle2" });
@@ -326,10 +327,10 @@ export async function downloadProvisionalAnswerKey(req, res, next) {
     for (let i = 0; i < MAX_RETRIES; i++) {
       try {
         await page.reload();
-        await page.waitForSelector(SELECTORS.applicationNumber, {
+        await page.waitForSelector(SELECTORS.application, {
           timeout: 10000,
         });
-        await page.type(SELECTORS.applicationNumber, String(applicationNumber));
+        await page.type(SELECTORS.application, String(application));
         await page.type(SELECTORS.password, String(password));
         await page.waitForSelector(SELECTORS.captchaImage, { timeout: 10000 });
 
@@ -567,7 +568,7 @@ export async function jeeMainResultDownload(req, res, next) {
     "https://examinationservices.nic.in/resultservices/JEEMAIN2025S1P1/Login";
 
   const SELECTORS = {
-    applicationNumber: "#txtAppNo",
+    application: "#txtAppNo",
     password: "#txtPassword",
     captchaInput: "#Captcha1",
     captcha: "#capimage",
@@ -608,7 +609,7 @@ export async function jeeMainResultDownload(req, res, next) {
 
     for (let i = 0; i < MAX_RETRIES; i++) {
       try {
-        await page.waitForSelector(SELECTORS.applicationNumber, {
+        await page.waitForSelector(SELECTORS.application, {
           timeout: 300000,
         });
         await page.evaluate(() => {
@@ -616,7 +617,7 @@ export async function jeeMainResultDownload(req, res, next) {
             .querySelectorAll("input")
             .forEach((input) => (input.value = ""));
         });
-        await page.type(SELECTORS.applicationNumber, String(application));
+        await page.type(SELECTORS.application, String(application));
         await page.type(SELECTORS.password, String(password));
         await page.waitForSelector(SELECTORS.captcha, { timeout: 10000 });
 

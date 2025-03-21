@@ -28,7 +28,7 @@ interface ScholarData {
   name: string;
   application: string;
   password?: string;
-  status?: "idle" | "loading" | "fetched";
+  status?: "idle" | "loading" | "success";
   error: string;
   rollNumber1?: string;
   rollNumber2?: string;

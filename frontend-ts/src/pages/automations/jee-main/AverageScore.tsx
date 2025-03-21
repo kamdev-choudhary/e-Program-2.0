@@ -21,7 +21,7 @@ interface ScholarData {
   name: string;
   application: string;
   password?: string;
-  status?: "idle" | "loading" | "fetched";
+  status?: "idle" | "loading" | "success";
   error: string;
   mathematics?: string;
   physics?: string;

@@ -5,8 +5,9 @@ import {
   IconButton,
   CircularProgress,
   Divider,
+  ToggleButton,
 } from "@mui/material";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useDropzone } from "react-dropzone";
 import ExcelJS from "exceljs";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
@@ -24,20 +25,20 @@ import axios from "../../hooks/AxiosInterceptor";
 
 interface ScholarData {
   drn: string;
-  day: string;
-  month: string;
   application: string;
-  year: string;
+  password: string;
   pdfUrl: string;
   city: string;
   date: string;
   name?: string;
   status?: string;
+  error?: string;
 }
 
 const JEEMainCityInfo: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [jsonData, setJsonData] = useState<ScholarData[] | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<string>("");
 
   const handleDownloadCityInfo = async (scholar: ScholarData) => {
     try {
@@ -48,6 +49,7 @@ const JEEMainCityInfo: React.FC = () => {
             ? {
                 ...item,
                 status: "loading",
+                error: "",
               }
             : item
         );
@@ -55,13 +57,11 @@ const JEEMainCityInfo: React.FC = () => {
       // Request to get the PDF file path
       const response = await axios.post("/automation/jee/cityinfo", {
         drn: scholar.drn,
-        day: scholar.day,
-        month: scholar.month,
-        year: scholar.year,
-        applicationNumber: scholar.application,
+        application: scholar.application,
+        password: scholar.password,
       });
 
-      if (response.data?.pdfUrl) {
+      if (response.data?.success) {
         setJsonData((prevData) => {
           if (!prevData) return null; // If jsonData is null, maintain null state
           return prevData.map((item) =>
@@ -72,12 +72,12 @@ const JEEMainCityInfo: React.FC = () => {
                   date: response.data.date,
                   city: response.data.city,
                   error: "",
-                  status: "fetched",
+                  status: "success",
                 }
               : item
           );
         });
-      } else if (response.data?.error) {
+      } else {
         setJsonData((prevData) => {
           if (!prevData) return null; // If jsonData is null, maintain null state
           return prevData.map((item) =>
@@ -186,9 +186,7 @@ const JEEMainCityInfo: React.FC = () => {
 
           return {
             drn: rowData.drn || "",
-            day: rowData.day || "",
-            month: rowData.month || "",
-            year: rowData.year || "",
+            password: rowData.password || "",
             application: rowData.application || "",
             pdfUrl: rowData.pdfUrl || "",
             city: rowData.city || "",
@@ -269,27 +267,10 @@ const JEEMainCityInfo: React.FC = () => {
       editable: true,
       flex: 1,
     },
+
     {
-      field: "day",
-      headerName: "Day",
-      minWidth: 80,
-      align: "center",
-      headerAlign: "center",
-      editable: true,
-      flex: 1,
-    },
-    {
-      field: "month",
-      headerName: "Month",
-      minWidth: 80,
-      align: "center",
-      headerAlign: "center",
-      editable: true,
-      flex: 1,
-    },
-    {
-      field: "year",
-      headerName: "Year",
+      field: "password",
+      headerName: "Password",
       minWidth: 100,
       align: "center",
       headerAlign: "center",
@@ -372,7 +353,7 @@ const JEEMainCityInfo: React.FC = () => {
             }
             color="success"
             disabled={
-              params.row.status === "fetched" || params.row.status === "loading"
+              params.row.status === "success" || params.row.status === "loading"
             }
             variant="outlined"
           >
@@ -394,6 +375,25 @@ const JEEMainCityInfo: React.FC = () => {
       ),
     },
   ];
+
+  const filteredData = useMemo(() => {
+    if (!jsonData) return [];
+
+    return jsonData
+      .filter((data) => {
+        if (selectedStatus === "loading" || selectedStatus === "success") {
+          return data.status === selectedStatus;
+        } else if (selectedStatus === "error") {
+          return data.error !== "";
+        } else {
+          return true; // Include all data for other cases
+        }
+      })
+      .map((data, index) => ({
+        ...data,
+        id: index + 1, // Add an id field based on the index (1-based)
+      }));
+  }, [jsonData, selectedStatus]);
 
   return (
     <Box>
@@ -477,13 +477,70 @@ const JEEMainCityInfo: React.FC = () => {
         </Box>
       </Box>
       <Divider sx={{ mt: 2 }} />
+      <Box
+        sx={{
+          display: "flex",
+          gap: 2,
+          justifyContent: "space-between",
+          overflow: "auto",
+          flexWrap: "wrap",
+          mt: 2,
+        }}
+      >
+        <ToggleButton
+          value="total"
+          aria-label="Platform"
+          selected={selectedStatus === ""}
+          onClick={() => setSelectedStatus("")}
+          sx={{ px: 4, minWidth: 150, flexGrow: 1, maxWidth: 200 }}
+          size="small"
+        >
+          <strong>Total &nbsp;&nbsp;</strong> ({jsonData?.length || 0})
+        </ToggleButton>
+        <ToggleButton
+          value="total"
+          color="success"
+          aria-label="Platform"
+          selected={selectedStatus === "success"}
+          onClick={() => setSelectedStatus("success")}
+          size="small"
+          sx={{ px: 4, minWidth: 150, flexGrow: 1, maxWidth: 200 }}
+        >
+          <strong>Success &nbsp;&nbsp;</strong> (
+          {jsonData?.filter((item) => item.status === "success").length || 0})
+        </ToggleButton>
+        <ToggleButton
+          color="primary"
+          value="total"
+          aria-label="Platform"
+          selected={selectedStatus === "loading"}
+          onClick={() => setSelectedStatus("loading")}
+          size="small"
+          sx={{ px: 4, minWidth: 150, flexGrow: 1, maxWidth: 200 }}
+        >
+          <strong>Loading &nbsp;&nbsp;</strong> (
+          {jsonData?.filter((item) => item.status === "loading").length || 0})
+        </ToggleButton>
+        <ToggleButton
+          size="small"
+          value="total"
+          color="error"
+          aria-label="Platform"
+          selected={selectedStatus === "error"}
+          onClick={() => setSelectedStatus("error")}
+          sx={{ px: 4, minWidth: 150, flexGrow: 1, maxWidth: 200 }}
+        >
+          <strong>Error &nbsp;&nbsp;</strong>(
+          {jsonData?.filter((item) => item?.error !== "").length || 0})
+        </ToggleButton>
+      </Box>
       <Box sx={{ mt: 2 }}>
         <DataGrid
           slots={{
             toolbar: () => <CustomToolbar />,
           }}
           columns={columns}
-          rows={jsonData || []}
+          rows={filteredData}
           loading={isLoading}
           processRowUpdate={handleProcessRowUpdate}
           initialState={{ pagination: { paginationModel: { pageSize: 10 } } }}

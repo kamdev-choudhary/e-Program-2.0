@@ -64,7 +64,7 @@ if (isProduction && cluster.isPrimary) {
 
   const startServer = async () => {
     try {
-      await connectDB();
+      // await connectDB();
       setupSocket(server);
       server.listen(port, () => {
         logger.info(
