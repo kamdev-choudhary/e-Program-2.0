@@ -203,7 +203,7 @@ export const buttons: Button[] = [
       },
       {
         label: "JEE Main Result (F)",
-        path: "/automation/jeemainresult-final",
+        path: "/automation/jeemainresult",
         icon: AssignmentTurnedInRounded,
         loginRequired: false,
         color: "#a12374",
