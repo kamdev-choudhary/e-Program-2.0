@@ -3,7 +3,8 @@ dotenv.config();
 
 const config = {
   PORT: process.env.PORT || 5000,
-  MONGO_URL: process.env.MONGO_URL,
+  MONGO_URL:
+    "mongodb+srv://kamdevchoudhary:mongopassword@cluster0.mrszysb.mongodb.net/eprogram?retryWrites=true&w=majority",
 
   // JWT
   ACCESS_TOKEN_SECRET: process.env.ACCESS_TOKEN_SECRET,

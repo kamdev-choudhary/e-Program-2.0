@@ -14,7 +14,7 @@ import { generateAdmitCard } from "../controllers/automations/jdst.js";
 
 // Define routes
 router.route("/jee/cityinfo").post(downloadCityInformation);
-router.route("/jee/admitcard").post(downloadAdmitCard);
+router.route("/jee/admitcard").get(downloadAdmitCard);
 
 router.route("/generate/admitcard").post(generateAdmitCard);
 

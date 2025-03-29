@@ -125,7 +125,7 @@ export async function downloadCityInformation(req, res, next) {
 
 export async function downloadAdmitCard(req, res, next) {
   const website =
-    "https://examinationservices.nic.in/JEEMain2025/downloadadmitcard/LoginPWD.aspx?enc=Ei4cajBkK1gZSfgr53ImFVj34FesvYg1WX45sPjGXBpvTjwcqEoJcZ5VnHgmpgmK";
+    "https://examinationservices.nic.in/jeemain2025/DownloadAdmitCard/LoginPWD.aspx?enc=WPJ5WSCVWOMNiXoyyomJgDUffqDdG1LTsAPBKFcEC9U6Jt9ZgEhPK34DpEEvDDR2";
 
   const SELECTORS = {
     application: 'input[name="ctl00$ContentPlaceHolder1$txtRegno"]',
@@ -147,19 +147,19 @@ export async function downloadAdmitCard(req, res, next) {
 
   const MAX_RETRIES = 10; // Define a maximum number of retries for captcha attempts.
   const browser = await puppeteer.launch({
-    headless: true,
+    headless: "new",
     args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-gpu"],
   });
   try {
-    const { application, password } = req.body;
+    const { drn, application, password } = req.query;
 
     const page = await browser.newPage();
     await page.setViewport({ width: 1920, height: 1080 });
     await page.goto(website);
-    await page.type(SELECTORS.application, String(application));
     let success = false;
     for (let i = 0; i < MAX_RETRIES; i++) {
       try {
+        await page.type(SELECTORS.application, String(application));
         await page.type(SELECTORS.password, "");
         await page.type(SELECTORS.password, String(password));
         await page.waitForSelector(SELECTORS.captchaImage, { timeout: 10000 });
@@ -285,9 +285,9 @@ export async function downloadAdmitCard(req, res, next) {
       rollNumber,
     });
 
-    // await page.click(SELECTORS.downloadPdf);
+    await page.click(SELECTORS.downloadPdf);
 
-    // await new Promise((resolve) => setTimeout(resolve, 15000));
+    await new Promise((resolve) => setTimeout(resolve, 20000));
   } catch (error) {
     next(error);
   } finally {

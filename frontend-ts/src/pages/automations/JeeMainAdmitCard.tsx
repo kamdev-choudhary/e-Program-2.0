@@ -56,15 +56,17 @@ const JEEMainAdmitCard: React.FC = () => {
         );
       });
       // Request to get the PDF file path
-      const response = await axios.post("/automation/jee/admitcard", {
-        drn: scholar.drn,
-        applicationNumber: scholar.application,
-        password: scholar.password,
+      const response = await axios.get(`/automation/jee/admitcard`, {
+        params: {
+          drn: scholar.drn,
+          application: scholar.application,
+          password: scholar.password,
+        },
       });
 
       if (response.data.success) {
         setJsonData((prevData) => {
-          if (!prevData) return null; // If jsonData is null, maintain null state
+          if (!prevData) return null;
           return prevData.map((item) =>
             item.drn === scholar.drn
               ? {
@@ -83,7 +85,7 @@ const JEEMainAdmitCard: React.FC = () => {
         });
       } else if (response.data?.error) {
         setJsonData((prevData) => {
-          if (!prevData) return null; // If jsonData is null, maintain null state
+          if (!prevData) return null;
           return prevData.map((item) =>
             item.drn === scholar.drn
               ? {
@@ -97,7 +99,7 @@ const JEEMainAdmitCard: React.FC = () => {
       }
     } catch (error: any) {
       setJsonData((prevData) => {
-        if (!prevData) return null; // If jsonData is null, maintain null state
+        if (!prevData) return null;
         const errorMessage = error?.response?.data?.message || "Unknown error";
         return prevData.map((item) =>
           item.drn === scholar.drn
@@ -150,10 +152,21 @@ const JEEMainAdmitCard: React.FC = () => {
 
         const rows: Array<any[]> = [];
         worksheet.eachRow((row) => {
+          if (!row.values) return; // Ensure row.values is defined
+
           const rowValues = Array.isArray(row.values)
             ? row.values.slice(1)
             : [];
-          rows.push(rowValues);
+
+          // Convert hyperlink/email cells to plain text if needed
+          const processedRow = rowValues.map((cell) => {
+            if (typeof cell === "object" && cell !== null && "text" in cell) {
+              return cell.text; // Extract the plain text from a hyperlink/email
+            }
+            return cell ?? ""; // Ensure no `undefined` values
+          });
+
+          rows.push(processedRow);
         });
 
         if (rows.length === 0) {
@@ -268,6 +281,15 @@ const JEEMainAdmitCard: React.FC = () => {
     {
       field: "shift",
       headerName: "Shift",
+      minWidth: 80,
+      align: "center",
+      headerAlign: "center",
+      editable: true,
+      flex: 1,
+    },
+    {
+      field: "center",
+      headerName: "Center",
       minWidth: 80,
       align: "center",
       headerAlign: "center",

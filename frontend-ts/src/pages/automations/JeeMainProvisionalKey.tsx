@@ -69,14 +69,7 @@ interface ScholarData {
   totalTotal?: number;
 }
 
-const droppedQuestions = [
-  "656445270",
-  "7364751025",
-  "656445728",
-  "656445566",
-  "6564451142",
-  "6564451161",
-];
+let droppedQuestions: any = [];
 
 const JeeMainProvisionalKey: React.FC = () => {
   const [isLoading, setIsLoading] = useState<boolean>(false);
